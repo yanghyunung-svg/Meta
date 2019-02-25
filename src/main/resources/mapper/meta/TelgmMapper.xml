@@ -114,7 +114,7 @@
         AND TASK_SE_CD = #{taskSeCd}
         ) A
         LEFT JOIN tb_code_detl B
-        ON B.GRP_CD = 'TELGM_KND_CD'
+        ON B.GRP_CD = 'TLG_KND_DVSN_CD'
         AND B.CD = A.CD
 
     </select>

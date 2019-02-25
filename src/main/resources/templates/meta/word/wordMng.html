@@ -246,6 +246,13 @@
                 btnCheck.click();
             }
         });
+        // Escape Key
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                window.close();
+            }
+        });
 
         // 닫기
         btnClose.addEventListener("click", () => window.close() );

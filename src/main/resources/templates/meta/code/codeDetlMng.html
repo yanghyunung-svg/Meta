@@ -12,11 +12,11 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 상세코드</h2>
         <div class="button-group">
-            <button id="btnReg" type="button" class="btn">등록            </button>
-            <button id="btnChange" type="button" class="btn">변경            </button>
-            <button id="btnDelete" type="button" class="btn">삭제            </button>
-            <button id="btnInit" type="button" class="btn">초기화            </button>
-            <button id="btnClose" type="button" class="btn">닫기            </button>
+            <button id="btnReg" type="button" class="btn">등록</button>
+            <button id="btnChange" type="button" class="btn">변경</button>
+            <button id="btnDelete" type="button" class="btn">삭제</button>
+            <button id="btnInit" type="button" class="hidden">초기화</button>
+            <button id="btnClose" type="button" class="btn">닫기</button>
         </div>
     </div>
 <!--    <div class="divider-t"></div>-->
@@ -60,7 +60,7 @@
                         <select id="sttsCd" name="sttsCd" class="search-input">
                             <option value="">선택</option>
                             <option value="0">신청</option>
-                            <option value="1">사용</option>
+                            <option value="1" SELECTED>사용</option>
                             <option value="9">미사용</option>
                         </select>
                     </td>
@@ -204,7 +204,6 @@
                 mainForm.cd.value = inData.cd;
                 mainForm.cdNm.focus();
                 btnReg.disabled = false;
-                myAlert( "등록 가능합니다");
             } else {
                 const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
@@ -265,10 +264,18 @@
         });
 
         // Enter Key
-        document.getElementById("grpCd").addEventListener("keydown", e => {
+        document.getElementById("cd").addEventListener("keydown", e => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 btnCheck.click();
+            }
+        });
+
+        // Escape Key
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                window.close();
             }
         });
 
@@ -301,6 +308,7 @@
             myAlert("처리중 오류가 발생했습니다.");
         }
     }
+
 
 </script>
 </body>

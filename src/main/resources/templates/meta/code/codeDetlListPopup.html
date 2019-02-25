@@ -141,6 +141,14 @@
                 document.getElementById("btnClose").addEventListener("click", () => {
                     window.close();
                 });
+
+                // Escape Key
+                document.addEventListener("keydown", e => {
+                    if (e.key === "Escape") {
+                        e.preventDefault();
+                        window.close();
+                    }
+                });
             });
 
 
