@@ -21,23 +21,23 @@
     <table class="popup-table">
         <tr>
             <th>단어명</th>
-            <td> <input type="text" id="wordNm" name="wordNm" class="form-input" required> </td>
+            <td colspan="2"><input type="text" id="wordNm" name="wordNm" class="form-input" required> </td>
         </tr>
         <tr>
             <th>영문약어명</th>
-            <td> <input type="text" id="engAbbrNm" name="engAbbrNm" class="form-input"  required> </td>
+            <td colspan="2"> <input type="text" id="engAbbrNm" name="engAbbrNm" class="form-input"  required> </td>
         </tr>
         <tr>
             <th>영문명</th>
-            <td> <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
+            <td colspan="2"><input type="text" id="engNm" name="engNm" class="form-input"  > </td>
         </tr>
         <tr>
             <th>설명</th>
-            <td> <textarea id="expln" name="expln" class="form-input" rows="10" ></textarea> </td>
+            <td colspan="2"> <textarea id="expln" name="expln" class="form-input" rows="10" ></textarea> </td>
         </tr>
         <tr>
             <th>상태</th>
-            <td>
+            <td colspan="2">
                 <select id="stat"  name="stat" class="form-input">
                     <option value="0" selected>신청</option>
                     <option value="1">사용</option>
@@ -47,7 +47,19 @@
         </tr>
         <tr>
             <th>ID</th>
-            <td> <input type="text" id="id" name="id" class="form-input" readonly> </td>
+            <td colspan="2"> <input type="text" id="id" name="id" class="form-input" readonly> </td>
+        </tr>
+        <tr>
+            <th>최초등록</th>
+            <td style="display:flex; gap:5px;">
+                <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
+                <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+        </tr>
+        <tr>
+            <th>최종변경</th>
+            <td style="display:flex; gap:5px;">
+                <input type="text" id="updId" name="updId" class="form-input" readonly>
+                <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
         </tr>
     </table>
 </form>
@@ -58,6 +70,7 @@
 
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
+        btnSave.disabled = true;
 
         // 현재 화면 상태: I(신규), S(상세)
         let mode = "I";

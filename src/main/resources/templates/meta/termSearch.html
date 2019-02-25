@@ -21,7 +21,8 @@
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSearch" class="btn">검색</button>
-                <button id="btnReg" class="btn">신청</button>
+                <button id="btnReg" class="btn">일반용어신청</button>
+                <button id="btnRegTerm" class="btn">전문용어신청</button>
             </div>
         </div>
 
@@ -50,7 +51,7 @@
         <table style="margin-top:12px" class="dark-table">
             <thead>
             <tr>
-                <th width="50px">번호</th>
+                <th width="50px" style="text-align: center;">번호</th>
                 <th width="150px">용어명</th>
                 <th width="250px">영문명</th>
                 <th>용어설명</th>
@@ -65,12 +66,12 @@
 </div><!-- /container -->
 
 <script>
+
     document.addEventListener("DOMContentLoaded", () => {
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
-
         const tableBody = document.querySelector('.dark-table tbody');
 
         // 페이지 탑바 container에 include
@@ -108,7 +109,7 @@
                     <td class="clickable" data-id="${item.id}" style="text-align: center;"> ${start + index + 1}</td>
                     <td style="text-align: left;">${item.trmNm}</td>
                     <td style="text-align: left;">${item.engNm}</td>
-                    <td style="text-align: left;">${truncateText(item.trmExpln, 120)}</td>
+                    <td style="text-align: left;">${truncateText(item.trmExpln, 100)}</td>
                     <td style="text-align: left;">${item.dmnNm}</td>
                     <td style="text-align: center;"> ${item.stat === '0' ? '신청' : item.stat === '1' ? '사용' : item.stat === '9' ? '미사용' : ''} </td>
                 </tr>
@@ -181,7 +182,6 @@
             });
         }
 
-
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
@@ -218,21 +218,27 @@
             const payload = { mode: "I" };
             openWindowWithJSON(payload);
         });
+
+        /** 상세 팝업 **/
+        document.getElementById('btnRegTerm').addEventListener('click', () => {
+            const payload = { mode: "T" };
+            openWindowWithJSON(payload);
+        });
     });
 
-
-    function openWindowWithJSON(payload, width = 700, height = 500) {
+    function openWindowWithJSON(payload, width = 700, height = 550) {
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
         const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
+        let url = (payload.mode === 'T') ? "/meta/termRegTlgm" : "/meta/termReg";
 
-        const win = window.open("/meta/termReg", "표준용어", features);
+        const win = window.open(url, "표준용어", features);
 
         win.addEventListener('load', () => {
             win.postMessage(payload, window.location.origin);
         });
     }
-
 </script>
+
 </body>
 </html>

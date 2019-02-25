@@ -1,6 +1,6 @@
 window.CONFIG = {
     PAGE_SIZE: 20,
-    PAGE_RANGE: 10,
+    PAGE_RANGE: 2,
     URL: {
         GET_CODE: '/meta/getCodeGroupListData'
     }

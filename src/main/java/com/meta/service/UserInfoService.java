@@ -19,6 +19,7 @@ import java.util.List;
 @Service
 public class UserInfoService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Autowired
     private TbUserInfoMapper tbUserInfoMapper;
@@ -54,6 +55,10 @@ public class UserInfoService {
                 return new ApiResponse<Void>(false, "기등록된 데이타가 있습니다." + outputDto.getUserNm());
             }
 
+            String rawPassword = inputDto.getPassword();
+            String encodedPassword = encoder.encode(rawPassword);
+            inputDto.setPassword(encodedPassword);
+
             if (tbUserInfoMapper.insertData(inputDto) == 0) {
                 log.debug(BizUtils.logInfo("등록오류"));
                 return new ApiResponse<Void>(false, "등록 오류");
@@ -81,6 +86,10 @@ public class UserInfoService {
             if (outputDto == null) {
                 return new ApiResponse<Void>(false, "수정할 자료가 없습니다." );
             }
+
+            String rawPassword = inputDto.getPassword();
+            String encodedPassword = encoder.encode(rawPassword);
+            inputDto.setPassword(encodedPassword);
 
             if (tbUserInfoMapper.updateData(inputDto) == 0) {
                 return new ApiResponse<Void>(false, "수정 오류");
@@ -111,8 +120,14 @@ public class UserInfoService {
                 return new ApiResponse<>(false, "사용자가 없습니다.");
             }
 
-            // 비밀번호 검증 (평문)
-            if (!StringUtils.equals(inputDto.getPassword(), outputDto.getPassword())) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+            String rawPassword = inputDto.getPassword();
+            String encodedPassword = encoder.encode(rawPassword);
+            String dbPw = outputDto.getPassword();
+
+            // 비밀번호 검증
+            if (!StringUtils.equals(encodedPassword, dbPw)) {
                 return new ApiResponse<>(false, "비밀번호 오류");
             }
 

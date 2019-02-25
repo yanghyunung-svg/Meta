@@ -106,7 +106,10 @@
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr>
                     <td class="clickable" data-id="${item.grpCd}" style="text-align: center;"> ${start + index + 1}</td>
-                    <td class="clickable1" data-id="${item.grpCd}" style="text-align: left;">  ${item.grpCd} </td>
+                    <td class="clickable1"
+                            data-id="${item.grpCd}"
+                            data-grpNm="${item.grpNm}"
+                            style="text-align: left;">  ${item.grpCd} </td>
                     <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.rmk}</td>
                     <td style="text-align: center;">${item.ord}</td>
@@ -123,12 +126,24 @@
                 });
             });
 
-            /** 상세 클릭 이벤트 **/
+            /** 코드상세 클릭 **/
             tableBody.querySelectorAll(".clickable1").forEach(td => {
                 td.addEventListener("click", () => {
                     const grpCd = td.getAttribute("data-id");
+                    const grpNm = td.getAttribute("data-grpNm");
                     localStorage.setItem('grpCd', grpCd);
-                    window.open(`/meta/codeSearch`, '_code');
+                    localStorage.setItem('grpNm', grpNm);
+<!--                    window.open(`/meta/codeSearch`, '_code');-->
+                    const width = 1200;
+                    const height = 1000;
+                    const left = window.screenX + (window.outerWidth - width) / 2;
+                    const top = window.screenY + (window.outerHeight - height) / 2;
+                    const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
+                    const win = window.open("/meta/codeSearchPopup",  "공통코드상세", features);
+                    win.addEventListener('load', () => {
+                        win.postMessage(payload, window.location.origin);
+                    });
+
                 });
             });
 
@@ -230,14 +245,11 @@
         });
     });
 
-
     function openWindowWithJSON(payload, width = 700, height = 400) {
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
         const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
-
         const win = window.open("/meta/codeGroupReg",  "공통코드", features);
-
         win.addEventListener('load', () => {
             win.postMessage(payload, window.location.origin);
         });
