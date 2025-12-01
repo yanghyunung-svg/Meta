@@ -5,6 +5,7 @@
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/layout.js" defer></script>
+    <script src="/js/config.js"></script>
 
 </head>
 <body>
@@ -77,7 +78,7 @@
         const engNm = document.getElementById('engNm');
         const stat = document.getElementById('stat');
 
-        let PAGE_SIZE = 15;
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 

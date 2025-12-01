@@ -5,7 +5,7 @@
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/layout.js" defer></script>
-
+    <script src="/js/config.js"></script>
 </head>
 <div id="topbarContainer"></div>
 <div class="container">
@@ -73,50 +73,12 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const wordNm = document.getElementById('wordNm');
-        const engAbbrNm = document.getElementById('engAbbrNm');
-        const stat = document.getElementById('stat');
-        const tableBody = document.querySelector('.dark-table tbody');
 
-        /** 초기화 **/
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
-            tableBody.innerHTML = "";
-            document.getElementById('pageInfo').innerText = "";
-            dataAll = [];
-            const old = document.querySelector(".pagination");
-            if (old) old.remove();
-        });
-
-
-        /** 검색 **/
-        document.getElementById('btnSearch').addEventListener('click', () => {
-            const keyword1 = wordNm.value.trim();
-            const keyword2 = engAbbrNm.value.trim();
-            const keyword3 = stat.value.trim();
-
-            fetch('/meta/getWordListData', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ wordNm: keyword1, engAbbrNm: keyword2, stat: keyword3 })
-            })
-            .then(res => res.json())
-            .then(data => {
-                dataAll = Array.isArray(data) ? data : [];
-                currentPage = 1;
-                renderTable(currentPage);
-                renderPagination();
-                updatePageInfo();
-            })
-            .catch(err => {
-                alert("에러 발생: " + err);
-            });
-        });
-
-
-        let PAGE_SIZE = 15;
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
+
+        const tableBody = document.querySelector('.dark-table tbody');
 
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageTopBarContainer");
@@ -278,6 +240,41 @@
             });
         }
 
+
+        /** 초기화 **/
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+            tableBody.innerHTML = "";
+            document.getElementById('pageInfo').innerText = "";
+            dataAll = [];
+            const old = document.querySelector(".pagination");
+            if (old) old.remove();
+        });
+
+
+        /** 검색 **/
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            const keyword1 = wordNm.value.trim();
+            const keyword2 = engAbbrNm.value.trim();
+            const keyword3 = stat.value.trim();
+
+            fetch('/meta/getWordListData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ wordNm: keyword1, engAbbrNm: keyword2, stat: keyword3 })
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination();
+                updatePageInfo();
+            })
+            .catch(err => {
+                alert("에러 발생: " + err);
+            });
+        });
 
         /** 등록 팝업 **/
         document.getElementById('btnReg').addEventListener('click', () => {

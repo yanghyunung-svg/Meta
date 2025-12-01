@@ -5,6 +5,7 @@
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/layout.js" defer></script>
+    <script src="/js/config.js"></script>
 
 </head>
 <body>
@@ -27,10 +28,15 @@
             <table class="search-table">
                 <tr>
                     <th>공통코드</th>
-                    <td><input type="text" id="grpCd" class="form-input"></td>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="text" id="grpCd" class="form-input">
+                        <button id="btnPopup" class="btn" type="button">검색</button>
+                    </td>
+                    <th>공통코드명</th>
+                    <td><input type="text" id="grpNm" class="form-input" readonly></td>
                     <th>상세코드</th>
                     <td><input type="text" id="cd" class="form-input"></td>
-                    <th>코드명</th>
+                    <th>상세코드명</th>
                     <td><input type="text" id="cdNm" class="form-input"></td>
                     <th>사용여부</th>
                     <td>
@@ -69,13 +75,14 @@
 <div id="detailModal" class="modal" style="display:none;">
     <div class="modal-content">
         <span id="closeModal" class="close">&times;</span>
-        <div class="modal-header"><h2 style="margin:0;">상세코드 상세</h2></div>
+        <div class="modal-header"><h2 style="margin:0;">상세코드 </h2></div>
         <div id="modalBody"></div>
     </div>
 </div>
 
 <script>
-    let PAGE_SIZE = 15;
+
+    let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
     let dataAll = [];
     let currentPage = 1;
     const tableBody = document.querySelector('.dark-table tbody');
@@ -123,6 +130,13 @@
             const cd = document.getElementById('cd').value.trim();
             const cdNm = document.getElementById('cdNm').value.trim();
             const useYn = document.getElementById('useYn').value.trim();
+
+<!--            if (!grpCd) {-->
+<!--                alert("공통코드를 입력해주세요.");-->
+<!--                document.getElementById('grpCd').focus();-->
+<!--                return; // 입력값 없으면 검색 중단-->
+<!--            }-->
+
 
             fetch('/meta/getCodeListData', {
                 method: 'POST',
@@ -310,13 +324,24 @@
             window.open("/meta/codeReg", "상세코드 관리", "width=700,height=500,scrollbars=yes,resizable=yes" );
         });
 
+        /** 코드검색 팝업 **/
+        document.getElementById('btnPopup').addEventListener('click', () => {
+            window.open("/meta/codeGroupPopup", "공통코드 검색", "width=700,height=500,scrollbars=yes,resizable=yes" );
+        });
+
         /** 모달 닫기 **/
         document.getElementById('closeModal').addEventListener('click', () => {
             document.getElementById('detailModal').style.display = 'none';
         });
-
-
     });
+
+    function receiveCode(grpCd, grpNm) {
+        document.getElementById("grpCd").value = grpCd;
+        document.getElementById("grpNm").value = grpNm;
+
+        console.log("받은 코드:", grpCd, grpNm);
+    }
+
 </script>
 
 </body>

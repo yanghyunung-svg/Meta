@@ -116,7 +116,7 @@
         <if test="useYn != null and useYn != ''">
             AND A.USE_YN = #{useYn}
         </if>
-        ORDER BY GRP_CD, CD
+        ORDER BY A.GRP_CD, A.ORD, A.CD
 
     </select>
 

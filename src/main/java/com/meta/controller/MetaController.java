@@ -50,6 +50,8 @@ public class MetaController {
     public String getCodeGroupSearchPage() { return "meta/codeGroupSearch"; }
     @GetMapping("/codeGroupReg")
     public String getCodeGroupRegPage() { return "meta/codeGroupReg"; }
+    @GetMapping("/codeGroupPopup")
+    public String getCodeGroupPopupPage() { return "meta/codeGroupPopup"; }
 
     /* Code */
     @GetMapping("/codeSearch")

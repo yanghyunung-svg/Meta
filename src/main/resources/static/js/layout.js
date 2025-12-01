@@ -20,7 +20,7 @@ function loadHeader() {
         const headerSpan = document.getElementById('headerUserNm');
         const logoutBtn = document.querySelector('.topbar-right .logout');
         if (headerSpan && logoutBtn) {
-            headerSpan.innerText = userNm + ' (' +  userId  + ') ' + role;   // userNm 표시
+            headerSpan.innerText = userNm + ' (' +  userId  + ') ' ;   // userNm 표시
             // Logout
             logoutBtn.addEventListener('click', () => {
                 localStorage.removeItem('userNm');

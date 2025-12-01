@@ -5,6 +5,7 @@
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/layout.js" defer></script>
+    <script src="/js/config.js"></script>
 </head>
 <body>
 <div id="topbarContainer"></div>
@@ -19,7 +20,7 @@
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSearch" class="btn">검색</button>
-                <button id="btnReg" class="btn">신청</button>
+                <button id="btnReg" class="btn">등록</button>
             </div>
         </div>
 
@@ -73,13 +74,9 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
-        const userId = document.getElementById('userId');
-        const userNm = document.getElementById('userNm');
-        const useYn = document.getElementById('useYn');
-
         const tableBody = document.querySelector('.dark-table tbody');
 
-        let PAGE_SIZE = 15;
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
@@ -143,12 +140,11 @@
                     <tr>
                         <td class="clickable"
                             data-id="${item.userId}" style="text-align: center; cursor:pointer; text-decoration:underline;"> ${start + index + 1}</td>
-                        <td style="text-align: center;">${start + index + 1}</td>
                         <td style="text-align: left;">${item.userId}</td>
                         <td style="text-align: left;">${item.userNm}</td>
                         <td style="text-align: left;">${item.email}</td>
                         <td style="text-align: left;">${item.phone}</td>
-                        <td style="text-align: left;">${item.role}</td>
+                        <td> ${item.role === '2' ? 'USER' :   item.role === '1' ? 'ADMIN' : '-'} </td>
                         <td> ${item.useYn === 'Y' ? '사용' :   item.useYn === 'N' ? '미사용' : '-'} </td>
 
                     </tr>
@@ -180,15 +176,24 @@
                                     <tr><th> 전화번호 </th>
                                         <td><input type="text" value="${detail.phone}" class="form-input" readonly></td></tr>
                                     <tr><th> 권한 </th>
-                                        <td><input type="text" value="${detail.role}" class="form-input" readonly></td></tr>
+                                        <td>
+                                          <select class="form-input">
+                                            <option value="1" ${detail.role === '1' ? 'selected' : ''}>ADMIN</option>
+                                            <option value="2" ${detail.role === '2' ? 'selected' : ''}>USER</option>
+                                            <option value="" ${detail.role === '' ? 'selected' : ''}>-</option>
+                                          </select>
+                                        </td>
+                                    </tr>
 
                                     <tr><th> 사용여부 </th>
-                                    <td>
+                                        <td>
                                           <select class="form-input">
                                             <option value="Y" ${detail.useYn === 'Y' ? 'selected' : ''}>사용</option>
                                             <option value="N" ${detail.useYn === 'N' ? 'selected' : ''}>미사용</option>
                                             <option value="" ${detail.useYn === '' ? 'selected' : ''}>-</option>
-                                          </select></td></tr>
+                                          </select>
+                                        </td>
+                                    </tr>
 
                                     </table><br>
                                 <table class="popup-table">

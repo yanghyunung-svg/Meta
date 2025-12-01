@@ -55,6 +55,17 @@ body, html { font-family: Arial, sans-serif; height: 100%; }
     background-color: #f5f5f5;
     transition: margin-left 0.25s ease, width 0.25s ease;
 }
+/* Main content */
+.popupContainer {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+    transition: margin-left 0.25s ease, width 0.25s ease;
+}
 
 
 /* 검색폼 */
@@ -117,7 +128,7 @@ body, html { font-family: Arial, sans-serif; height: 100%; }
     border-radius: 4px;
     background-color: #f8f8f8;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     white-space: nowrap;       /* 텍스트 줄바꿈 방지 */
 }
 
@@ -161,7 +172,7 @@ th { background-color: #f4f4f4; }
 
 .dark-table td {
     border: 1px solid #555;   /* 테두리 색 */
-    padding: 8px;
+    padding: 5px;
     text-align: center;
 }
 
@@ -170,12 +181,12 @@ th { background-color: #f4f4f4; }
     color: #000;
 }
 
-.dark-table tbody tr {
-    height: 20px;
-}
-
 .dark-table tbody tr:nth-child(even) {
     background-color: #ececec;  /* 짝수행 조금 더 밝게 */
+}
+
+.dark-table tbody tr {
+    height: 15px;
 }
 
 .clickable { cursor: pointer; color: blue; text-decoration: underline; }
