@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     loadHeader();
     loadSidebar();
+
 });
 
 /* Header 불러오기 */

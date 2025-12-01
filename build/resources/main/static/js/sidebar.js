@@ -1,34 +1,33 @@
-document.addEventListener("DOMContentLoaded", function () {
+// sidebar.js
+(function() {
+    // ADMIN 메뉴 보여주기 함수
+    function applyRole() {
+        const role = localStorage.getItem('role');  // role 가져오기
+        const adminMenus = document.querySelectorAll('.ADMIN');  // NodeList
 
-    /** =============================
-     *  권한 설정 (Server에서 전달 가능)
-     * ============================= */
-    const userRole = sessionStorage.getItem("userRole") || "USER";
-    // 서버에서 JSP로 전달 시: const userRole = "${sessionScope.userRole}";
+        if (!adminMenus || adminMenus.length === 0) return;  // 없으면 종료
 
-    /** 메뉴 권한 체크 */
-    document.querySelectorAll(".sidebar-group").forEach(group => {
-        const allowedRoles = group.getAttribute("data-role").split(",");
+        adminMenus.forEach(el => {
+            el.style.display = (role === "1") ? "block" : "none";  // role=1이면 보이기
+        });
 
-        if (!allowedRoles.includes(userRole)) {
-            group.style.display = "none";   // 권한 없는 메뉴 숨김
+        console.debug('Role applied:', role, '| ADMIN 메뉴 갯수:', adminMenus.length);
+    }
+
+    // 1) DOMContentLoaded 이벤트 처리
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyRole);
+    } else {
+        applyRole();
+    }
+
+    // 2) 동적 생성되는 ADMIN 메뉴도 처리(MutationObserver)
+    const observer = new MutationObserver((mutations, obs) => {
+        if (document.querySelector('.ADMIN')) {
+            applyRole();
+            obs.disconnect();  // 적용 후 관찰 종료
         }
     });
 
-    /** =============================
-     *  아코디언 처리
-     * ============================= */
-    document.querySelectorAll(".accordion").forEach(title => {
-        title.addEventListener("click", () => {
-            const submenu = title.nextElementSibling;
-            const isOpen = submenu.style.display === "block";
-
-            // 모든 submenu 닫기 (원하면 적용)
-            document.querySelectorAll(".submenu").forEach(s => s.style.display = "none");
-
-            // 클릭된 메뉴만 toggle
-            submenu.style.display = isOpen ? "none" : "block";
-        });
-    });
-
-});
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+})();
