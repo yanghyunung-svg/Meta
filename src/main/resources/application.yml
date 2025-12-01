@@ -1,0 +1,44 @@
+server:
+  port: 8088
+
+spring:
+  profiles:
+    active: local
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.meta.dto
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    org.mybatis: DEBUG
+    com.meta: DEBUG
+    com.zaxxer.hikari: INFO
+    org.springframework.jdbc: DEBUG
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/meta?serverTimezone=Asia/Seoul&useSSL=false
+    username: root
+    password: root0000
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+      read-only: false
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

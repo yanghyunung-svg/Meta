@@ -1,0 +1,168 @@
+2025-11-18 14:45:29.096 [restartedMain] [] [INFO ] com.meta.DemoApplication - Starting DemoApplication using Java 21.0.9 with PID 30764 (C:\Project\MetaSystem\build\classes\java\main started by bankware in C:\Project\MetaSystem)
+2025-11-18 14:45:29.100 [restartedMain] [] [INFO ] com.meta.DemoApplication - The following 1 profile is active: "local"
+2025-11-18 14:45:29.580 [restartedMain] [] [INFO ] o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\bankware\.gradle\caches\modules-2\files-2.1\org.glassfish.hk2\hk2\3.0.6\12187beb6321e6a7fdc2ef4d196e16c8c58a3a1\hk2-3.0.6.jar referenced one or more files that do not exist: file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-utils.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/jakarta.annotation-api.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/jakarta.inject-api.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-api.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/aopalliance-repackaged.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-core.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-locator.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/javassist.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-runlevel.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/class-model.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm-analysis.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm-commons.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm-tree.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm-util.jar
+2025-11-18 14:45:29.581 [restartedMain] [] [INFO ] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-18 14:45:29.582 [restartedMain] [] [INFO ] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-18 14:45:31.107 [restartedMain] [] [DEBUG] o.m.s.b.a.MybatisAutoConfiguration - Searching for mappers annotated with @Mapper
+2025-11-18 14:45:31.107 [restartedMain] [] [DEBUG] o.m.s.b.a.MybatisAutoConfiguration - Using auto-configuration base package 'com.meta'
+2025-11-18 14:45:31.160 [restartedMain] [] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-18 14:45:31.163 [restartedMain] [] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-18 14:45:31.198 [restartedMain] [] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 9 ms. Found 0 Redis repository interfaces.
+2025-11-18 14:45:31.552 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TbTermDictionaryMapper.class]
+2025-11-18 14:45:31.552 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TbWordDictionaryMapper.class]
+2025-11-18 14:45:31.552 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TermDictionaryMapper.class]
+2025-11-18 14:45:31.554 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'tbTermDictionaryMapper' and 'com.meta.mapper.TbTermDictionaryMapper' mapperInterface
+2025-11-18 14:45:31.558 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'tbWordDictionaryMapper' and 'com.meta.mapper.TbWordDictionaryMapper' mapperInterface
+2025-11-18 14:45:31.559 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'termDictionaryMapper' and 'com.meta.mapper.TermDictionaryMapper' mapperInterface
+2025-11-18 14:45:32.510 [restartedMain] [] [INFO ] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8088 (http)
+2025-11-18 14:45:32.542 [restartedMain] [] [INFO ] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-18 14:45:32.543 [restartedMain] [] [INFO ] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-11-18 14:45:32.706 [restartedMain] [] [INFO ] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-18 14:45:32.707 [restartedMain] [] [INFO ] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3124 ms
+2025-11-18 14:45:32.889 [restartedMain] [] [WARN ] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'metaRestController': Unsatisfied dependency expressed through field 'termDictionaryService': Error creating bean with name 'termDictionaryService': Unsatisfied dependency expressed through field 'termDictionaryMapper': Error creating bean with name 'termDictionaryMapper' defined in file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TermDictionaryMapper.class]: Cannot resolve reference to bean 'sqlSessionTemplate' while setting bean property 'sqlSessionTemplate'
+2025-11-18 14:45:32.893 [restartedMain] [] [INFO ] o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-11-18 14:45:33.016 [restartedMain] [] [INFO ] o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-11-18 14:45:33.067 [restartedMain] [] [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine suitable jdbc url
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (the profiles local are currently active).
+
+2025-11-18 14:46:17.713 [restartedMain] [] [INFO ] com.meta.DemoApplication - Starting DemoApplication using Java 21.0.9 with PID 31200 (C:\Project\MetaSystem\build\classes\java\main started by bankware in C:\Project\MetaSystem)
+2025-11-18 14:46:17.718 [restartedMain] [] [INFO ] com.meta.DemoApplication - The following 1 profile is active: "local"
+2025-11-18 14:46:18.209 [restartedMain] [] [INFO ] o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\bankware\.gradle\caches\modules-2\files-2.1\org.glassfish.hk2\hk2\3.0.6\12187beb6321e6a7fdc2ef4d196e16c8c58a3a1\hk2-3.0.6.jar referenced one or more files that do not exist: file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-utils.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/jakarta.annotation-api.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/jakarta.inject-api.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-api.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/aopalliance-repackaged.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-core.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-locator.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/javassist.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/hk2-runlevel.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/class-model.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm-analysis.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm-commons.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm-tree.jar,file:/C:/Users/bankware/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2/hk2/3.0.6/12187beb6321e6a7fdc2ef4d196e16c8c58a3a1/asm-util.jar
+2025-11-18 14:46:18.210 [restartedMain] [] [INFO ] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-18 14:46:18.210 [restartedMain] [] [INFO ] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-18 14:46:19.738 [restartedMain] [] [DEBUG] o.m.s.b.a.MybatisAutoConfiguration - Searching for mappers annotated with @Mapper
+2025-11-18 14:46:19.739 [restartedMain] [] [DEBUG] o.m.s.b.a.MybatisAutoConfiguration - Using auto-configuration base package 'com.meta'
+2025-11-18 14:46:19.815 [restartedMain] [] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-18 14:46:19.820 [restartedMain] [] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-18 14:46:19.860 [restartedMain] [] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 11 ms. Found 0 Redis repository interfaces.
+2025-11-18 14:46:20.257 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TbTermDictionaryMapper.class]
+2025-11-18 14:46:20.258 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TbWordDictionaryMapper.class]
+2025-11-18 14:46:20.258 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TermDictionaryMapper.class]
+2025-11-18 14:46:20.259 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'tbTermDictionaryMapper' and 'com.meta.mapper.TbTermDictionaryMapper' mapperInterface
+2025-11-18 14:46:20.262 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'tbWordDictionaryMapper' and 'com.meta.mapper.TbWordDictionaryMapper' mapperInterface
+2025-11-18 14:46:20.265 [restartedMain] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'termDictionaryMapper' and 'com.meta.mapper.TermDictionaryMapper' mapperInterface
+2025-11-18 14:46:21.288 [restartedMain] [] [INFO ] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8088 (http)
+2025-11-18 14:46:21.319 [restartedMain] [] [INFO ] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-18 14:46:21.319 [restartedMain] [] [INFO ] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-11-18 14:46:21.493 [restartedMain] [] [INFO ] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-18 14:46:21.493 [restartedMain] [] [INFO ] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3281 ms
+2025-11-18 14:46:21.681 [restartedMain] [] [WARN ] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'metaRestController': Unsatisfied dependency expressed through field 'termDictionaryService': Error creating bean with name 'termDictionaryService': Unsatisfied dependency expressed through field 'termDictionaryMapper': Error creating bean with name 'termDictionaryMapper' defined in file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TermDictionaryMapper.class]: Cannot resolve reference to bean 'sqlSessionTemplate' while setting bean property 'sqlSessionTemplate'
+2025-11-18 14:46:21.686 [restartedMain] [] [INFO ] o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-11-18 14:46:21.816 [restartedMain] [] [INFO ] o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-11-18 14:46:21.864 [restartedMain] [] [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine suitable jdbc url
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (the profiles local are currently active).
+
+2025-11-18 14:54:56.175 [main] [] [INFO ] com.meta.DemoApplication - Starting DemoApplication using Java 21.0.9 with PID 2016 (C:\Project\MetaSystem\build\classes\java\main started by bankware in C:\Project\MetaSystem)
+2025-11-18 14:54:56.178 [main] [] [INFO ] com.meta.DemoApplication - The following 1 profile is active: "local"
+2025-11-18 14:54:57.248 [main] [] [DEBUG] o.m.s.b.a.MybatisAutoConfiguration - Searching for mappers annotated with @Mapper
+2025-11-18 14:54:57.249 [main] [] [DEBUG] o.m.s.b.a.MybatisAutoConfiguration - Using auto-configuration base package 'com.meta'
+2025-11-18 14:54:57.451 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TbTermDictionaryMapper.class]
+2025-11-18 14:54:57.452 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TbWordDictionaryMapper.class]
+2025-11-18 14:54:57.452 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TermDictionaryMapper.class]
+2025-11-18 14:54:57.453 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'tbTermDictionaryMapper' and 'com.meta.mapper.TbTermDictionaryMapper' mapperInterface
+2025-11-18 14:54:57.456 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'tbWordDictionaryMapper' and 'com.meta.mapper.TbWordDictionaryMapper' mapperInterface
+2025-11-18 14:54:57.457 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'termDictionaryMapper' and 'com.meta.mapper.TermDictionaryMapper' mapperInterface
+2025-11-18 14:54:58.008 [main] [] [INFO ] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8088 (http)
+2025-11-18 14:54:58.029 [main] [] [INFO ] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-18 14:54:58.030 [main] [] [INFO ] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-11-18 14:54:58.142 [main] [] [INFO ] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-18 14:54:58.142 [main] [] [INFO ] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1872 ms
+2025-11-18 14:54:58.303 [main] [] [WARN ] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'metaRestController': Unsatisfied dependency expressed through field 'termDictionaryService': Error creating bean with name 'termDictionaryService': Unsatisfied dependency expressed through field 'termDictionaryMapper': Error creating bean with name 'termDictionaryMapper' defined in file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TermDictionaryMapper.class]: Cannot resolve reference to bean 'sqlSessionTemplate' while setting bean property 'sqlSessionTemplate'
+2025-11-18 14:54:58.308 [main] [] [INFO ] o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-11-18 14:54:58.340 [main] [] [INFO ] o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-11-18 14:54:58.384 [main] [] [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine a suitable driver class
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (the profiles local are currently active).
+
+2025-11-18 14:56:01.286 [main] [] [INFO ] com.meta.DemoApplication - Starting DemoApplication using Java 21.0.9 with PID 32752 (C:\Project\MetaSystem\build\classes\java\main started by bankware in C:\Project\MetaSystem)
+2025-11-18 14:56:01.291 [main] [] [INFO ] com.meta.DemoApplication - The following 1 profile is active: "local"
+2025-11-18 14:56:02.325 [main] [] [DEBUG] o.m.s.b.a.MybatisAutoConfiguration - Searching for mappers annotated with @Mapper
+2025-11-18 14:56:02.327 [main] [] [DEBUG] o.m.s.b.a.MybatisAutoConfiguration - Using auto-configuration base package 'com.meta'
+2025-11-18 14:56:02.532 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TbTermDictionaryMapper.class]
+2025-11-18 14:56:02.532 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TbWordDictionaryMapper.class]
+2025-11-18 14:56:02.532 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TermDictionaryMapper.class]
+2025-11-18 14:56:02.534 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'tbTermDictionaryMapper' and 'com.meta.mapper.TbTermDictionaryMapper' mapperInterface
+2025-11-18 14:56:02.537 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'tbWordDictionaryMapper' and 'com.meta.mapper.TbWordDictionaryMapper' mapperInterface
+2025-11-18 14:56:02.538 [main] [] [DEBUG] o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'termDictionaryMapper' and 'com.meta.mapper.TermDictionaryMapper' mapperInterface
+2025-11-18 14:56:03.103 [main] [] [INFO ] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8088 (http)
+2025-11-18 14:56:03.122 [main] [] [INFO ] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-18 14:56:03.122 [main] [] [INFO ] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-11-18 14:56:03.234 [main] [] [INFO ] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-18 14:56:03.234 [main] [] [INFO ] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1846 ms
+2025-11-18 14:56:03.401 [main] [] [WARN ] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'metaRestController': Unsatisfied dependency expressed through field 'termDictionaryService': Error creating bean with name 'termDictionaryService': Unsatisfied dependency expressed through field 'termDictionaryMapper': Error creating bean with name 'termDictionaryMapper' defined in file [C:\Project\MetaSystem\build\classes\java\main\com\meta\mapper\TermDictionaryMapper.class]: Cannot resolve reference to bean 'sqlSessionTemplate' while setting bean property 'sqlSessionTemplate'
+2025-11-18 14:56:03.405 [main] [] [INFO ] o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-11-18 14:56:03.434 [main] [] [INFO ] o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-11-18 14:56:03.474 [main] [] [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine a suitable driver class
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (the profiles local are currently active).
+

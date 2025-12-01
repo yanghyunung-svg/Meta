@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+</head>
+<body>
+
+<div class="popupnContainer" id="popupnContainer">
+
+    <div class="popup-header">
+        <h2 class="popup-title">공통코드 등록</h2>
+        <button id="btnClose" class="btn-close">x</button>
+    </div>
+
+<form id="mainForm">
+    <table class="popup-table">
+        <tr>
+            <th>공통코드</th>
+            <td> <input type="text" id="grpCd" class="form-input" > </td>
+        </tr>
+        <tr>
+            <th>코드명</th>
+            <td> <input type="text" id="grpNm" class="form-input"  > </td>
+        </tr>
+        <tr>
+            <th>정렬순서</th>
+            <td> <input type="text" id="ord" class="form-input"  > </td>
+        </tr>
+        <tr>
+            <th>비고</th>
+            <td> <textarea   id="rmk" class="form-input" rows="10" ></textarea> </td>
+        </tr>
+        <tr>
+            <th>사용여부</th><td>
+            <select id="useYn" class="form-input">
+                <option value="Y">사용</option>
+                <option value="N">미사용</option>
+            </select>
+        </td>
+        </tr>
+    </table>
+</form>
+    <div class="button-row" style="display:flex; gap:8px;">
+        <button id="btnInit" class="btn">초기화</button>
+        <button id="btnReg" class="btn">저장</button>
+    </div>
+
+</div> <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // 📌 초기화 버튼
+        document.getElementById("btnInit").addEventListener("click", () => {
+            document.getElementById('mainForm').reset();
+        });
+
+        // 📌 저장 버튼
+        document.getElementById("btnReg").addEventListener("click", async () => {
+            const data = {
+                grpCd: grpCd.value.trim(),
+                grpNm: grpNm.value.trim(),
+                useYn: useYn.value.trim(),
+                ord: ord.value.trim(),
+                rmk: rmk.value.trim()
+            };
+
+            if (!data.grpCd) {
+                alert("공통코드를 입력하세요.");
+                grpCd.focus();
+                return;
+            }
+            if (!data.grpNm) {
+                alert("코드명을 입력하세요.");
+                grpNm.focus();
+                return;
+            }
+
+            try {
+                const response = await fetch("/meta/insertCodeGroupData", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error("서버 오류 발생");
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("저장되었습니다.");
+                    window.close();
+                } else {
+                    alert("저장 실패: " + result.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("요청 중 오류가 발생했습니다.");
+            }
+        });
+    });
+
+    document.getElementById("btnClose").addEventListener("click", () => {
+        window.close();
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meta.mapper.TbWordDictionaryMapper">
+
+   <!--tb_word_dictionary SELECT-->
+   <select id="getData" parameterType="com.meta.dto.TbWordDictionaryDto" resultType="com.meta.dto.TbWordDictionaryDto">
+      SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
+       , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+       , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_word_dictionary
+       WHERE ID = #{id}
+  </select>
+    <!--tb_word_dictionary SELECT-->
+    <select id="getDataByName" parameterType="com.meta.dto.TbWordDictionaryDto" resultType="com.meta.dto.TbWordDictionaryDto">
+        SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_word_dictionary
+        WHERE WORD_NM = #{wordNm}
+    </select>
+
+   <!--tb_word_dictionary INSERT-->
+   <insert id="insertData" parameterType="com.meta.dto.TbWordDictionaryDto">
+     INSERT INTO tb_word_dictionary (
+            WORD_NM
+          , ENG_ABBR_NM
+          , ENG_NM
+          , EXPLN
+          , STAT
+          , CRT_ID
+          , UPD_ID
+     )
+     VALUES (
+            #{wordNm}
+           , #{engAbbrNm}
+           , #{engNm}
+           , #{expln}
+           , #{stat}
+           , #{crtId}
+          , #{updId}
+     ) 
+  </insert>
+
+   <!--tb_word_dictionary UPDATE-->
+   <update id="updateData" parameterType="com.meta.dto.TbWordDictionaryDto">
+     UPDATE tb_word_dictionary
+        SET
+            UPD_ID = #{updId}
+           <if test="engAbbrNm != null and engAbbrNm != ''">
+               , ENG_ABBR_NM = #{engAbbrNm}
+           </if>
+           <if test="engNm != null and engNm != ''">
+               , ENG_NM = #{engNm}
+           </if>
+           <if test="expln != null and expln != ''">
+               , EXPLN = #{expln}
+           </if>
+           <if test="stat != null and stat != ''">
+               , STAT = #{stat}
+           </if>
+      WHERE ID = #{id}
+   </update>
+
+   <!--tb_word_dictionary DELETE-->
+   <delete id="deleteData" parameterType="com.meta.dto.TbWordDictionaryDto">
+     DELETE
+       FROM tb_word_dictionary
+      WHERE ID = #{id}
+   </delete>
+
+   <!--tb_word_dictionary RECORD LOCK SELECT-->
+   <select id="getLockData" parameterType="com.meta.dto.TbWordDictionaryDto" resultType="com.meta.dto.TbWordDictionaryDto">
+       SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
+       , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+       , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_word_dictionary
+       WHERE ID = #{id}
+         FOR UPDATE
+  </select>
+
+    <!--tb_word_dictionary RECORD LOCK SELECT-->
+    <select id="getListData" parameterType="com.meta.dto.TbWordDictionaryDto" resultType="com.meta.dto.TbWordDictionaryDto">
+        SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_word_dictionary
+        WHERE 1=1
+            <if test="wordNm != null and wordNm != ''">
+                AND WORD_NM LIKE CONCAT('%', #{wordNm}, '%')
+            </if>
+            <if test="engAbbrNm != null and engAbbrNm != ''">
+                AND ENG_ABBR_NM LIKE CONCAT('%', #{engAbbrNm}, '%')
+            </if>
+            <if test="stat != null and stat != ''">
+                AND STAT = #{stat}
+            </if>
+        ORDER BY WORD_NM, ENG_NM
+    </select>
+
+</mapper>

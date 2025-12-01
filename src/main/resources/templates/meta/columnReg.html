@@ -1,0 +1,59 @@
+<div class="card">
+  <h2>컬럼관리</h2>
+
+  <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+    <div style="display:flex; gap:12px; align-items:center;">
+      <label style="width:80px;" for="termKor">한글명<span style="color:#f87171;">*</span></label>
+      <input type="text" id="termKor" placeholder="한글명 입력" style="flex:1; padding:6px; border-radius:6px; border:1px solid #9aa4b2; background:#0b1220; color:#e6eef8"/>
+    </div>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <label style="width:80px;" for="termEng">영문명</label>
+      <input type="text" id="termEng" placeholder="영문명 입력" style="flex:1; padding:6px; border-radius:6px; border:1px solid #9aa4b2; background:#0b1220; color:#e6eef8"/>
+    </div>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <label style="width:80px;" for="termAbbr">영문약어<span style="color:#f87171;">*</span></label>
+      <input type="text" id="termAbbr" placeholder="영문약어 입력" style="flex:1; padding:6px; border-radius:6px; border:1px solid #9aa4b2; background:#0b1220; color:#e6eef8"/>
+    </div>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <label style="width:80px;" for="termDesc">설명</label>
+      <input type="text" id="termDesc" placeholder="설명 입력" style="flex:1; padding:6px; border-radius:6px; border:1px solid #9aa4b2; background:#0b1220; color:#e6eef8"/>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; gap:12px; margin-top:16px;">
+    <button id="btnReg" style="padding:8px 16px; border-radius:8px; background:#06b6d4; color:white; border:0; cursor:pointer">저장</button>
+    <button id="btnClear" style="padding:8px 16px; border-radius:8px; background:#9aa4b2; color:white; border:0; cursor:pointer">초기화</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById('btnReg').addEventListener('click', () => {
+    const kor = document.getElementById('termKor').value.trim();
+    const eng = document.getElementById('termEng').value.trim();
+    const abbr = document.getElementById('termAbbr').value.trim();
+    const desc = document.getElementById('termDesc').value.trim();
+
+    if (!kor || !abbr) {
+      alert('한글명과 영문약어는 필수입니다.');
+      return;
+    }
+
+    if (!/^[A-Za-z0-9]+$/.test(abbr)) {
+      alert('영문약어는 영문 또는 숫자만 입력 가능합니다.');
+      return;
+    }
+
+    console.log('등록 데이터:', { kor, eng, abbr, desc });
+    alert(`용어 등록 완료!\n한글: ${kor}\n영문: ${eng}\n약어: ${abbr}\n설명: ${desc}`);
+
+    clearInputs();
+  });
+
+  document.getElementById('btnClear').addEventListener('click', clearInputs);
+
+  function clearInputs() {
+    ['termKor', 'termEng', 'termAbbr', 'termDesc'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  }
+</script>

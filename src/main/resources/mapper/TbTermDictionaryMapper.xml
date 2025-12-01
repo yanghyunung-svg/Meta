@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meta.mapper.TbTermDictionaryMapper">
+
+    <select id="getListData" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="com.meta.dto.TbTermDictionaryDto">
+        SELECT ID , TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT
+        , CRT_ID, UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_term_dictionary
+        WHERE 1=1
+            <if test="trmNm != null and trmNm != ''">
+                AND TRM_NM LIKE CONCAT('%', #{trmNm}, '%')
+            </if>
+            <if test="engNm != null and engNm != ''">
+                AND ENG_NM LIKE CONCAT('%', #{engNm}, '%')
+            </if>
+            <if test="stat != null and stat != ''">
+                AND STAT = #{stat}
+            </if>
+        ORDER BY TRM_NM, ENG_NM
+    </select>
+
+    <select id="getData" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="com.meta.dto.TbTermDictionaryDto">
+        SELECT ID , TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_term_dictionary
+        WHERE ID = #{id}
+    </select>
+    <select id="getDataByName" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="com.meta.dto.TbTermDictionaryDto">
+        SELECT ID , TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_term_dictionary
+        WHERE TRM_NM = #{trmNm}
+    </select>
+
+    <insert id="insertData" parameterType="com.meta.dto.TbTermDictionaryDto">
+        INSERT INTO tb_term_dictionary (TRM_NM, TRM_EXPLN, ENG_NM, DMN_NM, STAT, CRT_ID, UPD_ID)
+        VALUES (#{trmNm}, #{engNm}, #{trmExpln}, #{dmnNm},  #{stat},  #{crtId},  #{updId})
+    </insert>
+
+    <!--tb_term_dictionary UPDATE-->
+    <update id="updateData" parameterType="com.meta.dto.TbTermDictionaryDto">
+        UPDATE tb_term_dictionary
+        SET TRM_NM = #{trmNm}
+          , ENG_NM = #{engNm}
+          , TRM_EXPLN = #{trmExpln}
+          , DMN_NM = #{dmnNm}
+          , STAT = #{stat}
+        WHERE ID = #{id}
+    </update>
+
+
+</mapper>

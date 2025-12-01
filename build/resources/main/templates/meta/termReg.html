@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+</head>
+<body>
+
+<div class="popupnContainer" id="popupnContainer">
+
+    <div class="popup-header">
+        <h2 class="popup-title">용어 신청</h2>
+        <button id="btnClose" class="btn-close">x</button>
+    </div>
+
+    <table class="popup-table">
+        <tr>
+            <th>용어명</th>
+            <td> <input type="text" id="trmNm" class="form-input" > </td>
+        </tr>
+        <tr>
+            <th>영문명</th>
+            <td> <input type="text" id="engNm" class="form-input"  > </td>
+        </tr>
+        <tr>
+            <th>도메인명</th>
+            <td> <input type="text" id="dmnNm" class="form-input"  > </td>
+        </tr>
+        <tr>
+            <th>설명</th>
+            <td> <textarea   id="trmExpln" class="form-input" rows="10" ></textarea> </td>
+        </tr>
+        <tr>
+            <th>상태</th><td>
+            <select id="stat" class="form-input">
+                <option value="0" selected>신청</option>
+                <option value="1">사용</option>
+                <option value="9">미사용</option>
+            </select>
+        </td>
+        </tr>
+    </table>
+
+<div class="button-row" style="display:flex; gap:8px;">
+    <button id="btnInit" class="btn">초기화</button>
+    <button id="btnReg" class="btn">저장</button>
+</div>
+
+</div> <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const trmNm   = document.getElementById("trmNm");
+        const engNm   = document.getElementById("engNm");
+        const dmnNm   = document.getElementById("dmnNm");
+        const trmExpln = document.getElementById("trmExpln");
+        const stat = document.getElementById("stat");
+
+        // 📌 초기화 버튼
+        document.getElementById("btnInit").addEventListener("click", () => {
+            trmNm.value = "";
+            engNm.value = "";
+            dmnNm.value = "";
+            trmExpln.value = "";
+            stat.value = "0";
+        });
+
+        // 📌 저장 버튼
+        document.getElementById("btnReg").addEventListener("click", async () => {
+
+            const data = {
+                trmNm: trmNm.value.trim(),
+                engNm: engNm.value.trim(),
+                dmnNm: dmnNm.value.trim(),
+                trmExpln: trmExpln.value.trim(),
+                stat: stat.value.trim()
+            };
+
+            // 간단한 입력 체크
+            if (!data.trmNm) {
+                alert("용어명을 입력하세요.");
+                trmNm.focus();
+                return;
+            }
+
+            try {
+                const response = await fetch("/meta/insertTermData", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error("서버 오류 발생");
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("저장되었습니다.");
+                    window.close();
+                } else {
+                    alert("저장 실패: " + result.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("요청 중 오류가 발생했습니다.");
+            }
+        });
+    });
+
+    document.getElementById("btnClose").addEventListener("click", () => {
+        window.close();
+    });
+
+</script>
+
+</body>
+</html>

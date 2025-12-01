@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meta.mapper.TbUserInfoMapper">
+
+    <select id="getListData" parameterType="com.meta.dto.TbUserInfoDto" resultType="com.meta.dto.TbUserInfoDto">
+        SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, USE_YN, CRT_ID, UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_user_info
+        WHERE 1=1
+        <if test="userId != null and userId != ''">
+            AND USER_ID LIKE CONCAT('%', #{userId}, '%')
+        </if>
+        <if test="userNm != null and userNm != ''">
+            AND USER_NM LIKE CONCAT('%', #{userNm}, '%')
+        </if>
+        <if test="useYn != null and useYn != ''">
+            AND USE_YN = #{useYn}
+        </if>
+        ORDER BY USER_ID, USER_NM
+    </select>
+
+   <!--tb_user_info SELECT-->
+   <select id="getData" parameterType="com.meta.dto.TbUserInfoDto" resultType="com.meta.dto.TbUserInfoDto">
+      SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, USE_YN, CRT_ID, UPD_ID
+            , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+            , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_user_info
+       WHERE USER_ID = #{userId}
+  </select>
+
+   <!--tb_user_info INSERT-->
+   <insert id="insertData" parameterType="com.meta.dto.TbUserInfoDto">
+     INSERT INTO tb_user_info ( USER_ID, USER_NM, PASSWORD  EMAIL, PHONE,  ROLE, USE_YN, CRT_ID, UPD_ID )
+       VALUES (#{userId}, #{userNm}, #{password}, #{email}, #{phone}, #{role}, #{useYn}, #{crtId}, #{updId} )
+  </insert>
+
+   <!--tb_user_info UPDATE-->
+   <update id="updateData" parameterType="com.meta.dto.TbUserInfoDto">
+     UPDATE tb_user_info
+        SET USER_NM = #{userNm}, PASSWORD = #{password}, EMAIL = #{email}, PHONE = #{phone}, ROLE = #{role}, USE_YN = #{useYn}, UPD_ID = #{updId}
+      WHERE USER_ID = #{userId}
+   </update>
+
+   <!--tb_user_info DELETE-->
+   <delete id="deleteData" parameterType="com.meta.dto.TbUserInfoDto">
+     DELETE
+       FROM tb_user_info
+      WHERE USER_ID = #{userId}
+   </delete>
+
+   <!--tb_user_info RECORD LOCK SELECT-->
+   <select id="getLockData" parameterType="com.meta.dto.TbUserInfoDto" resultType="com.meta.dto.TbUserInfoDto">
+      SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, USE_YN, CRT_ID, UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_user_info
+       WHERE USER_ID = #{userId}
+         FOR UPDATE
+  </select>
+
+</mapper>

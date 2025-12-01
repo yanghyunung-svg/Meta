@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Layout</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/layout.js" defer></script>
+</head>
+<body>
+
+<!-- 공통 Topbar -->
+<div id="commonTopbar">
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+            <span class="logo">Meta System</span>
+        </div>
+        <div class="topbar-right">
+            <span class="user-name">HyunUng Yang</span>
+            <button class="notify-btn" id="notifyBtn">🔔</button>
+        </div>
+    </header>
+</div>
+
+<!-- 공통 Sidebar -->
+<div id="commonSidebar">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="#">홈</a></li>
+            <li><a href="#">용어 사전</a></li>
+            <li><a href="#">설정</a></li>
+        </ul>
+    </aside>
+</div>
+
+</body>
+</html>

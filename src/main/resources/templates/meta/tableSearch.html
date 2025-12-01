@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/layout.js" defer></script>
+</head>
+<body>
+<div id="topbarContainer"></div>
+<div class="container">
+    <div id="sidebarContainer"></div>
+    <div class="mainContainer" id="mainContainer">
+        <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;">용어검색</h2>
+
+            <!-- 오른쪽 버튼 그룹 -->
+            <div class="button-group" style="display:flex; gap:8px;">
+                <button id="btnInit" class="btn">초기화</button>
+                <button id="btnSearch" class="btn">검색</button>
+                <button id="btnReg" class="btn">등록</button>
+            </div>
+        </div>
+        <table class="search-table">
+            <tr>
+                <th>한글명</th>
+                <td>
+                    <input type="text" id="trmNm" class="form-input" placeholder="검색어 입력">
+                </td>
+                <th>영문명</th>
+                <td>
+                    <input type="text" id="engNm" class="form-input" placeholder="검색어 입력">
+                </td>
+            </tr>
+        </table>
+
+        <!-- 모달 -->
+        <div id="detailModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span id="closeModal" class="close">&times;</span>
+                <div class="modal-header"><h2 style="margin:0;">용어 상세 정보</h2></div>
+                <div id="modalBody"></div>
+            </div>
+        </div>
+
+        <div id="pageInfo" style="margin-top:10px; font-size:13px; font-weight:bold;"></div>
+
+        <table style="margin-top:12px" class="dark-table">
+            <thead>
+            <tr>
+                <th width="50px">번호</th>
+                <th>용어명</th>
+                <th>영문명</th>
+                <th>용어설명</th>
+                <th>도메인</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div><!-- /mainContainer -->
+</div><!-- /container -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const trmNm = document.getElementById('trmNm');
+        const engNm = document.getElementById('engNm');
+        const tableBody = document.querySelector('.dark-table tbody');
+
+        let dataAll = [];       // 전체 데이터 저장
+        let currentPage = 1;
+
+        /** 테이블 렌더링 **/
+        function renderTable(page) {
+            if (dataAll.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                return;
+            }
+
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map((item, index) => `
+                <tr>
+                    <td style="text-align: center;">${start + index + 1}</td>
+                    <td class="clickable" data-id="${item.id}" style="text-align: left; cursor:pointer; text-decoration:underline;"> ${item.trmNm} </td>
+                    <td style="text-align: left;">${item.engNm}</td>
+                    <td style="text-align: left;">${item.trmExpln}</td>
+                    <td>${item.dmnNm}</td>
+                    <td style="display:none">${item.crtDttm}</td>
+                    <td style="display:none">${item.id}</td>
+                </tr>
+            `).join('');
+
+            // 상세 조회 클릭 이벤트
+            document.querySelectorAll('.clickable').forEach(td => {
+                td.addEventListener('click', () => {
+                    const id = td.getAttribute('data-id');
+
+                    fetch('/meta/getTermData', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: id  })
+                        })
+                        .then(res => res.json())
+                        .then(detail => {
+                            const modalBody = document.getElementById('modalBody');
+                            modalBody.innerHTML = `
+                                <table>
+                                <tr><td width=100px style="text-align: right;">용어명 </td> <td><input type="text" value="${detail.trmNm}" class="form-input" readonly></td></tr>
+                                <tr><td style="text-align: right;">영문명 </td>       <td><input type="text" value="${detail.engNm}" class="form-input" readonly></td></tr>
+                                <tr><td style="text-align: right;">도메인 </td>       <td><input type="text" value="${detail.dmnNm}" class="form-input" readonly></td></tr>
+                                <tr><td style="text-align: right;">설명   </td>
+                                    <td><textarea class="form-input" readonly rows="4" style="width:100%;">${detail.trmExpln}</textarea></td></tr>
+                                <tr><td style="text-align: right;">생성자ID</td>   <td><input type="text" value="${detail.crtId}" class="form-input" readonly></td></tr>
+                                <tr><td style="text-align: right;">생성일시</td>   <td><input type="text" value="${detail.crtDttm}" class="form-input" readonly></td></tr>
+                                <tr><td style="text-align: right;">변경자ID</td>   <td><input type="text" value="${detail.updId}" class="form-input" readonly></td></tr>
+                                <tr><td style="text-align: right;">변경일시</td>   <td><input type="text" value="${detail.updDttm}" class="form-input" readonly></td></tr>
+                                <tr><td style="text-align: right;">ID</td>         <td><input type="text" value="${detail.id}" class="form-input" readonly></td></tr>
+                                </table>
+                            `;
+                            document.getElementById('detailModal').style.display = 'flex';
+                        })
+                        .catch(err => console.error(err));
+                });
+            });
+        }
+    function updatePageInfo() {
+        const totalCount = dataAll.length;
+        const totalPage = Math.ceil(totalCount / PAGE_SIZE);
+
+        document.getElementById("pageInfo").innerText = `전체 ${totalCount}건  |  ${currentPage} / ${totalPage} 페이지`;
+     }
+
+
+    function renderPagination() {
+        const totalPage = Math.ceil(dataAll.length / PAGE_SIZE);
+        let html = `<div class="pagination" style="margin-top:15px; text-align:center;">`;
+
+        html += `<button class="page-btn-nav" data-page="first" style="margin:3px; padding:5px 10px;">⏪ 맨앞</button>`;
+        html += `<button class="page-btn-nav" data-page="prev" style="margin:3px; padding:5px 10px;">◀ 이전</button>`;
+
+        /** ====== 현재 페이지 주변만 표시 ====== **/
+        const range = 5;  // 앞뒤 1개
+        let startPage = Math.max(1, currentPage - range);
+        let endPage = Math.min(totalPage, currentPage + range);
+        for (let i = startPage; i <= endPage; i++) {
+            html += `
+                <button class="page-btn"
+                        data-page="${i}"
+                        style="margin:3px; padding:5px 10px;
+                               ${i === currentPage ? 'background:#1f2937; color:white;' : ''}">
+                    ${i}
+                </button>
+            `;
+        }
+
+        html += `<button class="page-btn-nav" data-page="next"  style="margin:3px; padding:5px 10px;">다음 ▶</button>`;
+        html += `<button class="page-btn-nav" data-page="last" style="margin:3px; padding:5px 10px;">맨뒤 ⏩</button>`;
+        html += `</div>`;
+
+        // 기존 pagination 제거 후 새로 렌더
+        const oldNav = document.querySelector(".pagination");
+        if (oldNav) oldNav.remove();
+
+        tableBody.parentElement.insertAdjacentHTML("afterend", html);
+
+        /** 번호 버튼 */
+        document.querySelectorAll(".page-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                currentPage = Number(btn.getAttribute("data-page"));
+                renderTable(currentPage);
+                renderPagination();
+                updatePageInfo();
+            });
+        });
+        /** 이전/다음/맨앞/맨뒤 */
+        document.querySelectorAll(".page-btn-nav").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const type = btn.getAttribute("data-page");
+                if (type === "first") currentPage = 1;
+                else if (type === "prev") currentPage = Math.max(1, currentPage - 1);
+                else if (type === "next") currentPage = Math.min(totalPage, currentPage + 1);
+                else if (type === "last") currentPage = totalPage;
+                renderTable(currentPage);
+                renderPagination();
+                updatePageInfo();
+            });
+        });
+    }
+
+
+        /** 초기화 버튼 **/
+        document.getElementById('btnInit').addEventListener('click', () => {
+            trmNm.value = '';
+            engNm.value = '';
+            tableBody.innerHTML = '';
+            document.getElementById("pageInfo").innerText = ``;
+            const oldNav = document.querySelector(".pagination");
+            if (oldNav) oldNav.remove();
+        });
+
+        /** 검색 버튼 **/
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            const keyword1 = trmNm.value.trim();
+            const keyword2 = engNm.value.trim();
+            fetch('/meta/getTermListData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ trmNm: keyword1, engNm: keyword2 })
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = data;
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination();
+                updatePageInfo();
+            })
+            .catch(err => {
+                alert("err==>" + err);
+                console.error("err==>" + err);
+            });
+        });
+    });
+
+
+        /** 등록 버튼 **/
+        document.getElementById('btnReg').addEventListener('click', () => {
+            fetch('/meta/termReg', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ trmNm: keyword1, engNm: keyword2 })
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = data;
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination();
+                updatePageInfo();
+            })
+            .catch(err => {
+                alert("err==>" + err);
+                console.error("err==>" + err);
+            });
+        });
+    });
+
+    // 모달 닫기
+    document.getElementById('closeModal').addEventListener('click', () => {
+        document.getElementById('detailModal').style.display = 'none';
+    });
+
+</script>
+</body>
+</html>

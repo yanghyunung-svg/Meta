@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.meta.mapper.TbCodeGroupMapper">
+
+   <!--tb_code_group SELECT-->
+   <select id="getData" parameterType="com.meta.dto.TbCodeGroupDto" resultType="com.meta.dto.TbCodeGroupDto">
+      SELECT GRP_CD
+           , GRP_NM
+           , USE_YN
+           , ORD
+           , RMK
+       , CRT_ID, UPD_ID
+       , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+       , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_code_group
+       WHERE GRP_CD = #{grpCd}
+  </select>
+
+   <!--tb_code_group INSERT-->
+   <insert id="insertData" parameterType="com.meta.dto.TbCodeGroupDto">
+     INSERT INTO tb_code_group (
+            GRP_CD
+          , GRP_NM
+          , USE_YN
+          , ORD
+          , RMK
+          , CRT_ID
+          , UPD_ID
+     )
+     VALUES (
+            #{grpCd}
+          , #{grpNm}
+          , #{useYn}
+          , #{ord}
+          , #{rmk}
+          , #{crtId}
+          , #{updId}
+     ) 
+  </insert>
+
+   <!--tb_code_group UPDATE-->
+   <update id="updateData" parameterType="com.meta.dto.TbCodeGroupDto">
+     UPDATE tb_code_group
+        SET GRP_NM = #{grpNm}
+          , USE_YN = #{useYn}
+          , ORD = #{ord}
+          , RMK = #{rmk}
+          , UPD_ID = #{updId}
+      WHERE GRP_CD = #{grpCd}
+   </update>
+
+   <!--tb_code_group DELETE-->
+   <delete id="deleteData" parameterType="com.meta.dto.TbCodeGroupDto">
+     DELETE
+       FROM tb_code_group
+      WHERE GRP_CD = #{grpCd}
+   </delete>
+
+   <!--tb_code_group RECORD LOCK SELECT-->
+   <select id="getLockData" parameterType="com.meta.dto.TbCodeGroupDto" resultType="com.meta.dto.TbCodeGroupDto">
+      SELECT GRP_CD
+           , GRP_NM
+           , USE_YN
+           , ORD
+           , RMK
+       , CRT_ID, UPD_ID
+       , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+       , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_code_group
+       WHERE GRP_CD = #{grpCd}
+         FOR UPDATE
+  </select>
+
+
+    <!--tb_code_group LIST SELECT-->
+    <select id="getListData" parameterType="com.meta.dto.TbCodeGroupDto" resultType="com.meta.dto.TbCodeGroupDto">
+        SELECT GRP_CD
+        , GRP_NM
+        , USE_YN
+        , ORD
+        , RMK
+        , CRT_ID, UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_code_group
+        WHERE 1=1
+        <if test="grpCd != null and grpCd != ''">
+            AND TRM_NM LIKE CONCAT('%', #{grpCd}, '%')
+        </if>
+        <if test="grpNm != null and grpNm != ''">
+            AND GRP_NM LIKE CONCAT('%', #{grpNm}, '%')
+        </if>
+        <if test="useYn != null and useYn != ''">
+            AND USE_YN = #{useYn}
+        </if>
+        ORDER BY GRP_CD, GRP_NM
+
+    </select>
+</mapper>
