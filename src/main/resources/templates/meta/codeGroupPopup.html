@@ -93,7 +93,7 @@
                     <td class="clickable"
                             data-grpcd="${item.grpCd}"
                             data-grpnm="${item.grpNm}"
-                            style="text-align: left; cursor:pointer; text-decoration:underline;">
+                            style="text-align: left; ">
                             ${item.grpNm} </td>
                     <td style="text-align: left;">${item.grpCd}</td>
                     <td style="text-align: left;">${item.rmk}</td>
@@ -134,7 +134,7 @@
             html += `<button class="page-btn-nav" data-page="first" style="margin:0 4px;">«</button>`;
             html += `<button class="page-btn-nav" data-page="prev" style="margin:0 4px;">‹</button>`;
 
-            const range = 5;
+            const range = window.CONFIG.PAGE_RANGE;
             let start = Math.max(1, currentPage - range);
             let end = Math.min(totalPage, currentPage + range);
 

@@ -69,5 +69,34 @@ public class TermDictionaryService {
             return new ApiResponse(false, "등록 처리 중 오류가 발생했습니다.");
         }
     }
+
+
+
+    /**
+     * method   : updateData
+     * desc     : 단어사전 변경
+     */
+    public ApiResponse<Void> updateData(TbTermDictionaryDto inputDto)  {
+        log.debug(BizUtils.logInfo("START"));
+        log.debug(BizUtils.logVo(inputDto));
+
+        try {
+            TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getData(inputDto);
+
+            if (outputDto == null) {
+                return new ApiResponse<Void>(false, "수정할 데이타가 없습니다");
+            }
+
+            if (tbTermDictionaryMapper.updateData(inputDto) == 0) {
+                return new ApiResponse<Void>(false, "수정 오류");
+            }
+
+            log.debug(BizUtils.logVoKey(outputDto));
+            return new ApiResponse<Void>(true, "수정 성공");
+
+        } catch (Exception e) {
+            return new ApiResponse<Void>(false, "수정 처리 중 오류가 발생했습니다.");
+        }
+    }
 }
 

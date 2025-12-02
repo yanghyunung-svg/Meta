@@ -9,95 +9,107 @@
 <body>
 
 <div class="popupnContainer" id="popupnContainer">
-
     <div class="popup-header">
-        <h2 class="popup-title">단어 신청</h2>
-        <button id="btnClose" class="btn-close">x</button>
+        <h2 class="popup-title">표준 단어</h2>
+        <div class="button-group" style="display:flex; gap:8px;">
+            <button id="btnSave" class="btn">저장</button>
+            <button id="btnClose" class="btn">닫기</button>
+        </div>
     </div>
 
+    <form id="mainForm">
     <table class="popup-table">
         <tr>
             <th>단어명</th>
-            <td> <input type="text" id="wordNm" class="form-input" > </td>
+            <td> <input type="text" id="wordNm" name="wordNm" class="form-input" required> </td>
         </tr>
         <tr>
             <th>영문약어명</th>
-            <td> <input type="text" id="engAbbrNm" class="form-input"  > </td>
+            <td> <input type="text" id="engAbbrNm" name="engAbbrNm" class="form-input"  required> </td>
         </tr>
         <tr>
             <th>영문명</th>
-            <td> <input type="text" id="engNm" class="form-input"  > </td>
+            <td> <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
         </tr>
         <tr>
             <th>설명</th>
-            <td> <textarea   id="expln" class="form-input" rows="10" ></textarea> </td>
+            <td> <textarea id="expln" name="expln" class="form-input" rows="10" ></textarea> </td>
         </tr>
         <tr>
-            <th>상태</th><td>
-            <select id="stat" class="form-input">
-                <option value="0" selected>신청</option>
-                <option value="1">사용</option>
-                <option value="9">미사용</option>
-            </select>
-        </td>
+            <th>상태</th>
+            <td>
+                <select id="stat"  name="stat" class="form-input">
+                    <option value="0" selected>신청</option>
+                    <option value="1">사용</option>
+                    <option value="9">미사용</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <td> <input type="text" id="id" name="id" class="form-input" readonly> </td>
         </tr>
     </table>
+</form>
 
-    <div class="button-row" style="display:flex; gap:8px;">
-        <button id="btnInit" class="btn">초기화</button>
-        <button id="btnReg" class="btn">저장</button>
-    </div>
-
-</div> <script>
+</div>
+<script>
     document.addEventListener("DOMContentLoaded", () => {
 
-        const wordNm   = document.getElementById("wordNm");
-        const engNm   = document.getElementById("engNm");
-        const engAbbrNm   = document.getElementById("engAbbrNm");
-        const expln = document.getElementById("expln");
-        const stat = document.getElementById("stat");
+        const mainForm = document.getElementById("mainForm");
+        const btnSave = document.getElementById("btnSave");
 
-        // 📌 초기화 버튼
-        document.getElementById("btnInit").addEventListener("click", () => {
-            wordNm.value = "";
-            engNm.value = "";
-            engAbbrNm.value = "";
-            expln.value = "";
-            stat.value = "0";
+        // 현재 화면 상태: I(신규), S(상세)
+        let mode = "I";
+        let originalData = {};
+
+         // 🔸 현재 값이 수정되었는지 체크
+          const checkChanged = () => {
+            const current = formToJson(mainForm);
+            const changed = Object.keys(current).some(
+                key => current[key] !== originalData[key]
+            );
+            btnSave.disabled = !changed;
+        };
+
+        // 🔸 입력값 변경 감지 (입력/선택 모두 반응)
+        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
+            el.addEventListener("input", checkChanged);
+            el.addEventListener("change", checkChanged);
         });
 
-        // 📌 저장 버튼
-        document.getElementById("btnReg").addEventListener("click", async () => {
+        // 저장 버튼
+        btnSave.addEventListener("click", async () => {
+            const data = formToJson(mainForm);
 
-            const data = {
-                wordNm: wordNm.value.trim(),
-                engNm: engNm.value.trim(),
-                engAbbrNm: engAbbrNm.value.trim(),
-                expln: expln.value.trim(),
-                stat: stat.value.trim()
-            };
-
-            // 간단한 입력 체크
-            if (!data.wordNm) {
+            if (!data.wordNm.trim()) {
                 alert("단어명을 입력하세요.");
-                wordNm.focus();
+                mainForm.wordNm.focus();
+                return;
+            }
+            if (!data.engAbbrNm.trim()) {
+                alert("영문약어명을 입력하세요.");
+                mainForm.engAbbrNm.focus();
+                return;
+            }
+            if (!data.engNm.trim()) {
+                alert("영문명을 입력하세요.");
+                mainForm.engNm.focus();
                 return;
             }
 
             try {
-                const response = await fetch("/meta/insertWordData", {
+                let url = (mode === "S")
+                    ? "/meta/updateWordData"
+                    : "/meta/insertWordData";
+
+                const res = await fetch(url, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
 
-                if (!response.ok) {
-                    throw new Error("서버 오류 발생");
-                }
-
-                const result = await response.json();
+                const result = await res.json();
 
                 if (result.success) {
                     alert("저장되었습니다.");
@@ -111,13 +123,53 @@
                 alert("요청 중 오류가 발생했습니다.");
             }
         });
-    });
 
-    document.getElementById("btnClose").addEventListener("click", () => {
-        window.close();
-    });
 
+        // 부모창에서 데이터 받기
+        window.addEventListener("message", (event) => {
+            if (event.origin !== window.location.origin) return;
+
+            mode = event.data.mode;
+            const sendId  = event.data.id;
+
+            // 상세모드
+            if (mode === "S" && sendId ) {
+                (async () => {
+                    try {
+                        const res = await fetch('/meta/getWordData', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: sendId  })
+                        });
+
+                        const data = await res.json();
+
+                        fillForm(mainForm, data);
+                        // 읽기 전용
+                        document.getElementById("id").readOnly = true;
+                        document.getElementById("wordNm").readOnly = true;
+
+                        originalData = data; // 변경감지 기준 등록
+
+                    } catch (err) {
+                        console.error(err);
+                        alert("상세 데이터 조회 중 오류가 발생했습니다.");
+                    }
+                })();
+
+                btnSave.disabled = true;
+
+            } else if (mode === "I") {
+                originalData = formToJson(mainForm);
+                btnSave.disabled = false;
+            }
+        });
+
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
+
+    });
 </script>
-
 </body>
 </html>

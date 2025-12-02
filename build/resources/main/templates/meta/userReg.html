@@ -9,122 +9,124 @@
 <body>
 
 <div class="popupnContainer" id="popupnContainer">
-
     <div class="popup-header">
-        <h2 class="popup-title">사용자 등록</h2>
-        <button id="btnClose" class="btn-close">x</button>
+        <h2 class="popup-title">사용자 관리</h2>
+        <div class="button-group" style="display:flex; gap:8px;">
+            <button id="btnSave" class="btn">저장</button>
+            <button id="btnClose" class="btn">닫기</button>
+        </div>
     </div>
 
-    <table class="popup-table">
-        <tr>
-            <th>사용자ID</th>
-            <td> <input type="text" id="userId" class="form-input" > </td>
-        </tr>
-        <tr>
-            <th>사용자이름</th>
-            <td> <input type="text" id="userNm" class="form-input"  > </td>
-        </tr>
-        <tr>
-            <th>비밀번호</th>
-            <td> <input type="password" id="password" class="form-input"  > </td>
-        </tr>
-        <tr>
-            <th>이메일</th>
-            <td> <input type="text" id="email" class="form-input"  > </td>
-        </tr>
-        <tr>
-            <th>전화번호</th>
-            <td> <input type="text" id="phone" class="form-input"  > </td>
-        </tr>
-        <tr>
-            <th>권한</th>
-            <td>
-            <select id="role" class="form-input">
-                <option value="1">ADMIN</option>
-                <option value="2">USER</option>
-            </select>
-            </td>
-        </tr>
-        <tr>
-            <th>상태</th>
-            <td>
-            <select id="useYn" class="form-input">
-                <option value="Y">사용</option>
-                <option value="N">미사용</option>
-            </select>
-        </td>
-        </tr>
-    </table>
+    <form id="mainForm">
+        <table class="popup-table">
+            <tr>
+                <th>사용자ID</th>
+                <td><input type="text" id="userId" name="userId" class="form-input" required></td>
+            </tr>
+            <tr>
+                <th>사용자이름</th>
+                <td><input type="text" id="userNm" name="userNm" class="form-input"  required></td>
+            </tr>
+            <tr>
+                <th>비밀번호</th>
+                <td><input type="password" id="password" name="password" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>이메일</th>
+                <td><input type="text" id="email" name="email" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>전화번호</th>
+                <td><input type="text" id="phone" name="phone" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>권한</th>
+                <td>
+                    <select id="role" name="role" class="form-input">
+                        <option value="">선택</option>
+                        <option value="1">ADMIN</option>
+                        <option value="2">USER</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>상태</th>
+                <td>
+                    <select id="useYn"  name="useYn" class="form-input">
+                        <option value="">선택</option>
+                        <option value="Y">사용</option>
+                        <option value="N">미사용</option>
 
-<div class="button-row" style="display:flex; gap:8px;">
-    <button id="btnInit" class="btn">초기화</button>
-    <button id="btnReg" class="btn">저장</button>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </form>
+
 </div>
-
-</div>
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
-        const userId   = document.getElementById("userId");
-        const userNm   = document.getElementById("userNm");
-        const password   = document.getElementById("password");
-        const email = document.getElementById("email");
-        const phone = document.getElementById("phone");
-        const role = document.getElementById("role");
-        const useYn = document.getElementById("useYn");
+        const mainForm = document.getElementById("mainForm");
+        const btnSave = document.getElementById("btnSave");
 
-        // 📌 초기화 버튼
-        document.getElementById("btnInit").addEventListener("click", () => {
-            userId.value = "";
-            userNm.value = "";
-            password.value = "";
-            email.value = "";
-            phone.value = "";
-            role.value = "";
-            useYn.value = "";
+        // 현재 화면 상태: I(신규), S(상세)
+        let mode = "I";
+        let originalData = {};
+
+         // 🔸 현재 값이 수정되었는지 체크
+          const checkChanged = () => {
+            const current = formToJson(mainForm);
+            const changed = Object.keys(current).some(
+                key => current[key] !== originalData[key]
+            );
+            btnSave.disabled = !changed;
+        };
+
+        // 🔸 입력값 변경 감지 (입력/선택 모두 반응)
+        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
+            el.addEventListener("input", checkChanged);
+            el.addEventListener("change", checkChanged);
         });
 
-        // 📌 저장 버튼
-        document.getElementById("btnReg").addEventListener("click", async () => {
+        // 저장 버튼
+        btnSave.addEventListener("click", async () => {
+            const data = formToJson(mainForm);
 
-            const data = {
-                userId: userId.value.trim(),
-                userNm: userNm.value.trim(),
-                password: password.value.trim(),
-                email: email.value.trim(),
-                phone: phone.value.trim(),
-                role: role.value.trim(),
-                useYn: useYn.value.trim()
-            };
-
-            // 간단한 입력 체크
-            if (!data.userId) {
-                alert("사용자ID를 입력하세요.");
-                userId.focus();
+            if (!data.userId.trim()) {
+                alert("사용자IDF를 입력하세요.");
+                mainForm.userId.focus();
+                return;
+            }
+            if (!data.userNm.trim()) {
+                alert("사용자명을 입력하세요.");
+                mainForm.userNm.focus();
+                return;
+            }
+            if (!data.password.trim()) {
+                alert("비밀번호를 입력하세요.");
+                mainForm.password.focus();
                 return;
             }
 
             try {
-                const response = await fetch("/meta/insertUserData", {
+                let url = (mode === "S")
+                    ? "/meta/updateUserData"
+                    : "/meta/insertUserData";
+
+                const res = await fetch(url, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
 
-                if (!response.ok) {
-                    throw new Error("서버 오류 발생");
-                }
-
-                const result = await response.json();
+                const result = await res.json();
 
                 if (result.success) {
                     alert("저장되었습니다.");
                     window.close();
                 } else {
-                    alert("저장 실패: " + result.message);
+                    alert("오류: " + result.message);
                 }
 
             } catch (err) {
@@ -132,13 +134,52 @@
                 alert("요청 중 오류가 발생했습니다.");
             }
         });
-    });
 
-    document.getElementById("btnClose").addEventListener("click", () => {
-        window.close();
-    });
 
+        // 부모창에서 데이터 받기
+        window.addEventListener("message", (event) => {
+            if (event.origin !== window.location.origin) return;
+
+            mode = event.data.mode;
+            const sendId  = event.data.userId;
+
+            // 상세모드
+            if (mode === "S" && sendId ) {
+                (async () => {
+                    try {
+                        const res = await fetch('/meta/getUserData', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: sendId  })
+                        });
+
+                        const data = await res.json();
+
+                        fillForm(mainForm, data);
+                        // 읽기 전용
+                        document.getElementById("userId").readOnly = true;
+
+                        originalData = data; // 변경감지 기준 등록
+
+                    } catch (err) {
+                        console.error(err);
+                        alert("상세 데이터 조회 중 오류가 발생했습니다.");
+                    }
+                })();
+
+                btnSave.disabled = true;
+
+            } else if (mode === "I") {
+                originalData = formToJson(mainForm);
+                btnSave.disabled = false;
+            }
+        });
+
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
+
+    });
 </script>
-
 </body>
 </html>

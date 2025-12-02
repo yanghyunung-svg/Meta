@@ -31,7 +31,7 @@
 
    <!--tb_user_info INSERT-->
    <insert id="insertData" parameterType="com.meta.dto.TbUserInfoDto">
-     INSERT INTO tb_user_info ( USER_ID, USER_NM, PASSWORD  EMAIL, PHONE,  ROLE, USE_YN, CRT_ID, UPD_ID )
+     INSERT INTO tb_user_info ( USER_ID, USER_NM, PASSWORD,  EMAIL, PHONE,  ROLE, USE_YN, CRT_ID, UPD_ID )
        VALUES (#{userId}, #{userNm}, #{password}, #{email}, #{phone}, #{role}, #{useYn}, #{crtId}, #{updId} )
   </insert>
 

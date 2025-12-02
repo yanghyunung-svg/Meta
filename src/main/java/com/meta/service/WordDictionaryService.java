@@ -37,16 +37,20 @@ public class WordDictionaryService {
      * desc     : 단어사전 상세 조회
      */
     public TbWordDictionaryDto getData(TbWordDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        return tbWordDictionaryMapper.getData(inputDto);
+        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
+        TbWordDictionaryDto outputDto = tbWordDictionaryMapper.getData(inputDto);
+        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
+        return outputDto;
     }
     /**
      * method   : getDataByName
      * desc     : 단어사전 단어명 상세 조회
      */
     public TbWordDictionaryDto getDataByName(TbWordDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        return tbWordDictionaryMapper.getDataByName(inputDto);
+        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
+        TbWordDictionaryDto outputDto = tbWordDictionaryMapper.getDataByName(inputDto);
+        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
+        return outputDto;
     }
 
     /**
@@ -82,12 +86,12 @@ public class WordDictionaryService {
     public ApiResponse<Void> updateData(TbWordDictionaryDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
         log.debug(BizUtils.logVo(inputDto));
+
         try {
-            log.debug(BizUtils.logInfo("SELECT", inputDto.getWordNm()));
-            TbWordDictionaryDto outputDto = tbWordDictionaryMapper.getDataByName(inputDto);
+            TbWordDictionaryDto outputDto = tbWordDictionaryMapper.getData(inputDto);
 
             if (outputDto == null) {
-                return new ApiResponse<Void>(false, "수정할 데이타가 없습니다" + outputDto.getEngAbbrNm());
+                return new ApiResponse<Void>(false, "수정할 데이타가 없습니다");
             }
 
             if (tbWordDictionaryMapper.updateData(inputDto) == 0) {

@@ -34,10 +34,14 @@ public class MetaController {
     /* 테이블 */
     @GetMapping("/tableSearch")
     public String getTableSearchPage() { return "meta/tableSearch"; }
-
+    @GetMapping("/tableReg")
+    public String getTableRegPage() { return "meta/tableReg"; }
     /* 컬럼 */
     @GetMapping("/columnSearch")
     public String getColumnSearchPage() { return "meta/columnSearch"; }
+
+    @GetMapping("/columnReg")
+    public String getcolumnRegPage() { return "meta/columnReg"; }
 
     /* 사용자 */
     @GetMapping("/userSearch")

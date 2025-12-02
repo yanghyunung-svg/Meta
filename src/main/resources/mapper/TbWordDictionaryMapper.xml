@@ -80,10 +80,13 @@
 
     <!--tb_word_dictionary RECORD LOCK SELECT-->
     <select id="getListData" parameterType="com.meta.dto.TbWordDictionaryDto" resultType="com.meta.dto.TbWordDictionaryDto">
-        SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
-        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
-        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM tb_word_dictionary
+        SELECT A.ID , A.WORD_NM , A.ENG_ABBR_NM , A.ENG_NM,  A.EXPLN , B.CD_NM STAT,  A.CRT_ID,  A.UPD_ID
+        , date_format(A.CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(A.UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_word_dictionary A
+        LEFT JOIN tb_code B
+        ON B.GRP_CD = 'STAT'
+        AND B.CD = A.STAT
         WHERE 1=1
             <if test="wordNm != null and wordNm != ''">
                 AND WORD_NM LIKE CONCAT('%', #{wordNm}, '%')

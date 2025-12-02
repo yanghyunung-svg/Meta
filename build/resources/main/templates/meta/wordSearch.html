@@ -8,6 +8,7 @@
     <script src="/js/layout.js" defer></script>
     <script src="/js/config.js"></script>
 </head>
+<body>
 <div id="topbarContainer"></div>
 <div class="container">
     <div id="sidebarContainer"></div>
@@ -28,12 +29,12 @@
             <table class="search-table">
                 <tr>
                     <th>한글명</th>
-                    <td><input type="text" id="wordNm" class="form-input" placeholder="검색어 입력"></td>
+                    <td><input type="text" id="wordNm"  name="wordNm" class="form-input" placeholder="검색어 입력"></td>
                     <th>영문명</th>
-                    <td><input type="text" id="engAbbrNm" class="form-input" placeholder="검색어 입력"></td>
+                    <td><input type="text" id="engAbbrNm"  name="engAbbrNm" class="form-input" placeholder="검색어 입력"></td>
                     <th>상태</th>
                     <td>
-                        <select id="stat" class="form-input">
+                        <select id="stat"  name="stat" class="form-input">
                             <option value="">전체</option>
                             <option value="0">신청</option>
                             <option value="1">사용</option>
@@ -42,15 +43,6 @@
                     </td>
                 </tr>
             </table>
-
-            <!-- 모달 -->
-            <div id="detailModal" class="modal" style="display:none;">
-                <div class="modal-content">
-                    <span id="closeModal" class="close">&times;</span>
-                    <div class="modal-header"><h2 style="margin:0;">단어 상세 정보</h2></div>
-                    <div id="modalBody"></div>
-                </div>
-            </div>
         </form>
 
         <div id="pageTopBarContainer"></div>
@@ -59,11 +51,11 @@
             <thead>
             <tr>
                 <th width="50px">번호</th>
-                <th>단어명</th>
-                <th>영문약어명</th>
-                <th>영문명</th>
+                <th width="150px">단어명</th>
+                <th width="150px">영문약어명</th>
+                <th width="250px">영문명</th>
                 <th>단어설명</th>
-                <th style="text-align: center;">상태</th>
+                <th width="50px" style="text-align: center;">상태</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -113,76 +105,25 @@
 
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr>
-                    <td class="clickable"
-                        data-id="${item.id}" style="text-align: center; cursor:pointer; text-decoration:underline;"> ${start + index + 1}</td>
+                    <td class="clickable" data-id="${item.id}" style="text-align: center;"> ${start + index + 1}</td>
                     <td style="text-align: left;">${item.wordNm}</td>
                     <td style="text-align: left;">${item.engAbbrNm}</td>
                     <td style="text-align: left;">${item.engNm}</td>
-                    <td style="text-align: left;">${truncateText(item.expln, 120)}</td>
-                    <td> ${item.stat === '0' ? '신청' : item.stat === '1' ? '사용' : item.stat === '9' ? '미사용' : '-'} </td>
+                    <td style="text-align: left;">${truncateText(item.expln, 80)}</td>
+                    <td style="text-align: center;">${item.stat}</td>
 
                 </tr>
             `).join('');
 
-
-            /** 상세 클릭 이벤트 재등록 **/
+            /** 상세 클릭  **/
             tableBody.querySelectorAll(".clickable").forEach(td => {
                 td.addEventListener("click", () => {
                     const id = td.getAttribute("data-id");
-
-                    fetch('/meta/getWordData', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id })
-                    })
-                    .then(res => res.json())
-                    .then(detail => {
-                        const modalBody = document.getElementById("modalBody");
-                        modalBody.innerHTML = `
-                            <table class="popup-table">
-                                <tr>
-                                    <th width=120px>단어명 </th>
-                                    <td><input type="text" value="${detail.wordNm}" class="form-input" readonly></td></tr>
-                                <tr>
-                                    <th> 약어명 </th>
-                                    <td><input type="text" value="${detail.engAbbrNm}" class="form-input" readonly></td></tr>
-                                <tr>
-                                    <th> 영문명 </th>
-                                    <td><input type="text" value="${detail.engNm}" class="form-input" readonly></td></tr>
-                                <tr>
-                                    <th> 설명 </th>
-                                    <td><textarea class="form-input" readonly rows="10">${detail.expln}</textarea></td></tr>
-                                <tr>
-                                    <th> 상태 </th>
-                                    <td>
-                                          <select class="form-input">
-                                            <option value="0" ${detail.stat === '0' ? 'selected' : ''}>신청</option>
-                                            <option value="1" ${detail.stat === '1' ? 'selected' : ''}>사용</option>
-                                            <option value="9" ${detail.stat === '9' ? 'selected' : ''}>미사용</option>
-                                            <option value="" ${detail.stat === '' ? 'selected' : ''}>-</option>
-                                          </select></td>
-                                </tr>
-                            </table>
-                            <br>
-                                <table class="popup-table">
-                                    <tr>
-                                        <th> 등록 </th>
-                                        <td><input type="text" value="${detail.crtId}" class="form-input" readonly></td>
-                                        <td><input type="text" value="${detail.crtDttm}" class="form-input" readonly></td>
-                                    </tr>
-                                    <tr>
-                                        <th> 변경 </th>
-                                        <td><input type="text" value="${detail.updId}" class="form-input" readonly></td>
-                                        <td><input type="text" value="${detail.updDttm}" class="form-input" readonly></td>
-                                    </tr>
-                                </table>
-                        `;
-                        document.getElementById('detailModal').style.display = 'flex';
-                    });
+                    const payload = { mode: "S", id: id };
+                    openWindowWithJSON(payload);
                 });
             });
         }
-
 
         /** 페이지 정보 표시 **/
         function updatePageInfo() {
@@ -199,7 +140,7 @@
             let html = `<div class="pagination" style="margin-top:15px;text-align:center;">`;
             html += `<button class="page-btn-nav" data-page="first" style="margin:0 4px;">«</button>`;
             html += `<button class="page-btn-nav" data-page="prev" style="margin:0 4px;">‹</button>`;
-            const range = 5;
+            const range = window.CONFIG.PAGE_RANGE;
             let start = Math.max(1, currentPage - range);
             let end = Math.min(totalPage, currentPage + range);
 
@@ -252,17 +193,13 @@
             if (old) old.remove();
         });
 
-
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
-            const keyword1 = wordNm.value.trim();
-            const keyword2 = engAbbrNm.value.trim();
-            const keyword3 = stat.value.trim();
-
+            const data = formToJson(document.getElementById('mainForm'));
             fetch('/meta/getWordListData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ wordNm: keyword1, engAbbrNm: keyword2, stat: keyword3 })
+                body: JSON.stringify(data)
             })
             .then(res => res.json())
             .then(data => {
@@ -277,21 +214,26 @@
             });
         });
 
-        /** 등록 팝업 **/
+        /** 상세 팝업 **/
         document.getElementById('btnReg').addEventListener('click', () => {
-            window.open(
-                "/meta/wordReg",
-                "단어 관리",
-                "width=700,height=500,scrollbars=yes,resizable=yes"
-            );
+            const payload = { mode: "I" };
+            openWindowWithJSON(payload);
         });
-
-
-        /** 모달 닫기 **/
-        document.getElementById('closeModal').addEventListener('click', () => {
-            document.getElementById('detailModal').style.display = 'none';
-        });
-
     });
+
+
+    function openWindowWithJSON(payload, width = 700, height = 500) {
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
+
+        const win = window.open("/meta/wordReg", "표준단어", features);
+
+        win.addEventListener('load', () => {
+            win.postMessage(payload, window.location.origin);
+        });
+    }
+
 </script>
+</body>
 </html>

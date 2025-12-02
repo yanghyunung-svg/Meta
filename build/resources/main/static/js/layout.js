@@ -44,9 +44,3 @@ function loadSidebar() {
         .catch(err => console.error("Sidebar load error:", err));
 }
 
-function truncateText(text, maxLength = 100) {
-    if (text.length > maxLength) {
-        return text.slice(0, maxLength) + '...';
-    }
-    return text;
-}

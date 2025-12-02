@@ -7,7 +7,6 @@
     <script src="/js/sidebar.js" defer></script>
     <script src="/js/layout.js" defer></script>
     <script src="/js/config.js"></script>
-
 </head>
 <body>
 <div id="topbarContainer"></div>
@@ -16,7 +15,7 @@
     <div class="mainContainer" id="mainContainer">
         <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">용어검색</h2>
+            <h2 style="margin:0;">표준용어 검색</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
@@ -25,16 +24,17 @@
                 <button id="btnReg" class="btn">신청</button>
             </div>
         </div>
+
         <form id="mainForm">
             <table class="search-table">
                 <tr>
                     <th>한글명</th>
-                    <td><input type="text" id="trmNm" class="form-input" placeholder="검색어 입력"></td>
+                    <td><input type="text" id="trmNm"  name="trmNm" class="form-input" placeholder="검색어 입력"></td>
                     <th>영문명</th>
-                    <td><input type="text" id="engNm" class="form-input" placeholder="검색어 입력"></td>
+                    <td><input type="text" id="engNm"  name="engNm" class="form-input" placeholder="검색어 입력"></td>
                     <th>상태</th>
                     <td>
-                        <select id="stat" class="form-input">
+                        <select id="stat"  name="stat" class="form-input">
                             <option value="">전체</option>
                             <option value="0">신청</option>
                             <option value="1">사용</option>
@@ -51,54 +51,46 @@
             <thead>
             <tr>
                 <th width="50px">번호</th>
-                <th>용어명</th>
-                <th>영문명</th>
+                <th width="150px">용어명</th>
+                <th width="250px">영문명</th>
                 <th>용어설명</th>
-                <th style="text-align: center;">도메인</th>
-                <th style="text-align: center;">상태</th>
+                <th width="150px">도메인</th>
+                <th width="50px" style="text-align: center;">상태</th>
             </tr>
             </thead>
             <tbody></tbody>
-            </table>
+        </table>
 
-        </div><!-- /mainContainer -->
-    </div><!-- /container -->
-
-    <!-- 모달 -->
-    <div id="detailModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span id="closeModal" class="close">&times;</span>
-            <div class="modal-header"><h2 style="margin:0;">용어 상세 정보</h2></div>
-            <div id="modalBody"></div>
-        </div>
-    </div>
+    </div><!-- /mainContainer -->
+</div><!-- /container -->
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const tableBody = document.querySelector('.dark-table tbody');
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
+        const tableBody = document.querySelector('.dark-table tbody');
+
+        // 페이지 탑바 container에 include
         const container = document.getElementById("pageTopBarContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')
-            .then(res => res.text())
-            .then(html => {
-                container.innerHTML = html;
-                const pageSizeSelect = document.getElementById("pageSize");
-                if (!pageSizeSelect) return;
-
-                pageSizeSelect.addEventListener("change", () => {
-                    PAGE_SIZE = Number(pageSizeSelect.value);
-                    currentPage = 1;
-                    renderTable(currentPage);
-                    renderPagination();
-                    updatePageInfo();
-                });
+        .then(res => res.text())
+        .then(html => {
+            container.innerHTML = html;
+            const pageSizeSelect = document.getElementById("pageSize");
+            if (!pageSizeSelect) return;
+            pageSizeSelect.addEventListener("change", () => {
+                PAGE_SIZE = Number(pageSizeSelect.value);
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination();
+                updatePageInfo();
             });
+        });
 
         /** 테이블 렌더링 **/
         function renderTable(page) {
@@ -113,75 +105,21 @@
 
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr>
-                    <td class="clickable"
-                            data-id="${item.id}" style="text-align: center; cursor:pointer; text-decoration:underline;"> ${start + index + 1}</td>
+                    <td class="clickable" data-id="${item.id}" style="text-align: center;"> ${start + index + 1}</td>
                     <td style="text-align: left;">${item.trmNm}</td>
                     <td style="text-align: left;">${item.engNm}</td>
                     <td style="text-align: left;">${truncateText(item.trmExpln, 120)}</td>
-                    <td style="text-align: center;">${item.dmnNm}</td>
+                    <td style="text-align: left;">${item.dmnNm}</td>
                     <td style="text-align: center;"> ${item.stat === '0' ? '신청' : item.stat === '1' ? '사용' : item.stat === '9' ? '미사용' : ''} </td>
                 </tr>
             `).join('');
 
-            /** 상세 클릭 이벤트 **/
+            /** 상세 클릭  **/
             tableBody.querySelectorAll(".clickable").forEach(td => {
                 td.addEventListener("click", () => {
                     const id = td.getAttribute("data-id");
-
-                    fetch('/meta/getTermData', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id })
-                    })
-                    .then(res => res.json())
-                    .then(detail => {
-                        const modalBody = document.getElementById("modalBody");
-                        modalBody.innerHTML = `
-                                <table class="popup-table">
-                                    <tr>
-                                        <th width=100px> 용어명 </th>
-                                        <td><input type="text" value="${detail.trmNm}" class="form-input" readonly></td>
-                                    </tr>
-                                    <tr>
-                                        <th> 영문명 </th>
-                                        <td><input type="text" value="${detail.engNm}" class="form-input" readonly></td>
-                                    </tr>
-                                    <tr>
-                                        <th> 도메인 </th>
-                                        <td><input type="text" value="${detail.dmnNm}" class="form-input" readonly></td>
-                                    </tr>
-                                    <tr>
-                                        <th> 설명 </th>
-                                        <td><textarea class="form-input" readonly rows="5">${detail.trmExpln}</textarea></td>
-                                    </tr>
-                                    <tr>
-                                    <th> 상태 </th>
-                                        <td>
-                                              <select class="form-input">
-                                                <option value="0" ${detail.stat === '0' ? 'selected' : ''}>신청</option>
-                                                <option value="1" ${detail.stat === '1' ? 'selected' : ''}>사용</option>
-                                                <option value="9" ${detail.stat === '9' ? 'selected' : ''}>미사용</option>
-                                              </select>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <br>
-
-                                <table class="popup-table">
-                                    <tr>
-                                        <th> 등록 </th>
-                                        <td><input type="text" value="${detail.crtId}" class="form-input" readonly></td>
-                                        <td><input type="text" value="${detail.crtDttm}" class="form-input" readonly></td>
-                                    </tr>
-                                    <tr>
-                                        <th> 변경 </th>
-                                        <td><input type="text" value="${detail.updId}" class="form-input" readonly></td>
-                                        <td><input type="text" value="${detail.updDttm}" class="form-input" readonly></td>
-                                    </tr>
-                                </table>
-                        `;
-                        document.getElementById('detailModal').style.display = 'flex';
-                    });
+                    const payload = { mode: "S", id: id };
+                    openWindowWithJSON(payload);
                 });
             });
         }
@@ -198,12 +136,10 @@
         function renderPagination() {
             const totalPage = Math.ceil(dataAll.length / PAGE_SIZE);
             if (totalPage === 0) return;
-
             let html = `<div class="pagination" style="margin-top:15px;text-align:center;">`;
             html += `<button class="page-btn-nav" data-page="first" style="margin:0 4px;">«</button>`;
             html += `<button class="page-btn-nav" data-page="prev" style="margin:0 4px;">‹</button>`;
-
-            const range = 5;
+            const range = window.CONFIG.PAGE_RANGE;
             let start = Math.max(1, currentPage - range);
             let end = Math.min(totalPage, currentPage + range);
 
@@ -221,9 +157,7 @@
             html += `</div>`;
             const oldNav = document.querySelector(".pagination");
             if (oldNav) oldNav.remove();
-
             tableBody.parentElement.insertAdjacentHTML("afterend", html);
-
             document.querySelectorAll(".page-btn").forEach(btn => {
                 btn.addEventListener("click", () => {
                     currentPage = Number(btn.dataset.page);
@@ -247,26 +181,24 @@
             });
         }
 
+
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
             tableBody.innerHTML = "";
-            dataAll = [];
             document.getElementById('pageInfo').innerText = "";
+            dataAll = [];
             const old = document.querySelector(".pagination");
             if (old) old.remove();
         });
 
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
-            const trmNm = document.querySelector("#trmNm").value.trim();
-            const engNm = document.querySelector("#engNm").value.trim();
-            const stat = document.querySelector("#stat").value.trim();
-
+            const data = formToJson(document.getElementById('mainForm'));
             fetch('/meta/getTermListData', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ trmNm, engNm, stat })
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
             })
             .then(res => res.json())
             .then(data => {
@@ -281,18 +213,26 @@
             });
         });
 
-        /** 등록 팝업 **/
+        /** 상세 팝업 **/
         document.getElementById('btnReg').addEventListener('click', () => {
-            window.open("/meta/termReg", "용어 관리", "width=700,height=500,scrollbars=yes,resizable=yes" );
+            const payload = { mode: "I" };
+            openWindowWithJSON(payload);
         });
-
-        /** 모달 닫기 **/
-        document.getElementById('closeModal').addEventListener('click', () => {
-            document.getElementById('detailModal').style.display = 'none';
-        });
-
     });
-</script>
 
+
+    function openWindowWithJSON(payload, width = 700, height = 500) {
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
+
+        const win = window.open("/meta/termReg", "표준용어", features);
+
+        win.addEventListener('load', () => {
+            win.postMessage(payload, window.location.origin);
+        });
+    }
+
+</script>
 </body>
 </html>

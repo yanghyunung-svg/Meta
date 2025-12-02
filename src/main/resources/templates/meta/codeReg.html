@@ -9,99 +9,111 @@
 <body>
 
 <div class="popupnContainer" id="popupnContainer">
-
     <div class="popup-header">
-        <h2 class="popup-title">상세코드 등록</h2>
-        <button id="btnClose" class="btn-close">x</button>
+        <h2 class="popup-title">상세코드</h2>
+        <div class="button-group" style="display:flex; gap:8px;">
+            <button id="btnSave" class="btn">저장</button>
+            <button id="btnClose" class="btn">닫기</button>
+        </div>
     </div>
 
-<form id="mainForm">
-    <table class="popup-table">
-        <tr>
-            <th>공통코드</th>
-            <td> <input type="text" id="grpCd" class="form-input" > </td>
-        </tr>
-        <tr>
-            <th>상세코드</th>
-            <td> <input type="text" id="cd" class="form-input"  > </td>
-        </tr>
-        <tr>
-            <th>상세코드명</th>
-            <td> <input type="text" id="cdNm" class="form-input"  > </td>
-        </tr>
-        <tr>
-            <th>정렬순서</th>
-            <td> <input type="text" id="ord" class="form-input"  > </td>
-        </tr>
-        <tr>
-            <th>비고</th>
-            <td> <textarea   id="rmk" class="form-input" rows="10" ></textarea> </td>
-        </tr>
-        <tr>
-            <th>사용여부</th><td>
-            <select id="useYn" class="form-input">
-                <option value="Y">사용</option>
-                <option value="N">미사용</option>
-            </select>
-        </td>
-        </tr>
-    </table>
-</form>
-    <div class="button-row" style="display:flex; gap:8px;">
-        <button id="btnInit" class="btn">초기화</button>
-        <button id="btnReg" class="btn">저장</button>
-    </div>
+    <form id="mainForm">
+        <table class="popup-table">
+            <tr>
+                <th>공통코드</th>
+                <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" id="grpCd" name="grpCd" class="form-input">
+                    <button id="btnPopup" class="btn" type="button">검색</button>
+                </td>
+            </tr>
+            <tr>
+                <th>공통코드명</th>
+                <td><input type="text" id="grpNm"  name="grpNm" class="form-input" ></td>
+            </tr>
 
-</div> <script>
+            <tr>
+                <th>상세코드</th>
+                <td> <input type="text" id="cd" name="cd" class="form-input"  required> </td>
+            </tr>
+            <tr>
+                <th>상세코드명</th>
+                <td> <input type="text" id="cdNm" name="cdNm" class="form-input"  required> </td>
+            </tr>
+            <tr>
+                <th>정렬순서</th>
+                <td> <input type="text" id="ord" name="ord" class="form-input"  > </td>
+            </tr>
+            <tr>
+                <th>비고</th>
+                <td> <textarea id="rmk" name="rmk" class="form-input" rows="10" ></textarea> </td>
+            </tr>
+            <tr>
+                <th>사용여부</th>
+                <td>
+                    <select id="useYn"  name="useYn" class="form-input">
+                        <option value="Y">사용</option>
+                        <option value="N">미사용</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+</div>
+<script>
     document.addEventListener("DOMContentLoaded", () => {
 
-        // 📌 초기화 버튼
-        document.getElementById("btnInit").addEventListener("click", () => {
-            document.getElementById('mainForm').reset();
+        const mainForm = document.getElementById("mainForm");
+        const btnSave = document.getElementById("btnSave");
+
+        let mode = "I";
+        let originalData = {};
+
+        const checkChanged = () => {
+            const current = formToJson(mainForm);
+            const changed = Object.keys(current).some(
+                key => String(current[key]) !== String(originalData[key])
+            );
+            btnSave.disabled = !changed;
+        };
+
+        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
+            el.addEventListener("input", checkChanged);
+            el.addEventListener("change", checkChanged);
         });
 
-        // 📌 저장 버튼
-        document.getElementById("btnReg").addEventListener("click", async () => {
-            const data = {
-                grpCd: grpCd.value.trim(),
-                cd: cd.value.trim(),
-                cdNm: cdNm.value.trim(),
-                useYn: useYn.value.trim(),
-                ord: ord.value.trim(),
-                rmk: rmk.value.trim()
-            };
+        btnSave.addEventListener("click", async () => {
+            const data = formToJson(mainForm);
 
-            if (!data.grpCd) {
-                alert("그룹코드를 입력하세요.");
-                grpCd.focus();
+            if (!data.grpCd.trim()) {
+                alert("공통코드를 입력하세요.");
+                mainForm.grpCd.focus();
                 return;
             }
-            if (!data.cd) {
-                alert("코드를 입력하세요.");
-                grpNm.focus();
+            if (!data.cd.trim()) {
+                alert("상세코드를 입력하세요.");
+                mainForm.cd.focus();    // ← 수정됨
                 return;
             }
 
             try {
-                const response = await fetch("/meta/insertCodeData", {
+                let url = (mode === "S")
+                    ? "/meta/updateCodeData"
+                    : "/meta/insertCodeData";
+
+                const res = await fetch(url, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
 
-                if (!response.ok) {
-                    throw new Error("서버 오류 발생");
-                }
-
-                const result = await response.json();
+                const result = await res.json();
 
                 if (result.success) {
                     alert("저장되었습니다.");
                     window.close();
                 } else {
-                    alert("저장 실패: " + result.message);
+                    alert("오류: " + result.message);
                 }
 
             } catch (err) {
@@ -109,13 +121,67 @@
                 alert("요청 중 오류가 발생했습니다.");
             }
         });
+
+        window.addEventListener("message", (event) => {
+            if (event.origin !== window.location.origin) return;
+
+            mode = event.data.mode;
+            const sendGrpCd = event.data.grpCd;
+            const sendCd = event.data.cd;
+
+            if (mode === "S" && sendGrpCd) {
+                (async () => {
+                    try {
+                        const res = await fetch('/meta/getCodeData', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ grpCd: sendGrpCd, cd: sendCd })
+                        });
+
+                        let data = await res.json();
+
+                        // value를 문자열로 변환
+                        Object.keys(data).forEach(k => {
+                            if (data[k] == null) data[k] = "";
+                            else data[k] = String(data[k]);
+                        });
+
+                        fillForm(mainForm, data);
+
+                        document.getElementById("grpCd").readOnly = true;
+                        document.getElementById("cd").readOnly = true;
+
+                        originalData = data; // 변경감지 기준 등록
+
+                    } catch (err) {
+                        console.error(err);
+                        alert("상세 데이터 조회 중 오류가 발생했습니다.");
+                    }
+                })();
+
+                btnSave.disabled = true;
+
+            } else if (mode === "I") {
+                originalData = formToJson(mainForm);
+                btnSave.disabled = false;
+            }
+        });
+
+        document.getElementById('btnPopup').addEventListener('click', () => {
+            window.open("/meta/codeGroupPopup", "상세코드 검색", "width=700,height=500,scrollbars=yes,resizable=yes");
+        });
+
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
     });
 
-    document.getElementById("btnClose").addEventListener("click", () => {
-        window.close();
-    });
-
+    function receiveCode(grpCd, grpNm) {
+        document.getElementById("grpCd").value = grpCd;
+        document.getElementById("grpNm").value = grpNm;
+    }
 </script>
 
 </body>
 </html>
+

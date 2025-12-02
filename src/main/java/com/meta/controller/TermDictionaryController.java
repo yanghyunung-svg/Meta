@@ -62,4 +62,20 @@ public class TermDictionaryController {
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
+
+    /**
+     * @ID : updateTermData
+     * @NAME : 용어사전 등록
+     */
+    @PostMapping("/updateTermData")
+    @ResponseBody
+    public ApiResponse updateTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
+        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
+        String userId = (String) session.getAttribute("userId");
+        inputDto.setCrtId(userId);
+        inputDto.setUpdId(userId);
+        ApiResponse outputDto = termDictionaryService.updateData(inputDto);
+        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
+        return outputDto;
+    }
 }
