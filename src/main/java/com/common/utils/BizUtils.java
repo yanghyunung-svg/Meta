@@ -1,5 +1,7 @@
 package com.common.utils;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -123,5 +125,37 @@ public class BizUtils {
         int lineNumber = caller.getLineNumber();
         return String.format("✅●●●●● %s.%s [%d] : %s = [%s]", className, methodName, lineNumber, ke, va);
     }
+
+
+    public static String getClientIp(HttpServletRequest request) {
+
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+            return ip.split(",")[0].trim();
+        }
+
+        ip = request.getHeader("Proxy-Client-IP");
+        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+
+        ip = request.getHeader("WL-Proxy-Client-IP");
+        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+
+        ip = request.getHeader("HTTP_CLIENT_IP");
+        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+
+        ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+
+        return request.getRemoteAddr(); // 마지막 fallback
+    }
+
 
 }

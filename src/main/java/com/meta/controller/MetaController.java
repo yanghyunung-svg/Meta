@@ -12,13 +12,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MetaController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    /* 사용자 */
+    /* LOGIN */
     @GetMapping("/login")
     public String loginView(Model model) { return "meta/login"; }
+    @GetMapping("/loginLogSearch")
+    public String loginLogSearchView() {   return "meta/loginLogSearch";  }
+
+    /* 사용자 */
     @GetMapping("/userSearch")
-    public String getUserSearchView() {  return "meta/userSearch";  }
+    public String userSearchView() {  return "meta/userSearch";  }
     @GetMapping("/userReg")
-    public String getUserRegView() {   return "meta/userReg";  }
+    public String userRegView() {   return "meta/userReg";  }
 
     /* dashboard */
     @GetMapping("/dashboard")

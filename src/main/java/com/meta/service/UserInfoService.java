@@ -3,13 +3,17 @@ package com.meta.service;
 import ch.qos.logback.core.util.StringUtil;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
+import com.meta.dto.TbLoginLogDto;
 import com.meta.dto.TbUserInfoDto;
+import com.meta.mapper.TbLoginLogMapper;
 import com.meta.mapper.TbUserInfoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +28,8 @@ public class UserInfoService {
 
     @Autowired
     private TbUserInfoMapper tbUserInfoMapper;
+    @Autowired
+    private TbLoginLogMapper tbLoginLogMapper;
 
     /**
      * method   : getListData
@@ -114,9 +120,17 @@ public class UserInfoService {
     public  ApiResponse<TbUserInfoDto> getLogin(TbUserInfoDto inputDto) {
         log.debug(BizUtils.logInfo("START"));
         try {
+            TbLoginLogDto tbLoginLogDto = new TbLoginLogDto();
+            tbLoginLogDto.setUserId(inputDto.getUserId());
+            tbLoginLogDto.setIpAddr(inputDto.getIpAddr());
+            tbLoginLogDto.setUserAgent(inputDto.getUserAgent());
+
             // 사용자 조회
             TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
             if (outputDto == null) {
+                tbLoginLogDto.setLoginResult("1");
+                tbLoginLogDto.setFailReason("사용자가 없습니다.");
+                this.insertLoginLog(tbLoginLogDto);
                 return new ApiResponse<>(false, "사용자가 없습니다.");
             }
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -124,14 +138,40 @@ public class UserInfoService {
             String dbPw = outputDto.getPassword();
             // 비밀번호 검증
             if (!encoder.matches(rawPassword, dbPw)) {
+                tbLoginLogDto.setLoginResult("1");
+                tbLoginLogDto.setFailReason("비밀번호 오류");
+                this.insertLoginLog(tbLoginLogDto);
                 return new ApiResponse<>(false, "비밀번호 오류");
             }
+
+            tbLoginLogDto.setLoginResult("0");
+            tbLoginLogDto.setFailReason("");
+
+            this.insertLoginLog(tbLoginLogDto);
+
             return new ApiResponse<>(true, "로그인 성공", outputDto );
 
         } catch (Exception e) {
             log.error("Login 처리 중 오류", e);
             return new  ApiResponse<>(false, "로그인 처리 중 오류가 발생했습니다.");
         }
+    }
+    /**
+     * method   : getLoginLogList
+     * desc     : 로그인 로그 조회
+     */
+    public List<TbLoginLogDto> getLoginLogList(TbLoginLogDto inputDto)  {
+        log.debug(BizUtils.logInfo("START"));
+        return tbLoginLogMapper.getLoginLogList(inputDto);
+    }
+
+    /**
+     * method   : insertLoginLog
+     * desc     : Login Log insert
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public int insertLoginLog(TbLoginLogDto inputDto) {
+        return tbLoginLogMapper.insertData(inputDto);
     }
 }
 

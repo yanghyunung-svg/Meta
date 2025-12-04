@@ -18,15 +18,18 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TbUserInfoDto {
-  private String     userId;                          // 사용자ID VARCHAR(50)
-  private String     userNm;                          // 사용자이름 VARCHAR(200)
-  private String     password;                        // 비밀번호 VARCHAR(255)
-  private String     email;                           // 이메일 VARCHAR(200)
-  private String     phone;                           // 전화번호 VARCHAR(50)
-  private String     role;                            // 권한 VARCHAR(50)
-  private String     useYn;                           // 사용여부 CHAR(1)
-  private String     crtDttm;                         // 생성일시 DATETIME
-  private String     crtId;                           // 생성자ID VARCHAR(50)
-  private String     updDttm;                         // 변경일시 DATETIME
-  private String     updId;                           // 변경자ID VARCHAR(50)
+    private String     userId;                          // 사용자ID VARCHAR(50)
+    private String     userNm;                          // 사용자이름 VARCHAR(200)
+    private String     password;                        // 비밀번호 VARCHAR(255)
+    private String     email;                           // 이메일 VARCHAR(200)
+    private String     phone;                           // 전화번호 VARCHAR(50)
+    private String     role;                            // 권한 VARCHAR(50)
+    private String     useYn;                           // 사용여부 CHAR(1)
+    private String     crtDttm;                         // 생성일시 DATETIME
+    private String     crtId;                           // 생성자ID VARCHAR(50)
+    private String     updDttm;                         // 변경일시 DATETIME
+    private String     updId;                           // 변경자ID VARCHAR(50)
+
+    private String     ipAddr;
+    private String     userAgent;
 }

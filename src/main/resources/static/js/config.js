@@ -1,6 +1,6 @@
 window.CONFIG = {
     PAGE_SIZE: 20,
-    PAGE_RANGE: 2,
+    PAGE_RANGE: 10,
     URL: {
         GET_CODE: '/meta/getCodeGroupListData'
     }
@@ -24,4 +24,33 @@ function truncateText(text, maxLength = 100) {
         return text.slice(0, maxLength) + '...';
     }
     return text;
+}
+
+function formatDate(date) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+function getToday() {
+    const t = new Date();
+    const yyyy = t.getFullYear();
+    const mm = String(t.getMonth() + 1).padStart(2, '0');
+    const dd = String(t.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+// 오늘 / 7일 전 날짜 구하기
+function getDefaultDates() {
+    const today = new Date();
+
+    // 오늘 - 7일
+    const before7 = new Date();
+    before7.setDate(today.getDate() - 7);
+
+    return {
+        start: formatDate(before7),
+        end: formatDate(today)
+    };
 }

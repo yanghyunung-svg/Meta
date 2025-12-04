@@ -15,31 +15,34 @@
     <div class="mainContainer" id="mainContainer">
         <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">표준 용어 검색</h2>
+            <h2 style="margin:0;">로그인 로그 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSearch" class="btn">검색</button>
-                <button id="btnReg" class="btn">일반용어신청</button>
-                <button id="btnRegTerm" class="btn">전문용어신청</button>
             </div>
         </div>
 
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th>한글명</th>
-                    <td><input type="text" id="trmNm"  name="trmNm" class="form-input" placeholder="검색어 입력"></td>
-                    <th>영문명</th>
-                    <td><input type="text" id="engNm"  name="engNm" class="form-input" placeholder="검색어 입력"></td>
+                    <th>사용자 ID</th>
+                    <td><input type="text" id="userId" name="userId" class="form-input"></td>
+
+                    <th>조회일자</th>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="date" id="startDate" name="startDate" class="form-input">
+                        <span>/</span>
+                        <input type="date" id="endDate" name="endDate" class="form-input">
+                    </td>
+
                     <th>상태</th>
                     <td>
-                        <select id="stat"  name="stat" class="form-input">
+                        <select id="loginResult"  name="loginResult" class="form-input">
                             <option value="">전체</option>
-                            <option value="0">신청</option>
-                            <option value="1">사용</option>
-                            <option value="9">미사용</option>
+                            <option value="0">성공</option>
+                            <option value="1">실패</option>
                         </select>
                     </td>
                 </tr>
@@ -51,12 +54,14 @@
         <table style="margin-top:12px" class="dark-table">
             <thead>
             <tr>
-                <th width="50px" style="text-align: center;">번호</th>
-                <th width="150px">용어명</th>
-                <th width="250px">영문명</th>
-                <th>용어설명</th>
-                <th width="150px">도메인</th>
-                <th width="50px" style="text-align: center;">상태</th>
+                <th style="text-align: center;" width="50px">번호</th>a
+                <th style="text-align: center;">사용자ID</th>
+                <th style="text-align: center;">로그인일시</th>
+                <th style="text-align: center;">IP주소</th>
+                <th style="text-align: left;">UserAgent</th>
+                <th style="text-align: center;">상태</th>
+                <th style="text-align: center;">실패사유</th>
+                <th style="text-align: center;">로그ID</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -66,13 +71,17 @@
 </div><!-- /container -->
 
 <script>
-
     document.addEventListener("DOMContentLoaded", () => {
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
+
         const tableBody = document.querySelector('.dark-table tbody');
+
+        const d = getDefaultDates();
+        document.getElementById("startDate").value = d.start;
+        document.getElementById("endDate").value = d.end;
 
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageTopBarContainer");
@@ -96,7 +105,7 @@
         /** 테이블 렌더링 **/
         function renderTable(page) {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
             }
 
@@ -106,23 +115,16 @@
 
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr>
-                    <td class="clickable" data-id="${item.id}" style="text-align: center;"> ${start + index + 1}</td>
-                    <td style="text-align: left;">${item.trmNm}</td>
-                    <td style="text-align: left;">${item.engNm}</td>
-                    <td style="text-align: left;">${truncateText(item.trmExpln, 100)}</td>
-                    <td style="text-align: left;">${item.dmnNm}</td>
-                    <td style="text-align: center;"> ${item.stat === '0' ? '신청' : item.stat === '1' ? '사용' : item.stat === '9' ? '미사용' : ''} </td>
+                    <td>${start + index + 1}</td>
+                    <td>${item.userId}</td>
+                    <td>${item.crtDttm}</td>
+                    <td>${item.ipAddr}</td>
+                    <td style="text-align: left;">${item.userAgent}</td>
+                    <td style="text-align: center;"> ${item.loginResult === '0' ? '성공' : item.loginResult === '1' ? '실패'  : ''} </td>
+                    <td>${item.failReason}</td>
+                    <td>${item.logId}</td>
                 </tr>
             `).join('');
-
-            /** 상세 클릭  **/
-            tableBody.querySelectorAll(".clickable").forEach(td => {
-                td.addEventListener("click", () => {
-                    const id = td.getAttribute("data-id");
-                    const payload = { mode: "S", id: id };
-                    openWindowWithJSON(payload);
-                });
-            });
         }
 
         /** 페이지 정보 표시 **/
@@ -182,9 +184,15 @@
             });
         }
 
+
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
+
+            const d = getDefaultDates();
+            document.getElementById("startDate").value = d.start;
+            document.getElementById("endDate").value = d.end;
+
             tableBody.innerHTML = "";
             document.getElementById('pageInfo').innerText = "";
             dataAll = [];
@@ -194,11 +202,17 @@
 
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
-            const data = formToJson(document.getElementById('mainForm'));
-            fetch('/meta/getTermListData', {
+            const formData = formToJson(document.getElementById('mainForm'));
+            // 날짜 검증
+            if (formData.startDate && formData.endDate && formData.startDate > formData.endDate) {
+                alert("조회 시작일이 종료일보다 클 수 없습니다.");
+                return;
+            }
+
+            fetch('/meta/getLoginLogList', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify(formData)
             })
             .then(res => res.json())
             .then(data => {
@@ -212,33 +226,8 @@
                 alert("에러 발생: " + err);
             });
         });
-
-        /** 일반용어신청 **/
-        document.getElementById('btnReg').addEventListener('click', () => {
-            const payload = { mode: "I" };
-            openWindowWithJSON(payload);
-        });
-
-        /** 전문용어신청 **/
-        document.getElementById('btnRegTerm').addEventListener('click', () => {
-            const payload = { mode: "T" };
-            openWindowWithJSON(payload);
-        });
     });
 
-    function openWindowWithJSON(payload, width = 700, height = 550) {
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-        const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
-        let url = (payload.mode === 'I') ? "/meta/termReg" : "/meta/termRegTlgm";
-
-        const win = window.open(url, "표준용어", features);
-
-        win.addEventListener('load', () => {
-            win.postMessage(payload, window.location.origin);
-        });
-    }
 </script>
-
 </body>
 </html>

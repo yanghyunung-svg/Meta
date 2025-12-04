@@ -213,13 +213,13 @@
             });
         });
 
-        /** 상세 팝업 **/
+        /** 일반용어신청 **/
         document.getElementById('btnReg').addEventListener('click', () => {
             const payload = { mode: "I" };
             openWindowWithJSON(payload);
         });
 
-        /** 상세 팝업 **/
+        /** 전문용어신청 **/
         document.getElementById('btnRegTerm').addEventListener('click', () => {
             const payload = { mode: "T" };
             openWindowWithJSON(payload);
@@ -230,7 +230,7 @@
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
         const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
-        let url = (payload.mode === 'T') ? "/meta/termRegTlgm" : "/meta/termReg";
+        let url = (payload.mode === 'I') ? "/meta/termReg" : "/meta/termRegTlgm";
 
         const win = window.open(url, "표준용어", features);
 

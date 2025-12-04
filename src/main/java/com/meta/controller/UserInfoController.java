@@ -2,8 +2,10 @@ package com.meta.controller;
 
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
+import com.meta.dto.TbLoginLogDto;
 import com.meta.dto.TbUserInfoDto;
 import com.meta.service.UserInfoService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -31,21 +33,20 @@ public class UserInfoController {
      */
     @PostMapping("/getLogin")
     @ResponseBody
-    public ApiResponse<TbUserInfoDto>  getLogin(@RequestBody TbUserInfoDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<TbUserInfoDto>  getLogin(@RequestBody TbUserInfoDto inputDto, HttpServletRequest session) throws Exception {
         log.debug(BizUtils.logInfo("START"));
 
-        ApiResponse<TbUserInfoDto> outputDto = userInfoService.getLogin(inputDto);
+        inputDto.setIpAddr(BizUtils.getClientIp(session));
+        inputDto.setUserAgent(session.getHeader("User-Agent"));
 
+        ApiResponse<TbUserInfoDto> outputDto = userInfoService.getLogin(inputDto);
         if (!outputDto.isSuccess()) {
             return outputDto;
         }
-
         TbUserInfoDto user = outputDto.getData();
-
         session.setAttribute("userId", user.getUserId());
         session.setAttribute("userNm", user.getUserNm());
         session.setAttribute("role", user.getRole());
-
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
@@ -104,5 +105,18 @@ public class UserInfoController {
 
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
+    }
+
+
+    /**
+     * @ID : getLoginLogList
+     * @NAME : 로그인 로그 조회
+     */
+    @PostMapping("/getLoginLogList")
+    @ResponseBody
+    public List<TbLoginLogDto> getLoginLogList(@RequestBody TbLoginLogDto inputDto, HttpSession session) throws Exception {
+        log.debug(BizUtils.logInfo("START"));
+        log.debug(BizUtils.logVoKey(inputDto));
+        return userInfoService.getLoginLogList(inputDto);
     }
 }
