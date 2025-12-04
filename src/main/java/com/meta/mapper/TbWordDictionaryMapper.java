@@ -1,6 +1,7 @@
 package com.meta.mapper;
 
 import com.meta.dto.TbWordDictionaryDto;
+import com.meta.dto.WordMappingDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface TbWordDictionaryMapper {
     public int updateData(TbWordDictionaryDto tbWordDictionaryDto);
     public TbWordDictionaryDto getLockData(TbWordDictionaryDto tbWordDictionaryDto);
 //    public int deleteData(TbWordDictionaryDto tbWordDictionaryDto);
+
+    public List<WordMappingDto> getAllData();
 }

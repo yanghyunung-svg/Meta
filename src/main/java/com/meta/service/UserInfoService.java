@@ -1,5 +1,6 @@
 package com.meta.service;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbUserInfoDto;
@@ -7,8 +8,8 @@ import com.meta.mapper.TbUserInfoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 
@@ -47,7 +48,6 @@ public class UserInfoService {
      */
     public ApiResponse<Void> insertData(TbUserInfoDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVo(inputDto));
         try {
             TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
 
@@ -55,16 +55,17 @@ public class UserInfoService {
                 return new ApiResponse<Void>(false, "기등록된 데이타가 있습니다." + outputDto.getUserNm());
             }
 
-            String rawPassword = inputDto.getPassword();
-            String encodedPassword = encoder.encode(rawPassword);
-            inputDto.setPassword(encodedPassword);
+            if(!StringUtil.isNullOrEmpty(inputDto.getPassword())) {
+                String rawPassword = inputDto.getPassword();
+                String encodedPassword = encoder.encode(rawPassword);
+                inputDto.setPassword(encodedPassword);
+            }
 
             if (tbUserInfoMapper.insertData(inputDto) == 0) {
-                log.debug(BizUtils.logInfo("등록오류"));
                 return new ApiResponse<Void>(false, "등록 오류");
             }
 
-            log.debug(BizUtils.logVoKey(outputDto));
+            log.debug(BizUtils.logInfo("END"));
             return new ApiResponse<Void>(true, "등록 성공");
 
         } catch (Exception e) {
@@ -79,7 +80,7 @@ public class UserInfoService {
      */
     public ApiResponse<Void> updateData(TbUserInfoDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVo(inputDto));
+
         try {
             TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
 
@@ -87,15 +88,17 @@ public class UserInfoService {
                 return new ApiResponse<Void>(false, "수정할 자료가 없습니다." );
             }
 
-            String rawPassword = inputDto.getPassword();
-            String encodedPassword = encoder.encode(rawPassword);
-            inputDto.setPassword(encodedPassword);
+            if(!StringUtil.isNullOrEmpty(inputDto.getPassword())) {
+                String rawPassword = inputDto.getPassword();
+                String encodedPassword = encoder.encode(rawPassword);
+                inputDto.setPassword(encodedPassword);
+            }
 
             if (tbUserInfoMapper.updateData(inputDto) == 0) {
                 return new ApiResponse<Void>(false, "수정 오류");
             }
 
-            log.debug(BizUtils.logVoKey(outputDto));
+            log.debug(BizUtils.logInfo("END"));
             return new ApiResponse<Void>(true, "수정 성공");
 
         } catch (Exception e) {
@@ -110,27 +113,19 @@ public class UserInfoService {
      */
     public  ApiResponse<TbUserInfoDto> getLogin(TbUserInfoDto inputDto) {
         log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVoKey(inputDto));
-
         try {
             // 사용자 조회
             TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
-
             if (outputDto == null) {
                 return new ApiResponse<>(false, "사용자가 없습니다.");
             }
-
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
             String rawPassword = inputDto.getPassword();
-            String encodedPassword = encoder.encode(rawPassword);
             String dbPw = outputDto.getPassword();
-
             // 비밀번호 검증
-            if (!StringUtils.equals(encodedPassword, dbPw)) {
+            if (!encoder.matches(rawPassword, dbPw)) {
                 return new ApiResponse<>(false, "비밀번호 오류");
             }
-
             return new ApiResponse<>(true, "로그인 성공", outputDto );
 
         } catch (Exception e) {

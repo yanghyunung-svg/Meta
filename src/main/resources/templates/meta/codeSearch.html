@@ -15,7 +15,7 @@
     <div class="mainContainer" id="mainContainer">
         <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">상세코드검색</h2>
+            <h2 style="margin:0;">상세 코드 검색</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
@@ -252,19 +252,14 @@
     });
 
 
-    function openWindowWithJSON(payload, width = 700, height = 500) {
+    function openWindowWithJSON(payload, width = 700, height = 600) {
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
         const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
-
         const win = window.open("/meta/codeReg",  "상세코드", features);
-
-        const timer = setInterval(() => {
-            if (newWin && newWin.document.readyState === "complete") {
-                newWin.postMessage(payload, window.location.origin);
-                clearInterval(timer);
-            }
-        }, 100);
+        win.addEventListener('load', () => {
+            win.postMessage(payload, window.location.origin);
+        });
     }
 
     function receiveCode(grpCd, grpNm) {

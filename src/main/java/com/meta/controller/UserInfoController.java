@@ -99,7 +99,6 @@ public class UserInfoController {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
 
         String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
         inputDto.setUpdId(userId);
         ApiResponse<Void> outputDto = userInfoService.updateData(inputDto);
 

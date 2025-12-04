@@ -6,14 +6,14 @@ import com.meta.dto.TbTermDictionaryDto;
 import com.meta.service.TermDictionaryService;
 import jakarta.servlet.http.HttpSession;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class TermDictionaryController {
 
     /**
      * @ID : updateTermData
-     * @NAME : 용어사전 등록
+     * @NAME : 용어사전 변경
      */
     @PostMapping("/updateTermData")
     @ResponseBody
@@ -78,4 +78,17 @@ public class TermDictionaryController {
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
+
+
+    /**
+     * @ID : getTermSplitData
+     * @NAME : 용어사전 단어 목록 조회
+     */
+    @PostMapping("/getTermSplitData")
+    @ResponseBody
+    public TbTermDictionaryDto getTermSplitData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
+        log.debug(BizUtils.logInfo("START"));
+        return termDictionaryService.getTermSplitData(inputDto);
+    }
+
 }

@@ -38,7 +38,26 @@
    <!--tb_user_info UPDATE-->
    <update id="updateData" parameterType="com.meta.dto.TbUserInfoDto">
      UPDATE tb_user_info
-        SET USER_NM = #{userNm}, PASSWORD = #{password}, EMAIL = #{email}, PHONE = #{phone}, ROLE = #{role}, USE_YN = #{useYn}, UPD_ID = #{updId}
+        SET
+            UPD_ID = #{updId}
+       <if test="userNm != null and userNm != ''">
+            ,USER_NM = #{userNm}
+       </if>
+       <if test="password != null and password != ''">
+            ,PASSWORD = #{password}
+       </if>
+       <if test="email != null and email != ''">
+            ,EMAIL = #{email}
+        </if>
+       <if test="phone != null and phone != ''">
+            ,PHONE = #{phone}
+       </if>
+       <if test="role != null and role != ''">
+            ,ROLE = #{role}
+       </if>
+       <if test="useYn != null and useYn != ''">
+            ,SE_YN = #{useYn}
+       </if>
       WHERE USER_ID = #{userId}
    </update>
 

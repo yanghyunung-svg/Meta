@@ -100,4 +100,12 @@
         ORDER BY WORD_NM, ENG_NM
     </select>
 
+
+    <!--tb_word_dictionary SELECT-->
+    <select id="getAllData" resultType="com.meta.dto.WordMappingDto">
+        SELECT WORD_NM AS KOR_NM , ENG_ABBR_NM AS ENG_NM
+        FROM tb_word_dictionary
+        WHERE  1=1
+    </select>
+
 </mapper>

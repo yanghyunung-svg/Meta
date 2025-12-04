@@ -28,33 +28,45 @@
             </tr>
             <tr>
                 <th>공통코드명</th>
-                <td><input type="text" id="grpNm"  name="grpNm" class="form-input" ></td>
+                <td colspan="2"><input type="text" id="grpNm"  name="grpNm" class="form-input" readonly></td>
             </tr>
 
             <tr>
                 <th>상세코드</th>
-                <td> <input type="text" id="cd" name="cd" class="form-input"  required> </td>
+                <td colspan="2"> <input type="text" id="cd" name="cd" class="form-input"  required> </td>
             </tr>
             <tr>
                 <th>상세코드명</th>
-                <td> <input type="text" id="cdNm" name="cdNm" class="form-input"  required> </td>
+                <td colspan="2"> <input type="text" id="cdNm" name="cdNm" class="form-input"  required> </td>
             </tr>
             <tr>
                 <th>정렬순서</th>
-                <td> <input type="text" id="ord" name="ord" class="form-input"  > </td>
+                <td colspan="2"> <input type="text" id="ord" name="ord" class="form-input"  > </td>
             </tr>
             <tr>
                 <th>비고</th>
-                <td> <textarea id="rmk" name="rmk" class="form-input" rows="10" ></textarea> </td>
+                <td colspan="2"> <textarea id="rmk" name="rmk" class="form-input" rows="10" ></textarea> </td>
             </tr>
             <tr>
                 <th>사용여부</th>
-                <td>
+                <td colspan="2">
                     <select id="useYn"  name="useYn" class="form-input">
                         <option value="Y">사용</option>
                         <option value="N">미사용</option>
                     </select>
                 </td>
+            </tr>
+            <tr>
+                <th>최초등록</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
+                    <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+            </tr>
+            <tr>
+                <th>최종변경</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="updId" name="updId" class="form-input" readonly>
+                    <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
             </tr>
         </table>
     </form>

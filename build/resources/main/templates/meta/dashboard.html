@@ -71,6 +71,11 @@
         const crtId = localStorage.getItem('userId');
         document.getElementById("crtId").value = crtId;
 
+            const btnSearch = document.getElementById('btnSearch');
+            setTimeout(() => {
+                btnSearch.click();
+            }, 30);
+
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageTopBarContainer");
         if (!container) return;

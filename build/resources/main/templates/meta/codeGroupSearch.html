@@ -15,7 +15,7 @@
     <div class="mainContainer" id="mainContainer">
         <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">공통코드검색</h2>
+            <h2 style="margin:0;">공통 코드 검색</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
@@ -133,9 +133,8 @@
                     const grpNm = td.getAttribute("data-grpNm");
                     localStorage.setItem('grpCd', grpCd);
                     localStorage.setItem('grpNm', grpNm);
-<!--                    window.open(`/meta/codeSearch`, '_code');-->
-                    const width = 1200;
-                    const height = 1000;
+                    const width = 800;
+                    const height = 820;
                     const left = window.screenX + (window.outerWidth - width) / 2;
                     const top = window.screenY + (window.outerHeight - height) / 2;
                     const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
@@ -245,7 +244,7 @@
         });
     });
 
-    function openWindowWithJSON(payload, width = 700, height = 400) {
+    function openWindowWithJSON(payload, width = 700, height = 500) {
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
         const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;

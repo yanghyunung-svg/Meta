@@ -42,13 +42,11 @@
             <thead>
             <tr>
                 <th width="50px" style="text-align: center;">번호</th>
-                <th>공통코드</th>
-                <th>공통코드명</th>
                 <th>상세코드</th>
                 <th>상세코드명</th>
                 <th>비고</th>
-                <th width="120px" style="text-align: center;">정렬순서</th>
-                <th  width="120px"  style="text-align: center;">상태</th>
+                <th width="100px" style="text-align: center;">정렬순서</th>
+                <th  width="100px"  style="text-align: center;">상태</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -111,8 +109,6 @@
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr>
                     <td style="text-align: center;"> ${start + index + 1}</td>
-                    <td style="text-align: left;">${item.grpCd}</td>
-                    <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.cd}</td>
                     <td style="text-align: left;">${item.cdNm}</td>
                     <td style="text-align: left;">${item.rmk}</td>

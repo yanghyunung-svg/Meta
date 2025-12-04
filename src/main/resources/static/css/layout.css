@@ -123,9 +123,9 @@ body, html { font-family: Arial, sans-serif; height: 100%; }
 
 /* 버튼 스타일 */
 .btn {
-    padding: 4px 6px;
+    padding: 6px 8px;
     border: 1px solid #333;
-    border-radius: 3px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 13px;
     white-space: nowrap;       /* 텍스트 줄바꿈 방지 */
@@ -152,6 +152,10 @@ body, html { font-family: Arial, sans-serif; height: 100%; }
     font-size: 12px;
 }
 
+.timer-warning {
+    color: red !important;
+    font-weight: bold;
+}
 /* 테이블 */
 table { width: 100%; border-collapse: collapse; }
 th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
@@ -409,3 +413,9 @@ th { background-color: #f4f4f4; }
     font-size: 12px;
 }
 
+input[readonly],
+textarea[readonly] {
+    background-color: #f0f0f0; /* 연한 회색 */
+    color: #555;              /* 진한 회색 텍스트 */
+    border: 1px solid #ccc;   /* 선택적, 테두리 색 조정 */
+}
