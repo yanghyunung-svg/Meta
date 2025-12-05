@@ -5,7 +5,6 @@
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/config.js"></script>
-
 </head>
 <body>
 <div class="container">
@@ -17,7 +16,8 @@
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnInit" class="btn">초기화</button>
-                <button id="btnSearch" class="btn">검색</button>
+                <button id="btnSearch" class="btn">조회</button>
+                <button id="btnClose" class="btn">닫기</button>
             </div>
         </div>
         <form id="mainForm">
@@ -88,23 +88,19 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr>
+                <tr class="row-click" data-grpcd="${item.grpCd}" data-grpnm="${item.grpNm}">
                     <td style="text-align: center;">  ${start + index + 1}</td>
-                    <td class="clickable"
-                            data-grpcd="${item.grpCd}"
-                            data-grpnm="${item.grpNm}"
-                            style="text-align: left; ">
-                            ${item.grpNm} </td>
+                    <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.grpCd}</td>
                     <td style="text-align: left;">${item.rmk}</td>
                 </tr>
             `).join('');
 
             /** 상세 클릭 이벤트 **/
-            tableBody.querySelectorAll(".clickable").forEach(td => {
-                td.addEventListener("click", () => {
-                    const grpCd = td.dataset.grpcd;
-                    const grpNm = td.dataset.grpnm;
+            document.querySelectorAll(".row-click").forEach(tr => {
+                tr.addEventListener("click", () => {
+                    const grpCd = tr.dataset.grpcd;
+                    const grpNm = tr.dataset.grpnm;
 
                     // 부모창으로 값 전달
                     if (window.opener && !window.opener.closed && typeof window.opener.receiveCode === 'function') {
@@ -192,8 +188,6 @@
         document.getElementById('btnSearch').addEventListener('click', () => {
             const grpCd = document.querySelector("#grpCd").value.trim();
             const grpNm = document.querySelector("#grpNm").value.trim();
-
-
             fetch('/meta/getCodeGroupListData', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -212,6 +206,9 @@
             });
         });
 
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
     });
 </script>
 

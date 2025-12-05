@@ -67,16 +67,13 @@ function formatTime(seconds) {
 function openPopup(url, windowName = 'popupWindow', width = 600, height = 400, scrollable = true) {
     const left = (window.screen.width - width) / 2;
     const top = (window.screen.height - height) / 2;
-
     const options = `width=${width},height=${height},top=${top},left=${left},` +
         `resizable=yes,scrollbars=${scrollable ? 'yes' : 'no'},status=no`;
-
     const popup = window.open(url, windowName, options);
     if (!popup) {
         alert('팝업이 차단되었습니다. 브라우저 설정을 확인하세요.');
         return;
     }
-
     PopupManager.addPopup(popup);
     popup.focus();
 }

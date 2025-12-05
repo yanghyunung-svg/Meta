@@ -22,61 +22,51 @@
         </div>
     </main>
 </div>
-
 <script>
 
     document.addEventListener('DOMContentLoaded', () => {
-
-      const btn = document.getElementById('btnReg');
+        const btn = document.getElementById('btnReg');
 
         // Enter 키로 로그인
-        document.addEventListener('keypress', (e) => {
+        document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 login();
             }
         });
+        btn.addEventListener('click', login);
+    });
 
-      btn.addEventListener('click', async () => {
+    async function login() {
+        const userId = document.getElementById('userId').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-          const userId = document.getElementById('userId').value.trim();
-          const password = document.getElementById('password').value.trim();
+        if (!userId || !password) {
+            alert('ID와 PASSWORD를 모두 입력하세요.');
+            return;
+        }
+        const data = { userId, password };
 
-          if (!userId || !password) {
-              alert('ID와 PASSWORD를 모두 입력하세요.');
-              return;
-          }
-
-          const data = { userId, password };
-
-          try {
-              const response = await fetch("/meta/getLogin", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(data)
-              });
-
-              if (!response.ok) throw new Error("서버 오류 발생");
-
-              const result = await response.json();
-
-              if (result.success) {
+        try {
+            const response = await fetch("/meta/getLogin", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) throw new Error("서버 오류 발생");
+            const result = await response.json();
+            if (result.success) {
                 localStorage.setItem('userId', result.data.userId);
                 localStorage.setItem('userNm', result.data.userNm);
                 localStorage.setItem('role', result.data.role);
-
                 window.location.href = '/meta/dashboard';
-              } else {
-                  alert("Login 실패: " + result.message);
-              }
-
-          } catch (err) {
-              console.error(err);
-              alert("요청 중 오류가 발생했습니다.");
-          }
-      });
-
-  });
-
+            } else {
+                alert("Login 실패: " + result.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("요청 중 오류가 발생했습니다.");
+        }
+    }
 
 </script>
 </body>

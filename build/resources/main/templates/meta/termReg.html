@@ -12,8 +12,8 @@
     <div class="popup-header">
         <h2 class="popup-title">표준 용어</h2>
         <div class="button-group" style="display:flex; gap:8px;">
-            <button id="btnPopup" class="btn">단어검색</button>
-            <button id="btnSave" class="btn">저장</button>
+            <button id="btnPopup" class="btn-row">단어검색</button>
+            <button id="btnSave"  class="btn">저장</button>
             <button id="btnClose" class="btn">닫기</button>
         </div>
     </div>
@@ -22,21 +22,21 @@
         <table class="popup-table">
             <tr>
                 <th>용어명</th>
-                <td  colspan="2" style="display:flex; align-items:center; gap:4px;">
+                <td style="display:flex; align-items:center; gap:4px;">
                     <input type="text" id="trmNm" name="trmNm" class="form-input">
                 </td>
             </tr>
             <tr>
                 <th>영문명</th>
-                <td colspan="2"> <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
+                <td > <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
             </tr>
             <tr>
                 <th>도메인명</th>
-                <td colspan="2"> <input type="text" id="dmnNm" name="dmnNm" class="form-input"  > </td>
+                <td > <input type="text" id="dmnNm" name="dmnNm" class="form-input"  > </td>
             </tr>
             <tr>
                 <th>설명</th>
-                <td colspan="2"> <textarea id="trmExpln" name="trmExpln" class="form-input" rows="23" ></textarea> </td>
+                <td > <textarea id="trmExpln" name="trmExpln" class="form-input" rows="20" ></textarea> </td>
             </tr>
         </table>
     </form>
@@ -47,25 +47,6 @@
 
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
-
-        // 현재 화면 상태: I(신규), S(상세)
-        let mode = "I";
-        let originalData = {};
-
-         // 🔸 현재 값이 수정되었는지 체크
-          const checkChanged = () => {
-            const current = formToJson(mainForm);
-            const changed = Object.keys(current).some(
-                key => current[key] !== originalData[key]
-            );
-            btnSave.disabled = !changed;
-        };
-
-        // 🔸 입력값 변경 감지 (입력/선택 모두 반응)
-        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
-            el.addEventListener("input", checkChanged);
-            el.addEventListener("change", checkChanged);
-        });
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
@@ -83,11 +64,7 @@
             }
 
             try {
-                let url = (mode === "S")
-                    ? "/meta/updateTermData"
-                    : "/meta/insertTermData";
-
-                const res = await fetch(url, {
+                const res = await fetch("/meta/insertTermData", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
@@ -108,45 +85,6 @@
             }
         });
 
-        // 부모창에서 데이터 받기
-        window.addEventListener("message", (event) => {
-            if (event.origin !== window.location.origin) return;
-
-            mode = event.data.mode;
-            const sendId  = event.data.id;
-
-            // 상세모드
-            if (mode === "S" && sendId ) {
-                (async () => {
-                    try {
-                        const res = await fetch('/meta/getTermData', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id: sendId  })
-                        });
-
-                        const data = await res.json();
-                        fillForm(mainForm, data);
-
-                        document.getElementById("id").readOnly = true;
-                        document.getElementById("trmNm").readOnly = true;
-
-                        originalData = data; // 변경감지 기준 등록
-
-                    } catch (err) {
-                        console.error(err);
-                        alert("상세 데이터 조회 중 오류가 발생했습니다.");
-                    }
-                })();
-
-                btnSave.disabled = true;
-
-            } else if (mode === "I") {
-                originalData = formToJson(mainForm);
-                btnSave.disabled = false;
-            }
-        });
-
        document.getElementById('btnPopup').addEventListener('click', async () => {
             const inData = formToJson(mainForm);
 
@@ -154,7 +92,7 @@
                 alert("용어명을 입력하세요.");
                 mainForm.trmNm.focus();
                 return;
-        }
+            }
             try {
                 const res = await fetch('/meta/getTermSplitData', {
                     method: 'POST',
@@ -164,8 +102,8 @@
 
                 if (!res.ok) {
                     throw new Error("서버 응답 오류");
+                    return;
                 }
-
                 const outData = await res.json();
                 fillForm(mainForm, outData);
 
@@ -177,6 +115,14 @@
 
         document.getElementById("btnClose").addEventListener("click", () => {
             window.close();
+        });
+
+        // Enter 키 이벤트
+        document.getElementById('mainForm').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 폼 제출 방지
+                document.getElementById('btnPopup').click();
+            }
         });
 
     });

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/sidebar.js" defer></script>
+    <script src="/js/layout.js" defer></script>
+    <script src="/js/config.js"></script>
+</head>
+<body>
+<div id="topbarContainer"></div>
+<div class="container">
+    <div id="sidebarContainer"></div>
+    <div class="mainContainer" id="mainContainer">
+        <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;">신청내역</h2>
+
+            <!-- 오른쪽 버튼 그룹 -->
+            <div class="button-group" style="display:flex; gap:8px;">
+                <button id="btnReg" class="btn-row">일괄승인</button>
+                <button id="btnInit" class="btn">초기화</button>
+                <button id="btnSearch" class="btn">조 회</button>
+            </div>
+        </div>
+        <form id="mainForm">  <table class="search-table">
+            <tr>
+                <th>신청자ID</th>
+                <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" id="crtId"  name="crtId" class="form-input">
+                    <button id="btnPopup" type="button">🔍</button>
+                </td>
+                <th>신청자이름</th>
+                <td><input type="text" id="userNm"  name="userNm" class="form-input"  readonly></td>
+                <th>신청구분</th>
+                <td width="10%">
+                    <select id="se"  name="se" class="form-input">
+                        <option value="">전체</option>
+                        <option value="1">용어</option>
+                        <option value="2">단어</option>
+                        <option value="3">공통코드</option>
+                        <option value="4">상세코드</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        </form>
+
+        <div id="pageTopBarContainer"></div>
+
+        <table style="margin-top:12px" class="dark-table">
+            <thead>
+            <tr>
+                <th width="50px" style="text-align: center;">번호</th>
+                <th width="50px" style="text-align: center;">선택</th>
+                <th width="100px" style="text-align: center;">신청구분</th>
+                <th width="200px">한글명</th>
+                <th width="200px">영문명</th>
+                <th>비고</th>
+                <th width="80px" style="text-align: center;">신청자</th>
+                <th width="150px" style="text-align: center;">신청일자</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div><!-- /mainContainer -->
+</div><!-- /container -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+        let dataAll = [];
+        let currentPage = 1;
+
+        const tableBody = document.querySelector('.dark-table tbody');
+        const btnSearch = document.getElementById('btnSearch');
+        setTimeout(() => {
+            btnSearch.click();
+        }, 30);
+
+        // 페이지 탑바 container에 include
+        const container = document.getElementById("pageTopBarContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+        .then(res => res.text())
+        .then(html => {
+            container.innerHTML = html;
+            const pageSizeSelect = document.getElementById("pageSize");
+            if (!pageSizeSelect) return;
+            pageSizeSelect.addEventListener("change", () => {
+                PAGE_SIZE = Number(pageSizeSelect.value);
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination();
+                updatePageInfo();
+            });
+        });
+
+        /** 테이블 렌더링 **/
+        function renderTable(page) {
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                return;
+            }
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map((item, index) => `
+                <tr>
+                    <td style="text-align: center;"> ${start + index + 1}</td>
+                    <td style="text-align: center;"> ◎</td>
+                    <td style="text-align: center;"> ${item.se === '1' ? '용어'
+                        : item.se === '2' ? '단어'
+                        : item.se === '3' ? '공통코드'
+                        : item.se === '4' ? '상세코드'
+                        : ''} </td>
+                    <td style="text-align: left;">${item.korNm}</td>
+                    <td style="text-align: left;">${item.engNm}</td>
+                    <td style="text-align: left;">${truncateText(item.expln, 100)}</td>
+                    <td style="text-align: center;">${item.crtId}</td>
+                    <td style="text-align: center;">${item.crtDttm}</td>
+                </tr>
+            `).join('');
+        }
+
+        /** 페이지 정보 표시 **/
+        function updatePageInfo() {
+            const totalCount = dataAll.length;
+            const totalPage = Math.ceil(totalCount / PAGE_SIZE);
+            document.getElementById("pageInfo").innerText =
+                `전체 ${totalCount}건 | ${currentPage} / ${totalPage} 페이지`;
+        }
+
+        /** 페이지네이션 **/
+        function renderPagination() {
+            const totalPage = Math.ceil(dataAll.length / PAGE_SIZE);
+            if (totalPage === 0) return;
+            let html = `<div class="pagination" style="margin-top:15px;text-align:center;">`;
+            html += `<button class="page-btn-nav" data-page="first" style="margin:0 4px;">«</button>`;
+            html += `<button class="page-btn-nav" data-page="prev" style="margin:0 4px;">‹</button>`;
+            const range = window.CONFIG.PAGE_RANGE;
+            let start = Math.max(1, currentPage - range);
+            let end = Math.min(totalPage, currentPage + range);
+
+            for (let i = start; i <= end; i++) {
+                html += `
+                    <button class="page-btn"
+                        data-page="${i}"
+                        style="${i === currentPage ? 'background:#1f2937; color:white;' : ''}">
+                        ${i}
+                    </button>
+                `;
+            }
+            html += `<button class="page-btn-nav" data-page="next" style="margin:0 4px;">›</button>`;
+            html += `<button class="page-btn-nav" data-page="last" style="margin:0 4px;">»</button>`;
+            html += `</div>`;
+            const oldNav = document.querySelector(".pagination");
+            if (oldNav) oldNav.remove();
+            tableBody.parentElement.insertAdjacentHTML("afterend", html);
+            document.querySelectorAll(".page-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    currentPage = Number(btn.dataset.page);
+                    renderTable(currentPage);
+                    renderPagination();
+                    updatePageInfo();
+                });
+            });
+
+            document.querySelectorAll(".page-btn-nav").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const type = btn.dataset.page;
+                    if (type === "first") currentPage = 1;
+                    else if (type === "prev") currentPage = Math.max(1, currentPage - 1);
+                    else if (type === "next") currentPage = Math.min(totalPage, currentPage + 1);
+                    else if (type === "last") currentPage = totalPage;
+                    renderTable(currentPage);
+                    renderPagination();
+                    updatePageInfo();
+                });
+            });
+        }
+
+        /** 초기화 **/
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+            tableBody.innerHTML = "";
+            document.getElementById('pageInfo').innerText = "";
+            dataAll = [];
+            const old = document.querySelector(".pagination");
+            if (old) old.remove();
+        });
+
+        /** 검색 **/
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            const data = formToJson(document.getElementById('mainForm'));
+            fetch('/meta/getDashBoardList', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination();
+                updatePageInfo();
+            })
+            .catch(err => {
+                alert("에러 발생: " + err);
+            });
+        });
+
+        document.getElementById('btnPopup').addEventListener('click', () => {
+            window.open("/meta/userPopup", "사용자 검색", "width=800,height=500,scrollbars=yes,resizable=yes");
+        });
+    });
+
+    function receiveCode(id, nm) {
+        document.getElementById("crtId").value = id;
+        document.getElementById("userNm").value = nm;
+    }
+
+</script>
+</body>
+</html>

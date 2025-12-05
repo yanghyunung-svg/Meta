@@ -21,12 +21,18 @@ public class MetaController {
     /* 사용자 */
     @GetMapping("/userSearch")
     public String userSearchView() {  return "meta/userSearch";  }
+
+    @GetMapping("/userPopup")
+    public String userPopupView() {  return "meta/userPopup";  }
+
     @GetMapping("/userReg")
     public String userRegView() {   return "meta/userReg";  }
 
     /* dashboard */
     @GetMapping("/dashboard")
     public String dashboardView(Model model) { return "meta/dashboard"; }
+    @GetMapping("/aplyDsctnInq")
+    public String aplyDsctnInqView(Model model) { return "meta/aplyDsctnInq"; }
 
     /* 용어 */
     @GetMapping("/termSearch")

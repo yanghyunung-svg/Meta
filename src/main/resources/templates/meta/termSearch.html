@@ -19,10 +19,10 @@
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
+                <button id="btnReg" class="btn-row">일반용어신청</button>
+                <button id="btnRegTerm" class="btn-row">전문용어신청</button>
                 <button id="btnInit" class="btn">초기화</button>
-                <button id="btnSearch" class="btn">검색</button>
-                <button id="btnReg" class="btn">일반용어신청</button>
-                <button id="btnRegTerm" class="btn">전문용어신청</button>
+                <button id="btnSearch" class="btn">조회</button>
             </div>
         </div>
 
@@ -105,8 +105,8 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr>
-                    <td class="clickable" data-id="${item.id}" style="text-align: center;"> ${start + index + 1}</td>
+                <tr class="row-click" data-id="${item.id}">
+                    <td style="text-align: center;"> ${start + index + 1} </td>
                     <td style="text-align: left;">${item.trmNm}</td>
                     <td style="text-align: left;">${item.engNm}</td>
                     <td style="text-align: left;">${truncateText(item.trmExpln, 100)}</td>
@@ -116,15 +116,16 @@
             `).join('');
 
             /** 상세 클릭  **/
-            tableBody.querySelectorAll(".clickable").forEach(td => {
-                td.addEventListener("click", () => {
-                    const id = td.getAttribute("data-id");
+            document.querySelectorAll(".row-click").forEach(tr => {
+                tr.addEventListener("click", () => {
+                    const id = tr.getAttribute("data-id");
                     const payload = { mode: "S", id: id };
-                    openWindowWithJSON(payload);
+                    openWindowWithJSON(payload, "/meta/termRegTlgm", 700, 550);
                 });
             });
         }
 
+                </br>
         /** 페이지 정보 표시 **/
         function updatePageInfo() {
             const totalCount = dataAll.length;
@@ -216,24 +217,21 @@
         /** 일반용어신청 **/
         document.getElementById('btnReg').addEventListener('click', () => {
             const payload = { mode: "I" };
-            openWindowWithJSON(payload);
+            openWindowWithJSON(payload, "/meta/termReg", 700, 550);
         });
 
         /** 전문용어신청 **/
         document.getElementById('btnRegTerm').addEventListener('click', () => {
             const payload = { mode: "T" };
-            openWindowWithJSON(payload);
+            openWindowWithJSON(payload, "/meta/termRegTlgm", 700, 550);
         });
     });
 
-    function openWindowWithJSON(payload, width = 700, height = 550) {
+    function openWindowWithJSON(payload, url, width, height) {
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
         const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
-        let url = (payload.mode === 'I') ? "/meta/termReg" : "/meta/termRegTlgm";
-
-        const win = window.open(url, "표준용어", features);
-
+        const win = window.open(url, "Meta System", features);
         win.addEventListener('load', () => {
             win.postMessage(payload, window.location.origin);
         });

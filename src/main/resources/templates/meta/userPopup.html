@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/config.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="popupContainer" id="popupContainer">
+        <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;">사용자 정보 검색</h2>
+
+            <!-- 오른쪽 버튼 그룹 -->
+            <div class="button-group" style="display:flex; gap:8px;">
+                <button id="btnInit" class="btn">초기화</button>
+                <button id="btnSearch" class="btn">조회</button>
+                <button id="btnClose" class="btn">닫기</button>
+            </div>
+        </div>
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>사용자ID</th>
+                    <td><input type="text" id="userId"  name="userId" class="form-input"></td>
+                    <th>사용자이름</th>
+                    <td><input type="text" id="userNm"  name="userNm" class="form-input"></td>
+                </tr>
+            </table>
+        </form>
+
+        <div id="pageTopBarContainer"></div>
+
+        <table style="margin-top:12px" class="dark-table">
+            <thead>
+            <tr>
+                <th width="50px">번호</th>
+                <th>사용자ID</th>
+                <th>사용자이름</th>
+                <th>이메일</th>
+                <th>전화번호</th>
+                <th style="text-align: center;">권한</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div><!-- /mainContainer -->
+</div><!-- /container -->
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tableBody = document.querySelector('.dark-table tbody');
+
+        let PAGE_SIZE = 20;
+        let dataAll = [];
+        let currentPage = 1;
+
+        const container = document.getElementById("pageTopBarContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                const pageSizeSelect = document.getElementById("pageSize");
+                if (!pageSizeSelect) return;
+
+                pageSizeSelect.addEventListener("change", () => {
+                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    currentPage = 1;
+                    renderTable(currentPage);
+                    renderPagination();
+                    updatePageInfo();
+                });
+            });
+
+        /** 테이블 렌더링 **/
+        function renderTable(page) {
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                return;
+            }
+
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map((item, index) => `
+                <tr class="row-click" data-id="${item.userId}" data-nm="${item.userNm}">
+                    <td style="text-align: center;"> ${start + index + 1} </td>
+                    <td style="text-align: left;">${item.userId}</td>
+                    <td style="text-align: left;">${item.userNm}</td>
+                    <td style="text-align: left;">${item.email}</td>
+                    <td style="text-align: left;">${item.phone}</td>
+                    <td> ${item.role === '2' ? 'USER' :   item.role === '1' ? 'ADMIN' : '-'} </td>
+                </tr>
+            `).join('');
+
+            /** 상세 클릭 이벤트 **/
+            document.querySelectorAll(".row-click").forEach(tr => {
+                tr.addEventListener("click", () => {
+                    const { id, nm } = tr.dataset;
+                    if (window.opener && !window.opener.closed && typeof window.opener.receiveCode === 'function') {
+                        window.opener.receiveCode(id, nm);
+                    }
+                    window.close();
+                });
+            });
+        }
+
+        /** 페이지 정보 표시 **/
+        function updatePageInfo() {
+            const totalCount = dataAll.length;
+            const totalPage = Math.ceil(totalCount / PAGE_SIZE);
+            document.getElementById("pageInfo").innerText =
+                `전체 ${totalCount}건 | ${currentPage} / ${totalPage} 페이지`;
+        }
+
+        /** 페이지네이션 **/
+        function renderPagination() {
+            const totalPage = Math.ceil(dataAll.length / PAGE_SIZE);
+            if (totalPage === 0) return;
+
+            let html = `<div class="pagination" style="margin-top:15px;text-align:center;">`;
+            html += `<button class="page-btn-nav" data-page="first" style="margin:0 4px;">«</button>`;
+            html += `<button class="page-btn-nav" data-page="prev" style="margin:0 4px;">‹</button>`;
+
+            const range = window.CONFIG.PAGE_RANGE;
+            let start = Math.max(1, currentPage - range);
+            let end = Math.min(totalPage, currentPage + range);
+
+            for (let i = start; i <= end; i++) {
+                html += `
+                    <button class="page-btn"
+                        data-page="${i}"
+                        style="${i === currentPage ? 'background:#1f2937; color:white;' : ''}">
+                        ${i}
+                    </button>
+                `;
+            }
+            html += `<button class="page-btn-nav" data-page="next" style="margin:0 4px;">›</button>`;
+            html += `<button class="page-btn-nav" data-page="last" style="margin:0 4px;">»</button>`;
+            html += `</div>`;
+            const oldNav = document.querySelector(".pagination");
+            if (oldNav) oldNav.remove();
+
+            tableBody.parentElement.insertAdjacentHTML("afterend", html);
+
+            document.querySelectorAll(".page-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    currentPage = Number(btn.dataset.page);
+                    renderTable(currentPage);
+                    renderPagination();
+                    updatePageInfo();
+                });
+            });
+
+            document.querySelectorAll(".page-btn-nav").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const type = btn.dataset.page;
+                    if (type === "first") currentPage = 1;
+                    else if (type === "prev") currentPage = Math.max(1, currentPage - 1);
+                    else if (type === "next") currentPage = Math.min(totalPage, currentPage + 1);
+                    else if (type === "last") currentPage = totalPage;
+                    renderTable(currentPage);
+                    renderPagination();
+                    updatePageInfo();
+                });
+            });
+        }
+
+        /** 초기화 **/
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+            tableBody.innerHTML = "";
+            dataAll = [];
+            document.getElementById('pageInfo').innerText = "";
+            const old = document.querySelector(".pagination");
+            if (old) old.remove();
+        });
+
+        /** 검색 **/
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            const userId = document.querySelector("#userId").value.trim();
+            const userNm = document.querySelector("#userNm").value.trim();
+            fetch('/meta/getUserListData', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, userNm })
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination();
+                updatePageInfo();
+            })
+            .catch(err => {
+                alert("에러 발생: " + err);
+            });
+        });
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
+
+        // Enter 키 이벤트
+        document.getElementById('mainForm').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 폼 제출 방지
+                document.getElementById('btnSearch').click();
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

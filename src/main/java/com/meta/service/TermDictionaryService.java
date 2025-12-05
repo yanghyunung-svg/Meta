@@ -108,10 +108,12 @@ public class TermDictionaryService {
      */
     public TbTermDictionaryDto getTermSplitData(TbTermDictionaryDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVo(inputDto));
+        log.debug(BizUtils.logVoKey(inputDto));
 
         TbTermDictionaryDto tbTermDictionaryDto = tbTermDictionaryMapper.getDataByName(inputDto);
         if (tbTermDictionaryDto != null) {
+            log.debug(BizUtils.logVoKey(tbTermDictionaryDto));
+            log.debug(BizUtils.logInfo("END"));
             return tbTermDictionaryDto;
         }
 
@@ -128,6 +130,7 @@ public class TermDictionaryService {
         outputDto.setEngNm(outTxt);
         outputDto.setTrmExpln(prettyPrintKeywords(keywords));
 
+        log.debug(BizUtils.logVoKey(outputDto));
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }

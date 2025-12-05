@@ -20,7 +20,7 @@
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnInit" class="btn">초기화</button>
-                <button id="btnSearch" class="btn">검색</button>
+                <button id="btnSearch" class="btn">조회</button>
             </div>
         </div>
 
@@ -28,7 +28,12 @@
             <table class="search-table">
                 <tr>
                     <th>사용자 ID</th>
-                    <td><input type="text" id="userId" name="userId" class="form-input"></td>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="text" id="userId"  name="userId" class="form-input">
+                        <button id="btnPopup" type="button">🔍</button>
+                    </td>
+                    <th>사용자이름</th>
+                    <td><input type="text" id="userNm"  name="userNm" class="form-input"  readonly></td>
 
                     <th>조회일자</th>
                     <td style="display:flex; align-items:center; gap:4px;">
@@ -226,7 +231,16 @@
                 alert("에러 발생: " + err);
             });
         });
+
+        document.getElementById('btnPopup').addEventListener('click', () => {
+            window.open("/meta/userPopup", "사용자 검색", "width=800,height=500,scrollbars=yes,resizable=yes");
+        });
     });
+
+    function receiveCode(id, nm) {
+        document.getElementById("userId").value = id;
+        document.getElementById("userNm").value = nm;
+    }
 
 </script>
 </body>

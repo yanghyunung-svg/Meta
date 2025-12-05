@@ -26,7 +26,7 @@ spring:
       on-profile: local
 
   datasource:
-    url: jdbc:mysql://localhost:3306/meta?serverTimezone=Asia/Seoul&useSSL=false
+    url: jdbc:mysql://localhost:3306/meta?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: root0000
     driver-class-name: com.mysql.cj.jdbc.Driver
