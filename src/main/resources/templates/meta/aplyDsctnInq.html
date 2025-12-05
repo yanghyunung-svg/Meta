@@ -7,6 +7,7 @@
     <script src="/js/sidebar.js" defer></script>
     <script src="/js/layout.js" defer></script>
     <script src="/js/config.js"></script>
+    <script src="/js/pagenation.js"></script>
 </head>
 <body>
 <div id="topbarContainer"></div>
@@ -19,7 +20,7 @@
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnReg" class="btn-row">일괄승인</button>
+                <button id="btnApprove" class="btn-row">일괄승인</button>
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSearch" class="btn">조 회</button>
             </div>
@@ -53,7 +54,9 @@
             <thead>
             <tr>
                 <th width="50px" style="text-align: center;">번호</th>
-                <th width="50px" style="text-align: center;">선택</th>
+                <th style="width: 40px; text-align:center;">
+                    <input type="checkbox" id="checkAll">
+                </th>
                 <th width="100px" style="text-align: center;">신청구분</th>
                 <th width="200px">한글명</th>
                 <th width="200px">영문명</th>
@@ -75,7 +78,7 @@
         let dataAll = [];
         let currentPage = 1;
 
-        const tableBody = document.querySelector('.dark-table tbody');
+        window.tableBody = document.querySelector('.dark-table tbody');
         const btnSearch = document.getElementById('btnSearch');
         setTimeout(() => {
             btnSearch.click();
@@ -95,8 +98,8 @@
                 PAGE_SIZE = Number(pageSizeSelect.value);
                 currentPage = 1;
                 renderTable(currentPage);
-                renderPagination();
-                updatePageInfo();
+                renderPagination(dataAll, currentPage, PAGE_SIZE)
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE)
             });
         });
 
@@ -111,9 +114,11 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr>
+                <tr data-id="${item.crtId}">
                     <td style="text-align: center;"> ${start + index + 1}</td>
-                    <td style="text-align: center;"> ◎</td>
+                    <td style="text-align:center;">
+                        <input type="checkbox" class="row-check">
+                    </td>
                     <td style="text-align: center;"> ${item.se === '1' ? '용어'
                         : item.se === '2' ? '단어'
                         : item.se === '3' ? '공통코드'
@@ -128,69 +133,13 @@
             `).join('');
         }
 
-        /** 페이지 정보 표시 **/
-        function updatePageInfo() {
-            const totalCount = dataAll.length;
-            const totalPage = Math.ceil(totalCount / PAGE_SIZE);
-            document.getElementById("pageInfo").innerText =
-                `전체 ${totalCount}건 | ${currentPage} / ${totalPage} 페이지`;
-        }
-
-        /** 페이지네이션 **/
-        function renderPagination() {
-            const totalPage = Math.ceil(dataAll.length / PAGE_SIZE);
-            if (totalPage === 0) return;
-            let html = `<div class="pagination" style="margin-top:15px;text-align:center;">`;
-            html += `<button class="page-btn-nav" data-page="first" style="margin:0 4px;">«</button>`;
-            html += `<button class="page-btn-nav" data-page="prev" style="margin:0 4px;">‹</button>`;
-            const range = window.CONFIG.PAGE_RANGE;
-            let start = Math.max(1, currentPage - range);
-            let end = Math.min(totalPage, currentPage + range);
-
-            for (let i = start; i <= end; i++) {
-                html += `
-                    <button class="page-btn"
-                        data-page="${i}"
-                        style="${i === currentPage ? 'background:#1f2937; color:white;' : ''}">
-                        ${i}
-                    </button>
-                `;
-            }
-            html += `<button class="page-btn-nav" data-page="next" style="margin:0 4px;">›</button>`;
-            html += `<button class="page-btn-nav" data-page="last" style="margin:0 4px;">»</button>`;
-            html += `</div>`;
-            const oldNav = document.querySelector(".pagination");
-            if (oldNav) oldNav.remove();
-            tableBody.parentElement.insertAdjacentHTML("afterend", html);
-            document.querySelectorAll(".page-btn").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    currentPage = Number(btn.dataset.page);
-                    renderTable(currentPage);
-                    renderPagination();
-                    updatePageInfo();
-                });
-            });
-
-            document.querySelectorAll(".page-btn-nav").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const type = btn.dataset.page;
-                    if (type === "first") currentPage = 1;
-                    else if (type === "prev") currentPage = Math.max(1, currentPage - 1);
-                    else if (type === "next") currentPage = Math.min(totalPage, currentPage + 1);
-                    else if (type === "last") currentPage = totalPage;
-                    renderTable(currentPage);
-                    renderPagination();
-                    updatePageInfo();
-                });
-            });
-        }
-
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
             tableBody.innerHTML = "";
             document.getElementById('pageInfo').innerText = "";
             dataAll = [];
+            document.getElementById("checkAll").checked = false;
             const old = document.querySelector(".pagination");
             if (old) old.remove();
         });
@@ -198,6 +147,7 @@
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
             const data = formToJson(document.getElementById('mainForm'));
+            document.getElementById("checkAll").checked = false;
             fetch('/meta/getDashBoardList', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -208,18 +158,68 @@
                 dataAll = Array.isArray(data) ? data : [];
                 currentPage = 1;
                 renderTable(currentPage);
-                renderPagination();
-                updatePageInfo();
+                renderPagination(dataAll, currentPage, PAGE_SIZE)
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE)
             })
             .catch(err => {
                 alert("에러 발생: " + err);
             });
         });
+        document.getElementById("btnApprove").addEventListener("click", async () => {
+            const ids = getCheckedRowIds();
+            if (ids.length === 0) {
+                alert("승인할 항목을 선택하세요.");
+                return;
+            }
+
+            if (!confirm(`${ids.length}건을 승인하시겠습니까?`)) return;
+
+            for (const id of ids) {
+                await approveOne(id);  // 개별 승인 처리
+            }
+
+            alert("일괄 승인 완료");
+            document.getElementById("checkAll").checked = false;
+            loadData();  // 또는 renderTable() 등 목록 다시 로딩
+        });
+
+        document.addEventListener("change", (e) => {
+            if (e.target.id === "checkAll") {
+                document.querySelectorAll(".row-check").forEach(cb => {
+                    cb.checked = e.target.checked;
+                });
+            }
+        });
+
+        async function approveOne(id) {
+            const response = await fetch("/api/loginLog/approve", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ logId: id })
+            });
+
+            if (!response.ok) {
+                console.error(`승인 실패: ${id}`);
+            }
+        }
+
 
         document.getElementById('btnPopup').addEventListener('click', () => {
-            window.open("/meta/userPopup", "사용자 검색", "width=800,height=500,scrollbars=yes,resizable=yes");
+            const payload = {};
+            openWindowWithJSON(payload, "/meta/userPopup", 800, 500);
         });
     });
+
+
+function getCheckedRowIds() {
+    const ids = [];
+    document.querySelectorAll(".row-check:checked").forEach(cb => {
+        const tr = cb.closest("tr");
+        ids.push(tr.dataset.id);
+    });
+    return ids;
+}
+
 
     function receiveCode(id, nm) {
         document.getElementById("crtId").value = id;

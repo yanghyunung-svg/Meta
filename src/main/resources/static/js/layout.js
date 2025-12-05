@@ -61,3 +61,12 @@ function loadSidebar() {
         .catch(err => console.error("Sidebar load error:", err));
 }
 
+function openWindowWithJSON(payload, url, width, height) {
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
+    const win = window.open(url, "Meta System", features);
+    win.addEventListener('load', () => {
+        win.postMessage(payload, window.location.origin);
+    });
+}

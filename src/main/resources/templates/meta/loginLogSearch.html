@@ -7,6 +7,7 @@
     <script src="/js/sidebar.js" defer></script>
     <script src="/js/layout.js" defer></script>
     <script src="/js/config.js"></script>
+    <script src="/js/pagenation.js"></script>
 </head>
 <body>
 <div id="topbarContainer"></div>
@@ -59,7 +60,7 @@
         <table style="margin-top:12px" class="dark-table">
             <thead>
             <tr>
-                <th style="text-align: center;" width="50px">번호</th>a
+                <th style="text-align: center;" width="50px">번호</th>
                 <th style="text-align: center;">사용자ID</th>
                 <th style="text-align: center;">로그인일시</th>
                 <th style="text-align: center;">IP주소</th>
@@ -82,7 +83,7 @@
         let dataAll = [];
         let currentPage = 1;
 
-        const tableBody = document.querySelector('.dark-table tbody');
+        window.tableBody = document.querySelector('.dark-table tbody');
 
         const d = getDefaultDates();
         document.getElementById("startDate").value = d.start;
@@ -102,8 +103,8 @@
                 PAGE_SIZE = Number(pageSizeSelect.value);
                 currentPage = 1;
                 renderTable(currentPage);
-                renderPagination();
-                updatePageInfo();
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
             });
         });
 
@@ -131,64 +132,6 @@
                 </tr>
             `).join('');
         }
-
-        /** 페이지 정보 표시 **/
-        function updatePageInfo() {
-            const totalCount = dataAll.length;
-            const totalPage = Math.ceil(totalCount / PAGE_SIZE);
-            document.getElementById("pageInfo").innerText =
-                `전체 ${totalCount}건 | ${currentPage} / ${totalPage} 페이지`;
-        }
-
-        /** 페이지네이션 **/
-        function renderPagination() {
-            const totalPage = Math.ceil(dataAll.length / PAGE_SIZE);
-            if (totalPage === 0) return;
-            let html = `<div class="pagination" style="margin-top:15px;text-align:center;">`;
-            html += `<button class="page-btn-nav" data-page="first" style="margin:0 4px;">«</button>`;
-            html += `<button class="page-btn-nav" data-page="prev" style="margin:0 4px;">‹</button>`;
-            const range = window.CONFIG.PAGE_RANGE;
-            let start = Math.max(1, currentPage - range);
-            let end = Math.min(totalPage, currentPage + range);
-
-            for (let i = start; i <= end; i++) {
-                html += `
-                    <button class="page-btn"
-                        data-page="${i}"
-                        style="${i === currentPage ? 'background:#1f2937; color:white;' : ''}">
-                        ${i}
-                    </button>
-                `;
-            }
-            html += `<button class="page-btn-nav" data-page="next" style="margin:0 4px;">›</button>`;
-            html += `<button class="page-btn-nav" data-page="last" style="margin:0 4px;">»</button>`;
-            html += `</div>`;
-            const oldNav = document.querySelector(".pagination");
-            if (oldNav) oldNav.remove();
-            tableBody.parentElement.insertAdjacentHTML("afterend", html);
-            document.querySelectorAll(".page-btn").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    currentPage = Number(btn.dataset.page);
-                    renderTable(currentPage);
-                    renderPagination();
-                    updatePageInfo();
-                });
-            });
-
-            document.querySelectorAll(".page-btn-nav").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const type = btn.dataset.page;
-                    if (type === "first") currentPage = 1;
-                    else if (type === "prev") currentPage = Math.max(1, currentPage - 1);
-                    else if (type === "next") currentPage = Math.min(totalPage, currentPage + 1);
-                    else if (type === "last") currentPage = totalPage;
-                    renderTable(currentPage);
-                    renderPagination();
-                    updatePageInfo();
-                });
-            });
-        }
-
 
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
@@ -224,8 +167,8 @@
                 dataAll = Array.isArray(data) ? data : [];
                 currentPage = 1;
                 renderTable(currentPage);
-                renderPagination();
-                updatePageInfo();
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
             })
             .catch(err => {
                 alert("에러 발생: " + err);
@@ -233,7 +176,8 @@
         });
 
         document.getElementById('btnPopup').addEventListener('click', () => {
-            window.open("/meta/userPopup", "사용자 검색", "width=800,height=500,scrollbars=yes,resizable=yes");
+            const payload = {};
+            openWindowWithJSON(payload, "/meta/userPopup", 800, 500);
         });
     });
 
