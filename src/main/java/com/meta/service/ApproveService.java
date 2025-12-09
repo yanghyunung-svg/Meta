@@ -51,6 +51,7 @@ public class ApproveService {
             termIn.setId(inputDto.getId());
             TbTermDictionaryDto termOut = tbTermDictionaryMapper.getLockData(termIn);
             termOut.setStat("1");
+            termOut.setUpdId(inputDto.getUserId());
             tbTermDictionaryMapper.updateData(termOut);
             break;
         case "2":
@@ -58,6 +59,7 @@ public class ApproveService {
             wordIn.setId(inputDto.getId());
             TbWordDictionaryDto wordOut = tbWordDictionaryMapper.getLockData(wordIn);
             wordOut.setStat("1");
+            wordOut.setUpdId(inputDto.getUserId());
             tbWordDictionaryMapper.updateData(wordOut);
             break;
         default:

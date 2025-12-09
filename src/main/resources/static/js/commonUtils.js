@@ -54,3 +54,12 @@ function getDefaultDates() {
         end: formatDate(today)
     };
 }
+
+function addUserAuditFields(data) {
+    const userId = localStorage.getItem("userId");
+    return {
+        ...data,
+        updId: userId,
+        crtId: data.crtId || userId   // regId 없으면 자동 주입
+    };
+}

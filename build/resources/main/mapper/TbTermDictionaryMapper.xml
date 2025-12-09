@@ -67,6 +67,7 @@
           , TRM_EXPLN = #{trmExpln}
           , DMN_NM = #{dmnNm}
           , STAT = #{stat}
+          , UPD_ID = #{updId}
         WHERE ID = #{id}
     </update>
 

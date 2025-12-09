@@ -1,5 +1,5 @@
 // sidebar.js
-(function() {
+(function () {
     // ADMIN 메뉴 보여주기 함수
     function applyRole() {
         const role = localStorage.getItem('role');  // role 가져오기
@@ -14,14 +14,14 @@
         console.debug('Role applied:', role, '| ADMIN 메뉴 갯수:', adminMenus.length);
     }
 
-    // 1) DOMContentLoaded 이벤트 처리
+    // DOM 준비 시 적용
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', applyRole);
     } else {
         applyRole();
     }
 
-    // 2) 동적 생성되는 ADMIN 메뉴도 처리(MutationObserver)
+    // 동적 생성되는 ADMIN 메뉴도 처리
     const observer = new MutationObserver((mutations, obs) => {
         if (document.querySelector('.ADMIN')) {
             applyRole();
@@ -31,3 +31,25 @@
 
     observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
+
+ document.addEventListener("DOMContentLoaded", () => {
+     document.querySelectorAll(".menu-title").forEach(title => {
+         title.addEventListener("click", () => {
+
+             const submenu = title.nextElementSibling;  // 바로 아래 sub-menu
+             const arrow = title.querySelector(".arrow");
+
+             if (!submenu) return;
+
+             submenu.classList.toggle("collapsed");
+
+             if (submenu.classList.contains("collapsed")) {
+                 arrow.textContent = "▲";  // 접힘
+             } else {
+                 arrow.textContent = "▼";  // 펼침
+             }
+         });
+     });
+ });
+
+

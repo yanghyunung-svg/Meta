@@ -5,7 +5,7 @@
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/layout.js" defer></script>
-    <script src="/js/config.js"></script>
+    <script src="/js/commonUtils.js"></script>
 </head>
 <body>
 
@@ -14,7 +14,7 @@
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-            <h2 style="margin:0;">⊙ 상세코드 신청</h2>
+            <h2 style="margin:0;"> ✅ 상세코드 신청</h2>
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnCheck" class="btn-row">코드검증</button>
                 <button id="btnInit" class="btn">초기화</button>
@@ -82,10 +82,6 @@
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
 
-        const userId = localStorage.getItem('userId');
-        document.getElementById("crtId").value = userId;
-        document.getElementById("updId").value = userId;
-
         let mode = "I";
         let originalData = {};
 
@@ -103,7 +99,8 @@
         });
 
         btnSave.addEventListener("click", async () => {
-            const data = formToJson(mainForm);
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
 
             if (!data.grpCd.trim()) {
                 alert("공통코드를 입력하세요.");

@@ -51,7 +51,7 @@ public class TermDictionaryService {
      * method   : insertData
      * desc     : 용어사전 등록
      */
-    public ApiResponse insertData(TbTermDictionaryDto inputDto)  {
+    public ApiResponse<Void> insertData(TbTermDictionaryDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
         log.debug(BizUtils.logVo(inputDto));
         try {

@@ -19,5 +19,6 @@ public class ApproveDto {
     private String     expln;                           // 설명
     private String     stat;                            // 상태 0=신청 1=사용 9=미사용
     private String     crtDttm;                         // 생성일시 DATETIME
-    private String     crtId;                           // 생성자ID VARCHAR(50)
+    private String     crtId;                           // 생성자ID
+    private String     userId;                          // 신청자ID
 }

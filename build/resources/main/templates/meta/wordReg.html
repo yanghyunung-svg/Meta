@@ -5,7 +5,7 @@
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/layout.js" defer></script>
-    <script src="/js/config.js"></script>
+    <script src="/js/commonUtils.js"></script>
 </head>
 <body>
 
@@ -14,7 +14,7 @@
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-            <h2 style="margin:0;">⊙ 표준단어 신청</h2>
+            <h2 style="margin:0;"> ✅ 표준단어 신청</h2>
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnPopup" class="btn-row">단어검증</button>
                 <button id="btnInit" class="btn">초기화</button>
@@ -101,7 +101,8 @@
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
-            const data = formToJson(mainForm);
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
 
             if (!data.wordNm.trim()) {
                 alert("단어명을 입력하세요.");
@@ -121,7 +122,6 @@
 
             try {
                 let url = "/meta/insertWordData";
-
                 const res = await fetch(url, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },

@@ -15,8 +15,8 @@
             , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
             FROM tb_term_dictionary
             WHERE STAT ='0'
-            <if test="crtId != null and crtId != ''">
-                AND CRT_ID = #{crtId}
+            <if test="userId != null and userId != ''">
+                AND CRT_ID = #{userId}
             </if>
 
             UNION ALL
@@ -31,8 +31,8 @@
             , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
             FROM tb_word_dictionary
             WHERE STAT = '0'
-            <if test="crtId != null and crtId != ''">
-                AND CRT_ID = #{crtId}
+            <if test="userId != null and userId != ''">
+                AND CRT_ID = #{userId}
             </if>
         ) Z
         WHERE 1=1

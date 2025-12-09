@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/config.js"></script>
+    <script src="/js/commonUtils.js"></script>
 </head>
 <body>
 
-<div class="popupnContainer" id="popupnContainer">
+<div class="popupContainer" id="popupContainer">
     <div class="popup-header">
-        <h2 class="popup-title">⊙ 상세코드 관리</h2>
+        <h2 class="popup-title"> ✅ 상세코드 관리</h2>
         <div class="button-group" style="display:flex; gap:8px;">
             <button id="btnSave" class="btn">저장</button>
             <button id="btnClose" class="btn">닫기</button>
@@ -93,7 +93,8 @@
         });
 
         btnSave.addEventListener("click", async () => {
-            const data = formToJson(mainForm);
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
 
             if (!data.grpCd.trim()) {
                 alert("공통코드를 입력하세요.");

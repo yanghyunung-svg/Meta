@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/config.js"></script>
+    <script src="/js/commonUtils.js"></script>
 </head>
 <body>
 
-<div class="popupnContainer" id="popupnContainer">
+<div class="popupContainer" id="popupContainer">
     <div class="popup-header">
-        <h2 class="popup-title">⊙ 표준단어 관리</h2>
+        <h2 class="popup-title"> ✅ 표준단어 관리</h2>
         <div class="button-group" style="display:flex; gap:8px;">
             <button id="btnSave" class="btn">저장</button>
             <button id="btnClose" class="btn">닫기</button>
@@ -94,7 +94,8 @@
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
-            const data = formToJson(mainForm);
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
 
             if (!data.wordNm.trim()) {
                 alert("단어명을 입력하세요.");
@@ -113,11 +114,7 @@
             }
 
             try {
-                let url = (mode === "S")
-                    ? "/meta/updateWordData"
-                    : "/meta/insertWordData";
-
-                const res = await fetch(url, {
+                const res = await fetch("/meta/updateWordData", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
@@ -163,9 +160,6 @@
                         document.getElementById("id").readOnly = true;
                         document.getElementById("wordNm").readOnly = true;
 
-                        const userId = localStorage.getItem('userId');
-                        document.getElementById("updId").value = userId;
-
                         originalData = data; // 변경감지 기준 등록
 
                     } catch (err) {
@@ -175,10 +169,6 @@
                 })();
 
                 btnSave.disabled = true;
-
-            } else if (mode === "I") {
-                originalData = formToJson(mainForm);
-                btnSave.disabled = false;
             }
         });
 

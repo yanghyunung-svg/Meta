@@ -5,7 +5,7 @@
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/layout.js" defer></script>
-    <script src="/js/config.js"></script>
+    <script src="/js/commonUtils.js"></script>
 </head>
 <body>
 
@@ -15,7 +15,7 @@
     <div class="mainContainer" id="mainContainer">
 
     <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-        <h2 style="margin:0;">⊙ 표준용어 신청</h2>
+        <h2 style="margin:0;"> ✅ 표준용어 신청</h2>
         <div class="button-group" style="display:flex; gap:8px;">
             <button id="btnPopup" class="btn-row">용어검증</button>
             <button id="btnInit" class="btn">초기화</button>
@@ -30,7 +30,7 @@
                 <td> <input type="text" id="trmNm" name="trmNm" class="form-input" required> </td>
             </tr>
             <tr>
-                <th>영문명< <span style="color:red">*</span></th>
+                <th>영문명 <span style="color:red">*</span></th>
                 <td > <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
             </tr>
             <tr>
@@ -74,13 +74,10 @@
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
 
-        const userId = localStorage.getItem('userId');
-        document.getElementById("crtId").value = userId;
-        document.getElementById("updId").value = userId;
-
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
-            const data = formToJson(mainForm);
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
 
             if (!data.trmNm.trim()) {
                 alert("용어명을 입력하세요.");

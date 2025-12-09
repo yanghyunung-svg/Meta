@@ -66,6 +66,7 @@
           , LOGIN_RESULT = #{loginResult}
           , FAIL_REASON = #{failReason}
           , CRT_DTTM = #{crtDttm}
+          , UPD_ID = #{updId}
       WHERE LOG_ID = #{logId}
    </update>
 

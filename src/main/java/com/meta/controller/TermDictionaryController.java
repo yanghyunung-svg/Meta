@@ -55,7 +55,7 @@ public class TermDictionaryController {
     @ResponseBody
     public ApiResponse<Void> insertTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        ApiResponse outputDto = termDictionaryService.insertData(inputDto);
+        ApiResponse<Void> outputDto = termDictionaryService.insertData(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
@@ -68,10 +68,7 @@ public class TermDictionaryController {
     @ResponseBody
     public ApiResponse<Void> updateTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
-        inputDto.setUpdId(userId);
-        ApiResponse outputDto = termDictionaryService.updateData(inputDto);
+        ApiResponse<Void> outputDto = termDictionaryService.updateData(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/sidebar.js" defer></script>
     <script src="/js/layout.js" defer></script>
-    <script src="/js/config.js"></script>
+    <script src="/js/commonUtils.js"></script>
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
@@ -16,7 +16,7 @@
     <div class="mainContainer" id="mainContainer">
         <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">⊙ 신청내역 조회</h2>
+            <h2 style="margin:0;"> ✅ 신청내역 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
@@ -29,7 +29,7 @@
             <tr>
                 <th>신청자ID</th>
                 <td style="display:flex; align-items:center; gap:4px;">
-                    <input type="text" id="crtId"  name="crtId" class="form-input">
+                    <input type="text" id="userId"  name="userId" class="form-input">
                     <button id="btnPopup" type="button">🔍</button>
                 </td>
                 <th>신청자이름</th>
@@ -124,7 +124,6 @@
                     <td style="text-align: left;">${truncateText(item.expln, 100)}</td>
                     <td style="text-align: center;">${item.crtId}</td>
                     <td style="text-align: center;">${item.crtDttm}</td>
-                    <td style="text-align: center;">${item.id}</td>
                 </tr>
             `).join('');
         }
@@ -191,10 +190,12 @@
 
         // 승인내역처리
         async function approveOne(se, id) {
+            const userId = localStorage.getItem("userId");
+
             const response = await fetch("/meta/prcsAprvDsctn", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ se: se, id: id })
+                body: JSON.stringify({ se: se, id: id, userId: userId })
             });
 
             if (!response.ok) {
@@ -224,7 +225,7 @@
 
 
     function receiveCode(id, nm) {
-        document.getElementById("crtId").value = id;
+        document.getElementById("userId").value = id;
         document.getElementById("userNm").value = nm;
     }
 

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/css/layout.css">
     <script src="/js/sidebar.js" defer></script>
     <script src="/js/layout.js" defer></script>
-    <script src="/js/config.js"></script>
+    <script src="/js/commonUtils.js"></script>
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
@@ -16,7 +16,7 @@
     <div class="mainContainer" id="mainContainer">
         <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">⊙ 공통코드 조회</h2>
+            <h2 style="margin:0;"> ✅ 공통코드 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
@@ -104,9 +104,9 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr>
-                    <td class="clickable" data-id="${item.grpCd}" style="text-align: center;"> ${start + index + 1}</td>
-                    <td class="clickable1"
+                <tr class="row-click" data-id="${item.grpCd}">
+                    <td style="text-align: center;"> ${start + index + 1} </td>
+                    <td class="clickable"
                             data-id="${item.grpCd}"
                             data-grpNm="${item.grpNm}"
                             style="text-align: left;">  ${item.grpCd} </td>
@@ -118,16 +118,16 @@
             `).join('');
 
             /** 상세 클릭  **/
-            tableBody.querySelectorAll(".clickable").forEach(td => {
-                td.addEventListener("click", () => {
-                    const grpCd = td.getAttribute("data-id");
+            document.querySelectorAll(".row-click").forEach(tr => {
+                tr.addEventListener("click", () => {
+                    const grpCd = tr.getAttribute("data-id");
                     const payload = { mode: "S", grpCd: grpCd };
                     openWindowWithJSON(payload, "/meta/codeGroupChg", 700, 550);
                 });
             });
 
             /** 코드상세 클릭 **/
-            tableBody.querySelectorAll(".clickable1").forEach(td => {
+            tableBody.querySelectorAll(".clickable").forEach(td => {
                 td.addEventListener("click", () => {
                     const grpCd = td.getAttribute("data-id");
                     const grpNm = td.getAttribute("data-grpNm");

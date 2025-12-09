@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/config.js"></script>
+    <script src="/js/commonUtils.js"></script>
 </head>
 <body>
 
-<div class="popupnContainer" id="popupnContainer">
+<div class="popupContainer" id="popupContainer">
     <div class="popup-header">
-        <h2 class="popup-title">⊙ 사용자정보 관리</h2>
+        <h2 class="popup-title"> ✅ 사용자정보 관리</h2>
         <div class="button-group" style="display:flex; gap:8px;">
             <button id="btnSave" class="btn">저장</button>
             <button id="btnClose" class="btn">닫기</button>
@@ -102,12 +102,9 @@
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
-            const userId = localStorage.getItem('userId');
-            document.getElementById("updId").value = userId;
 
-            const mainForm = document.getElementById("mainForm");
-
-            const data = formToJson(mainForm);
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
 
             if (!data.userId.trim()) {
                 alert("사용자ID를 입력하세요.");
