@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/layout.js" defer></script>
     <script src="/js/sidebar.js" defer></script>
+    <script src="/js/layout.js" defer></script>
     <script src="/js/commonUtils.js"></script>
     <script src="/js/pagenation.js"></script>
 </head>
@@ -63,6 +63,19 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+
+        const titles = document.querySelectorAll('.menu-title');
+
+        titles.forEach(title => {
+            title.addEventListener('click', function() {
+                this.classList.toggle('folded');
+
+                const subMenu = this.nextElementSibling;
+                if (subMenu && subMenu.classList.contains('sub-menu')) {
+                    subMenu.classList.toggle('folded');
+                }
+            });
+        });
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];

@@ -4,14 +4,11 @@
     function applyRole() {
         const role = localStorage.getItem('role');  // role 가져오기
         const adminMenus = document.querySelectorAll('.ADMIN');  // NodeList
-
         if (!adminMenus || adminMenus.length === 0) return;  // 없으면 종료
-
         adminMenus.forEach(el => {
             el.style.display = (role === "1") ? "block" : "none";  // role=1이면 보이기
         });
-
-        console.debug('Role applied:', role, '| ADMIN 메뉴 갯수:', adminMenus.length);
+        console.log('Role applied:', role, '| ADMIN 메뉴 갯수:', adminMenus.length);
     }
 
     // DOM 준비 시 적용
@@ -32,24 +29,16 @@
     observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
 
- document.addEventListener("DOMContentLoaded", () => {
-     document.querySelectorAll(".menu-title").forEach(title => {
-         title.addEventListener("click", () => {
 
-             const submenu = title.nextElementSibling;  // 바로 아래 sub-menu
-             const arrow = title.querySelector(".arrow");
+ function toggleMenu(element) {
+        // 1. 클릭된 제목 바로 다음에 있는 <ul> 태그(서브 메뉴)를 찾습니다.
+        var subMenu = element.nextElementSibling;
 
-             if (!submenu) return;
+        // 2. 서브 메뉴에 'hide' 클래스를 토글(추가/삭제)합니다.
+        if (subMenu) {
+            subMenu.classList.toggle('hide');
+        }
 
-             submenu.classList.toggle("collapsed");
-
-             if (submenu.classList.contains("collapsed")) {
-                 arrow.textContent = "▲";  // 접힘
-             } else {
-                 arrow.textContent = "▼";  // 펼침
-             }
-         });
-     });
- });
-
-
+        // 3. 제목 자체에도 클래스를 추가하여 화살표 방향을 바꿉니다.
+        element.classList.toggle('collapsed');
+    }

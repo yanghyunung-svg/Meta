@@ -154,12 +154,6 @@
                 alert("에러 발생: " + err);
             });
         });
-
-        /** 상세 팝업 **/
-        document.getElementById('btnReg').addEventListener('click', () => {
-            const payload = { mode: "I" };
-            openWindowWithJSON(payload, "/meta/wordChg", 700, 550);
-        });
     });
 
 
