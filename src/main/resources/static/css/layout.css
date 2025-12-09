@@ -25,10 +25,10 @@ body, html { font-family: 'Malgun Gothic', sans-serif; height: 100%; }
 
 /* 버튼 그룹 */
 .button-group { display: flex; flex-wrap: wrap; gap: 1px; }
-.btn      { padding: 6px 8px; border: 0px solid #333; border-radius: 3px; width: 100px; cursor: pointer; font-size: 12px; white-space: nowrap; background-color: gray; color: white; }
-.btn-row { padding: 6px 8px; border: 0px solid #333; border-radius: 3px; width: 100px; cursor: pointer; font-size: 12px; white-space: nowrap; background-color: gray; color: white; }
-.btn:hover      { background-color: gray; color: yellow; font-weight: bold;}
-.btn-row:hover { background-color: gray; color: yellow; font-weight: bold;}
+.btn      { padding: 6px 8px; border: 0px solid #333; border-radius: 3px; width: 100px; cursor: pointer; font-size: 12px; white-space: nowrap; background-color: black; color: white; }
+.btn-row { padding: 6px 8px; border: 0px solid #333; border-radius: 3px; width: 100px; cursor: pointer; font-size: 12px; white-space: nowrap; background-color: black; color: white; }
+.btn:hover      { background-color: black; color: yellow; font-weight: bold;}
+.btn-row:hover { background-color: black; color: yellow; font-weight: bold;}
 .btn-search { padding: 6px 8px; border:  0px solid #333; border-radius: 3px; cursor: pointer; width: 80px; font-size: 12px; white-space: nowrap; background-color: blue; color: white; }
 
 
@@ -41,7 +41,7 @@ th { background-color: #f4f4f4; }
 
 .dark-code-table { background-color: gray; color: white; border-collapse: collapse; width: 400px; font-size: 12px; }
 .dark-table { background-color: gray; color: white; border-collapse: collapse; width: 100%; font-size: 12px; }
-.dark-table th { background-color: gray; color: white; justify-content: center; align-items: center; }
+.dark-table th { background-color: gray; color: white; justify-content: center; align-items: center; border: 1px solid #555; }
 .dark-table td { border: 1px solid #555; padding: 5px; text-align: center; }
 .dark-table tbody { background-color: white; color: #000; }
 .dark-table tbody tr:nth-child(even) { background-color: #ececec; }

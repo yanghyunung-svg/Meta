@@ -32,6 +32,9 @@ dependencies {
     // MySQL Connector
     runtimeOnly 'mysql:mysql-connector-java:8.0.33'  // 안정 버전 사용
 
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'

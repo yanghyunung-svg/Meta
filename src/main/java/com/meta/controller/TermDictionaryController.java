@@ -73,7 +73,6 @@ public class TermDictionaryController {
         return outputDto;
     }
 
-
     /**
      * @ID : getTermSplitData
      * @NAME : 용어사전 단어 목록 조회
@@ -84,5 +83,6 @@ public class TermDictionaryController {
         log.debug(BizUtils.logInfo("START"));
         return termDictionaryService.getTermSplitData(inputDto);
     }
+
 
 }
