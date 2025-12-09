@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/layout.js" defer></script>
+    <script src="/js/config.js"></script>
+</head>
+<body>
+
+<div id="topbarContainer"></div>
+<div class="container">
+    <div id="sidebarContainer"></div>
+    <div class="mainContainer" id="mainContainer">
+        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <h2 style="margin:0;">⊙ 상세코드 신청</h2>
+            <div class="button-group" style="display:flex; gap:8px;">
+                <button id="btnCheck" class="btn-row">코드검증</button>
+                <button id="btnInit" class="btn">초기화</button>
+                <button id="btnSave"  class="btn">저장</button>
+            </div>
+        </div>
+        <form id="mainForm">
+            <table class="form-table">
+            <tr>
+                <th>공통코드 <span style="color:red">*</span></th>
+                <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" id="grpCd" name="grpCd" class="form-input">
+                    <button id="btnPopup">🔍</button>
+                </td>
+            </tr>
+            <tr>
+                <th>공통코드명 <span style="color:red">*</span></th>
+                <td colspan="2"><input type="text" id="grpNm"  name="grpNm" class="form-input" readonly></td>
+            </tr>
+
+            <tr>
+                <th>상세코드 <span style="color:red">*</span></th>
+                <td colspan="2"> <input type="text" id="cd" name="cd" class="form-input"  required> </td>
+            </tr>
+            <tr>
+                <th>상세코드명 <span style="color:red">*</span></th>
+                <td colspan="2"> <input type="text" id="cdNm" name="cdNm" class="form-input"  required> </td>
+            </tr>
+            <tr>
+                <th>정렬순서</th>
+                <td colspan="2"> <input type="text" id="ord" name="ord" class="form-input"  > </td>
+            </tr>
+            <tr>
+                <th>비고</th>
+                <td colspan="2"> <textarea id="rmk" name="rmk" class="form-input" rows="10" ></textarea> </td>
+            </tr>
+            <tr>
+                <th>사용여부</th>
+                <td colspan="2">
+                    <select id="useYn"  name="useYn" class="form-input">
+                        <option value="Y">사용</option>
+                        <option value="N">미사용</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>최초등록</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
+                    <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+            </tr>
+            <tr>
+                <th>최종변경</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="updId" name="updId" class="form-input" readonly>
+                    <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
+            </tr>
+        </table>
+    </form>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const mainForm = document.getElementById("mainForm");
+        const btnSave = document.getElementById("btnSave");
+
+        const userId = localStorage.getItem('userId');
+        document.getElementById("crtId").value = userId;
+        document.getElementById("updId").value = userId;
+
+        let mode = "I";
+        let originalData = {};
+
+        const checkChanged = () => {
+            const current = formToJson(mainForm);
+            const changed = Object.keys(current).some(
+                key => String(current[key]) !== String(originalData[key])
+            );
+            btnSave.disabled = !changed;
+        };
+
+        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
+            el.addEventListener("input", checkChanged);
+            el.addEventListener("change", checkChanged);
+        });
+
+        btnSave.addEventListener("click", async () => {
+            const data = formToJson(mainForm);
+
+            if (!data.grpCd.trim()) {
+                alert("공통코드를 입력하세요.");
+                mainForm.grpCd.focus();
+                return;
+            }
+            if (!data.cd.trim()) {
+                alert("상세코드를 입력하세요.");
+                mainForm.cd.focus();    // ← 수정됨
+                return;
+            }
+
+            try {
+                let url = "/meta/insertCodeData";
+
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    alert("저장되었습니다.");
+                } else {
+                    alert("오류: " + result.message);
+                }
+
+            } catch (err) {
+                alert("요청 중 오류가 발생했습니다.");
+            }
+        });
+
+
+       document.getElementById('btnCheck').addEventListener('click', async () => {
+            const inData = formToJson(mainForm);
+
+            if (!inData.grpCd.trim()) {
+                alert("공통코드를 입력하세요.");
+                mainForm.grpCd.focus();
+                return;
+            }
+            if (!inData.cd.trim()) {
+                alert("상세코드를 입력하세요.");
+                mainForm.cd.focus();
+                return;
+            }
+            try {
+                const res = await fetch('/meta/getCodeData', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(inData)
+                });
+
+                if (!res.ok) {
+                    throw new Error("서버 응답 오류");
+                    return;
+                }
+                const outData = await res.json();
+                fillForm(mainForm, outData);
+
+            } catch (err) {
+                alert("등록가능 합니다");
+            }
+        });
+
+
+        /** 초기화 **/
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+        });
+
+        document.getElementById('btnPopup').addEventListener('click', () => {
+            window.open("/meta/codeGroupPopup", "상세코드 검색", "width=700,height=500,scrollbars=yes,resizable=yes");
+        });
+    });
+
+    function receiveCode(grpCd, grpNm) {
+        document.getElementById("grpCd").value = grpCd;
+        document.getElementById("grpNm").value = grpNm;
+    }
+</script>
+
+</body>
+</html>
+

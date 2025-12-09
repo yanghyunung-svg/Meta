@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/config.js"></script>
+</head>
+<body>
+
+<div class="popupnContainer" id="popupnContainer">
+    <div class="popup-header">
+        <h2 class="popup-title">⊙ 표준용어 관리</h2>
+        <div class="button-group" style="display:flex; gap:8px;">
+            <button id="btnSave" class="btn">저장</button>
+            <button id="btnClose" class="btn">닫기</button>
+        </div>
+    </div>
+
+    <form id="mainForm">
+        <table class="popup-table">
+            <tr>
+                <th>용어명 <span style="color:red">*</span></th>
+                <td colspan="2"> <input type="text" id="trmNm" name="trmNm" class="form-input" required> </td>
+            </tr>
+            <tr>
+                <th>영문명</th>
+                <td colspan="2"> <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
+            </tr>
+            <tr>
+                <th>도메인명</th>
+                <td colspan="2"> <input type="text" id="dmnNm" name="dmnNm" class="form-input"  > </td>
+            </tr>
+            <tr>
+                <th>설명</th>
+                <td colspan="2"> <textarea id="trmExpln" name="trmExpln" class="form-input" rows="10" ></textarea> </td>
+            </tr>
+            <tr>
+                <th>상태</th>
+                <td colspan="2">
+                    <select id="stat" name="stat" class="form-input">
+                        <option value="0" selected>신청</option>
+                        <option value="1">사용</option>
+                        <option value="9">미사용</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>ID</th>
+                <td colspan="2"> <input type="text" id="id" name="id" class="form-input" readonly> </td>
+            </tr>
+            <tr>
+                <th>최초등록</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
+                    <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+            </tr>
+            <tr>
+                <th>최종변경</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="updId" name="updId" class="form-input" readonly>
+                    <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
+            </tr>
+        </table>
+    </form>
+
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const mainForm = document.getElementById("mainForm");
+        const btnSave = document.getElementById("btnSave");
+
+        // 현재 화면 상태: I(신규), S(상세)
+        let mode = "I";
+        let originalData = {};
+
+         // 🔸 현재 값이 수정되었는지 체크
+          const checkChanged = () => {
+            const current = formToJson(mainForm);
+            const changed = Object.keys(current).some(
+                key => current[key] !== originalData[key]
+            );
+            btnSave.disabled = !changed;
+        };
+
+        // 🔸 입력값 변경 감지 (입력/선택 모두 반응)
+        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
+            el.addEventListener("input", checkChanged);
+            el.addEventListener("change", checkChanged);
+        });
+
+        // 저장 버튼
+        btnSave.addEventListener("click", async () => {
+            const data = formToJson(mainForm);
+
+            if (!data.trmNm.trim()) {
+                alert("용어명을 입력하세요.");
+                mainForm.wordNm.focus();
+                return;
+            }
+            if (!data.engNm.trim()) {
+                alert("영문명을 입력하세요.");
+                mainForm.engAbbrNm.focus();
+                return;
+            }
+
+            try {
+                let url = (mode === "S")
+                    ? "/meta/updateTermData"
+                    : "/meta/insertTermData";
+
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    alert("저장되었습니다.");
+                    window.close();
+                } else {
+                    alert("오류: " + result.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("요청 중 오류가 발생했습니다.");
+            }
+        });
+
+
+        // 부모창에서 데이터 받기
+        window.addEventListener("message", (event) => {
+            if (event.origin !== window.location.origin) return;
+
+            mode = event.data.mode;
+            const sendId  = event.data.id;
+
+            // 상세모드
+            if (mode === "S" && sendId ) {
+                (async () => {
+                    try {
+                        const res = await fetch('/meta/getTermData', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: sendId  })
+                        });
+
+                        const data = await res.json();
+
+                        fillForm(mainForm, data);
+                        // 읽기 전용
+                        document.getElementById("id").readOnly = true;
+                        document.getElementById("trmNm").readOnly = true;
+
+                        const userId = localStorage.getItem('userId');
+                        document.getElementById("updId").value = userId;
+
+                        originalData = data; // 변경감지 기준 등록
+
+                    } catch (err) {
+                        console.error(err);
+                        alert("상세 데이터 조회 중 오류가 발생했습니다.");
+                    }
+                })();
+
+                btnSave.disabled = true;
+
+            } else if (mode === "I") {
+                originalData = formToJson(mainForm);
+                btnSave.disabled = false;
+            }
+        });
+
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
+
+    });
+</script>
+</body>
+</html>

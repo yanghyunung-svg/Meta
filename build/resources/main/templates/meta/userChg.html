@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/config.js"></script>
+</head>
+<body>
+
+<div class="popupnContainer" id="popupnContainer">
+    <div class="popup-header">
+        <h2 class="popup-title">⊙ 사용자정보 관리</h2>
+        <div class="button-group" style="display:flex; gap:8px;">
+            <button id="btnSave" class="btn">저장</button>
+            <button id="btnClose" class="btn">닫기</button>
+        </div>
+    </div>
+
+    <form id="mainForm">
+        <table class="popup-table">
+            <tr>
+                <th>사용자ID <span style="color:red">*</span></th>
+                <td colspan="2"><input type="text" id="userId" name="userId" class="form-input" required></td>
+            </tr>
+            <tr>
+                <th>사용자이름 <span style="color:red">*</span></th>
+                <td colspan="2"><input type="text" id="userNm" name="userNm" class="form-input"  required></td>
+            </tr>
+            <tr>
+                <th>비밀번호</th>
+                <td colspan="2"><input type="password" id="password" name="password" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>이메일</th>
+                <td colspan="2"><input type="text" id="email" name="email" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>전화번호</th>
+                <td colspan="2"><input type="text" id="phone" name="phone" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>권한</th>
+                <td colspan="2">
+                    <select id="role" name="role" class="form-input">
+                        <option value="">선택</option>
+                        <option value="1">ADMIN</option>
+                        <option value="2">USER</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>상태</th>
+                <td colspan="2">
+                    <select id="useYn"  name="useYn" class="form-input">
+                        <option value="">선택</option>
+                        <option value="Y">사용</option>
+                        <option value="N">미사용</option>
+
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>최초등록</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
+                    <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+            </tr>
+            <tr>
+                <th>최종변경</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="updId" name="updId" class="form-input" readonly>
+                    <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
+            </tr>
+        </table>
+    </form>
+
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const mainForm = document.getElementById("mainForm");
+        const btnSave = document.getElementById("btnSave");
+
+        // 현재 화면 상태: I(신규), S(상세)
+        let originalData = {};
+
+         // 🔸 현재 값이 수정되었는지 체크
+          const checkChanged = () => {
+            const current = formToJson(mainForm);
+            const changed = Object.keys(current).some(
+                key => current[key] !== originalData[key]
+            );
+            btnSave.disabled = !changed;
+        };
+
+        // 🔸 입력값 변경 감지 (입력/선택 모두 반응)
+        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
+            el.addEventListener("input", checkChanged);
+            el.addEventListener("change", checkChanged);
+        });
+
+        // 저장 버튼
+        btnSave.addEventListener("click", async () => {
+            const userId = localStorage.getItem('userId');
+            document.getElementById("updId").value = userId;
+
+            const mainForm = document.getElementById("mainForm");
+
+            const data = formToJson(mainForm);
+
+            if (!data.userId.trim()) {
+                alert("사용자ID를 입력하세요.");
+                mainForm.userId.focus();
+                return;
+            }
+            if (!data.userNm.trim()) {
+                alert("사용자명을 입력하세요.");
+                mainForm.userNm.focus();
+                return;
+            }
+            if (!data.password.trim()) {
+                alert("비밀번호를 입력하세요.");
+                mainForm.password.focus();
+                return;
+            }
+
+            try {
+                const res = await fetch("/meta/updateUserData", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    alert("저장되었습니다.");
+                    window.close();
+                } else {
+                    alert("오류: " + result.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("요청 중 오류가 발생했습니다.");
+            }
+        });
+
+
+        // 부모창에서 데이터 받기
+        window.addEventListener("message", (event) => {
+            if (event.origin !== window.location.origin) return;
+
+            const sendId  = event.data.userId;
+
+            // 상세모드
+            if (sendId ) {
+                (async () => {
+                    try {
+                        const res = await fetch('/meta/getUserData', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: sendId  })
+                        });
+
+                        const data = await res.json();
+
+                        fillForm(mainForm, data);
+                        // 읽기 전용
+                        document.getElementById("userId").readOnly = true;
+
+                        originalData = data; // 변경감지 기준 등록
+
+                    } catch (err) {
+                        console.error(err);
+                        alert("상세 데이터 조회 중 오류가 발생했습니다.");
+                    }
+                })();
+
+                btnSave.disabled = true;
+            }
+        });
+
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
+
+    });
+</script>
+</body>
+</html>
