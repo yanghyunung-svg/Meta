@@ -16,6 +16,7 @@ import java.util.List;
 @Mapper
 public interface TbTermDictionaryMapper {
     public TbTermDictionaryDto getData(TbTermDictionaryDto tbTermDictionaryDto);
+    public TbTermDictionaryDto getLockData(TbTermDictionaryDto tbTermDictionaryDto);
     public TbTermDictionaryDto getDataByName(TbTermDictionaryDto tbTermDictionaryDto);
     public List<TbTermDictionaryDto> getListData(TbTermDictionaryDto tbTermDictionaryDto);
     public int insertData(TbTermDictionaryDto tbTermDictionaryDto);

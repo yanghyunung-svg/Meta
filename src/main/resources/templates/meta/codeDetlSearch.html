@@ -14,13 +14,12 @@
 <div class="container">
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
-        <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">상세 코드 검색</h2>
+            <h2 style="margin:0;">⊙ 상세코드 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnReg" class="btn-row">상세코드신청</button>
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSearch" class="btn">조회</button>
             </div>
@@ -113,7 +112,7 @@
         });
 
         /** 테이블 렌더링 **/
-        function renderTable(page) {
+        window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
@@ -142,7 +141,7 @@
                     const grpCdS = tr.getAttribute("data-grp");
                     const cdS = tr.getAttribute("data-cd");
                     const payload = { mode: "S", grpCd: grpCdS, cd: cdS };
-                    openWindowWithJSON(payload, "/meta/codeReg", 700, 600);
+                    openWindowWithJSON(payload, "/meta/codeDetlChg", 700, 600);
                 });
             });
         }
@@ -177,21 +176,13 @@
                 alert("에러 발생: " + err);
             });
         });
-
-        /** 상세 팝업 **/
-        document.getElementById('btnReg').addEventListener('click', () => {
-            const payload = { mode: "I" };
-            openWindowWithJSON(payload, "/meta/codeReg", 700, 600);
-        });
     });
 
     /** 코드검색 팝업 **/
     document.getElementById('btnPopup').addEventListener('click', () => {
         const payload = {};
         openWindowWithJSON(payload, "/meta/codeGroupPopup", 700, 500);
-<!--        window.open("/meta/codeGroupPopup", "상세코드 검색", "width=700,height=500,scrollbars=yes,resizable=yes" );-->
     });
-
 
     function receiveCode(grpCd, grpNm) {
         document.getElementById("grpCd").value = grpCd;

@@ -3,9 +3,10 @@
 <mapper namespace="com.meta.mapper.DashBoardMapper">
     <select id="getListData" parameterType="com.meta.dto.DashBoardDto" resultType="com.meta.dto.DashBoardDto">
 
-        SELECT SE, KOR_NM, ENG_NM, EXPLN, STAT, CRT_ID, CRT_DTTM
+        SELECT SE, ID, KOR_NM, ENG_NM, EXPLN, STAT, CRT_ID, CRT_DTTM
         FROM (
             SELECT  '1'  AS SE
+            , ID
             , TRM_NM  AS KOR_NM
             , ENG_NM  AS ENG_NM
             , TRM_EXPLN AS EXPLN
@@ -21,6 +22,7 @@
             UNION ALL
 
             SELECT  '2'      AS SE
+            , ID
             , WORD_NM  AS KOR_NM
             , ENG_ABBR_NM  AS ENG_NM
             , EXPLN AS EXPLN

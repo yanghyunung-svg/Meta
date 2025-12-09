@@ -81,12 +81,7 @@ public class UserInfoController {
     @ResponseBody
     public ApiResponse<Void> insertUserData(@RequestBody TbUserInfoDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
-        inputDto.setUpdId(userId);
         ApiResponse<Void> outputDto = userInfoService.insertData(inputDto);
-
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
@@ -98,15 +93,10 @@ public class UserInfoController {
     @ResponseBody
     public ApiResponse<Void> updateUserData(@RequestBody TbUserInfoDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setUpdId(userId);
         ApiResponse<Void> outputDto = userInfoService.updateData(inputDto);
-
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
-
 
     /**
      * @ID : getLoginLogList

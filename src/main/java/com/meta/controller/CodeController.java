@@ -55,12 +55,7 @@ public class CodeController {
     @ResponseBody
     public ApiResponse<Void> insertCodeData(@RequestBody TbCodeDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
-        inputDto.setUpdId(userId);
         ApiResponse<Void> outputDto = codeService.insertData(inputDto);
-
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
@@ -72,12 +67,7 @@ public class CodeController {
     @ResponseBody
     public ApiResponse<Void> updateCodeData(@RequestBody TbCodeDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
-        inputDto.setUpdId(userId);
         ApiResponse<Void> outputDto = codeService.updateData(inputDto);
-
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }

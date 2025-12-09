@@ -14,13 +14,12 @@
 <div class="container">
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
-        <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">사용자 정보 검색</h2>
+            <h2 style="margin:0;">⊙ 사용자 정보 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnReg" class="btn-row">사용자등록</button>
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSearch" class="btn">조회</button>
             </div>
@@ -94,7 +93,7 @@
         });
 
         /** 테이블 렌더링 **/
-        function renderTable(page) {
+        window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
@@ -105,25 +104,23 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr>
-                    <td class="clickable" data-id="${item.userId}" style="text-align: center;"> ${start + index + 1}</td>
+                <tr class="row-click" data-id="${item.userId}">
+                    <td style="text-align: center;"> ${start + index + 1} </td>
                     <td style="text-align: left;">${item.userId}</td>
                     <td style="text-align: left;">${item.userNm}</td>
                     <td style="text-align: left;">${item.email}</td>
                     <td style="text-align: left;">${item.phone}</td>
                     <td> ${item.role === '2' ? 'USER' :   item.role === '1' ? 'ADMIN' : '-'} </td>
                     <td> ${item.useYn === 'Y' ? '사용' :   item.useYn === 'N' ? '미사용' : '-'} </td>
-
-
                 </tr>
             `).join('');
 
             /** 상세 클릭  **/
-            tableBody.querySelectorAll(".clickable").forEach(td => {
-                td.addEventListener("click", () => {
-                    const id = td.getAttribute("data-id");
+            document.querySelectorAll(".row-click").forEach(tr => {
+                tr.addEventListener("click", () => {
+                    const id = tr.getAttribute("data-id");
                     const payload = { mode: "S", userId: id };
-                    openWindowWithJSON(payload, "/meta/userReg", 700, 450);
+                    openWindowWithJSON(payload, "/meta/userChg", 700, 450);
                 });
             });
         }
@@ -158,12 +155,6 @@
             .catch(err => {
                 alert("에러 발생: " + err);
             });
-        });
-
-        /** 상세 팝업 **/
-        document.getElementById('btnReg').addEventListener('click', () => {
-            const payload = { mode: "I" };
-            openWindowWithJSON(payload, "/meta/userReg", 700, 450);
         });
     });
 

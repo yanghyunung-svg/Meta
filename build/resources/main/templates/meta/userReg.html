@@ -4,27 +4,33 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/layout.js" defer></script>
     <script src="/js/config.js"></script>
 </head>
 <body>
 
-<div class="popupnContainer" id="popupnContainer">
-    <div class="popup-header">
-        <h2 class="popup-title">사용자 관리</h2>
-        <div class="button-group" style="display:flex; gap:8px;">
-            <button id="btnSave" class="btn">저장</button>
-            <button id="btnClose" class="btn">닫기</button>
-        </div>
-    </div>
+<div id="topbarContainer"></div>
+<div class="container">
+    <div id="sidebarContainer"></div>
+    <div class="mainContainer" id="mainContainer">
 
-    <form id="mainForm">
-        <table class="popup-table">
+        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <h2 style="margin:0;">⊙ 사용자정보 등록</h2>
+            <div class="button-group" style="display:flex; gap:8px;">
+                <button id="btnInq" class="btn-row">사용자검증</button>
+                <button id="btnInit" class="btn">초기화</button>
+                <button id="btnSave"  class="btn">저장</button>
+            </div>
+        </div>
+
+        <form id="mainForm">
+            <table class="form-table">
             <tr>
-                <th>사용자ID</th>
+                <th>사용자ID <span style="color:red">*</span></th>
                 <td colspan="2"><input type="text" id="userId" name="userId" class="form-input" required></td>
             </tr>
             <tr>
-                <th>사용자이름</th>
+                <th>사용자이름 <span style="color:red">*</span></th>
                 <td colspan="2"><input type="text" id="userNm" name="userNm" class="form-input"  required></td>
             </tr>
             <tr>
@@ -74,39 +80,25 @@
             </tr>
         </table>
     </form>
-
+    </div>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
+        const userId = localStorage.getItem('userId');
+        document.getElementById("crtId").value = userId;
+        document.getElementById("updId").value = userId;
+
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
 
-        // 현재 화면 상태: I(신규), S(상세)
-        let mode = "I";
-        let originalData = {};
-
-         // 🔸 현재 값이 수정되었는지 체크
-          const checkChanged = () => {
-            const current = formToJson(mainForm);
-            const changed = Object.keys(current).some(
-                key => current[key] !== originalData[key]
-            );
-            btnSave.disabled = !changed;
-        };
-
-        // 🔸 입력값 변경 감지 (입력/선택 모두 반응)
-        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
-            el.addEventListener("input", checkChanged);
-            el.addEventListener("change", checkChanged);
-        });
-
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
+
             const data = formToJson(mainForm);
 
             if (!data.userId.trim()) {
-                alert("사용자IDF를 입력하세요.");
+                alert("사용자ID를 입력하세요.");
                 mainForm.userId.focus();
                 return;
             }
@@ -122,9 +114,7 @@
             }
 
             try {
-                let url = (mode === "S")
-                    ? "/meta/updateUserData"
-                    : "/meta/insertUserData";
+                let url =  "/meta/insertUserData" ;
 
                 const res = await fetch(url, {
                     method: "POST",
@@ -136,7 +126,6 @@
 
                 if (result.success) {
                     alert("저장되었습니다.");
-                    window.close();
                 } else {
                     alert("오류: " + result.message);
                 }
@@ -147,49 +136,48 @@
             }
         });
 
+       document.getElementById('btnInq').addEventListener('click', async () => {
+            const inData = formToJson(mainForm);
 
-        // 부모창에서 데이터 받기
-        window.addEventListener("message", (event) => {
-            if (event.origin !== window.location.origin) return;
+            if (!inData.userId.trim()) {
+                alert("사용자ID를 입력하세요.");
+                mainForm.userId.focus();
+                return;
+            }
+            try {
+                const res = await fetch('/meta/getUserData', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(inData)
+                });
 
-            mode = event.data.mode;
-            const sendId  = event.data.userId;
+                if (!res.ok) {
+                    throw new Error("서버 응답 오류");
+                    return;
+                }
+                const outData = await res.json();
+                fillForm(mainForm, outData);
 
-            // 상세모드
-            if (mode === "S" && sendId ) {
-                (async () => {
-                    try {
-                        const res = await fetch('/meta/getUserData', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId: sendId  })
-                        });
-
-                        const data = await res.json();
-
-                        fillForm(mainForm, data);
-                        // 읽기 전용
-                        document.getElementById("userId").readOnly = true;
-
-                        originalData = data; // 변경감지 기준 등록
-
-                    } catch (err) {
-                        console.error(err);
-                        alert("상세 데이터 조회 중 오류가 발생했습니다.");
-                    }
-                })();
-
-                btnSave.disabled = true;
-
-            } else if (mode === "I") {
-                originalData = formToJson(mainForm);
-                btnSave.disabled = false;
+            } catch (err) {
+                console.error(err);
+                alert("상세 데이터 조회 중 오류가 발생했습니다.");
             }
         });
 
-        document.getElementById("btnClose").addEventListener("click", () => {
-            window.close();
+
+        /** 초기화 **/
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
         });
+
+        // Enter 키 이벤트
+        document.getElementById('mainForm').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 폼 제출 방지
+                document.getElementById('btnInq').click();
+            }
+        });
+
 
     });
 </script>

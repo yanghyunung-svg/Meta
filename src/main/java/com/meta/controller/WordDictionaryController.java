@@ -1,5 +1,6 @@
 package com.meta.controller;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbWordDictionaryDto;
@@ -44,7 +45,12 @@ public class WordDictionaryController {
     @ResponseBody
     public TbWordDictionaryDto getWordData(@RequestBody TbWordDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-        return wordDictionaryService.getData(inputDto);
+        if (StringUtil.notNullNorEmpty(inputDto.getWordNm())) {
+            return wordDictionaryService.getDataByName(inputDto);
+        }
+        else  {
+            return wordDictionaryService.getData(inputDto);
+        }
     }
 
     /**
@@ -55,13 +61,7 @@ public class WordDictionaryController {
     @ResponseBody
     public ApiResponse<Void> insertWordData(@RequestBody TbWordDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
-        inputDto.setUpdId(userId);
-
         ApiResponse<Void> outputDto = wordDictionaryService.insertData(inputDto);
-
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
@@ -74,13 +74,7 @@ public class WordDictionaryController {
     @ResponseBody
     public ApiResponse<Void> updateWordData(@RequestBody TbWordDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
-        inputDto.setUpdId(userId);
-
         ApiResponse<Void> outputDto = wordDictionaryService.updateData(inputDto);
-
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }

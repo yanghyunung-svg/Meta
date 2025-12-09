@@ -14,14 +14,12 @@
 <div class="container">
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
-        <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">표준 용어 검색</h2>
+            <h2 style="margin:0;">⊙ 표준용어 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnReg" class="btn-row">일반용어신청</button>
-                <button id="btnRegTerm" class="btn-row">전문용어신청</button>
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSearch" class="btn">조회</button>
             </div>
@@ -68,109 +66,95 @@
 
 <script>
 
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
+    let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+    let dataAll = [];
+    let currentPage = 1;
+    window.tableBody = document.querySelector('.dark-table tbody');
 
-        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
-        let dataAll = [];
-        let currentPage = 1;
-        window.tableBody = document.querySelector('.dark-table tbody');
+    // 페이지 탑바 container에 include
+    const container = document.getElementById("pageTopBarContainer");
+    if (!container) return;
 
-        // 페이지 탑바 container에 include
-        const container = document.getElementById("pageTopBarContainer");
-        if (!container) return;
-
-        fetch('/common/pageSize.html')
-        .then(res => res.text())
-        .then(html => {
-            container.innerHTML = html;
-            const pageSizeSelect = document.getElementById("pageSize");
-            if (!pageSizeSelect) return;
-            pageSizeSelect.addEventListener("change", () => {
-                PAGE_SIZE = Number(pageSizeSelect.value);
-                currentPage = 1;
-                renderTable(currentPage);
-                renderPagination(dataAll, currentPage, PAGE_SIZE);
-                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-            });
-        });
-
-        /** 테이블 렌더링 **/
-        function renderTable(page) {
-            if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
-                return;
-            }
-
-            const start = (page - 1) * PAGE_SIZE;
-            const end = start + PAGE_SIZE;
-            const pageData = dataAll.slice(start, end);
-
-            tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-id="${item.id}">
-                    <td style="text-align: center;"> ${start + index + 1} </td>
-                    <td style="text-align: left;">${item.trmNm}</td>
-                    <td style="text-align: left;">${item.engNm}</td>
-                    <td style="text-align: left;">${truncateText(item.trmExpln, 100)}</td>
-                    <td style="text-align: left;">${item.dmnNm}</td>
-                    <td style="text-align: center;"> ${item.stat === '0' ? '신청' : item.stat === '1' ? '사용' : item.stat === '9' ? '미사용' : ''} </td>
-                </tr>
-            `).join('');
-
-            /** 상세 클릭  **/
-            document.querySelectorAll(".row-click").forEach(tr => {
-                tr.addEventListener("click", () => {
-                    const id = tr.getAttribute("data-id");
-                    const payload = { mode: "S", id: id };
-                    openWindowWithJSON(payload, "/meta/termRegTlgm", 700, 550);
-                });
-            });
-        }
-
-        /** 초기화 **/
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
-            tableBody.innerHTML = "";
-            document.getElementById('pageInfo').innerText = "";
-            dataAll = [];
-            const old = document.querySelector(".pagination");
-            if (old) old.remove();
-        });
-
-        /** 검색 **/
-        document.getElementById('btnSearch').addEventListener('click', () => {
-            const data = formToJson(document.getElementById('mainForm'));
-            fetch('/meta/getTermListData', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(res => res.json())
-            .then(data => {
-                dataAll = Array.isArray(data) ? data : [];
-                currentPage = 1;
-                renderTable(currentPage);
-                renderPagination(dataAll, currentPage, PAGE_SIZE);
-                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-            })
-            .catch(err => {
-                alert("에러 발생: " + err);
-            });
-        });
-
-        /** 일반용어신청 **/
-        document.getElementById('btnReg').addEventListener('click', () => {
-            const payload = { mode: "I" };
-            openWindowWithJSON(payload, "/meta/termReg", 700, 550);
-        });
-
-        /** 전문용어신청 **/
-        document.getElementById('btnRegTerm').addEventListener('click', () => {
-            const payload = { mode: "T" };
-            openWindowWithJSON(payload, "/meta/termRegTlgm", 700, 550);
+    fetch('/common/pageSize.html')
+    .then(res => res.text())
+    .then(html => {
+        container.innerHTML = html;
+        const pageSizeSelect = document.getElementById("pageSize");
+        if (!pageSizeSelect) return;
+        pageSizeSelect.addEventListener("change", () => {
+            PAGE_SIZE = Number(pageSizeSelect.value);
+            currentPage = 1;
+            renderTable(currentPage);
+            renderPagination(dataAll, currentPage, PAGE_SIZE);
+            updatePageInfo(dataAll, currentPage, PAGE_SIZE);
         });
     });
 
-</script>
+    window.renderTable = function(page)  {
+        if (!Array.isArray(dataAll) || dataAll.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+            return;
+        }
 
+        const start = (page - 1) * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+        const pageData = dataAll.slice(start, end);
+
+        tableBody.innerHTML = pageData.map((item, index) => `
+            <tr class="row-click" data-id="${item.id}">
+                <td style="text-align: center;"> ${start + index + 1} </td>
+                <td style="text-align: left;">${item.trmNm}</td>
+                <td style="text-align: left;">${item.engNm}</td>
+                <td style="text-align: left;">${truncateText(item.trmExpln, 100)}</td>
+                <td style="text-align: left;">${item.dmnNm}</td>
+                <td style="text-align: center;"> ${item.stat === '0' ? '신청' : item.stat === '1' ? '사용' : item.stat === '9' ? '미사용' : ''} </td>
+            </tr>
+        `).join('');
+
+        /** 상세 클릭  **/
+        document.querySelectorAll(".row-click").forEach(tr => {
+            tr.addEventListener("click", () => {
+                const id = tr.getAttribute("data-id");
+                const payload = { mode: "S", id: id };
+                openWindowWithJSON(payload, "/meta/termChg", 700, 550);
+            });
+        });
+    }
+
+    /** 검색 **/
+    document.getElementById('btnSearch').addEventListener('click', () => {
+        const data = formToJson(document.getElementById('mainForm'));
+        fetch('/meta/getTermListData', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(data => {
+            dataAll = Array.isArray(data) ? data : [];
+            currentPage = 1;
+            renderTable(currentPage);
+            renderPagination(dataAll, currentPage, PAGE_SIZE);
+            updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+        })
+        .catch(err => {
+            alert("에러 발생: " + err);
+        });
+    });
+
+    /** 초기화 **/
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        tableBody.innerHTML = "";
+        document.getElementById('pageInfo').innerText = "";
+        dataAll = [];
+        const old = document.querySelector(".pagination");
+        if (old) old.remove();
+    });
+
+});
+
+</script>
 </body>
 </html>

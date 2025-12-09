@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 
@@ -45,8 +46,10 @@ public class UserInfoService {
      * desc     : 사용자정보 상세 조회
      */
     public TbUserInfoDto getData(TbUserInfoDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        return tbUserInfoMapper.getData(inputDto);
+        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
+        TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
+        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
+        return outputDto;
     }
     /**
      * method   : insertData
@@ -85,7 +88,7 @@ public class UserInfoService {
      * desc     : 사용자정보 변경
      */
     public ApiResponse<Void> updateData(TbUserInfoDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
+        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
 
         try {
             TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
@@ -124,24 +127,37 @@ public class UserInfoService {
             tbLoginLogDto.setUserId(inputDto.getUserId());
             tbLoginLogDto.setIpAddr(inputDto.getIpAddr());
             tbLoginLogDto.setUserAgent(inputDto.getUserAgent());
+            tbLoginLogDto.setLoginResult("1");
 
             // 사용자 조회
             TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
             if (outputDto == null) {
-                tbLoginLogDto.setLoginResult("1");
                 tbLoginLogDto.setFailReason("사용자가 없습니다.");
                 this.insertLoginLog(tbLoginLogDto);
-                return new ApiResponse<>(false, "사용자가 없습니다.");
+                return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
             }
+
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String rawPassword = inputDto.getPassword();
             String dbPw = outputDto.getPassword();
             // 비밀번호 검증
             if (!encoder.matches(rawPassword, dbPw)) {
-                tbLoginLogDto.setLoginResult("1");
                 tbLoginLogDto.setFailReason("비밀번호 오류");
                 this.insertLoginLog(tbLoginLogDto);
-                return new ApiResponse<>(false, "비밀번호 오류");
+                return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
+            }
+
+            // 사용여부 검증
+            if (StringUtils.equals(outputDto.getUseYn(), "0")) {
+                tbLoginLogDto.setFailReason("시스템사용 미승인");
+                this.insertLoginLog(tbLoginLogDto);
+                return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
+            }
+
+            if (StringUtils.equals(outputDto.getUseYn(), "N")) {
+                tbLoginLogDto.setFailReason("시스템사용 불가");
+                this.insertLoginLog(tbLoginLogDto);
+                return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
             }
 
             tbLoginLogDto.setLoginResult("0");

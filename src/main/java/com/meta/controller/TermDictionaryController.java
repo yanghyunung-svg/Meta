@@ -53,11 +53,8 @@ public class TermDictionaryController {
      */
     @PostMapping("/insertTermData")
     @ResponseBody
-    public ApiResponse insertTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> insertTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
-        inputDto.setUpdId(userId);
         ApiResponse outputDto = termDictionaryService.insertData(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
@@ -69,7 +66,7 @@ public class TermDictionaryController {
      */
     @PostMapping("/updateTermData")
     @ResponseBody
-    public ApiResponse updateTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> updateTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
         String userId = (String) session.getAttribute("userId");
         inputDto.setCrtId(userId);

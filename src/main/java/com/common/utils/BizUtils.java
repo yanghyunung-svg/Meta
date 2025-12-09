@@ -96,12 +96,11 @@ public class BizUtils {
     public static String logInfo() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         StackTraceElement caller = stackTrace[2]; // 호출한 메서드의 정보
-
         String fullClassName  = caller.getClassName();   // 클래스 이름
         String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);  // 클래스 이름
         String methodName = caller.getMethodName(); // 메서드 이름
         int lineNumber = caller.getLineNumber();
-        return String.format("✅●●●●● %s.%s [%d]", className, methodName, lineNumber);
+        return String.format("[03%d] ✅●●●●● %s", lineNumber, methodName);
     }
 
     public static String logInfo(String str) {
@@ -112,7 +111,7 @@ public class BizUtils {
         String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);  // 클래스 이름
         String methodName = caller.getMethodName(); // 메서드 이름
         int lineNumber = caller.getLineNumber();
-        return String.format("✅●●●●● %s.%s [%d] : %s", className, methodName, lineNumber, str);
+        return String.format("[%03d] ✅●●●●● %s : %s", lineNumber, methodName, str);
     }
 
     public static String logInfo(String ke,  String va) {
@@ -123,36 +122,24 @@ public class BizUtils {
         String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);  // 클래스 이름
         String methodName = caller.getMethodName(); // 메서드 이름
         int lineNumber = caller.getLineNumber();
-        return String.format("✅●●●●● %s.%s [%d] : %s = [%s]", className, methodName, lineNumber, ke, va);
+        return String.format("[%03d] ✅●●●●● %s : %s = [%s]", lineNumber, methodName, ke, va);
     }
 
-
     public static String getClientIp(HttpServletRequest request) {
-
         String ip = request.getHeader("X-Forwarded-For");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-            return ip.split(",")[0].trim();
-        }
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip.split(",")[0].trim(); }
 
         ip = request.getHeader("Proxy-Client-IP");
-        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
-            return ip;
-        }
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip; }
 
         ip = request.getHeader("WL-Proxy-Client-IP");
-        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
-            return ip;
-        }
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip; }
 
         ip = request.getHeader("HTTP_CLIENT_IP");
-        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
-            return ip;
-        }
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip; }
 
         ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
-            return ip;
-        }
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip; }
 
         return request.getRemoteAddr(); // 마지막 fallback
     }

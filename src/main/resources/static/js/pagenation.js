@@ -1,5 +1,4 @@
 
-
         /** 페이지 정보 표시 **/
         function updatePageInfo(dataAll, currentPage, page_size) {
             const totalCount = dataAll.length;
@@ -7,53 +6,81 @@
             document.getElementById("pageInfo").innerText =
                 `전체 ${totalCount}건 | ${currentPage} / ${totalPage} 페이지`;
         }
+/** 페이지네이션: 페이지번호 10개 고정 **/
+function renderPagination(dataAll, currentPage, page_size) {
+    const totalPage = Math.ceil(dataAll.length / page_size);
+    if (totalPage === 0) return;
 
-        /** 페이지네이션 **/
-        function renderPagination(dataAll, currentPage, page_size) {
-            const totalPage = Math.ceil(dataAll.length / page_size);
-            if (totalPage === 0) return;
-            let html = `<div class="pagination" style="margin-top:15px;text-align:center;">`;
-            html += `<button class="page-btn-nav" data-page="first" style="margin:0 4px;">«</button>`;
-            html += `<button class="page-btn-nav" data-page="prev" style="margin:0 4px;">‹</button>`;
-            const range = window.CONFIG.PAGE_RANGE;
-            let start = Math.max(1, currentPage - range);
-            let end = Math.min(totalPage, currentPage + range);
+    // ✔ 10개 단위 페이징
+    const blockIndex = Math.floor((currentPage - 1) / 10);
+    let start = blockIndex * 10 + 1;
+    let end = start + 9;
+    end = Math.min(end, totalPage);
 
-            for (let i = start; i <= end; i++) {
-                html += `
-                    <button class="page-btn"
-                        data-page="${i}"
-                        style="${i === currentPage ? 'background:#1f2937; color:white;' : ''}">
-                        ${i}
-                    </button>
-                `;
-            }
-            html += `<button class="page-btn-nav" data-page="next" style="margin:0 4px;">›</button>`;
-            html += `<button class="page-btn-nav" data-page="last" style="margin:0 4px;">»</button>`;
-            html += `</div>`;
-            const oldNav = document.querySelector(".pagination");
-            if (oldNav) oldNav.remove();
-            tableBody.parentElement.insertAdjacentHTML("afterend", html);
+    const container = document.createElement("div");
+    container.className = "pagination";
+    container.style.cssText = "margin-top:15px;text-align:center;";
 
-            document.querySelectorAll(".page-btn").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    currentPage = Number(btn.dataset.page);
-                    renderTable(currentPage);
-                    renderPagination(dataAll, currentPage, PAGE_SIZE);
-                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-                });
-            });
+    // 첫/이전
+    container.appendChild(makeNavBtn("first", "«", currentPage === 1));
+    container.appendChild(makeNavBtn("prev", "‹", currentPage === 1));
 
-            document.querySelectorAll(".page-btn-nav").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const type = btn.dataset.page;
-                    if (type === "first") currentPage = 1;
-                    else if (type === "prev") currentPage = Math.max(1, currentPage - 1);
-                    else if (type === "next") currentPage = Math.min(totalPage, currentPage + 1);
-                    else if (type === "last") currentPage = totalPage;
-                    renderTable(currentPage);
-                    renderPagination(dataAll, currentPage, PAGE_SIZE);
-                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-                });
-            });
+    // ✔ 10개 고정 페이징 번호 출력
+    for (let i = start; i <= end; i++) {
+        const btn = document.createElement("button");
+        btn.className = "page-btn";
+        btn.dataset.page = i;
+        btn.textContent = i;
+
+        if (i === currentPage) {
+            btn.style.background = "#1f2937";
+            btn.style.color = "white";
         }
+
+        btn.addEventListener("click", () => {
+            currentPage = i;
+            renderTable(currentPage);
+            renderPagination(dataAll, currentPage, page_size);
+            updatePageInfo(dataAll, currentPage, page_size);
+        });
+
+        container.appendChild(btn);
+    }
+
+    // 다음/마지막
+    container.appendChild(makeNavBtn("next", "›", currentPage === totalPage));
+    container.appendChild(makeNavBtn("last", "»", currentPage === totalPage));
+
+    // 기존 pagination 교체
+    const oldNav = document.querySelector(".pagination");
+    if (oldNav) oldNav.replaceWith(container);
+    else tableBody.parentElement.insertAdjacentElement("afterend", container);
+
+
+    /** navigation 버튼 생성 **/
+    function makeNavBtn(type, label, disabled) {
+        const btn = document.createElement("button");
+        btn.className = "page-btn-nav";
+        btn.dataset.page = type;
+        btn.textContent = label;
+        btn.style.margin = "0 4px";
+
+        if (disabled) {
+            btn.disabled = true;
+            btn.style.opacity = "0.4";
+        }
+
+        btn.addEventListener("click", () => {
+            if (type === "first") currentPage = 1;
+            else if (type === "prev") currentPage = Math.max(1, currentPage - 1);
+            else if (type === "next") currentPage = Math.min(totalPage, currentPage + 1);
+            else if (type === "last") currentPage = totalPage;
+
+            renderTable(currentPage);
+            renderPagination(dataAll, currentPage, page_size);
+            updatePageInfo(dataAll, currentPage, page_size);
+        });
+
+        return btn;
+    }
+}

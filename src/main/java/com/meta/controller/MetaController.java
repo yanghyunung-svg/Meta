@@ -21,60 +21,47 @@ public class MetaController {
     /* 사용자 */
     @GetMapping("/userSearch")
     public String userSearchView() {  return "meta/userSearch";  }
-
+    @GetMapping("/userReg")
+    public String userRegView() {   return "meta/userReg";  }
+    @GetMapping("/userChg")
+    public String userChgView() {   return "meta/userChg";  }
     @GetMapping("/userPopup")
     public String userPopupView() {  return "meta/userPopup";  }
 
-    @GetMapping("/userReg")
-    public String userRegView() {   return "meta/userReg";  }
-
-    /* dashboard */
-    @GetMapping("/dashboard")
-    public String dashboardView(Model model) { return "meta/dashboard"; }
-    @GetMapping("/aplyDsctnInq")
-    public String aplyDsctnInqView(Model model) { return "meta/aplyDsctnInq"; }
-
     /* 용어 */
     @GetMapping("/termSearch")
-    public String getTermSearchView() { return "meta/termSearch"; }
+    public String termSearchView() { return "meta/termSearch"; }
     @GetMapping("/termReg")
-    public String getTermRegView() { return "meta/termReg"; }
-    @GetMapping("/termRegTlgm")
-    public String getTermRegTlgmView() { return "meta/termRegTlgm"; }
+    public String termRegView() { return "meta/termReg"; }
+    @GetMapping("/termChg")
+    public String termChgView() { return "meta/termChg"; }
 
     /* 단어 */
     @GetMapping("/wordSearch")
-    public String getWordSearchView() { return "meta/wordSearch"; }
+    public String wordSearchView() { return "meta/wordSearch"; }
     @GetMapping("/wordReg")
-    public String getWordRegView() { return "meta/wordReg"; }
+    public String wordRegView() { return "meta/wordReg"; }
+    @GetMapping("/wordChg")
+    public String wordChgView() { return "meta/wordChg"; }
 
     /* Code Group */
     @GetMapping("/codeGroupSearch")
-    public String getCodeGroupSearchView() { return "meta/codeGroupSearch"; }
+    public String codeGroupSearchView() { return "meta/codeGroupSearch"; }
     @GetMapping("/codeGroupReg")
-    public String getCodeGroupRegView() { return "meta/codeGroupReg"; }
+    public String codeGroupRegView() { return "meta/codeGroupReg"; }
+    @GetMapping("/codeGroupChg")
+    public String codeGroupChgView() { return "meta/codeGroupChg"; }
     @GetMapping("/codeGroupPopup")
-    public String getCodeGroupPopupView() { return "meta/codeGroupPopup"; }
+    public String codeGroupPopupView() { return "meta/codeGroupPopup"; }
 
     /* Code */
-    @GetMapping("/codeSearch")
-    public String getCodeSearchView() { return "meta/codeSearch"; }
-    @GetMapping("/codeSearchPopup")
-    public String getCodeSearchPopupView() { return "meta/codeSearchPopup"; }
-    @GetMapping("/codeReg")
-    public String getCodeRegView() { return "meta/codeReg"; }
-
-    /* 테이블 */
-    @GetMapping("/tableSearch")
-    public String getTableSearchView() { return "meta/tableSearch"; }
-    @GetMapping("/tableReg")
-    public String getTableRegView() { return "meta/tableReg"; }
-
-    /* 컬럼 */
-    @GetMapping("/columnSearch")
-    public String getColumnSearchView() { return "meta/columnSearch"; }
-    @GetMapping("/columnReg")
-    public String getcolumnRegView() { return "meta/columnReg"; }
-
+    @GetMapping("/codeDetlSearch")
+    public String codeDetlSearchView() { return "meta/codeDetlSearch"; }
+    @GetMapping("/codeDetlReg")
+    public String codeDetlRegView() { return "meta/codeDetlReg"; }
+    @GetMapping("/codeDetlChg")
+    public String codeDetlChgView() { return "meta/codeDetlChg"; }
+    @GetMapping("/codeDetlPopup")
+    public String codeDetlPopupView() { return "meta/codeDetlPopup"; }
 
 }

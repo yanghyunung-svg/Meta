@@ -37,8 +37,26 @@
     </select>
 
     <insert id="insertData" parameterType="com.meta.dto.TbTermDictionaryDto">
-        INSERT INTO tb_term_dictionary (TRM_NM, TRM_EXPLN, ENG_NM, DMN_NM, STAT, CRT_ID, UPD_ID)
-        VALUES (#{trmNm}, #{engNm}, #{trmExpln}, #{dmnNm},  #{stat},  #{crtId},  #{updId})
+        INSERT INTO tb_term_dictionary
+        (
+            TRM_NM,
+            ENG_NM,
+            TRM_EXPLN,
+            DMN_NM,
+            STAT,
+            CRT_ID,
+            UPD_ID
+        )
+        VALUES
+        (
+            #{trmNm},
+            #{engNm},
+            #{trmExpln},
+            #{dmnNm},
+            #{stat},
+            #{crtId},
+            #{updId}
+        )
     </insert>
 
     <!--tb_term_dictionary UPDATE-->
@@ -52,5 +70,13 @@
         WHERE ID = #{id}
     </update>
 
+    <select id="getLockData" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="com.meta.dto.TbTermDictionaryDto">
+        SELECT ID , TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM tb_term_dictionary
+        WHERE ID = #{id}
+          FOR UPDATE
+    </select>
 
 </mapper>

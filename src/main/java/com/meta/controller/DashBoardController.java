@@ -9,10 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +23,13 @@ public class DashBoardController {
     private DashBoardService dashBoardService;
 
     /**
+     * @ID : dashboardView
+     * @NAME : DashBoard PAGE
+     */
+    @GetMapping("/dashboard")
+    public String dashboardView(Model model) { return "meta/dashboard"; }
+
+    /**
      * @ID : getDashBoardListData
      * @NAME : DashBoard 조회
      */
@@ -32,14 +37,9 @@ public class DashBoardController {
     @ResponseBody
     public List<DashBoardDto> getDashBoardList(@RequestBody DashBoardDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-
-//        String userId = (String) session.getAttribute("userId");
-//        inputDto.setCrtId(userId);
         inputDto.setStat("0");
-
         List<DashBoardDto> outputDto =  dashBoardService.getListData(inputDto);
         log.debug(BizUtils.logInfo("END"));
-
         return outputDto;
     }
 
@@ -51,7 +51,9 @@ public class DashBoardController {
     @ResponseBody
     public DashBoardDto getDashBoardData(@RequestBody DashBoardDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-        return dashBoardService.getData(inputDto);
+        DashBoardDto outputDto = dashBoardService.getData(inputDto);
+        log.debug(BizUtils.logInfo("END"));
+        return outputDto;
     }
 
 }

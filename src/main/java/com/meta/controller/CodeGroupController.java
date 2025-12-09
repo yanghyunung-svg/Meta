@@ -55,12 +55,7 @@ public class CodeGroupController {
     @ResponseBody
     public ApiResponse<Void> insertCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
-        inputDto.setUpdId(userId);
         ApiResponse<Void> outputDto = codeGroupService.insertData(inputDto);
-
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
@@ -72,12 +67,7 @@ public class CodeGroupController {
     @ResponseBody
     public ApiResponse<Void> updateCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-
-        String userId = (String) session.getAttribute("userId");
-        inputDto.setCrtId(userId);
-        inputDto.setUpdId(userId);
         ApiResponse<Void> outputDto = codeGroupService.updateData(inputDto);
-
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }

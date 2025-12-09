@@ -10,7 +10,7 @@
 
 <div class="popupnContainer" id="popupnContainer">
     <div class="popup-header">
-        <h2 class="popup-title">전문 용어</h2>
+        <h2 class="popup-title">⊙ 표준단어 관리</h2>
         <div class="button-group" style="display:flex; gap:8px;">
             <button id="btnSave" class="btn">저장</button>
             <button id="btnClose" class="btn">닫기</button>
@@ -18,51 +18,51 @@
     </div>
 
     <form id="mainForm">
-        <table class="popup-table">
-            <tr>
-                <th>용어명</th>
-                <td colspan="2"> <input type="text" id="trmNm" name="trmNm" class="form-input" required> </td>
-            </tr>
-            <tr>
-                <th>영문명</th>
-                <td colspan="2"> <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
-            </tr>
-            <tr>
-                <th>도메인명</th>
-                <td colspan="2"> <input type="text" id="dmnNm" name="dmnNm" class="form-input"  > </td>
-            </tr>
-            <tr>
-                <th>설명</th>
-                <td colspan="2"> <textarea id="trmExpln" name="trmExpln" class="form-input" rows="10" ></textarea> </td>
-            </tr>
-            <tr>
-                <th>상태</th>
-                <td colspan="2">
-                    <select id="stat" name="stat" class="form-input">
-                        <option value="0" selected>신청</option>
-                        <option value="1">사용</option>
-                        <option value="9">미사용</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th>ID</th>
-                <td colspan="2"> <input type="text" id="id" name="id" class="form-input" readonly> </td>
-            </tr>
-            <tr>
-                <th>최초등록</th>
-                <td style="display:flex; gap:5px;">
-                    <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
-                    <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
-            </tr>
-            <tr>
-                <th>최종변경</th>
-                <td style="display:flex; gap:5px;">
-                    <input type="text" id="updId" name="updId" class="form-input" readonly>
-                     <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
-            </tr>
-        </table>
-    </form>
+    <table class="popup-table">
+        <tr>
+            <th>단어명 <span style="color:red">*</span></th>
+            <td colspan="2"><input type="text" id="wordNm" name="wordNm" class="form-input" required> </td>
+        </tr>
+        <tr>
+            <th>영문약어명 <span style="color:red">*</span></th>
+            <td colspan="2"> <input type="text" id="engAbbrNm" name="engAbbrNm" class="form-input"  required> </td>
+        </tr>
+        <tr>
+            <th>영문명</th>
+            <td colspan="2"><input type="text" id="engNm" name="engNm" class="form-input"  > </td>
+        </tr>
+        <tr>
+            <th>설명</th>
+            <td colspan="2"> <textarea id="expln" name="expln" class="form-input" rows="10" ></textarea> </td>
+        </tr>
+        <tr>
+            <th>상태</th>
+            <td colspan="2">
+                <select id="stat"  name="stat" class="form-input">
+                    <option value="0" selected>신청</option>
+                    <option value="1">사용</option>
+                    <option value="9">미사용</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <td colspan="2"> <input type="text" id="id" name="id" class="form-input" readonly> </td>
+        </tr>
+        <tr>
+            <th>최초등록</th>
+            <td style="display:flex; gap:5px;">
+                <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
+                <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+        </tr>
+        <tr>
+            <th>최종변경</th>
+            <td style="display:flex; gap:5px;">
+                <input type="text" id="updId" name="updId" class="form-input" readonly>
+                <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
+        </tr>
+    </table>
+</form>
 
 </div>
 <script>
@@ -70,6 +70,8 @@
 
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
+
+        btnSave.disabled = true;
 
         // 현재 화면 상태: I(신규), S(상세)
         let mode = "I";
@@ -94,21 +96,26 @@
         btnSave.addEventListener("click", async () => {
             const data = formToJson(mainForm);
 
-            if (!data.trmNm.trim()) {
-                alert("용어명을 입력하세요.");
+            if (!data.wordNm.trim()) {
+                alert("단어명을 입력하세요.");
                 mainForm.wordNm.focus();
+                return;
+            }
+            if (!data.engAbbrNm.trim()) {
+                alert("영문약어명을 입력하세요.");
+                mainForm.engAbbrNm.focus();
                 return;
             }
             if (!data.engNm.trim()) {
                 alert("영문명을 입력하세요.");
-                mainForm.engAbbrNm.focus();
+                mainForm.engNm.focus();
                 return;
             }
 
             try {
                 let url = (mode === "S")
-                    ? "/meta/updateTermData"
-                    : "/meta/insertTermData";
+                    ? "/meta/updateWordData"
+                    : "/meta/insertWordData";
 
                 const res = await fetch(url, {
                     method: "POST",
@@ -143,7 +150,7 @@
             if (mode === "S" && sendId ) {
                 (async () => {
                     try {
-                        const res = await fetch('/meta/getTermData', {
+                        const res = await fetch('/meta/getWordData', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ id: sendId  })
@@ -154,7 +161,10 @@
                         fillForm(mainForm, data);
                         // 읽기 전용
                         document.getElementById("id").readOnly = true;
-                        document.getElementById("trmNm").readOnly = true;
+                        document.getElementById("wordNm").readOnly = true;
+
+                        const userId = localStorage.getItem('userId');
+                        document.getElementById("updId").value = userId;
 
                         originalData = data; // 변경감지 기준 등록
 

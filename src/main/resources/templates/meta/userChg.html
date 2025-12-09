@@ -10,7 +10,7 @@
 
 <div class="popupnContainer" id="popupnContainer">
     <div class="popup-header">
-        <h2 class="popup-title">전문 용어</h2>
+        <h2 class="popup-title">⊙ 사용자정보 관리</h2>
         <div class="button-group" style="display:flex; gap:8px;">
             <button id="btnSave" class="btn">저장</button>
             <button id="btnClose" class="btn">닫기</button>
@@ -20,34 +20,45 @@
     <form id="mainForm">
         <table class="popup-table">
             <tr>
-                <th>용어명</th>
-                <td colspan="2"> <input type="text" id="trmNm" name="trmNm" class="form-input" required> </td>
+                <th>사용자ID <span style="color:red">*</span></th>
+                <td colspan="2"><input type="text" id="userId" name="userId" class="form-input" required></td>
             </tr>
             <tr>
-                <th>영문명</th>
-                <td colspan="2"> <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
+                <th>사용자이름 <span style="color:red">*</span></th>
+                <td colspan="2"><input type="text" id="userNm" name="userNm" class="form-input"  required></td>
             </tr>
             <tr>
-                <th>도메인명</th>
-                <td colspan="2"> <input type="text" id="dmnNm" name="dmnNm" class="form-input"  > </td>
+                <th>비밀번호</th>
+                <td colspan="2"><input type="password" id="password" name="password" class="form-input"></td>
             </tr>
             <tr>
-                <th>설명</th>
-                <td colspan="2"> <textarea id="trmExpln" name="trmExpln" class="form-input" rows="10" ></textarea> </td>
+                <th>이메일</th>
+                <td colspan="2"><input type="text" id="email" name="email" class="form-input"></td>
             </tr>
             <tr>
-                <th>상태</th>
+                <th>전화번호</th>
+                <td colspan="2"><input type="text" id="phone" name="phone" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>권한</th>
                 <td colspan="2">
-                    <select id="stat" name="stat" class="form-input">
-                        <option value="0" selected>신청</option>
-                        <option value="1">사용</option>
-                        <option value="9">미사용</option>
+                    <select id="role" name="role" class="form-input">
+                        <option value="">선택</option>
+                        <option value="1">ADMIN</option>
+                        <option value="2">USER</option>
                     </select>
                 </td>
             </tr>
             <tr>
-                <th>ID</th>
-                <td colspan="2"> <input type="text" id="id" name="id" class="form-input" readonly> </td>
+                <th>상태</th>
+                <td colspan="2">
+                    <select id="useYn"  name="useYn" class="form-input">
+                        <option value="">선택</option>
+                        <option value="Y">사용</option>
+                        <option value="N">미사용</option>
+
+                    </select>
+                </td>
             </tr>
             <tr>
                 <th>최초등록</th>
@@ -59,7 +70,7 @@
                 <th>최종변경</th>
                 <td style="display:flex; gap:5px;">
                     <input type="text" id="updId" name="updId" class="form-input" readonly>
-                     <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
+                    <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
             </tr>
         </table>
     </form>
@@ -72,7 +83,6 @@
         const btnSave = document.getElementById("btnSave");
 
         // 현재 화면 상태: I(신규), S(상세)
-        let mode = "I";
         let originalData = {};
 
          // 🔸 현재 값이 수정되었는지 체크
@@ -92,25 +102,31 @@
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
+            const userId = localStorage.getItem('userId');
+            document.getElementById("updId").value = userId;
+
+            const mainForm = document.getElementById("mainForm");
+
             const data = formToJson(mainForm);
 
-            if (!data.trmNm.trim()) {
-                alert("용어명을 입력하세요.");
-                mainForm.wordNm.focus();
+            if (!data.userId.trim()) {
+                alert("사용자ID를 입력하세요.");
+                mainForm.userId.focus();
                 return;
             }
-            if (!data.engNm.trim()) {
-                alert("영문명을 입력하세요.");
-                mainForm.engAbbrNm.focus();
+            if (!data.userNm.trim()) {
+                alert("사용자명을 입력하세요.");
+                mainForm.userNm.focus();
+                return;
+            }
+            if (!data.password.trim()) {
+                alert("비밀번호를 입력하세요.");
+                mainForm.password.focus();
                 return;
             }
 
             try {
-                let url = (mode === "S")
-                    ? "/meta/updateTermData"
-                    : "/meta/insertTermData";
-
-                const res = await fetch(url, {
+                const res = await fetch("/meta/updateUserData", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
@@ -136,25 +152,23 @@
         window.addEventListener("message", (event) => {
             if (event.origin !== window.location.origin) return;
 
-            mode = event.data.mode;
-            const sendId  = event.data.id;
+            const sendId  = event.data.userId;
 
             // 상세모드
-            if (mode === "S" && sendId ) {
+            if (sendId ) {
                 (async () => {
                     try {
-                        const res = await fetch('/meta/getTermData', {
+                        const res = await fetch('/meta/getUserData', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id: sendId  })
+                            body: JSON.stringify({ userId: sendId  })
                         });
 
                         const data = await res.json();
 
                         fillForm(mainForm, data);
                         // 읽기 전용
-                        document.getElementById("id").readOnly = true;
-                        document.getElementById("trmNm").readOnly = true;
+                        document.getElementById("userId").readOnly = true;
 
                         originalData = data; // 변경감지 기준 등록
 
@@ -165,10 +179,6 @@
                 })();
 
                 btnSave.disabled = true;
-
-            } else if (mode === "I") {
-                originalData = formToJson(mainForm);
-                btnSave.disabled = false;
             }
         });
 

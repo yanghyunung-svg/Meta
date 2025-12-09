@@ -86,7 +86,7 @@
         FROM tb_code_group
         WHERE 1=1
         <if test="grpCd != null and grpCd != ''">
-            AND TRM_NM LIKE CONCAT('%', #{grpCd}, '%')
+            AND GRP_CD LIKE CONCAT('%', #{grpCd}, '%')
         </if>
         <if test="grpNm != null and grpNm != ''">
             AND GRP_NM LIKE CONCAT('%', #{grpNm}, '%')

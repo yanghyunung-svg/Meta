@@ -9,9 +9,9 @@
 <body>
 <div class="container">
     <div class="popupContainer" id="popupContainer">
-        <div class="search-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;">사용자 정보 검색</h2>
+            <h2 style="margin:0;">⊙ 사용자 정보 검색</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
@@ -121,7 +121,7 @@
         }
 
         /** 페이지네이션 **/
-        function renderPagination() {
+        window.renderTable = function(page)  {
             const totalPage = Math.ceil(dataAll.length / PAGE_SIZE);
             if (totalPage === 0) return;
 
