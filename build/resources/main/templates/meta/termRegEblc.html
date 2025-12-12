@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/sidebar.js" defer></script>
+    <script src="/js/layout.js" defer></script>
+    <script src="/js/commonUtils.js"></script>
+</head>
+<body>
+
+<div id="topbarContainer"></div>
+<div class="container">
+    <div id="sidebarContainer"></div>
+    <div class="mainContainer" id="mainContainer">
+        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <h2 style="margin:0;"> ✅ 표준용어 일괄등록</h2>
+            <div class="button-group" style="display:flex; gap:8px;">
+                <button id="btnDownload" class="btn">템플릿 다운로드</button>
+                <button id="btnUpload" class="btn">엑셀 업로드</button>
+                <button id="btnVal" class="btn">재검증</button>
+                <button id="btnUploadSave" class="btn" disabled>업로드 저장</button>
+            </div>
+        </div>
+        <div class="divider-h"></div>
+        <div style="display:flex; align-items:left;"> <input type="file" id="excelFile" accept=".xlsx,.xls" > </div>
+        <div class="divider-h"></div>
+
+    <table id="uploadPreviewTable" class="form-table" style="margin-top:10px; ">
+        <thead>
+        <tr>
+            <th width="50px" style="text-align: center;">번호</th>
+            <th style="text-align: left;">용어명</th>
+            <th style="text-align: left;">영문명</th>
+            <th style="text-align: left;">도메인명</th>
+            <th style="text-align: left;">설명</th>
+            <th style="text-align: center;">상태</th>
+            <th style="text-align: center;">신청자</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div class="divider-h"></div>
+    </div>
+
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        document.getElementById("btnDownload").addEventListener("click", () => {
+            window.location.href = "/meta/downloadTermExcelTemplate";
+        });
+
+        document.getElementById("btnUpload").addEventListener("click", () => {
+            document.getElementById("excelFile").value = "";
+            document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
+            window.uploadPreviewData = null;
+            document.getElementById("btnUploadSave").disabled = true;
+
+            document.getElementById("excelFile").click();
+        });
+
+        document.getElementById("excelFile").addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await fetch("/meta/uploadTermExcelPreview", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await res.json();
+
+                if (!result.success) {
+                    alert("오류: " + result.message);
+                    return;
+                }
+
+                renderPreviewTable(result.data);
+                window.uploadPreviewData = result.data;  // 저장 버튼에서 사용
+
+                document.getElementById("btnUploadSave").disabled = false;
+
+            } catch (error) {
+                alert("업로드 중 오류가 발생했습니다.");
+            }
+        });
+
+        function renderPreviewTable(rows) {
+            const crtId = localStorage.getItem("userId");
+            const table = document.getElementById("uploadPreviewTable");
+            const tbody = table.querySelector("tbody");
+            tbody.innerHTML = "";
+            table.style.display = "table";
+
+            rows.forEach(row => {
+                row.crtId = crtId || '';
+            });
+
+            rows.forEach((row, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="text-align: center;"> ${index + 1} </td>
+                    <td contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
+                    <td contenteditable="true" data-index="${index}" data-field="engNm">${row.engNm}</td>
+                    <td contenteditable="true" data-index="${index}" data-field="dmnNm">${row.dmnNm}</td>
+                    <td contenteditable="true" data-index="${index}" data-field="trmExpln">${row.trmExpln}</td>
+                    <td contenteditable="true" style="text-align: center;">${row.stat}</td>
+                    <td style="text-align: center;">${row.crtId}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            attachEditListeners();
+        }
+
+
+        document.getElementById('btnVal').addEventListener('click', async () => { // ⭐ 1. async 추가
+            if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
+                alert("업로드된 데이터가 없습니다.");
+                return;
+            }
+
+            try {
+                const res = await fetch("/meta/parseTermReload", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(window.uploadPreviewData)
+                });
+
+                const result = await res.json();
+
+                if (!result.success) {
+                    alert("오류: " + result.message);
+                    return;
+                }
+
+                renderPreviewTable(result.data);
+                window.uploadPreviewData = result.data;  // 저장 버튼에서 사용
+                alert("데이터 재처리가 완료되었습니다.");
+
+            } catch(err) {
+                console.error(err);
+                alert("처리 중 오류 발생");
+            }
+        });
+
+        document.getElementById("btnUploadSave").addEventListener("click", async () => {
+            if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
+                alert("업로드된 데이터가 없습니다.");
+                return;
+            }
+
+            console.log('uploadPreviewData', window.uploadPreviewData);
+
+            if (!confirm("검증된 데이터를 저장하시겠습니까?")) return;
+
+            try {
+                const res = await fetch("/meta/uploadTermExcelSave", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(window.uploadPreviewData)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    alert(result.count + "건 처리되었습니다.");
+                } else {
+                    alert("오류: " + result.message);
+                }
+
+            } catch(err) {
+                alert("저장 중 오류 발생");
+            }
+        });
+
+    });
+
+    function attachEditListeners() {
+        const editableCells = document.querySelectorAll("#uploadPreviewTable tbody td[contenteditable='true']");
+        editableCells.forEach(cell => {
+            cell.addEventListener('blur', (event) => {
+                const element = event.target;
+                const rowIndex = element.getAttribute('data-index');
+                const fieldName = element.getAttribute('data-field');
+                const newValue = element.textContent.trim();
+                if (window.uploadPreviewData && window.uploadPreviewData[rowIndex]) {
+                    window.uploadPreviewData[rowIndex][fieldName] = newValue;
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>
+
