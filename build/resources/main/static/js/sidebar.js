@@ -8,7 +8,7 @@
         adminMenus.forEach(el => {
             el.style.display = (role === "1") ? "block" : "none";  // role=1이면 보이기
         });
-        console.log('Role applied:', role, '| ADMIN 메뉴 갯수:', adminMenus.length);
+       // console.log('Role applied:', role, '| ADMIN 메뉴 갯수:', adminMenus.length);
     }
 
     // DOM 준비 시 적용

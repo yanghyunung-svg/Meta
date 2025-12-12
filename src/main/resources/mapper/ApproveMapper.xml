@@ -3,18 +3,26 @@
 <mapper namespace="com.meta.mapper.ApproveMapper">
     <select id="getListData" parameterType="com.meta.dto.ApproveDto" resultType="com.meta.dto.ApproveDto">
 
-        SELECT SE, ID, KOR_NM, ENG_NM, EXPLN, STAT, CRT_ID, CRT_DTTM
+        SELECT Z.SE
+            , Z.ID
+            , Z.KOR_NM
+            , Z.ENG_NM
+            , Z.RMK
+            , Z.STAT
+            , Z.CRT_ID
+            , date_format(Z.CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+            , B.CD_NM AS SE_NM
         FROM (
             SELECT  '1'  AS SE
-            , ID
+            , 0  AS ID
             , TRM_NM  AS KOR_NM
             , ENG_NM  AS ENG_NM
-            , TRM_EXPLN AS EXPLN
+            , TRM_EXPLN AS RMK
             , STAT
             , CRT_ID
-            , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+            , CRT_DTTM
             FROM tb_term_dictionary
-            WHERE STAT ='0'
+            WHERE STAT = #{stat}
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
             </if>
@@ -25,19 +33,71 @@
             , ID
             , WORD_NM  AS KOR_NM
             , ENG_ABBR_NM  AS ENG_NM
-            , EXPLN AS EXPLN
+            , EXPLN AS RMK
             , STAT
             , CRT_ID
-            , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+            , CRT_DTTM
             FROM tb_word_dictionary
-            WHERE STAT = '0'
+            WHERE STAT = #{stat}
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
             </if>
+
+        UNION ALL
+
+            SELECT  '3'  AS SE
+            , 0  AS ID
+            , DMN_NM  AS KOR_NM
+            , DMN_ENG_NM  AS ENG_NM
+            , DMN_CLSF_NM AS RMK
+            , STTS_CD AS STAT
+            , CRT_ID
+            , CRT_DTTM
+            FROM TB_STD_DMN_BSC
+            WHERE STTS_CD = #{stat}
+            <if test="userId != null and userId != ''">
+                AND CRT_ID = #{userId}
+            </if>
+
+        UNION ALL
+
+            SELECT  '4'  AS SE
+            , 0  AS ID
+            , GRP_CD  AS KOR_NM
+            , GRP_NM  AS ENG_NM
+            , RMK AS RMK
+            , STAT
+            , CRT_ID
+            , CRT_DTTM
+            FROM tb_code_group
+            WHERE STAT = #{stat}
+            <if test="userId != null and userId != ''">
+                AND CRT_ID = #{userId}
+            </if>
+
+         UNION ALL
+
+            SELECT  '5'  AS SE
+            , 0 AS ID
+            , GRP_CD  AS KOR_NM
+            , CD  AS ENG_NM
+            , CD_NM AS RMK
+            , STAT
+            , CRT_ID
+            , CRT_DTTM
+            FROM tb_code
+            WHERE STAT = #{stat}
+            <if test="userId != null and userId != ''">
+                AND CRT_ID = #{userId}
+            </if>
+
         ) Z
+        JOIN tb_code  B
+        ON   B.GRP_CD = 'APRV_CD'
+        AND  B.CD = Z.SE
         WHERE 1=1
         <if test="se != null and se != ''">
-            AND SE = #{se}
+            AND Z.SE = #{se}
         </if>
 
     </select>

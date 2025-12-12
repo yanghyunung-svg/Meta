@@ -17,11 +17,8 @@ public class BizUtils {
         int iSize = 1;
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\n");
-        sb.append("------------------------------------------\n");
         sb.append(clazz.getSimpleName());
         sb.append("\n");
-        sb.append("------------------------------------------\n");
 
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true); // private 필드 접근 허용
@@ -47,11 +44,8 @@ public class BizUtils {
         int iSize = 1;
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\n");
-        sb.append("------------------------------------------\n");
         sb.append(clazz.getSimpleName());
         sb.append("\n");
-        sb.append("------------------------------------------\n");
 
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true); // private 필드 접근 허용
@@ -95,34 +89,32 @@ public class BizUtils {
 
     public static String logInfo() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        StackTraceElement caller = stackTrace[2]; // 호출한 메서드의 정보
-        String fullClassName  = caller.getClassName();   // 클래스 이름
-        String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);  // 클래스 이름
-        String methodName = caller.getMethodName(); // 메서드 이름
+        StackTraceElement caller = stackTrace[2]; 
+        String fullClassName  = caller.getClassName();  
+        String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1); 
+        String methodName = caller.getMethodName(); 
         int lineNumber = caller.getLineNumber();
-        return String.format("[03%d] ✅●●●●● %s", lineNumber, methodName);
+        return String.format("[03%d] ✅●●●●● %s.%s", lineNumber, className, methodName);
     }
 
     public static String logInfo(String str) {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        StackTraceElement caller = stackTrace[2]; // 호출한 메서드의 정보
-
-        String fullClassName  = caller.getClassName();   // 클래스 이름
-        String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);  // 클래스 이름
-        String methodName = caller.getMethodName(); // 메서드 이름
+        StackTraceElement caller = stackTrace[2]; 
+        String fullClassName  = caller.getClassName();  
+        String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1); 
+        String methodName = caller.getMethodName(); 
         int lineNumber = caller.getLineNumber();
-        return String.format("[%03d] ✅●●●●● %s : %s", lineNumber, methodName, str);
+        return String.format("[%03d] ✅●●●●● %s.%s : %s", lineNumber, className, methodName, str);
     }
 
     public static String logInfo(String ke,  String va) {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        StackTraceElement caller = stackTrace[2]; // 호출한 메서드의 정보
-
-        String fullClassName  = caller.getClassName();   // 클래스 이름
-        String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);  // 클래스 이름
-        String methodName = caller.getMethodName(); // 메서드 이름
+        StackTraceElement caller = stackTrace[2]; 
+        String fullClassName  = caller.getClassName();  
+        String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1); 
+        String methodName = caller.getMethodName(); 
         int lineNumber = caller.getLineNumber();
-        return String.format("[%03d] ✅●●●●● %s : %s = [%s]", lineNumber, methodName, ke, va);
+        return String.format("[%03d] ✅●●●●● %s.%s : %s = [%s]", lineNumber, className, methodName, ke, va);
     }
 
     public static String getClientIp(HttpServletRequest request) {

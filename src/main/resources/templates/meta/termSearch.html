@@ -25,6 +25,7 @@
             </div>
         </div>
 
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
@@ -36,18 +37,16 @@
                     <td>
                         <select id="stat"  name="stat" class="form-input">
                             <option value="">전체</option>
-                            <option value="0">신청</option>
-                            <option value="1">사용</option>
-                            <option value="9">미사용</option>
                         </select>
                     </td>
                 </tr>
             </table>
         </form>
+        <div class="divider-h"></div>
 
         <div id="pageTopBarContainer"></div>
 
-        <table style="margin-top:12px" class="dark-table">
+        <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
                 <th width="50px" style="text-align: center;">번호</th>
@@ -67,10 +66,11 @@
 <script>
 
 document.addEventListener("DOMContentLoaded", () => {
+    loadCodeCombo('STAT', 'stat');
     let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
     let dataAll = [];
     let currentPage = 1;
-    window.tableBody = document.querySelector('.dark-table tbody');
+    window.tableBody = document.querySelector('.data-table tbody');
 
     // 페이지 탑바 container에 include
     const container = document.getElementById("pageTopBarContainer");
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const pageData = dataAll.slice(start, end);
 
         tableBody.innerHTML = pageData.map((item, index) => `
-            <tr class="row-click" data-id="${item.id}">
+            <tr class="row-click" data-id="${item.trmNm}">
                 <td style="text-align: center;"> ${start + index + 1} </td>
                 <td style="text-align: left;">${item.trmNm}</td>
                 <td style="text-align: left;">${item.engNm}</td>
@@ -116,10 +116,20 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".row-click").forEach(tr => {
             tr.addEventListener("click", () => {
                 const id = tr.getAttribute("data-id");
-                const payload = { mode: "S", id: id };
-                openWindowWithJSON(payload, "/meta/termChg", 700, 550);
+                const payload = { mode: "S", trmNm: id };
+                openWindowWithJSON(payload, "/meta/termChg", 700, 600);
             });
         });
+    }
+
+    window.refreshParentRow = function(data) {
+        const refreshMap = {
+            engNm: 'td:nth-child(3)', // 영문명
+            trmExpln: 'td:nth-child(4)', // 용어설명
+            dmnNm: 'td:nth-child(5)', // 도메인
+            stat: 'td:nth-child(6)' // 상태
+        };
+        window.updateRowDataFlexible(data, 'trmNm', refreshMap);
     }
 
     /** 검색 **/
@@ -157,5 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 </script>
+<script src="/js/commonCombo.js"></script>
 </body>
 </html>

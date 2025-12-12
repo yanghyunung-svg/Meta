@@ -21,6 +21,7 @@
                 <button id="btnClose" class="btn">닫기</button>
             </div>
         </div>
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
@@ -31,10 +32,11 @@
                 </tr>
             </table>
         </form>
+        <div class="divider-h"></div>
 
         <div id="pageTopBarContainer"></div>
 
-        <table style="margin-top:12px" class="dark-table">
+        <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
                 <th width="100px" style="text-align: center;">번호</th>
@@ -56,7 +58,7 @@
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.dark-table tbody');
+        window.tableBody = document.querySelector('.data-table tbody');
 
         const container = document.getElementById("pageTopBarContainer");
         if (!container) return;
@@ -132,7 +134,7 @@
             fetch('/meta/getCodeGroupListData', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ grpCd, grpNm, useYn: 'Y' })
+                    body: JSON.stringify({ grpCd: grpCd, grpNm: grpNm, stat: '1' })
             })
             .then(res => res.json())
             .then(data => {

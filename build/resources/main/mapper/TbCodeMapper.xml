@@ -10,7 +10,7 @@
        , B.GRP_NM
        , A.CD
        , A.CD_NM
-       , A.USE_YN
+       , A.STAT
        , A.ORD
        , A.RMK
        , A.CRT_ID
@@ -30,7 +30,7 @@
             GRP_CD
           , CD
           , CD_NM
-          , USE_YN
+          , STAT
           , ORD
           , RMK
           , CRT_ID
@@ -40,7 +40,7 @@
             #{grpCd}
           , #{cd}
           , #{cdNm}
-          , #{useYn}
+          , #{stat}
           , #{ord}
           , #{rmk}
           , #{crtId}
@@ -53,7 +53,7 @@
      UPDATE tb_code
         SET CD = #{cd}
           , CD_NM = #{cdNm}
-          , USE_YN = #{useYn}
+          , STAT = #{stat}
           , ORD = #{ord}
           , RMK = #{rmk}
           , UPD_ID = #{updId}
@@ -74,7 +74,7 @@
       SELECT GRP_CD
            , CD
            , CD_NM
-           , USE_YN
+           , STAT
            , ORD
            , RMK
        , CRT_ID, UPD_ID
@@ -93,7 +93,7 @@
         , B.GRP_NM
         , A.CD
         , A.CD_NM
-        , A.USE_YN
+        , A.STAT
         , A.ORD
         , A.RMK
         , A.CRT_ID
@@ -113,11 +113,25 @@
         <if test="cdNm != null and cdNm != ''">
             AND A.CD_NM LIKE CONCAT('%', #{cdNm}, '%')
         </if>
-        <if test="useYn != null and useYn != ''">
-            AND A.USE_YN = #{useYn}
+        <if test="stat != null and stat != ''">
+            AND A.STAT = #{stat}
         </if>
         ORDER BY A.GRP_CD, A.ORD, A.CD
-
     </select>
+
+    <select id="getAllData" parameterType="com.meta.dto.TbCodeDto" resultType="com.meta.dto.TbCodeDto">
+        SELECT CD, CD_NM
+        FROM tb_code
+        WHERE GRP_CD = #{grpCd}
+        ORDER BY GRP_CD, ORD, CD
+    </select>
+
+    <select id="countCode" parameterType="com.meta.dto.TbCodeDto" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_CODE
+        WHERE GRP_CD = #{grpCd}
+        AND CD = #{cd}
+    </select>
+
 
 </mapper>

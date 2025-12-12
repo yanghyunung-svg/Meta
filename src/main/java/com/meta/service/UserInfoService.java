@@ -147,14 +147,14 @@ public class UserInfoService {
                 return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
             }
 
-            // 사용여부 검증
-            if (StringUtils.equals(outputDto.getUseYn(), "0")) {
+            // 상태코드 검증
+            if (StringUtils.equals(outputDto.getStat(), "0")) {
                 tbLoginLogDto.setFailReason("시스템사용 미승인");
                 this.insertLoginLog(tbLoginLogDto);
                 return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
             }
 
-            if (StringUtils.equals(outputDto.getUseYn(), "N")) {
+            if (StringUtils.equals(outputDto.getStat(), "9")) {
                 tbLoginLogDto.setFailReason("시스템사용 불가");
                 this.insertLoginLog(tbLoginLogDto);
                 return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
@@ -186,8 +186,8 @@ public class UserInfoService {
      * desc     : Login Log insert
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public int insertLoginLog(TbLoginLogDto inputDto) {
-        return tbLoginLogMapper.insertData(inputDto);
+    public void insertLoginLog(TbLoginLogDto inputDto) {
+        tbLoginLogMapper.insertData(inputDto);
     }
 }
 

@@ -25,6 +25,7 @@
             </div>
         </div>
 
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
@@ -34,19 +35,18 @@
                     <td><input type="text" id="grpNm"  name="grpNm" class="form-input"></td>
                     <th>상태</th>
                     <td>
-                        <select id="useYn"  name="useYn" class="form-input">
+                        <select id="stat"  name="stat" class="form-input">
                             <option value="">전체</option>
-                            <option value="Y">사용</option>
-                            <option value="N">미사용</option>
                         </select>
                     </td>
                 </tr>
             </table>
         </form>
+        <div class="divider-h"></div>
 
         <div id="pageTopBarContainer"></div>
 
-        <table style="margin-top:12px" class="dark-table">
+        <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
                 <th width="50px" style="text-align: center;">번호</th>
@@ -66,12 +66,13 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('STAT', 'stat');
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.dark-table tbody');
+        window.tableBody = document.querySelector('.data-table tbody');
 
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageTopBarContainer");
@@ -113,7 +114,7 @@
                     <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.rmk}</td>
                     <td style="text-align: center;">${item.ord}</td>
-                    <td style="text-align: center;"> ${item.useYn === 'Y' ? '사용' : item.useYn === 'N' ? '미사용' : ''} </td>
+                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                 </tr>
             `).join('');
 
@@ -125,6 +126,16 @@
                     openWindowWithJSON(payload, "/meta/codeGroupChg", 700, 550);
                 });
             });
+
+            window.refreshParentRow = function(data) {
+                const refreshMap = {
+                    grpNm: 'td:nth-child(3)',
+                    rmk: 'td:nth-child(4)',
+                    ord: 'td:nth-child(5)',
+                    stat: 'td:nth-child(6)'
+                };
+                window.updateRowDataFlexible(data, 'grpCd', refreshMap);
+            }
 
             /** 코드상세 클릭 **/
             tableBody.querySelectorAll(".clickable").forEach(td => {
@@ -178,8 +189,7 @@
             });
         });
     });
-
-
 </script>
+<script src="/js/commonCombo.js"></script>
 </body>
 </html>

@@ -18,7 +18,6 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TbTermDictionaryDto {
-    private Long       id;                              // ID INT
     private String     trmNm;                           // 용어명 VARCHAR(100)
     private String     engNm;                           // 영문명 VARCHAR(100)
     private String     trmExpln;                        // 용어설명 TEXT

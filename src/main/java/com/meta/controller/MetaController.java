@@ -35,6 +35,8 @@ public class MetaController {
     public String termRegView() { return "meta/termReg"; }
     @GetMapping("/termChg")
     public String termChgView() { return "meta/termChg"; }
+    @GetMapping("/termRegEblc")
+    public String termRegEblcView() { return "meta/termRegEblc"; }
 
     /* 단어 */
     @GetMapping("/wordSearch")
@@ -43,6 +45,14 @@ public class MetaController {
     public String wordRegView() { return "meta/wordReg"; }
     @GetMapping("/wordChg")
     public String wordChgView() { return "meta/wordChg"; }
+
+    /* 도메인 */
+    @GetMapping("/dmnSearch")
+    public String dmnSearchView() { return "meta/dmnSearch"; }
+    @GetMapping("/dmnReg")
+    public String dmnRegView() { return "meta/dmnReg"; }
+    @GetMapping("/dmnChg")
+    public String dmnChgView() { return "meta/dmnChg"; }
 
     /* Code Group */
     @GetMapping("/codeGroupSearch")
@@ -63,5 +73,7 @@ public class MetaController {
     public String codeDetlChgView() { return "meta/codeDetlChg"; }
     @GetMapping("/codeDetlPopup")
     public String codeDetlPopupView() { return "meta/codeDetlPopup"; }
+    @GetMapping("/codeDetlRegEblc")
+    public String codeDetlRegEblcView() { return "meta/codeDetlRegEblc"; }
 
 }

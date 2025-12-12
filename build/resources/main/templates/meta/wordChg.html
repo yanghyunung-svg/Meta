@@ -17,6 +17,7 @@
         </div>
     </div>
 
+    <div class="divider-h"></div>
     <form id="mainForm">
     <table class="popup-table">
         <tr>
@@ -39,7 +40,7 @@
             <th>상태</th>
             <td colspan="2">
                 <select id="stat"  name="stat" class="form-input">
-                    <option value="0" selected>신청</option>
+                    <option value="0">신청</option>
                     <option value="1">사용</option>
                     <option value="9">미사용</option>
                 </select>
@@ -63,6 +64,7 @@
         </tr>
     </table>
 </form>
+    <div class="divider-h"></div>
 
 </div>
 <script>
@@ -124,6 +126,9 @@
 
                 if (result.success) {
                     alert("저장되었습니다.");
+                    if (window.opener && typeof window.opener.refreshParentRow === 'function') {
+                        window.opener.refreshParentRow(data);
+                    }
                     window.close();
                 } else {
                     alert("오류: " + result.message);

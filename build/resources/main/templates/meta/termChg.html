@@ -17,6 +17,7 @@
         </div>
     </div>
 
+    <div class="divider-h"></div>
     <form id="mainForm">
         <table class="popup-table">
             <tr>
@@ -39,15 +40,11 @@
                 <th>상태</th>
                 <td colspan="2">
                     <select id="stat" name="stat" class="form-input">
-                        <option value="0" selected>신청</option>
+                        <option value="0">신청</option>
                         <option value="1">사용</option>
                         <option value="9">미사용</option>
                     </select>
                 </td>
-            </tr>
-            <tr>
-                <th>ID</th>
-                <td colspan="2"> <input type="text" id="id" name="id" class="form-input" readonly> </td>
             </tr>
             <tr>
                 <th>최초등록</th>
@@ -64,6 +61,7 @@
         </table>
     </form>
 
+    <div class="divider-h"></div>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -71,7 +69,6 @@
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
 
-        // 현재 화면 상태: I(신규), S(상세)
         let originalData = {};
 
          // 🔸 현재 값이 수정되었는지 체크
@@ -112,11 +109,14 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
-
                 const result = await res.json();
 
                 if (result.success) {
                     alert("저장되었습니다.");
+                    if (window.opener && typeof window.opener.refreshParentRow === 'function') {
+                        window.opener.refreshParentRow(data);
+                    }
+
                     window.close();
                 } else {
                     alert("오류: " + result.message);
@@ -132,9 +132,8 @@
         // 부모창에서 데이터 받기
         window.addEventListener("message", (event) => {
             if (event.origin !== window.location.origin) return;
-
             const mode = event.data.mode;
-            const sendId  = event.data.id;
+            const sendId  = event.data.trmNm;
 
             // 상세모드
             if (mode === "S" && sendId ) {
@@ -143,14 +142,13 @@
                         const res = await fetch('/meta/getTermData', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id: sendId  })
+                            body: JSON.stringify({ trmNm: sendId  })
                         });
 
                         const data = await res.json();
 
                         fillForm(mainForm, data);
                         // 읽기 전용
-                        document.getElementById("id").readOnly = true;
                         document.getElementById("trmNm").readOnly = true;
 
                         originalData = data; // 변경감지 기준 등록

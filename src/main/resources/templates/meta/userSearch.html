@@ -24,7 +24,7 @@
                 <button id="btnSearch" class="btn">조회</button>
             </div>
         </div>
-
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
@@ -34,19 +34,18 @@
                     <td><input type="text" id="userNm"  name="userNm" class="form-input"></td>
                     <th>상태</th>
                     <td>
-                        <select id="useYn"  name="useYn" class="form-input">
+                        <select id="stat"  name="stat" class="form-input">
                             <option value="">전체</option>
-                            <option value="Y">사용</option>
-                            <option value="N">미사용</option>
                         </select>
                     </td>
                 </tr>
             </table>
         </form>
+        <div class="divider-h"></div>
 
         <div id="pageTopBarContainer"></div>
 
-        <table style="margin-top:12px" class="dark-table">
+        <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
                 <th width="50px">번호</th>
@@ -55,7 +54,7 @@
                 <th>이메일</th>
                 <th>전화번호</th>
                 <th style="text-align: center;">권한</th>
-                <th style="text-align: center;">사용여부</th>
+                <th style="text-align: center;">상태코드</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -66,12 +65,13 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('STAT', 'stat');
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.dark-table tbody');
+        window.tableBody = document.querySelector('.data-table tbody');
 
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageTopBarContainer");
@@ -110,8 +110,8 @@
                     <td style="text-align: left;">${item.userNm}</td>
                     <td style="text-align: left;">${item.email}</td>
                     <td style="text-align: left;">${item.phone}</td>
-                    <td> ${item.role === '2' ? 'USER' :   item.role === '1' ? 'ADMIN' : '-'} </td>
-                    <td> ${item.useYn === 'Y' ? '사용' :   item.useYn === 'N' ? '미사용' : '-'} </td>
+                    <td> ${item.role === '2' ? 'USER' : item.role === '1' ? 'ADMIN' : '-'} </td>
+                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                 </tr>
             `).join('');
 
@@ -120,9 +120,20 @@
                 tr.addEventListener("click", () => {
                     const id = tr.getAttribute("data-id");
                     const payload = { mode: "S", userId: id };
-                    openWindowWithJSON(payload, "/meta/userChg", 700, 450);
+                    openWindowWithJSON(payload, "/meta/userChg", 700, 500);
                 });
             });
+        }
+
+        window.refreshParentRow = function(data) {
+            const refreshMap = {
+                userNm: 'td:nth-child(3)',
+                email: 'td:nth-child(4)',
+                phone: 'td:nth-child(5)',
+                role: 'td:nth-child(6)',
+                stat: 'td:nth-child(7)'
+            };
+            window.updateRowDataFlexible(data, 'userId', refreshMap);
         }
 
 
@@ -159,5 +170,6 @@
     });
 
 </script>
+<script src="/js/commonCombo.js"></script>
 </body>
 </html>

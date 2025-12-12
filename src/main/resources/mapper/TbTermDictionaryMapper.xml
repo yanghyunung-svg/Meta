@@ -3,7 +3,7 @@
 <mapper namespace="com.meta.mapper.TbTermDictionaryMapper">
 
     <select id="getListData" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="com.meta.dto.TbTermDictionaryDto">
-        SELECT ID , TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT
+        SELECT  TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT
         , CRT_ID, UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
@@ -22,14 +22,7 @@
     </select>
 
     <select id="getData" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="com.meta.dto.TbTermDictionaryDto">
-        SELECT ID , TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
-        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
-        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM tb_term_dictionary
-        WHERE ID = #{id}
-    </select>
-    <select id="getDataByName" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="com.meta.dto.TbTermDictionaryDto">
-        SELECT ID , TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
+        SELECT  TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM tb_term_dictionary
@@ -68,16 +61,22 @@
           , DMN_NM = #{dmnNm}
           , STAT = #{stat}
           , UPD_ID = #{updId}
-        WHERE ID = #{id}
+        WHERE TRM_NM = #{trmNm}
     </update>
 
     <select id="getLockData" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="com.meta.dto.TbTermDictionaryDto">
-        SELECT ID , TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
+        SELECT TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM tb_term_dictionary
-        WHERE ID = #{id}
+        WHERE TRM_NM = #{trmNm}
           FOR UPDATE
+    </select>
+
+    <select id="countCode" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_term_dictionary
+        WHERE TRM_NM = #{trmNm}
     </select>
 
 </mapper>

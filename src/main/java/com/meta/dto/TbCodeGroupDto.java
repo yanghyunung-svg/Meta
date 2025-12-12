@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 public class TbCodeGroupDto {  
   private String     grpCd;                           // 그룹코드 VARCHAR(50)
   private String     grpNm;                           // 그룹명 VARCHAR(200)
-  private String     useYn;                           // 사용여부 VARCHAR(1)
+  private String     stat;                           // 상태코드 VARCHAR(1)
   private Integer    ord;                             // 정렬순서 INT
   private String     rmk;                             // 비고 VARCHAR(500)
   private String     crtDttm;                         // 생성일시 DATETIME

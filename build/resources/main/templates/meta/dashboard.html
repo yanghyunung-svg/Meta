@@ -16,22 +16,21 @@
     <div class="mainContainer" id="mainContainer">
         <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 대시보드</h2>
+            <h2 style="margin:0;"> ✅ 용어.단어.도메인 신청 내역</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnSearch" class="btn">검색</button>
             </div>
         </div>
+
+        <div class="divider-h"></div>
         <form id="mainForm">  <table class="search-table">
             <tr>
                 <th>신청구분</th>
                 <td>
                     <select id="se"  name="se" class="form-input">
-                        <option value="">전체</option>
-                        <option value="1">용어</option>
-                        <option value="2">단어</option>
-                        <option value="3">코드</option>
+                        <option value="" selected>전체</option>
                     </select>
                 </td>
                 <td width="80%">
@@ -40,15 +39,16 @@
             </tr>
         </table>
         </form>
+        <div class="divider-h"></div>
 
         <div id="pageTopBarContainer"></div>
 
-        <table style="margin-top:12px" class="dark-table">
+        <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
                 <th width="50px" style="text-align: center;">번호</th>
                 <th width="100px" style="text-align: center;">신청구분</th>
-                <th width="250px">한글명</th>
+                <th width="250px">신청내용</th>
                 <th width="250px">영문명</th>
                 <th>비고</th>
                 <th width="150px" style="text-align: center;">신청자</th>
@@ -63,6 +63,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('APRV_CD', 'se');
 
         const titles = document.querySelectorAll('.menu-title');
 
@@ -81,7 +82,7 @@
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.dark-table tbody');
+        window.tableBody = document.querySelector('.data-table tbody');
         const crtId = localStorage.getItem('userId');
         document.getElementById("crtId").value = crtId;
 
@@ -127,20 +128,11 @@
                     <td style="text-align: center;"> ${item.se === '1' ? '용어' : item.se === '2' ? '단어' : item.se === '3' ? '코드' : ''} </td>
                     <td style="text-align: left;">${item.korNm}</td>
                     <td style="text-align: left;">${item.engNm}</td>
-                    <td style="text-align: left;">${truncateText(item.expln, 100)}</td>
+                    <td style="text-align: left;">${truncateText(item.rmk, 100)}</td>
                     <td style="text-align: center;">${item.crtId}</td>
                     <td style="text-align: center;">${item.crtDttm}</td>
                 </tr>
             `).join('');
-
-            /** 상세 클릭  **/
-            tableBody.querySelectorAll(".clickable").forEach(td => {
-                td.addEventListener("click", () => {
-                    const grpCd = td.getAttribute("data-id");
-                    const payload = { mode: "S", grpCd: grpCd };
-                    openWindowWithJSON(payload);
-                });
-            });
         }
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
@@ -164,8 +156,7 @@
             });
         });
     });
-
-
 </script>
+<script src="/js/commonCombo.js"></script>
 </body>
 </html>

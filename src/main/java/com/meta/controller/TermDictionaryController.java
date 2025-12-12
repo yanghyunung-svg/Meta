@@ -3,19 +3,21 @@ package com.meta.controller;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbTermDictionaryDto;
+import com.meta.mapper.TbTermDictionaryMapper;
 import com.meta.service.TermDictionaryService;
 import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Controller
@@ -24,6 +26,8 @@ public class TermDictionaryController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private TermDictionaryService termDictionaryService;
+    @Autowired
+    private TbTermDictionaryMapper tbTermDictionaryMapper;
 
     /**
      * @ID : getTermListData
@@ -33,7 +37,9 @@ public class TermDictionaryController {
     @ResponseBody
     public List<TbTermDictionaryDto> getTermListData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-        return termDictionaryService.getListData(inputDto);
+        List<TbTermDictionaryDto> outputDto = tbTermDictionaryMapper.getListData(inputDto);
+        log.debug(BizUtils.logInfo("END"));
+        return outputDto;
     }
 
     /**
@@ -44,7 +50,9 @@ public class TermDictionaryController {
     @ResponseBody
     public TbTermDictionaryDto getTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-        return termDictionaryService.getData(inputDto);
+        TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getData(inputDto);
+        log.debug(BizUtils.logInfo("END"));
+        return outputDto;
     }
 
     /**
@@ -54,9 +62,9 @@ public class TermDictionaryController {
     @PostMapping("/insertTermData")
     @ResponseBody
     public ApiResponse<Void> insertTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
+        log.debug(BizUtils.logInfo("START"));
         ApiResponse<Void> outputDto = termDictionaryService.insertData(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
+        log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
 
@@ -67,9 +75,9 @@ public class TermDictionaryController {
     @PostMapping("/updateTermData")
     @ResponseBody
     public ApiResponse<Void> updateTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
+        log.debug(BizUtils.logInfo("START"));
         ApiResponse<Void> outputDto = termDictionaryService.updateData(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
+        log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
 
@@ -81,8 +89,64 @@ public class TermDictionaryController {
     @ResponseBody
     public TbTermDictionaryDto getTermSplitData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-        return termDictionaryService.getTermSplitData(inputDto);
+        TbTermDictionaryDto outputDto = termDictionaryService.getTermSplitData(inputDto);
+        log.debug(BizUtils.logInfo("END"));
+        return outputDto;
     }
 
+    @PostMapping("/uploadTermExcelPreview")
+    public ResponseEntity<Map<String, Object>> uploadTermExcelPreview(@RequestParam("file") MultipartFile file) {
+        log.debug(BizUtils.logInfo("START"));
+        Map<String, Object> res = new HashMap<>();
+        try {
+            List<TbTermDictionaryDto> list = termDictionaryService.parseExcelPreview(file);
+            res.put("success", true);
+            res.put("data", list);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        } finally {
+            log.debug(BizUtils.logInfo("END"));
+        }
+    }
+
+    @PostMapping("/parseTermReload")
+    public ResponseEntity<Map<String, Object>> parseTermReload(@RequestBody List<TbTermDictionaryDto> inputList) {
+        log.debug(BizUtils.logInfo("START"));
+        Map<String, Object> res = new HashMap<>();
+        try {
+            List<TbTermDictionaryDto> list = termDictionaryService.parseTermReload(inputList);
+            res.put("success", true);
+            res.put("data", list);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        } finally {
+            log.debug(BizUtils.logInfo("END"));
+        }
+    }
+
+    @PostMapping("/uploadTermExcelSave")
+    public ResponseEntity<Map<String, Object>> uploadTermExcelSave(@RequestBody List<TbTermDictionaryDto> list, HttpSession session) {
+        log.debug(BizUtils.logInfo("START"));
+
+        Map<String, Object> res = new HashMap<>();
+        try {
+            int count = termDictionaryService.uploadTermExcelSave(list, session);
+            res.put("success", true);
+            res.put("count", count);
+            log.debug(BizUtils.logInfo("END", "success"));
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            log.debug(BizUtils.logInfo("END", "fail"));
+            return ResponseEntity.ok(res);
+        }
+    }
 
 }

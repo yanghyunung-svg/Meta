@@ -21,4 +21,6 @@ public interface TbCodeMapper {
     public int updateData(TbCodeDto tbCodeDto);
     public int deleteData(TbCodeDto tbCodeDto);
     public List<TbCodeDto> getListData(TbCodeDto tbCodeDto);
+    public List<TbCodeDto> getAllData(TbCodeDto tbCodeDto);
+    public int countCode(TbCodeDto tbCodeDto);
 }

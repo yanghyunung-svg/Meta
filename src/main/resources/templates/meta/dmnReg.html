@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/sidebar.js" defer></script>
+    <script src="/js/layout.js" defer></script>
+    <script src="/js/commonUtils.js"></script>
+</head>
+<body>
+
+<div id="topbarContainer"></div>
+<div class="container">
+    <div id="sidebarContainer"></div>
+    <div class="mainContainer" id="mainContainer">
+        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <h2 style="margin:0;"> ✅ 표준도메인 신청</h2>
+            <div class="button-group" style="display:flex; gap:8px;">
+                <button id="btnPopup" class="btn-row">도메인검증</button>
+                <button id="btnInit" class="btn">초기화</button>
+                <button id="btnSave"  class="btn">저장</button>
+            </div>
+        </div>
+        <div class="divider-h"></div>
+            <form id="mainForm">
+                <table class="form-table">
+                <tr>
+                    <th>도메인명 <span style="color:red">*</span></th>
+                    <td colspan="2"><input type="text" id="dmnNm" name="dmnNm" class="form-input" required> </td>
+                </tr>
+                </table>
+                <div class="divider-h"></div>
+                <table class="form-table">
+                <tr>
+                    <th>도메인분류명 <span style="color:red">*</span></th>
+                    <td colspan="2"> <input type="text" id="dmnClsfNm" name="dmnClsfNm" class="form-input"  required> </td>
+                </tr>
+                <tr>
+                    <th>영문명</th>
+                    <td colspan="2"><input type="text" id="dmnEngNm" name="dmnEngNm" class="form-input"  > </td>
+                </tr>
+                <tr>
+                    <th>속성</th>
+                    <td colspan="2"><input type="text" id="dmnAtrb" name="dmnAtrb" class="form-input"  > </td>
+                </tr>
+                <tr>
+                    <th>상태</th>
+                    <td colspan="2">
+                        <select id="sttsCd"  name="sttsCd" class="form-input">
+                            <option value="0">신청</option>
+                            <option value="1">사용</option>
+                            <option value="9">미사용</option>
+                        </select>
+                    </td>
+                </tr>
+                </table>
+                <table class="form-table">
+                <tr>
+                    <th>최초등록</th>
+                    <td style="display:flex; gap:5px;">
+                        <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
+                        <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+                </tr>
+                <tr>
+                    <th>최종변경</th>
+                    <td style="display:flex; gap:5px;">
+                        <input type="text" id="updId" name="updId" class="form-input" readonly>
+                        <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
+                </tr>
+            </table>
+        </form>
+        <div class="divider-h"></div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const mainForm = document.getElementById("mainForm");
+        const btnSave = document.getElementById("btnSave");
+        btnSave.disabled = true;
+
+        const userId = localStorage.getItem('userId');
+        document.getElementById("crtId").value = userId;
+        document.getElementById("updId").value = userId;
+
+        // 현재 화면 상태: I(신규), S(상세)
+        let mode = "I";
+        let originalData = {};
+
+        // 저장 버튼
+        btnSave.addEventListener("click", async () => {
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
+
+            if (!data.dmnNm.trim()) {
+                alert("도메인명을 입력하세요.");
+                mainForm.dmnNm.focus();
+                return;
+            }
+            if (!data.dmnClsfNm.trim()) {
+                alert("도메인분류명을 입력하세요.");
+                mainForm.dmnClsfNm.focus();
+                return;
+            }
+            if (!data.dmnEngNm.trim()) {
+                alert("도메인영문명을 입력하세요.");
+                mainForm.dmnEngNm.focus();
+                return;
+            }
+
+            try {
+                let url = "/meta/insertDmnData";
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    alert("저장되었습니다.");
+                } else {
+                    alert("오류: " + result.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("요청 중 오류가 발생했습니다.");
+            }
+        });
+
+        /** 초기화 **/
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+        });
+
+       document.getElementById('btnPopup').addEventListener('click', async () => {
+            const inData = formToJson(mainForm);
+
+            if (!inData.dmnNm.trim()) {
+                alert("도메인명을 입력하세요.");
+                mainForm.dmnNm.focus();
+                return;
+            }
+            try {
+                const res = await fetch('/meta/getDmnData', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(inData)
+                });
+
+                if (!res.ok) {
+                    throw new Error("서버 응답 오류");
+                    return;
+                }
+                const outData = await res.json();
+                fillForm(mainForm, outData);
+
+            } catch (err) {
+                alert("등록 가능합니다.");
+            }
+        });
+
+        // Enter 키 이벤트
+        document.getElementById('mainForm').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 폼 제출 방지
+                document.getElementById('btnPopup').click();
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -2,9 +2,11 @@ package com.meta.service;
 
 import com.common.utils.BizUtils;
 import com.meta.dto.ApproveDto;
+import com.meta.dto.TbStdDmnBscDto;
 import com.meta.dto.TbTermDictionaryDto;
 import com.meta.dto.TbWordDictionaryDto;
 import com.meta.mapper.ApproveMapper;
+import com.meta.mapper.TbStdDmnBscMapper;
 import com.meta.mapper.TbTermDictionaryMapper;
 import com.meta.mapper.TbWordDictionaryMapper;
 import org.slf4j.Logger;
@@ -27,6 +29,9 @@ public class ApproveService {
     private TbWordDictionaryMapper tbWordDictionaryMapper;
     @Autowired
     private TbTermDictionaryMapper tbTermDictionaryMapper;
+    @Autowired
+    private TbStdDmnBscMapper tbStdDmnBscMapper;
+
 
     /**
      * @ID   : getListData
@@ -48,19 +53,33 @@ public class ApproveService {
         switch (inputDto.getSe()) {
         case "1":
             TbTermDictionaryDto termIn = new TbTermDictionaryDto();
-            termIn.setId(inputDto.getId());
+            termIn.setTrmNm(inputDto.getKorNm());
             TbTermDictionaryDto termOut = tbTermDictionaryMapper.getLockData(termIn);
-            termOut.setStat("1");
-            termOut.setUpdId(inputDto.getUserId());
-            tbTermDictionaryMapper.updateData(termOut);
+            if (termOut != null) {
+                termOut.setStat("1");
+                termOut.setUpdId(inputDto.getUserId());
+                tbTermDictionaryMapper.updateData(termOut);
+            }
             break;
         case "2":
             TbWordDictionaryDto wordIn = new TbWordDictionaryDto();
             wordIn.setId(inputDto.getId());
             TbWordDictionaryDto wordOut = tbWordDictionaryMapper.getLockData(wordIn);
-            wordOut.setStat("1");
-            wordOut.setUpdId(inputDto.getUserId());
-            tbWordDictionaryMapper.updateData(wordOut);
+            if (wordOut != null) {
+                wordOut.setStat("1");
+                wordOut.setUpdId(inputDto.getUserId());
+                tbWordDictionaryMapper.updateData(wordOut);
+            }
+            break;
+        case "3":
+            TbStdDmnBscDto dmnIn = new TbStdDmnBscDto();
+            dmnIn.setDmnNm(inputDto.getKorNm());
+            TbStdDmnBscDto dmnOut = tbStdDmnBscMapper.getLockData(dmnIn);
+            if (dmnOut != null) {
+                dmnOut.setSttsCd("1");
+                dmnOut.setUpdId(inputDto.getUserId());
+                tbStdDmnBscMapper.updateData(dmnOut);
+            }
             break;
         default:
             break;

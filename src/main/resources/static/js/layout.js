@@ -36,11 +36,11 @@ function loadHeader() {
         if (headerSpan && userInfo) {
             userInfo.addEventListener('click', () => {
                 const width = 700;
-                const height = 450;
+                const height = 480;
                 const left = window.screenX + (window.outerWidth - width) / 2;
                 const top = window.screenY + (window.outerHeight - height) / 2;
                 const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
-                const win = window.open("/meta/userReg", "사용자정보", features);
+                const win = window.open("/meta/userChg", "사용자정보", features);
                 const payload = { mode: "S", userId: userId };
                 win.addEventListener('load', () => {
                     win.postMessage(payload, window.location.origin);

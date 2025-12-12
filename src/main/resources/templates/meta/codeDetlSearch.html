@@ -25,6 +25,7 @@
             </div>
         </div>
 
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
@@ -42,19 +43,18 @@
 
                     <th>상태</th>
                     <td>
-                        <select id="useYn"  name="useYn" class="form-input">
+                        <select id="stat"  name="stat" class="form-input">
                             <option value="">전체</option>
-                            <option value="Y">사용</option>
-                            <option value="N">미사용</option>
                         </select>
                     </td>
                 </tr>
             </table>
         </form>
+        <div class="divider-h"></div>
 
         <div id="pageTopBarContainer"></div>
 
-        <table style="margin-top:12px" class="dark-table">
+        <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
                 <th width="50px" style="text-align: center;">번호</th>
@@ -76,12 +76,13 @@
 <script>
 
     document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('STAT', 'stat');
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.dark-table tbody');
+        window.tableBody = document.querySelector('.data-table tbody');
         const savedGrpCd = localStorage.getItem('grpCd');
         if (savedGrpCd) {
             document.getElementById('grpCd').value = savedGrpCd;
@@ -123,7 +124,7 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-grp="${item.grpCd}" data-cd="${item.cd}">
+                <tr class="row-click" data-grp="${item.grpCd}" data-cd="${item.cd}" data-id="${item.grpCd}" + "${item.cd}">
                     <td style="text-align: center;"> ${start + index + 1} </td>
                     <td style="text-align: left;">${item.grpCd}</td>
                     <td style="text-align: left;">${item.grpNm}</td>
@@ -131,7 +132,7 @@
                     <td style="text-align: left;">${item.cdNm}</td>
                     <td style="text-align: left;">${item.rmk}</td>
                     <td style="text-align: center;">${item.ord}</td>
-                    <td style="text-align: center;"> ${item.useYn === 'Y' ? '사용' : item.useYn === 'N' ? '미사용' : ' '} </td>
+                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                 </tr>
             `).join('');
 
@@ -141,9 +142,22 @@
                     const grpCdS = tr.getAttribute("data-grp");
                     const cdS = tr.getAttribute("data-cd");
                     const payload = { mode: "S", grpCd: grpCdS, cd: cdS };
-                    openWindowWithJSON(payload, "/meta/codeDetlChg", 700, 600);
+                    openWindowWithJSON(payload, "/meta/codeDetlChg", 700, 650);
                 });
             });
+        }
+
+        window.refreshParentRow = function(data) {
+            const refreshMap = {
+                grpCd: 'td:nth-child(2)',
+                grpNm: 'td:nth-child(3)',
+                cd: 'td:nth-child(4)',
+                cdNm: 'td:nth-child(5)',
+                rmk: 'td:nth-child(6)',
+                ord: 'td:nth-child(7)',
+                stat: 'td:nth-child(8)'
+            };
+            window.updateRowDataFlexible(data, 'grpCd' + 'cd', refreshMap);
         }
 
         /** 초기화 **/
@@ -188,8 +202,7 @@
         document.getElementById("grpCd").value = grpCd;
         document.getElementById("grpNm").value = grpNm;
     }
-
-
 </script>
+<script src="/js/commonCombo.js"></script>
 </body>
 </html>

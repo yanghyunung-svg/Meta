@@ -16,19 +16,23 @@
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-            <h2 style="margin:0;"> ✅ 공통코드 신청</h2>
+            <h2 style="margin:0;"> ✅ 공통코드 등록</h2>
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnPopup" class="btn-row">코드검증</button>
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSave"  class="btn">저장</button>
             </div>
         </div>
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="form-table">
                 <tr>
                     <th>공통코드 <span style="color:red">*</span></th>
                     <td colspan="2"> <input type="text" id="grpCd" name="grpCd" class="form-input" required> </td>
                 </tr>
+            </table>
+            <div class="divider-h"></div>
+            <table class="form-table">
                 <tr>
                     <th>공통코드명 <span style="color:red">*</span></th>
                     <td colspan="2"> <input type="text" id="grpNm" name="grpNm" class="form-input"  required> </td>
@@ -42,15 +46,16 @@
                     <td colspan="2"> <textarea id="rmk" name="rmk" class="form-input" rows="10" ></textarea> </td>
                 </tr>
                 <tr>
-                    <th>사용여부</th>
+                    <th>상태코드</th>
                     <td colspan="2">
-                        <select id="useYn"  name="useYn" class="form-input">
-                            <option value="Y">사용</option>
-                            <option value="N">미사용</option>
-
+                        <select id="stat"  name="stat" class="form-input">
+                            <option value="1">사용</option>
+                            <option value="9">미사용</option>
                         </select>
                     </td>
                 </tr>
+            </table>
+            <table class="form-table">
                 <tr>
                     <th>최초등록</th>
                     <td style="display:flex; gap:5px;">
@@ -65,6 +70,7 @@
                 </tr>
             </table>
         </form>
+        <div class="divider-h"></div>
     </div>
 </div>
 <script>

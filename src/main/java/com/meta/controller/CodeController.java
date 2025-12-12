@@ -4,18 +4,20 @@ import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbCodeDto;
 import com.meta.service.CodeService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Controller
@@ -65,10 +67,62 @@ public class CodeController {
      */
     @PostMapping("/updateCodeData")
     @ResponseBody
-    public ApiResponse<Void> updateCodeData(@RequestBody TbCodeDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> updateCodeData(@RequestBody TbCodeDto inputDto, HttpServletRequest session) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         ApiResponse<Void> outputDto = codeService.updateData(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
+
+
+    /**
+     * @ID : getCodeAllData
+     * @NAME : 코드 콤보 조회
+     */
+    @PostMapping("/getCodeAllData")
+    public ResponseEntity<List<TbCodeDto>> getCodeAllData(@RequestBody TbCodeDto inputDto)  {
+        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
+        List<TbCodeDto> outputDto = codeService.getCodeAllData(inputDto);
+        return ResponseEntity.ok(outputDto);
+    }
+
+
+    /**
+     * @ID : uploadCodeExcelPreview
+     * @NAME : 상세코드 엑셀업로드
+     */
+    @PostMapping("/uploadCodeExcelPreview")
+    public ResponseEntity<Map<String, Object>> uploadCodeExcelPreview(@RequestParam("file") MultipartFile file) {
+        Map<String, Object> res = new HashMap<>();
+        try {
+            List<TbCodeDto> list = codeService.parseExcelPreview(file);
+            res.put("success", true);
+            res.put("data", list);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        }
+    }
+
+    /**
+     * @ID : uploadCodeExcelSave
+     * @NAME : 상세코드 엑셀업로드 저장
+     */
+    @PostMapping("/uploadCodeExcelSave")
+    public ResponseEntity<Map<String, Object>> uploadCodeExcelSave(@RequestBody List<TbCodeDto> list) {
+        Map<String, Object> res = new HashMap<>();
+        try {
+            int count = codeService.saveUploadedExcel(list);
+            res.put("success", true);
+            res.put("count", count);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        }
+    }
+
 }

@@ -24,12 +24,16 @@
             </div>
         </div>
 
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="form-table">
             <tr>
                 <th>사용자ID <span style="color:red">*</span></th>
                 <td colspan="2"><input type="text" id="userId" name="userId" class="form-input" required></td>
             </tr>
+            </table>
+            <div class="divider-h"></div>
+            <table class="form-table">
             <tr>
                 <th>사용자이름 <span style="color:red">*</span></th>
                 <td colspan="2"><input type="text" id="userNm" name="userNm" class="form-input"  required></td>
@@ -59,14 +63,15 @@
             <tr>
                 <th>상태</th>
                 <td colspan="2">
-                    <select id="useYn"  name="useYn" class="form-input">
-                        <option value="">선택</option>
-                        <option value="Y">사용</option>
-                        <option value="N">미사용</option>
-
+                    <select id="stat"  name="stat" class="form-input">
+                        <option value="0">신청</option>
+                        <option value="1">사용</option>
+                        <option value="9">미사용</option>
                     </select>
                 </td>
             </tr>
+            </table>
+            <table class="form-table">
             <tr>
                 <th>최초등록</th>
                 <td style="display:flex; gap:5px;">
@@ -81,6 +86,7 @@
             </tr>
         </table>
     </form>
+        <div class="divider-h"></div>
     </div>
 </div>
 <script>

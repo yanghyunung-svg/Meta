@@ -25,6 +25,7 @@
             </div>
         </div>
 
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
@@ -36,18 +37,16 @@
                     <td>
                         <select id="stat"  name="stat" class="form-input">
                             <option value="">전체</option>
-                            <option value="0">신청</option>
-                            <option value="1">사용</option>
-                            <option value="9">미사용</option>
                         </select>
                     </td>
                 </tr>
             </table>
         </form>
+        <div class="divider-h"></div>
 
         <div id="pageTopBarContainer"></div>
 
-        <table style="margin-top:12px" class="dark-table">
+        <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
                 <th width="50px">번호</th>
@@ -66,11 +65,13 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('STAT', 'stat');
+
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.dark-table tbody');
+        window.tableBody = document.querySelector('.data-table tbody');
 
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageTopBarContainer");
@@ -118,11 +119,20 @@
                 tr.addEventListener("click", () => {
                     const id = tr.getAttribute("data-id");
                     const payload = { mode: "S", id: id };
-                    openWindowWithJSON(payload, "/meta/wordChg", 700, 550);
+                    openWindowWithJSON(payload, "/meta/wordChg", 700, 620);
                 });
             });
         }
 
+        window.refreshParentRow = function(data) {
+            const refreshMap = {
+                engAbbrNm: 'td:nth-child(3)',
+                engNm: 'td:nth-child(4)',
+                expln: 'td:nth-child(5)',
+                stat: 'td:nth-child(6)'
+            };
+            window.updateRowDataFlexible(data, 'id', refreshMap);
+        }
 
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
@@ -155,8 +165,7 @@
             });
         });
     });
-
-
 </script>
+<script src="/js/commonCombo.js"></script>
 </body>
 </html>

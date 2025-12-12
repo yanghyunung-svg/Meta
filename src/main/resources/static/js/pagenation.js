@@ -4,7 +4,7 @@
             const totalCount = dataAll.length;
             const totalPage = Math.ceil(totalCount / page_size);
             document.getElementById("pageInfo").innerText =
-                `전체 ${totalCount}건 | ${currentPage} / ${totalPage} 페이지`;
+                `전체 ${totalCount} 건 | ${currentPage} / ${totalPage} 페이지 `;
         }
 /** 페이지네이션: 페이지번호 10개 고정 **/
 function renderPagination(dataAll, currentPage, page_size) {

@@ -47,6 +47,7 @@ public class UserInfoController {
         session.setAttribute("userId", user.getUserId());
         session.setAttribute("userNm", user.getUserNm());
         session.setAttribute("role", user.getRole());
+
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }

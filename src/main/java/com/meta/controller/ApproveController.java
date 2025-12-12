@@ -37,6 +37,7 @@ public class ApproveController {
     @ResponseBody
     public List<ApproveDto> getAprvDsctnList(@RequestBody ApproveDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START"));
+        inputDto.setStat("0");
         List<ApproveDto> outputDto =  approveService.getListData(inputDto);
         log.debug(BizUtils.logInfo("END"));
         return outputDto;

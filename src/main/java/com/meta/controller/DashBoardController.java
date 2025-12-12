@@ -1,7 +1,7 @@
 package com.meta.controller;
 
 import com.common.utils.BizUtils;
-import com.meta.dto.DashBoardDto;
+import com.meta.dto.ApproveDto;
 import com.meta.service.DashBoardService;
 import jakarta.servlet.http.HttpSession;
 import lombok.Data;
@@ -35,25 +35,13 @@ public class DashBoardController {
      */
     @PostMapping("/getDashBoardList")
     @ResponseBody
-    public List<DashBoardDto> getDashBoardList(@RequestBody DashBoardDto inputDto, HttpSession session) throws Exception {
+    public List<ApproveDto> getDashBoardList(@RequestBody ApproveDto inputDto, HttpSession session) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         inputDto.setStat("0");
-        List<DashBoardDto> outputDto =  dashBoardService.getListData(inputDto);
+        List<ApproveDto> outputDto =  dashBoardService.getListData(inputDto);
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
 
-    /**
-     * @ID : getDashBoardData
-     * @NAME : DashBoard 상세 조회
-     */
-    @PostMapping("/getDashBoardData")
-    @ResponseBody
-    public DashBoardDto getDashBoardData(@RequestBody DashBoardDto inputDto, HttpSession session) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-        DashBoardDto outputDto = dashBoardService.getData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
-    }
 
 }

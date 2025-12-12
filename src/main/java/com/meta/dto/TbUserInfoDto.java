@@ -24,7 +24,7 @@ public class TbUserInfoDto {
     private String     email;                           // 이메일 VARCHAR(200)
     private String     phone;                           // 전화번호 VARCHAR(50)
     private String     role;                            // 권한 VARCHAR(50)
-    private String     useYn;                           // 사용여부 CHAR(1)
+    private String     stat;                           // 상태코드 CHAR(1)
     private String     crtDttm;                         // 생성일시 DATETIME
     private String     crtId;                           // 생성자ID VARCHAR(50)
     private String     updDttm;                         // 변경일시 DATETIME
