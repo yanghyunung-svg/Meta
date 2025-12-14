@@ -28,8 +28,8 @@ public class UserInfoController {
     private UserInfoService userInfoService;
 
     /**
-     * @ID : getLogin
-     * @NAME : Login
+     * @ ID : getLogin
+     * @ NAME : Login
      */
     @PostMapping("/getLogin")
     @ResponseBody
@@ -53,8 +53,8 @@ public class UserInfoController {
     }
 
     /**
-     * @ID : getUserListData
-     * @NAME : 사용자정보 목록 조회
+     * @ ID : getUserListData
+     * @ NAME : 사용자정보 목록 조회
      */
     @PostMapping("/getUserListData")
     @ResponseBody
@@ -64,8 +64,8 @@ public class UserInfoController {
     }
 
     /**
-     * @ID : getUserData
-     * @NAME : 사용자정보 상세 조회
+     * @ ID : getUserData
+     * @ NAME : 사용자정보 상세 조회
      */
     @PostMapping("/getUserData")
     @ResponseBody
@@ -75,8 +75,8 @@ public class UserInfoController {
     }
 
     /**
-     * @ID : insertUserData
-     * @NAME : 사용자정보 등록
+     * @ ID : insertUserData
+     * @ NAME : 사용자정보 등록
      */
     @PostMapping("/insertUserData")
     @ResponseBody
@@ -87,8 +87,8 @@ public class UserInfoController {
         return outputDto;
     }
     /**
-     * @ID : updateUserData
-     * @NAME : 사용자정보 변경
+     * @ ID : updateUserData
+     * @ NAME : 사용자정보 변경
      */
     @PostMapping("/updateUserData")
     @ResponseBody
@@ -100,8 +100,8 @@ public class UserInfoController {
     }
 
     /**
-     * @ID : getLoginLogList
-     * @NAME : 로그인 로그 조회
+     * @ ID : getLoginLogList
+     * @ NAME : 로그인 로그 조회
      */
     @PostMapping("/getLoginLogList")
     @ResponseBody

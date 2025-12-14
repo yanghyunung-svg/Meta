@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TemplateController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * @ ID : downloadCodeExcelTemplate
+     * @ NAME : 상세코드 UPLOAD Template
+     */
     @GetMapping("/downloadCodeExcelTemplate")
     public void downloadCodeExcelTemplate(HttpServletResponse response) throws Exception {
 
@@ -55,6 +59,10 @@ public class TemplateController {
         workbook.close();
     }
 
+    /**
+     * @ ID : downloadTermExcelTemplate
+     * @ NAME : 표쥰용어 UPLOAD Template
+     */
     @GetMapping("/downloadTermExcelTemplate")
     public void downloadTermExcelTemplate(HttpServletResponse response) throws Exception {
 

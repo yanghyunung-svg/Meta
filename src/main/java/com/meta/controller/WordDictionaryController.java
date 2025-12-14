@@ -27,8 +27,8 @@ public class WordDictionaryController {
     private WordDictionaryService wordDictionaryService;
 
     /**
-     * @ID : getWordListData
-     * @NAME : 단어사전 목록 조회
+     * @ ID : getWordListData
+     * @ NAME : 단어사전 목록 조회
      */
     @PostMapping("/getWordListData")
     @ResponseBody
@@ -38,8 +38,8 @@ public class WordDictionaryController {
     }
 
     /**
-     * @ID : getWordData
-     * @NAME : 단어사전 상세 조회
+     * @ ID : getWordData
+     * @ NAME : 단어사전 상세 조회
      */
     @PostMapping("/getWordData")
     @ResponseBody
@@ -54,8 +54,8 @@ public class WordDictionaryController {
     }
 
     /**
-     * @ID : insertWordData
-     * @NAME : 단어사전 등록
+     * @ ID : insertWordData
+     * @ NAME : 단어사전 등록
      */
     @PostMapping("/insertWordData")
     @ResponseBody
@@ -67,8 +67,8 @@ public class WordDictionaryController {
     }
 
     /**
-     * @ID : updateWordData
-     * @NAME : 단어사전 변경
+     * @ ID : updateWordData
+     * @ NAME : 단어사전 변경
      */
     @PostMapping("/updateWordData")
     @ResponseBody

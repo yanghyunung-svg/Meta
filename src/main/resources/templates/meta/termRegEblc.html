@@ -19,7 +19,6 @@
             <div class="button-group" style="display:flex; gap:8px;">
                 <button id="btnDownload" class="btn">템플릿 다운로드</button>
                 <button id="btnUpload" class="btn">엑셀 업로드</button>
-                <button id="btnVal" class="btn">재검증</button>
                 <button id="btnUploadSave" class="btn" disabled>업로드 저장</button>
             </div>
         </div>
@@ -36,7 +35,6 @@
             <th style="text-align: left;">도메인명</th>
             <th style="text-align: left;">설명</th>
             <th style="text-align: center;">상태</th>
-            <th style="text-align: center;">신청자</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -57,7 +55,6 @@
             document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
             window.uploadPreviewData = null;
             document.getElementById("btnUploadSave").disabled = true;
-
             document.getElementById("excelFile").click();
         });
 
@@ -111,44 +108,13 @@
                     <td contenteditable="true" data-index="${index}" data-field="dmnNm">${row.dmnNm}</td>
                     <td contenteditable="true" data-index="${index}" data-field="trmExpln">${row.trmExpln}</td>
                     <td contenteditable="true" style="text-align: center;">${row.stat}</td>
-                    <td style="text-align: center;">${row.crtId}</td>
+                    <td style="text-align: center;" display: none;>${row.crtId}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
             attachEditListeners();
         }
-
-
-        document.getElementById('btnVal').addEventListener('click', async () => { // ⭐ 1. async 추가
-            if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
-                alert("업로드된 데이터가 없습니다.");
-                return;
-            }
-
-            try {
-                const res = await fetch("/meta/parseTermReload", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify(window.uploadPreviewData)
-                });
-
-                const result = await res.json();
-
-                if (!result.success) {
-                    alert("오류: " + result.message);
-                    return;
-                }
-
-                renderPreviewTable(result.data);
-                window.uploadPreviewData = result.data;  // 저장 버튼에서 사용
-                alert("데이터 재처리가 완료되었습니다.");
-
-            } catch(err) {
-                console.error(err);
-                alert("처리 중 오류 발생");
-            }
-        });
 
         document.getElementById("btnUploadSave").addEventListener("click", async () => {
             if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){

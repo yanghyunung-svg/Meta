@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- *@ID       : StdDmnBscService
- *@NAME     : 표준도메인 Service
+ *@ ID       : StdDmnBscService
+ *@ NAME     : 표준도메인 Service
  */
 @Service
 public class StdDmnBscService {

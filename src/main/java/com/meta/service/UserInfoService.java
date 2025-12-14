@@ -19,8 +19,8 @@ import org.thymeleaf.util.StringUtils;
 import java.util.List;
 
 /** 
- *@ID       : userInfoService
- *@NAME     : 사용자정보 Service
+ *@ ID       : userInfoService
+ *@ NAME     : 사용자정보 Service
  */
 @Service
 public class UserInfoService {

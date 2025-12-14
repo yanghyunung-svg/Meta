@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /** 
- *@ID       : ApproveService
- *@NAME     : 승인 Service
+ *@ ID       : ApproveService
+ *@ NAME     : 승인 Service
  */
 @Service
 public class ApproveService {
@@ -34,8 +34,8 @@ public class ApproveService {
 
 
     /**
-     * @ID   : getListData
-     * @NAME     : 승인 목록 조회
+     * @ ID   : getListData
+     * @ NAME     : 승인 목록 조회
      */
     public List<ApproveDto> getListData(ApproveDto inputDto)  {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
@@ -44,8 +44,8 @@ public class ApproveService {
         return outputDto;
     }
     /**
-     * @ID   : getListData
-     * @NAME     : 승인 목록 조회
+     * @ ID   : getListData
+     * @ NAME     : 승인 목록 조회
      */
     public ApproveDto prcsAprvDsctn(ApproveDto inputDto)  {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /** 
- *@ID       : CodeGroupService
- *@NAME     : 코드그룹기본 Service
+ *@ ID       : CodeGroupService
+ *@ NAME     : 코드그룹기본 Service
  */
 @Service
 public class CodeGroupService {

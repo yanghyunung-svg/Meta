@@ -37,6 +37,8 @@ public class MetaController {
     public String termChgView() { return "meta/termChg"; }
     @GetMapping("/termRegEblc")
     public String termRegEblcView() { return "meta/termRegEblc"; }
+    @GetMapping("/termEdit")
+    public String termEditView() { return "meta/termEdit"; }
 
     /* 단어 */
     @GetMapping("/wordSearch")

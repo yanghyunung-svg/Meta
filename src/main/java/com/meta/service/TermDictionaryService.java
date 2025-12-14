@@ -3,6 +3,7 @@ package com.meta.service;
 import ch.qos.logback.core.util.StringUtil;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
+import com.meta.dto.TbCodeDto;
 import com.meta.dto.TbTermDictionaryDto;
 import com.meta.dto.TbWordDictionaryDto;
 import com.meta.dto.WordMappingDto;
@@ -21,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
- *@ID       : TermDictionaryService
- *@NAME     : 용어사전 Service
+ *@ ID       : TermDictionaryService
+ *@ NAME     : 용어사전 Service
  */
 @Service
 public class TermDictionaryService {
@@ -177,6 +178,31 @@ public class TermDictionaryService {
     }
 
 
+    public List<TbTermDictionaryDto> uploadTermExcelOnly(MultipartFile file) throws Exception {
+        log.debug(BizUtils.logInfo("START"));
+
+        List<TbTermDictionaryDto> result = new ArrayList<>();
+
+        Workbook workbook = WorkbookFactory.create(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            if (row == null) continue;
+
+            TbTermDictionaryDto dto = new TbTermDictionaryDto();
+
+            dto.setTrmNm(getCell(row, 1));
+            dto.setEngNm(getCell(row, 2));
+            dto.setTrmExpln(getCell(row, 4));
+
+            result.add(dto);
+        }
+
+        log.debug(BizUtils.logInfo("END"));
+        return result;
+    }
+
     public List<TbTermDictionaryDto> parseExcelPreview(MultipartFile file) throws Exception {
         log.debug(BizUtils.logInfo("START"));
 
@@ -190,6 +216,7 @@ public class TermDictionaryService {
             if (row == null) continue;
 
             TbTermDictionaryDto dto = new TbTermDictionaryDto();
+
             dto.setTrmNm(getCell(row, 1));
             dto.setEngNm(getCell(row, 2));
             dto.setDmnNm(getCell(row, 3));
@@ -197,12 +224,11 @@ public class TermDictionaryService {
             dto.setStat(getCell(row, 5));
             dto.setCrtId(getCell(row, 6));
 
-            TbTermDictionaryDto outDto = getTermSplitData(dto);
+            // 검증 로직
+            String error = validateRow(dto);
+            if (StringUtil.notNullNorEmpty(error))  dto.setStat(error);
 
-            if (StringUtil.isNullOrEmpty(outDto.getDmnNm())) outDto.setDmnNm("-");
-            if (StringUtil.isNullOrEmpty(outDto.getStat())) outDto.setStat("0");
-
-            result.add(outDto);
+            result.add(dto);
         }
 
         log.debug(BizUtils.logInfo("END"));
@@ -214,15 +240,28 @@ public class TermDictionaryService {
 
         List<TbTermDictionaryDto> result = new ArrayList<>();
         for (TbTermDictionaryDto dto : inputList) {
-            TbTermDictionaryDto outDto = getTermSplitData(dto);
-            if (StringUtil.isNullOrEmpty(outDto.getDmnNm())) {
-                outDto.setDmnNm("-");
+
+            if (StringUtil.notNullNorEmpty(dto.getTrmNm())) {
+                TbTermDictionaryDto outDto = getTermSplitData(dto);
+                if (StringUtil.isNullOrEmpty(outDto.getDmnNm())) {
+                    outDto.setDmnNm("-");
+                }
+                result.add(outDto);
             }
-            result.add(outDto);
         }
 
         log.debug(BizUtils.logInfo("END"));
         return result;
+    }
+
+
+    private String validateRow(TbTermDictionaryDto dto) {
+        if (dto.getTrmNm() == null || dto.getTrmNm().isEmpty()) return "용어명 누락";
+        if (dto.getEngNm() == null || dto.getEngNm().isEmpty()) return "영문명 누락";
+        // DB 중복 체크
+        int exists = tbTermDictionaryMapper.countCode(dto);
+        if (exists > 0) return "이미 존재하는 코드";
+        return null;  // 정상
     }
 
     public int uploadTermExcelSave(List<TbTermDictionaryDto> list, HttpSession session)  {

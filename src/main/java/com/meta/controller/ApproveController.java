@@ -23,15 +23,15 @@ public class ApproveController {
     private ApproveService approveService;
 
     /**
-     * @ID : aprvDsctnInqView
-     * @NAME : 용어단어 승인내역 조회
+     * @ ID : aprvDsctnInqView
+     * @ NAME : 용어단어 승인내역 조회
      */
     @GetMapping("/aprvDsctnInq")
     public String aprvDsctnInqView(Model model) { return "meta/aprvDsctnInq"; }
 
     /**
-     * @ID : getAprvDsctnList
-     * @NAME : 승인내역 조회
+     * @ ID : getAprvDsctnList
+     * @ NAME : 승인내역 조회
      */
     @PostMapping("/getAprvDsctnList")
     @ResponseBody
@@ -43,8 +43,8 @@ public class ApproveController {
         return outputDto;
     }
     /**
-     * @ID : prcsAprvDsctn
-     * @NAME : 승인처리
+     * @ ID : prcsAprvDsctn
+     * @ NAME : 승인처리
      */
     @PostMapping("/prcsAprvDsctn")
     @ResponseBody

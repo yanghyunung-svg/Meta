@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /** 
- *@ID       : WordDictionaryService
- *@NAME     : 단어사전 Service
+ *@ ID       : WordDictionaryService
+ *@ NAME     : 단어사전 Service
  */
 @Service
 public class WordDictionaryService {

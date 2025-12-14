@@ -26,8 +26,8 @@ public class CodeGroupController {
     private CodeGroupService codeGroupService;
  
     /**
-     * @ID : getCodeGroupListData
-     * @NAME : 코드그룹 목록 조회
+     * @ ID : getCodeGroupListData
+     * @ NAME : 코드그룹 목록 조회
      */
     @PostMapping("/getCodeGroupListData")
     @ResponseBody
@@ -37,8 +37,8 @@ public class CodeGroupController {
     }
 
     /**
-     * @ID : getCodeGroupData
-     * @NAME : 코드그룹 상세 조회
+     * @ ID : getCodeGroupData
+     * @ NAME : 코드그룹 상세 조회
      */
     @PostMapping("/getCodeGroupData")
     @ResponseBody
@@ -48,8 +48,8 @@ public class CodeGroupController {
     }
 
     /**
-     * @ID : insertCodeGroupData
-     * @NAME : 코드그룹 등록
+     * @ ID : insertCodeGroupData
+     * @ NAME : 코드그룹 등록
      */
     @PostMapping("/insertCodeGroupData")
     @ResponseBody
@@ -60,8 +60,8 @@ public class CodeGroupController {
         return outputDto;
     }
     /**
-     * @ID : updateCodeGroupData
-     * @NAME : 코드그룹 변경
+     * @ ID : updateCodeGroupData
+     * @ NAME : 코드그룹 변경
      */
     @PostMapping("/updateCodeGroupData")
     @ResponseBody

@@ -27,8 +27,8 @@ public class StdDmnBscController {
     private StdDmnBscService stdDmnBscService;
 
     /**
-     * @ID : getDmnListData
-     * @NAME : 표준도메인 목록 조회
+     * @ ID : getDmnListData
+     * @ NAME : 표준도메인 목록 조회
      */
     @PostMapping("/getDmnListData")
     @ResponseBody
@@ -37,8 +37,8 @@ public class StdDmnBscController {
         return stdDmnBscService.getListData(inputDto);
     }
     /**
-     * @ID : getDmnComboData
-     * @NAME : 표준도메인 콤보 조회
+     * @ ID : getDmnComboData
+     * @ NAME : 표준도메인 콤보 조회
      */
     @PostMapping("/getDmnComboData")
     public ResponseEntity<List<TbStdDmnBscDto>> getDmnComboData()  {
@@ -47,8 +47,8 @@ public class StdDmnBscController {
     }
 
     /**
-     * @ID : getDmnData
-     * @NAME : 표준도메인 상세 조회
+     * @ ID : getDmnData
+     * @ NAME : 표준도메인 상세 조회
      */
     @PostMapping("/getDmnData")
     @ResponseBody
@@ -58,8 +58,8 @@ public class StdDmnBscController {
     }
 
     /**
-     * @ID : insertDmnData
-     * @NAME : 표준도메인 등록
+     * @ ID : insertDmnData
+     * @ NAME : 표준도메인 등록
      */
     @PostMapping("/insertDmnData")
     @ResponseBody
@@ -71,8 +71,8 @@ public class StdDmnBscController {
     }
 
     /**
-     * @ID : updateDmnData
-     * @NAME : 표준도메인 변경
+     * @ ID : updateDmnData
+     * @ NAME : 표준도메인 변경
      */
     @PostMapping("/updateDmnData")
     @ResponseBody

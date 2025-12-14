@@ -28,8 +28,8 @@ public class CodeController {
     private CodeService codeService;
  
     /**
-     * @ID : getCodeListData
-     * @NAME : 코드 목록 조회
+     * @ ID : getCodeListData
+     * @ NAME : 코드 목록 조회
      */
     @PostMapping("/getCodeListData")
     @ResponseBody
@@ -39,8 +39,8 @@ public class CodeController {
     }
 
     /**
-     * @ID : getCodeData
-     * @NAME : 코드 상세 조회
+     * @ ID : getCodeData
+     * @ NAME : 코드 상세 조회
      */
     @PostMapping("/getCodeData")
     @ResponseBody
@@ -50,8 +50,8 @@ public class CodeController {
     }
 
     /**
-     * @ID : insertCodeData
-     * @NAME : 코드 등록
+     * @ ID : insertCodeData
+     * @ NAME : 코드 등록
      */
     @PostMapping("/insertCodeData")
     @ResponseBody
@@ -62,8 +62,8 @@ public class CodeController {
         return outputDto;
     }
     /**
-     * @ID : updateCodeData
-     * @NAME : 코드 변경
+     * @ ID : updateCodeData
+     * @ NAME : 코드 변경
      */
     @PostMapping("/updateCodeData")
     @ResponseBody
@@ -76,8 +76,8 @@ public class CodeController {
 
 
     /**
-     * @ID : getCodeAllData
-     * @NAME : 코드 콤보 조회
+     * @ ID : getCodeAllData
+     * @ NAME : 코드 콤보 조회
      */
     @PostMapping("/getCodeAllData")
     public ResponseEntity<List<TbCodeDto>> getCodeAllData(@RequestBody TbCodeDto inputDto)  {
@@ -88,8 +88,8 @@ public class CodeController {
 
 
     /**
-     * @ID : uploadCodeExcelPreview
-     * @NAME : 상세코드 엑셀업로드
+     * @ ID : uploadCodeExcelPreview
+     * @ NAME : 상세코드 엑셀업로드
      */
     @PostMapping("/uploadCodeExcelPreview")
     public ResponseEntity<Map<String, Object>> uploadCodeExcelPreview(@RequestParam("file") MultipartFile file) {
@@ -107,8 +107,8 @@ public class CodeController {
     }
 
     /**
-     * @ID : uploadCodeExcelSave
-     * @NAME : 상세코드 엑셀업로드 저장
+     * @ ID : uploadCodeExcelSave
+     * @ NAME : 상세코드 엑셀업로드 저장
      */
     @PostMapping("/uploadCodeExcelSave")
     public ResponseEntity<Map<String, Object>> uploadCodeExcelSave(@RequestBody List<TbCodeDto> list) {

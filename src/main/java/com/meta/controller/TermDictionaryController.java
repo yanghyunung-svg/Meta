@@ -30,8 +30,8 @@ public class TermDictionaryController {
     private TbTermDictionaryMapper tbTermDictionaryMapper;
 
     /**
-     * @ID : getTermListData
-     * @NAME : 용어사전 목록 조회
+     * @ ID : getTermListData
+     * @ NAME : 용어사전 목록 조회
      */
     @PostMapping("/getTermListData")
     @ResponseBody
@@ -43,8 +43,8 @@ public class TermDictionaryController {
     }
 
     /**
-     * @ID : getTermData
-     * @NAME : 용어사전 상세 조회
+     * @ ID : getTermData
+     * @ NAME : 용어사전 상세 조회
      */
     @PostMapping("/getTermData")
     @ResponseBody
@@ -56,8 +56,8 @@ public class TermDictionaryController {
     }
 
     /**
-     * @ID : insertTermData
-     * @NAME : 용어사전 등록
+     * @ ID : insertTermData
+     * @ NAME : 용어사전 등록
      */
     @PostMapping("/insertTermData")
     @ResponseBody
@@ -69,8 +69,8 @@ public class TermDictionaryController {
     }
 
     /**
-     * @ID : updateTermData
-     * @NAME : 용어사전 변경
+     * @ ID : updateTermData
+     * @ NAME : 용어사전 변경
      */
     @PostMapping("/updateTermData")
     @ResponseBody
@@ -82,8 +82,8 @@ public class TermDictionaryController {
     }
 
     /**
-     * @ID : getTermSplitData
-     * @NAME : 용어사전 단어 목록 조회
+     * @ ID : getTermSplitData
+     * @ NAME : 용어사전 단어 목록 조회
      */
     @PostMapping("/getTermSplitData")
     @ResponseBody
@@ -94,6 +94,23 @@ public class TermDictionaryController {
         return outputDto;
     }
 
+    @PostMapping("/uploadTermExcelOnly")
+    public ResponseEntity<Map<String, Object>> uploadTermExcelOnly(@RequestParam("file") MultipartFile file) {
+        log.debug(BizUtils.logInfo("START"));
+        Map<String, Object> res = new HashMap<>();
+        try {
+            List<TbTermDictionaryDto> list = termDictionaryService.uploadTermExcelOnly(file);
+            res.put("success", true);
+            res.put("data", list);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        } finally {
+            log.debug(BizUtils.logInfo("END"));
+        }
+    }
     @PostMapping("/uploadTermExcelPreview")
     public ResponseEntity<Map<String, Object>> uploadTermExcelPreview(@RequestParam("file") MultipartFile file) {
         log.debug(BizUtils.logInfo("START"));

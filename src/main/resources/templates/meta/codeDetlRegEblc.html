@@ -37,7 +37,6 @@
             <th>정렬</th>
             <th>비고</th>
             <th>상태</th>
-            <th>등록자</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -112,9 +111,9 @@
                     <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="cd">${row.cd}</td>
                     <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="cdNm">${row.cdNm}</td>
                     <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="ord">${row.ord}</td>
-                    <td contenteditable="true" data-index="${index}" data-field="rmk">${row.rmk}</td>
+                    <td style="text-align: left;"   contenteditable="true" data-index="${index}" data-field="rmk">${row.rmk}</td>
                     <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="stat">${row.stat}</td>
-                    <td style="text-align: center;">${row.crtId}</td>
+                    <td style="text-align: center;" display: none;>${row.crtId}</td>
                 `;
                 tbody.appendChild(tr);
             });

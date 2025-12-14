@@ -23,15 +23,15 @@ public class DashBoardController {
     private DashBoardService dashBoardService;
 
     /**
-     * @ID : dashboardView
-     * @NAME : DashBoard PAGE
+     * @ ID : dashboardView
+     * @ NAME : DashBoard PAGE
      */
     @GetMapping("/dashboard")
     public String dashboardView(Model model) { return "meta/dashboard"; }
 
     /**
-     * @ID : getDashBoardListData
-     * @NAME : DashBoard 조회
+     * @ ID : getDashBoardListData
+     * @ NAME : DashBoard 조회
      */
     @PostMapping("/getDashBoardList")
     @ResponseBody

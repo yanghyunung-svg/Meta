@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
- *@ID       : CodeService
- *@NAME     : 코드기본 Service
+ *@ ID       : CodeService
+ *@ NAME     : 코드기본 Service
  */
 @Service
 public class CodeService {
@@ -29,8 +29,8 @@ public class CodeService {
 
 
     /**
-     *@id   : getListData
-     *@name     : 코드기본 목록 조회
+     *@ ID   : getListData
+     *@ NAME     : 코드기본 목록 조회
      */
     public List<TbCodeDto> getListData(TbCodeDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
@@ -38,8 +38,8 @@ public class CodeService {
     }
 
     /**
-     *@id   : getAllData
-     *@name     : 공통코드상세 combo 조회
+     *@ ID   : getAllData
+     *@ NAME     : 공통코드상세 combo 조회
      */
     public List<TbCodeDto> getCodeAllData(TbCodeDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
@@ -48,8 +48,8 @@ public class CodeService {
 
 
     /**
-     *@id   : getData
-     *@name     : 코드기본 상세 조회
+     *@ ID   : getData
+     *@ NAME     : 코드기본 상세 조회
      */
     public TbCodeDto getData(TbCodeDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
@@ -57,8 +57,8 @@ public class CodeService {
     }
 
     /**
-     *@id   : insertData
-     *@name     : 코드기본 등록
+     *@ ID   : insertData
+     *@ NAME     : 코드기본 등록
      */
     public ApiResponse<Void> insertData(TbCodeDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
@@ -83,8 +83,8 @@ public class CodeService {
 
 
     /**
-     *@id   : updateData
-     *@name     : 코드기본 변경
+     *@ ID   : updateData
+     *@ NAME     : 코드기본 변경
      */
     public ApiResponse<Void> updateData(TbCodeDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
@@ -109,8 +109,8 @@ public class CodeService {
     }
 
     /**
-     * @ID : parseExcelPreview
-     * @NAME : 상세코드 엑셀업로드
+     * @ ID : parseExcelPreview
+     * @ NAME : 상세코드 엑셀업로드
      */
     public List<TbCodeDto> parseExcelPreview(MultipartFile file) throws Exception {
         log.debug(BizUtils.logInfo("START"));

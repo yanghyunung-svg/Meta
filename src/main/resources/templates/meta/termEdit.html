@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/sidebar.js" defer></script>
+    <script src="/js/layout.js" defer></script>
+    <script src="/js/commonUtils.js"></script>
+</head>
+<body>
+
+<div id="topbarContainer"></div>
+<div class="container">
+    <div id="sidebarContainer"></div>
+    <div class="mainContainer" id="mainContainer">
+        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <h2 style="margin:0;"> ✅ 표준용어 단어조립</h2>
+            <div class="button-group" style="display:flex; gap:8px;">
+                <button id="btnInit" class="btn">초기화</button>
+                <button id="btnDownload" class="btn">템플릿 다운로드</button>
+                <button id="btnUpload" class="btn">엑셀 업로드</button>
+                <button id="btnVal" class="btn">단어조립</button>
+            </div>
+        </div>
+        <div class="divider-h"></div>
+        <div style="display:flex; align-items:left;"> <input type="file" id="excelFile" accept=".xlsx,.xls" > </div>
+        <div class="divider-h"></div>
+
+        <table id="uploadPreviewTable" class="form-table" style="margin-top:10px; ">
+        <thead>
+        <tr>
+            <th class="col-no">번호</th>
+            <th style="text-align: left;">용어명</th>
+            <th style="text-align: left;">영문명</th>
+            <th style="text-align: left;">설명</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div class="divider-h"></div>
+    </div>
+
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const emptyRows = createEmptyRows(20);
+        window.uploadPreviewData = emptyRows;
+        renderPreviewTable(emptyRows);
+    });
+
+
+    document.getElementById("btnDownload").addEventListener("click", () => {
+        window.location.href = "/meta/downloadTermExcelTemplate";
+    });
+
+
+    document.getElementById("btnInit").addEventListener("click", () => {
+        document.getElementById("excelFile").value = "";
+        document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
+        window.uploadPreviewData = null;
+
+        const emptyRows = createEmptyRows(20);
+        window.uploadPreviewData = emptyRows;
+        renderPreviewTable(emptyRows);
+    });
+
+
+    document.getElementById("btnUpload").addEventListener("click", () => {
+        document.getElementById("btnInit").click();
+        document.getElementById("excelFile").click();
+    });
+
+    document.getElementById("excelFile").addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const res = await fetch("/meta/uploadTermExcelOnly", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await res.json();
+
+            if (!result.success) {
+                alert("오류: " + result.message);
+                return;
+            }
+
+            renderPreviewTable(result.data);
+            window.uploadPreviewData = result.data;
+
+        } catch (error) {
+            alert("업로드 중 오류가 발생했습니다.");
+        }
+    });
+
+    document.getElementById('btnVal').addEventListener('click', async () => {
+        if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
+            alert("업로드된 데이터가 없습니다.");
+            return;
+        }
+
+        try {
+            const res = await fetch("/meta/parseTermReload", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(window.uploadPreviewData)
+            });
+
+            const result = await res.json();
+
+            if (!result.success) {
+                alert("오류: " + result.message);
+                return;
+            }
+
+            renderPreviewTable(result.data);
+
+        } catch(err) {
+            console.error(err);
+            alert("처리 중 오류 발생");
+        }
+    });
+
+    function renderPreviewTable(rows) {
+        const table = document.getElementById("uploadPreviewTable");
+        const tbody = table.querySelector("tbody");
+        tbody.innerHTML = "";
+        table.style.display = "table";
+
+        rows.forEach((row, index) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td class="col-no">${index + 1}</td>
+                <td contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
+                <td>${row.engNm}</td>
+                <td>${row.trmExpln}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        attachEditListeners();
+    }
+
+    function attachEditListeners() {
+        const editableCells = document.querySelectorAll("#uploadPreviewTable tbody td[contenteditable='true']");
+        editableCells.forEach(cell => {
+            cell.addEventListener('blur', (event) => {
+                const element = event.target;
+                const rowIndex = element.getAttribute('data-index');
+                const fieldName = element.getAttribute('data-field');
+                const newValue = element.textContent.trim();
+                if (window.uploadPreviewData && window.uploadPreviewData[rowIndex]) {
+                    window.uploadPreviewData[rowIndex][fieldName] = newValue;
+                }
+            });
+        });
+    }
+
+    function createEmptyRows(count) {
+        const rows = [];
+        for (let i = 0; i < count; i++) {
+            rows.push({
+                trmNm: '',
+                engNm: '',
+                trmExpln: ''
+            });
+        }
+        return rows;
+    }
+
+
+</script>
+</body>
+</html>
+
