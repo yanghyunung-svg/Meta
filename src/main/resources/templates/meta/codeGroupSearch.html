@@ -142,8 +142,10 @@
                 td.addEventListener("click", () => {
                     const grpCd = td.getAttribute("data-id");
                     const grpNm = td.getAttribute("data-grpNm");
+
                     localStorage.setItem('grpCd', grpCd);
                     localStorage.setItem('grpNm', grpNm);
+
                     const width = 800;
                     const height = 820;
                     const left = window.screenX + (window.outerWidth - width) / 2;

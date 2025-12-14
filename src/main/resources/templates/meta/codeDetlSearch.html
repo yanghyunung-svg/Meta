@@ -36,11 +36,12 @@
                     </td>
                     <th>공통코드명</th>
                     <td><input type="text" id="grpNm"  name="grpNm" class="form-input" ></td>
+<!--
                     <th>상세코드</th>
                     <td><input type="text" id="cd"  name="cd" class="form-input" ></td>
                     <th>상세코드명</th>
                     <td><input type="text" id="cdNm"  name="cdNm" class="form-input" ></td>
-
+ -->
                     <th>상태</th>
                     <td>
                         <select id="stat"  name="stat" class="form-input">
@@ -150,14 +151,8 @@
         window.refreshParentRow = function(data) {
             const refreshMap = {
                 grpCd: 'td:nth-child(2)',
-                grpNm: 'td:nth-child(3)',
-                cd: 'td:nth-child(4)',
-                cdNm: 'td:nth-child(5)',
-                rmk: 'td:nth-child(6)',
-                ord: 'td:nth-child(7)',
-                stat: 'td:nth-child(8)'
             };
-            window.updateRowDataFlexible(data, 'grpCd' + 'cd', refreshMap);
+            document.getElementById("btnSearch").click();
         }
 
         /** 초기화 **/
@@ -173,6 +168,14 @@
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
             const data = formToJson(document.getElementById('mainForm'));
+
+            if (!data.grpCd.trim() && !data.grpNm.trim()) {
+                alert("공통코드를 입력하세요.");
+                mainForm.grpCd.focus();
+                return;
+            }
+
+
             fetch('/meta/getCodeListData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
