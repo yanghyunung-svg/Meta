@@ -27,6 +27,37 @@
     });
 
     observer.observe(document.documentElement, { childList: true, subtree: true });
+
+     function initSidebarToggle() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggleBtn');
+            const content = document.querySelector('.container') || document.getElementById('content');
+
+            if (!sidebar || !toggleBtn) return;
+
+            toggleBtn.addEventListener('click', () => {
+                const isHidden = sidebar.classList.toggle('hidden');
+
+                if (content) {
+                    content.classList.toggle('full', isHidden);
+                }
+
+                localStorage.setItem('sidebarHidden', isHidden);
+            });
+
+            // 새로고침 시 상태 복원
+            if (localStorage.getItem('sidebarHidden') === 'true') {
+                sidebar.classList.add('hidden');
+                if (content) content.classList.add('full');
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSidebarToggle);
+        } else {
+            initSidebarToggle();
+        }
+
 })();
 
 

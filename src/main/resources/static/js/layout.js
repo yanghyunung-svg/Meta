@@ -4,6 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('hidden');
+}
+
+
 /* Header 불러오기 */
 function loadHeader() {
     fetch("/common/header.html")
