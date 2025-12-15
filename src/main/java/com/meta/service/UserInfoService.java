@@ -91,7 +91,7 @@ public class UserInfoService {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
 
         try {
-            TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
+            TbUserInfoDto outputDto = tbUserInfoMapper.getLockData(inputDto);
 
             if (outputDto == null) {
                 return new ApiResponse<Void>(false, "수정할 자료가 없습니다." );
@@ -109,6 +109,48 @@ public class UserInfoService {
 
             log.debug(BizUtils.logInfo("END"));
             return new ApiResponse<Void>(true, "수정 성공");
+
+        } catch (Exception e) {
+            log.debug(BizUtils.logInfo("Exception"));
+            return new ApiResponse<Void>(false, "수정 처리 중 오류가 발생했습니다.");
+        }
+    }
+
+
+    /**
+     * method   : changePassword
+     * desc     : 비밀번호 변경
+     */
+    public ApiResponse<Void> changePassword(TbUserInfoDto inputDto)  {
+        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
+
+        try {
+            TbUserInfoDto outputDto = tbUserInfoMapper.getLockData(inputDto);
+
+            if (outputDto == null) {
+                return new ApiResponse<Void>(false, "수정할 자료가 없습니다." );
+            }
+
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String rawPassword = inputDto.getCurrentPassword();
+            String dbPw = outputDto.getPassword();
+            // 비밀번호 검증
+            if (!encoder.matches(rawPassword, dbPw)) {
+                return new ApiResponse<Void>(false, "비밀번호 오류");
+            }
+
+            if(!StringUtil.isNullOrEmpty(inputDto.getNewPassword())) {
+                String newPassword = inputDto.getNewPassword();
+                String encodedPassword = encoder.encode(newPassword);
+                inputDto.setPassword(encodedPassword);
+            }
+
+            if (tbUserInfoMapper.updateData(inputDto) == 0) {
+                return new ApiResponse<Void>(false, "비밀번호 수정 오류");
+            }
+
+            log.debug(BizUtils.logInfo("END"));
+            return new ApiResponse<Void>(true, "비밀번호 수정 성공");
 
         } catch (Exception e) {
             log.debug(BizUtils.logInfo("Exception"));

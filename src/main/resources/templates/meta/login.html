@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>Meta System - Login</title>
+    <title>Meta System Login</title>
     <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
@@ -58,6 +58,7 @@
                 localStorage.setItem('userId', result.data.userId);
                 localStorage.setItem('userNm', result.data.userNm);
                 localStorage.setItem('role', result.data.role);
+                localStorage.setItem('menuId', 'menu-term');
                 window.location.href = '/meta/dashboard';
             } else {
                 alert("Login 실패: " + result.message);

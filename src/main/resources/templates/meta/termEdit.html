@@ -27,7 +27,7 @@
         <div style="display:flex; align-items:left;"> <input type="file" id="excelFile" accept=".xlsx,.xls" > </div>
         <div class="divider-h"></div>
 
-        <table id="uploadPreviewTable" class="form-table" style="margin-top:10px; ">
+        <table id="uploadPreviewTable" class="data-table" style="margin-top:10px; ">
         <thead>
         <tr>
             <th class="col-no">번호</th>
@@ -137,9 +137,9 @@
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td class="col-no">${index + 1}</td>
-                <td contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
-                <td>${row.engNm}</td>
-                <td>${row.trmExpln}</td>
+                <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
+                <td style="text-align: left;">${row.engNm}</td>
+                <td style="text-align: left;">${row.trmExpln}</td>
             `;
             tbody.appendChild(tr);
         });

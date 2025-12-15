@@ -26,10 +26,10 @@
         <div style="display:flex; align-items:left;"> <input type="file" id="excelFile" accept=".xlsx,.xls" > </div>
         <div class="divider-h"></div>
 
-    <table id="uploadPreviewTable" class="form-table" style="margin-top:10px; ">
+    <table id="uploadPreviewTable" class="data-table" style="margin-top:10px; ">
         <thead>
         <tr>
-            <th width="50px" style="text-align: center;">번호</th>
+            <th class="col-no">번호</th>
             <th style="text-align: left;">용어명</th>
             <th style="text-align: left;">영문명</th>
             <th style="text-align: left;">도메인명</th>
@@ -51,10 +51,7 @@
         });
 
         document.getElementById("btnUpload").addEventListener("click", () => {
-            document.getElementById("excelFile").value = "";
-            document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
-            window.uploadPreviewData = null;
-            document.getElementById("btnUploadSave").disabled = true;
+           initScreen()
             document.getElementById("excelFile").click();
         });
 
@@ -137,6 +134,7 @@
 
                 if (result.success) {
                     alert(result.count + "건 처리되었습니다.");
+                    initScreen()
                 } else {
                     alert("오류: " + result.message);
                 }
@@ -147,6 +145,13 @@
         });
 
     });
+
+    function initScreen() {
+        document.getElementById("excelFile").value = "";
+        document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
+        window.uploadPreviewData = null;
+        document.getElementById("btnUploadSave").disabled = true;
+    }
 
     function attachEditListeners() {
         const editableCells = document.querySelectorAll("#uploadPreviewTable tbody td[contenteditable='true']");

@@ -26,10 +26,10 @@
         <div style="display:flex; align-items:left;"> <input type="file" id="excelFile" accept=".xlsx,.xls"> </div>
 
         <div class="divider-h"></div>
-    <table id="uploadPreviewTable" class="form-table" style="margin-top:20px; ">
+    <table id="uploadPreviewTable" class="data-table" style="margin-top:20px; ">
         <thead>
         <tr>
-            <th>번호</th>
+            <th class="col-no">번호</th>
             <th>공통코드</th>
             <th>공통코드명</th>
             <th>상세코드</th>
@@ -53,11 +53,7 @@
         });
 
         document.getElementById("btnUpload").addEventListener("click", () => {
-            document.getElementById("excelFile").value = "";
-            document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
-            window.uploadPreviewData = null;
-            document.getElementById("btnUploadSave").disabled = true;
-
+            initScreen();
             document.getElementById("excelFile").click();
         });
 
@@ -106,13 +102,13 @@
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td style="text-align: center;"> ${index + 1} </td>
-                    <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="grpCd">${row.grpCd}</td>
-                    <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="grpNm">${row.grpNm}</td>
-                    <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="cd">${row.cd}</td>
-                    <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="cdNm">${row.cdNm}</td>
-                    <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="ord">${row.ord}</td>
-                    <td style="text-align: left;"   contenteditable="true" data-index="${index}" data-field="rmk">${row.rmk}</td>
-                    <td style="text-align: center;" contenteditable="true" data-index="${index}" data-field="stat">${row.stat}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="grpCd">${row.grpCd}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="grpNm">${row.grpNm}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="cd">${row.cd}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="cdNm">${row.cdNm}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="ord">${row.ord}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="rmk">${row.rmk}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="stat">${row.stat}</td>
                     <td class="hidden">${row.crtId}</td>
 
                 `;
@@ -142,6 +138,8 @@
 
                 if (result.success) {
                     alert(result.count + "건 저장되었습니다.");
+                    initScreen();
+
                 } else {
                     alert("오류: " + result.message);
                 }
@@ -152,6 +150,12 @@
         });
 
     });
+    function initScreen() {
+        document.getElementById("excelFile").value = "";
+        document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
+        window.uploadPreviewData = null;
+        document.getElementById("btnUploadSave").disabled = true;
+    }
 
     function attachEditListeners() {
         const editableCells = document.querySelectorAll("#uploadPreviewTable tbody td[contenteditable='true']");

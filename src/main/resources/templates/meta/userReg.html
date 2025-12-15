@@ -13,7 +13,7 @@
 <div id="topbarContainer"></div>
 <div class="container">
     <div id="sidebarContainer"></div>
-    <div class="mainContainer" id="mainContainer">
+    <div class="regContainer" id="regContainer">
 
         <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <h2 style="margin:0;"> ✅ 사용자정보 등록</h2>
@@ -40,7 +40,11 @@
             </tr>
             <tr>
                 <th>비밀번호</th>
-                <td colspan="2"><input type="password" id="password" name="password" class="form-input"></td>
+                <td><input type="password" id="password" name="password" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>비밀번호 확인</th>
+                <td><input type="password" id="confirmPassword" name="confirmPassword" class="form-input"></td>
             </tr>
             <tr>
                 <th>이메일</th>
@@ -117,6 +121,11 @@
                 return;
             }
 
+            if (data.password.trim() !== data.confirmPassword.trim()) {
+                alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+                return;
+            }
+
             try {
                 let url =  "/meta/insertUserData" ;
 
@@ -130,6 +139,7 @@
 
                 if (result.success) {
                     alert("저장되었습니다.");
+                    document.getElementById('mainForm').reset();
                 } else {
                     alert("오류: " + result.message);
                 }
@@ -159,12 +169,12 @@
                     throw new Error("서버 응답 오류");
                     return;
                 }
+
                 const outData = await res.json();
                 fillForm(mainForm, outData);
 
             } catch (err) {
-                console.error(err);
-                alert("상세 데이터 조회 중 오류가 발생했습니다.");
+                alert("등록 가능합니다.");
             }
         });
 

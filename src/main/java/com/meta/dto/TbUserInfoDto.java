@@ -30,6 +30,8 @@ public class TbUserInfoDto {
     private String     updDttm;                         // 변경일시 DATETIME
     private String     updId;                           // 변경자ID VARCHAR(50)
 
+    private String     currentPassword;
+    private String     newPassword;
     private String     ipAddr;
     private String     userAgent;
 }

@@ -87,6 +87,18 @@ public class UserInfoController {
         return outputDto;
     }
     /**
+     * @ ID : changePassword
+     * @ NAME : 비밀번호 변경
+     */
+    @PostMapping("/changePassword")
+    @ResponseBody
+    public ApiResponse<Void> changePassword(@RequestBody TbUserInfoDto inputDto, HttpSession session) throws Exception {
+        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
+        ApiResponse<Void> outputDto = userInfoService.changePassword(inputDto);
+        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
+        return outputDto;
+    }
+    /**
      * @ ID : updateUserData
      * @ NAME : 사용자정보 변경
      */

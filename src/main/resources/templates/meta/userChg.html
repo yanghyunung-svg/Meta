@@ -30,7 +30,8 @@
             </tr>
             <tr>
                 <th>비밀번호</th>
-                <td colspan="2"><input type="password" id="password" name="password" class="form-input"></td>
+                <td colspan="2">
+                    <button id="btnPswd" type="button" class="btn">비밀번호변경</button>
             </tr>
             <tr>
                 <th>이메일</th>
@@ -77,13 +78,41 @@
 
     <div class="divider-h"></div>
 </div>
+
+ <div id="passwordChangeModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="divider-h"></div>
+        <input type="hidden" id="modalUserId">
+
+        <table class="popup-table">
+            <tr>
+                <th>현재 비밀번호</th>
+                <td><input type="password" id="currentPassword" name="currentPassword" class="form-input" required></td>
+            </tr>
+            <tr>
+                <th>새 비밀번호</th>
+                <td><input type="password" id="newPassword" name="newPassword" class="form-input" required></td>
+            </tr>
+            <tr>
+                <th>새 비밀번호 확인</th>
+                <td><input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required></td>
+            </tr>
+        </table>
+        <div class="divider-h"></div>
+        <div class="button-bottom" style="display:flex; gap:8px;">
+            <button id="changePasswordBtn" class="btn">변경</button>
+            <button id="closePasswordModalBtn" class="btn">취소</button>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
+        const btnPswd = document.getElementById("btnPswd");
 
-        // 현재 화면 상태: I(신규), S(상세)
         let originalData = {};
 
          // 🔸 현재 값이 수정되었는지 체크
@@ -117,11 +146,6 @@
                 mainForm.userNm.focus();
                 return;
             }
-            if (!data.password.trim()) {
-                alert("비밀번호를 입력하세요.");
-                mainForm.password.focus();
-                return;
-            }
 
             try {
                 const res = await fetch("/meta/updateUserData", {
@@ -147,7 +171,6 @@
                 alert("요청 중 오류가 발생했습니다.");
             }
         });
-
 
         // 부모창에서 데이터 받기
         window.addEventListener("message", (event) => {
@@ -185,6 +208,108 @@
 
         document.getElementById("btnClose").addEventListener("click", () => {
             window.close();
+        });
+
+        // ------------------------------------------------------------------
+        // 🔑 PasswordModal 객체 (모듈화된 비밀번호 변경 로직)
+        // ------------------------------------------------------------------
+        const PasswordModal = (() => {
+            const modal = document.getElementById('passwordChangeModal');
+            const changeBtn = document.getElementById('changePasswordBtn');
+            const closeBtn = document.getElementById('closePasswordModalBtn');
+
+            // 헬퍼: 모달 닫기 및 초기화
+            const close = () => {
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                modal.style.display = 'none';
+            };
+
+            // 이벤트 리스너: 변경하기 버튼 클릭
+            changeBtn.addEventListener('click', () => {
+                const userId = document.getElementById('modalUserId').value;
+                const currentPass = document.getElementById('currentPassword').value;
+                const newPass = document.getElementById('newPassword').value;
+                const confirmPass = document.getElementById('confirmPassword').value;
+
+                // 1. 필수 입력 항목 체크
+                if (!currentPass || !newPass || !confirmPass) {
+                    alert("모든 비밀번호 항목을 입력해야 합니다.");
+                    return;
+                }
+
+                // 2. 새 비밀번호 일치 확인
+                if (newPass !== confirmPass) {
+                    alert("새 비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+                    return;
+                }
+
+                // 모든 검증 통과 시 API 호출
+                changePasswordApi(userId, currentPass, newPass);
+            });
+
+            // 이벤트 리스너: 취소 버튼
+            closeBtn.addEventListener('click', close);
+
+
+            const changePasswordApi = async (userId, currentPassword, newPassword) => {
+                changeBtn.disabled = true;
+                try {
+                    const res = await fetch("/meta/changePassword", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId, currentPassword, newPassword })
+                    });
+
+                    const result = await res.json();
+
+                    if (result.success) {
+                        alert("✅ 비밀번호가 성공적으로 변경되었습니다.");
+                        close();
+                        window.close();
+                    } else {
+                        // 서버에서 전달된 오류 메시지 사용 (예: 현재 비밀번호 불일치)
+                        alert(`❌ 비밀번호 변경 실패: ${result.message || '알 수 없는 오류'}`);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("❌ 서버와 통신 중 문제가 발생했습니다.");
+                } finally {
+                    changeBtn.disabled = false; // 버튼 활성화
+                }
+            };
+
+
+            // 외부 노출 함수 (모달 열기)
+            const open = (userId) => {
+                if (!userId) {
+                    alert("사용자 ID가 지정되지 않았습니다.");
+                    return;
+                }
+                document.getElementById('modalUserId').value = userId;
+                modal.style.display = 'block';
+                document.getElementById('currentPassword').focus(); // 현재 비밀번호 필드에 포커스
+            };
+
+            // 외부 노출 함수들
+            return {
+                open: open,
+                close: close
+            };
+
+        })();
+        // ------------------------------------------------------------------
+
+
+        // 🆕 비밀번호 변경 버튼 클릭 이벤트 처리 (PasswordModal.open 호출)
+        btnPswd.addEventListener("click", () => {
+            const userId = document.getElementById("userId").value;
+            if (!userId) {
+                alert("사용자 조회 후 가능합니다.");
+                return;
+            }
+            PasswordModal.open(userId);
         });
 
     });

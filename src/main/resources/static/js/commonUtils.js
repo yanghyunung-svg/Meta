@@ -655,3 +655,159 @@ window.updateRowDataFlexible = function(data, idKey, updateMap) {
         setTimeout(() => targetRow.classList.remove('highlight-update'), 3000);
     }
 }
+
+function ensureGlobalModal() {
+    if (document.getElementById('globalMsgModal')) return;
+
+    document.body.insertAdjacentHTML('beforeend', `
+        <div id="globalMsgModal" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-box">
+                <h3 id="gmmTitle"></h3>
+                <p id="gmmMessage"></p>
+                <div class="modal-actions">
+                    <button id="gmmCancel">취소</button>
+                    <button id="gmmOk">확인</button>
+                </div>
+            </div>
+        </div>
+    `);
+}
+
+
+const GlobalModalManager = (() => {
+
+    let modal, overlay, titleEl, msgEl, okBtn, cancelBtn;
+    let isOpen = false;
+    const queue = [];
+
+    function bind() {
+        modal = document.getElementById('globalMsgModal');
+        overlay = modal.querySelector('.modal-overlay');
+        titleEl = document.getElementById('gmmTitle');
+        msgEl = document.getElementById('gmmMessage');
+        okBtn = document.getElementById('gmmOk');
+        cancelBtn = document.getElementById('gmmCancel');
+    }
+
+    function showNext() {
+        if (isOpen || queue.length === 0) return;
+
+        const item = queue.shift();
+        isOpen = true;
+
+        titleEl.textContent = item.title;
+        msgEl.textContent = item.message;
+        cancelBtn.style.display = item.showCancel ? 'inline-block' : 'none';
+        modal.classList.remove('hidden');
+
+        okBtn.onclick = () => close(item.onOk);
+        cancelBtn.onclick = () => close(item.onCancel);
+    }
+
+    function close(callback) {
+        modal.classList.add('hidden');
+        isOpen = false;
+        callback && callback();
+        setTimeout(showNext, 0); // 다음 큐 처리
+    }
+
+    function attachGlobalEvents() {
+        // ESC 키
+        document.addEventListener('keydown', e => {
+            if (!isOpen) return;
+            if (e.key === 'Escape') {
+                close();
+            }
+        });
+
+        // Overlay 클릭
+        overlay.addEventListener('click', () => {
+            if (!isOpen) return;
+            close();
+        });
+    }
+
+    function open(config) {
+        ensureGlobalModal();
+        bind();
+
+        queue.push(config);
+        attachGlobalEvents();
+        showNext();
+    }
+
+    return {
+        alert(message, onOk) {
+            open({
+                title: '알림',
+                message,
+                showCancel: false,
+                onOk
+            });
+        },
+
+        confirm(message) {
+            return new Promise(resolve => {
+                open({
+                    title: '확인',
+                    message,
+                    showCancel: true,
+                    onOk: () => resolve(true),
+                    onCancel: () => resolve(false)
+                });
+            });
+        },
+
+        error(message) {
+            open({
+                title: '오류',
+                message,
+                showCancel: false
+            });
+        }
+    };
+})();
+
+
+window.alert = msg => GlobalModalManager.alert(msg);
+window.confirm = msg => GlobalModalManager.confirm(msg);
+window.showError = msg => GlobalModalManager.error(msg);
+
+// error 전용
+window.showError = function (msg) {
+    GlobalModalManager.error(msg);
+};
+
+
+/**
+ * 필수값 검증
+ * @param {Array} rules - 검증 규칙 목록
+ * @returns {boolean} true = 통과, false = 실패
+ */
+function validateRequired(rules) {
+    for (const rule of rules) {
+        const { value, message, element, type = 'alert' } = rule;
+
+        if (value === undefined || value === null || value === '') {
+
+            // 사용자 수정 가능 → alert
+            if (type === 'alert') {
+                alert(message);
+
+                if (element) {
+                    element.focus();
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
+            // 시스템 상태 문제 → error
+            if (type === 'error') {
+                showError(message);
+            }
+
+            return false;
+        }
+    }
+    return true;
+}

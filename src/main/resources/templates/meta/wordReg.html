@@ -13,11 +13,11 @@
 <div id="topbarContainer"></div>
 <div class="container">
     <div id="sidebarContainer"></div>
-    <div class="mainContainer" id="mainContainer">
+    <div class="regContainer" id="regContainer">
         <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <h2 style="margin:0;"> ✅ 표준단어 신청</h2>
             <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnPopup" class="btn-row">단어검증</button>
+                <button id="btnInq" class="btn-row">단어검증</button>
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSave"  class="btn">저장</button>
             </div>
@@ -155,7 +155,7 @@
             document.getElementById('mainForm').reset();
         });
 
-       document.getElementById('btnPopup').addEventListener('click', async () => {
+       document.getElementById('btnInq').addEventListener('click', async () => {
             const inData = formToJson(mainForm);
 
             if (!inData.wordNm.trim()) {
@@ -187,7 +187,7 @@
         document.getElementById('mainForm').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault(); // 폼 제출 방지
-                document.getElementById('btnPopup').click();
+                document.getElementById('btnInq').click();
             }
         });
 

@@ -13,11 +13,11 @@
 <div id="topbarContainer"></div>
 <div class="container">
     <div id="sidebarContainer"></div>
-    <div class="mainContainer" id="mainContainer">
+    <div class="regContainer" id="regContainer">
         <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <h2 style="margin:0;"> ✅ 상세코드 등록</h2>
             <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnCheck" class="btn-row">코드검증</button>
+                <button id="btnInq" class="btn-row">코드검증</button>
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSave"  class="btn">저장</button>
             </div>
@@ -112,7 +112,7 @@
             data = addUserAuditFields(data);
 
             if (!data.grpCd.trim()) {
-                alert("공통코드를 입력하세요.");
+                alebtnInq;
                 mainForm.grpCd.focus();
                 return;
             }
@@ -145,11 +145,11 @@
         });
 
 
-       document.getElementById('btnCheck').addEventListener('click', async () => {
+       document.getElementById('btnInq').addEventListener('click', async () => {
             const inData = formToJson(mainForm);
 
             if (!inData.grpCd.trim()) {
-                alert("공통코드를 입력하세요.");
+                alert("그룹코드를 입력하세요.");
                 mainForm.grpCd.focus();
                 return;
             }
