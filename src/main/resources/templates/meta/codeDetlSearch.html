@@ -14,14 +14,16 @@
 <div class="container">
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
-        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header">
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 상세코드 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
-            <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnInit" class="btn">초기화</button>
+            <div class="button-group">
                 <button id="btnSearch" class="btn">조회</button>
+                <button id="btnReg" class="btn">등록</button>
+                <button id="btnRegEblc" class="btn">일괄등록</button>
+                <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
 
@@ -44,7 +46,7 @@
  -->
                     <th>상태</th>
                     <td>
-                        <select id="stat"  name="stat" class="form-input">
+                        <select id="stat"  name="stat" class="form-select">
                             <option value="">전체</option>
                         </select>
                     </td>
@@ -139,7 +141,7 @@
 
             /** 상세 클릭  **/
             document.querySelectorAll(".row-click").forEach(tr => {
-                tr.addEventListener("click", () => {
+                tr.addEventListener("dblclick", () => {
                     const grpCdS = tr.getAttribute("data-grp");
                     const cdS = tr.getAttribute("data-cd");
                     const payload = { mode: "S", grpCd: grpCdS, cd: cdS };
@@ -174,8 +176,6 @@
                 mainForm.grpCd.focus();
                 return;
             }
-
-
             fetch('/meta/getCodeListData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -201,10 +201,23 @@
         openWindowWithJSON(payload, "/meta/codeGroupPopup", 700, 500);
     });
 
+
     function receiveCode(grpCd, grpNm) {
         document.getElementById("grpCd").value = grpCd;
         document.getElementById("grpNm").value = grpNm;
     }
+
+    /** 코드등록 **/
+    document.getElementById('btnReg').addEventListener('click', () => {
+        const payload = {};
+        openWindowWithJSON(payload, "/meta/codeDetlReg", 800, 700);
+    });
+
+    /** 일괄등록 **/
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = '/meta/codeDetlRegEblc';
+    });
+
 </script>
 <script src="/js/commonCombo.js"></script>
 </body>

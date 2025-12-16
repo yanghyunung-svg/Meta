@@ -14,14 +14,15 @@
 <div class="container">
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
-        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header">
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 표준단어 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
-            <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnInit" class="btn">초기화</button>
+            <div class="button-group">
                 <button id="btnSearch" class="btn">조회</button>
+                <button id="btnReg" class="btn">등록</button>
+                <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
 
@@ -30,12 +31,12 @@
             <table class="search-table">
                 <tr>
                     <th>한글명</th>
-                    <td><input type="text" id="wordNm"  name="wordNm" class="form-input" placeholder="검색어 입력"></td>
+                    <td><input type="text" id="wordNm"  name="wordNm" class="form-input" ></td>
                     <th>영문명</th>
-                    <td><input type="text" id="engAbbrNm"  name="engAbbrNm" class="form-input" placeholder="검색어 입력"></td>
+                    <td><input type="text" id="engAbbrNm"  name="engAbbrNm" class="form-input" ></td>
                     <th>상태</th>
                     <td>
-                        <select id="stat"  name="stat" class="form-input">
+                        <select id="stat"  name="stat" class="form-select">
                             <option value="">전체</option>
                         </select>
                     </td>
@@ -116,7 +117,7 @@
 
             /** 상세 클릭  **/
             document.querySelectorAll(".row-click").forEach(tr => {
-                tr.addEventListener("click", () => {
+                tr.addEventListener("dblclick", () => {
                     const id = tr.getAttribute("data-id");
                     const payload = { mode: "S", id: id };
                     openWindowWithJSON(payload, "/meta/wordChg", 700, 620);
@@ -142,6 +143,12 @@
             dataAll = [];
             const old = document.querySelector(".pagination");
             if (old) old.remove();
+        });
+
+        /** 코드등록 **/
+        document.getElementById('btnReg').addEventListener('click', () => {
+            const payload = {};
+            openWindowWithJSON(payload, "/meta/wordReg", 800, 700);
         });
 
         /** 검색 **/

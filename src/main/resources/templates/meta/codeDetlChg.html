@@ -11,7 +11,8 @@
 <div class="popupContainer" id="popupContainer">
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 상세코드 관리</h2>
-        <div class="button-group" style="display:flex; gap:8px;">
+        <div class="button-group">
+            <button id="btnInit" class="btn">초기화</button>
             <button id="btnSave" class="btn">저장</button>
             <button id="btnClose" class="btn">닫기</button>
         </div>
@@ -184,6 +185,11 @@
                 originalData = formToJson(mainForm);
                 btnSave.disabled = false;
             }
+        });
+
+        /** 초기화 **/
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
         });
 
         document.getElementById("btnClose").addEventListener("click", () => {

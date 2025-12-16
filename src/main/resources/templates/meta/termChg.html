@@ -11,12 +11,11 @@
 <div class="popupContainer" id="popupContainer">
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 표준용어 관리</h2>
-        <div class="button-group" style="display:flex; gap:8px;">
+        <div class="button-group">
             <button id="btnSave" class="btn">저장</button>
             <button id="btnClose" class="btn">닫기</button>
         </div>
     </div>
-
     <div class="divider-h"></div>
     <form id="mainForm">
         <table class="popup-table">
@@ -60,7 +59,6 @@
             </tr>
         </table>
     </form>
-
     <div class="divider-h"></div>
 </div>
 <script>
@@ -161,12 +159,12 @@
                 btnSave.disabled = true;
             }
         });
-
-        document.getElementById("btnClose").addEventListener("click", () => {
-            window.close();
-        });
-
     });
+
+    document.getElementById("btnClose").addEventListener("click", () => {
+        window.close();
+    });
+
 </script>
 </body>
 </html>

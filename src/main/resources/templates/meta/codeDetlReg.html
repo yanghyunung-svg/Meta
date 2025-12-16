@@ -10,21 +10,19 @@
 </head>
 <body>
 
-<div id="topbarContainer"></div>
-<div class="container">
-    <div id="sidebarContainer"></div>
-    <div class="regContainer" id="regContainer">
-        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-            <h2 style="margin:0;"> ✅ 상세코드 등록</h2>
-            <div class="button-group" style="display:flex; gap:8px;">
+    <div class="popupContainer" id="popupContainer">
+        <div class="popup-header">
+            <h2 class="popup-title"> ✅ 상세코드 등록</h2>
+            <div class="button-group">
                 <button id="btnInq" class="btn-row">코드검증</button>
-                <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSave"  class="btn">저장</button>
+                <button id="btnInit" class="btn">초기화</button>
+                <button id="btnClose" class="btn">닫기</button>
             </div>
         </div>
         <div class="divider-h"></div>
         <form id="mainForm">
-            <table class="form-table">
+            <table class="popup-table">
             <tr>
                 <th>공통코드 <span style="color:red">*</span></th>
                 <td style="display:flex; align-items:center; gap:4px;">
@@ -42,7 +40,7 @@
             </tr>
             </table>
             <div class="divider-h"></div>
-            <table class="form-table">
+            <table class="popup-table">
 
             <tr>
                 <th>상세코드명 <span style="color:red">*</span></th>
@@ -66,7 +64,7 @@
                 </td>
             </tr>
             </table>
-            <table class="form-table">
+            <table class="popup-table">
             <tr>
                 <th>최초등록</th>
                 <td style="display:flex; gap:5px;">
@@ -84,7 +82,6 @@
         <div class="divider-h"></div>
     </div>
 
-</div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
@@ -182,8 +179,13 @@
             document.getElementById('mainForm').reset();
         });
 
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
+
         document.getElementById('btnPopup').addEventListener('click', () => {
-            window.open("/meta/codeGroupPopup", "상세코드 검색", "width=700,height=500,scrollbars=yes,resizable=yes");
+            const payload = {};
+            openWindowWithJSON(payload, "/meta/codeGroupPopup", 700, 500); ;
         });
     });
 

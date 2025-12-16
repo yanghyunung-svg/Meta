@@ -14,12 +14,13 @@
 <div class="container">
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
-        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header">
             <h2 style="margin:0;"> ✅ 표준용어 단어검색</h2>
-            <div class="button-group" style="display:flex; gap:8px;">
+            <div class="button-group">
                 <button id="btnInit" class="btn">초기화</button>
-                <button id="btnDownload" class="btn">템플릿 다운로드</button>
+                <button id="btnDownload" class="btn">템플릿</button>
                 <button id="btnUpload" class="btn">엑셀 업로드</button>
+                <button id="btnAddRow" class="btn">1줄 추가</button>
                 <button id="btnVal" class="btn">단어검색</button>
             </div>
         </div>
@@ -43,8 +44,9 @@
 
 </div>
 <script>
+
     document.addEventListener("DOMContentLoaded", () => {
-        const emptyRows = createEmptyRows(20);
+        const emptyRows = createEmptyRows(1);
         window.uploadPreviewData = emptyRows;
         renderPreviewTable(emptyRows);
     });
@@ -60,7 +62,7 @@
         document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
         window.uploadPreviewData = null;
 
-        const emptyRows = createEmptyRows(20);
+        const emptyRows = createEmptyRows(1);
         window.uploadPreviewData = emptyRows;
         renderPreviewTable(emptyRows);
     });
@@ -174,6 +176,26 @@
         return rows;
     }
 
+    document.getElementById("btnAddRow").addEventListener("click", () => {
+
+        // 빈 행 데이터 생성
+        const newEmptyRow = {
+            trmNm: '',
+            engNm: '',
+            trmExpln: ''
+        };
+
+        // window.uploadPreviewData가 아직 초기화되지 않았다면 빈 배열로 시작
+        if (!window.uploadPreviewData) {
+            window.uploadPreviewData = [];
+        }
+
+        // 데이터 배열에 새로운 행 추가
+        window.uploadPreviewData.push(newEmptyRow);
+
+        // 업데이트된 데이터를 사용하여 테이블 다시 렌더링
+        renderPreviewTable(window.uploadPreviewData);
+    });
 
 </script>
 </body>

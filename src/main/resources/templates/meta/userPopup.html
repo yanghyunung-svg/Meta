@@ -10,12 +10,12 @@
 <body>
 <div class="container">
     <div class="popupContainer" id="popupContainer">
-        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header">
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 사용자 정보 검색</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
-            <div class="button-group" style="display:flex; gap:8px;">
+            <div class="button-group">
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSearch" class="btn">조회</button>
                 <button id="btnClose" class="btn">닫기</button>
@@ -106,7 +106,7 @@
 
             /** 상세 클릭 이벤트 **/
             document.querySelectorAll(".row-click").forEach(tr => {
-                tr.addEventListener("click", () => {
+                tr.addEventListener("dblclick", () => {
                     const { id, nm } = tr.dataset;
                     if (window.opener && !window.opener.closed && typeof window.opener.receiveCode === 'function') {
                         window.opener.receiveCode(id, nm);

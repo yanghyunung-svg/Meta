@@ -4,34 +4,29 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/sidebar.js" defer></script>
-    <script src="/js/layout.js" defer></script>
     <script src="/js/commonUtils.js"></script>
 </head>
 <body>
 
-<div id="topbarContainer"></div>
-<div class="container">
-    <div id="sidebarContainer"></div>
-    <div class="regContainer" id="regContainer">
-        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-            <h2 style="margin:0;"> ✅ 표준도메인 신청</h2>
-            <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnInq" class="btn-row">도메인검증</button>
-                <button id="btnInit" class="btn">초기화</button>
-                <button id="btnSave"  class="btn">저장</button>
-            </div>
+<div class="popupContainer" id="popupContainer">
+    <div class="popup-header">
+        <h2 class="popup-title"> ✅ 표준도메인 신청</h2>
+        <div class="button-group">
+            <button id="btnInit" class="btn">초기화</button>
+            <button id="btnSave" class="btn">저장</button>
+            <button id="btnClose" class="btn">닫기</button>
         </div>
+    </div>
         <div class="divider-h"></div>
             <form id="mainForm">
-                <table class="form-table">
+                <table class="popup-table">
                 <tr>
                     <th>도메인명 <span style="color:red">*</span></th>
                     <td colspan="2"><input type="text" id="dmnNm" name="dmnNm" class="form-input" required> </td>
                 </tr>
                 </table>
                 <div class="divider-h"></div>
-                <table class="form-table">
+                <table class="popup-table">
                 <tr>
                     <th>도메인분류명 <span style="color:red">*</span></th>
                     <td colspan="2"> <input type="text" id="dmnClsfNm" name="dmnClsfNm" class="form-input"  required> </td>
@@ -55,7 +50,7 @@
                     </td>
                 </tr>
                 </table>
-                <table class="form-table">
+                <table class="popup-table">
                 <tr>
                     <th>최초등록</th>
                     <td style="display:flex; gap:5px;">
@@ -72,7 +67,6 @@
         </form>
         <div class="divider-h"></div>
     </div>
-</div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
@@ -136,6 +130,19 @@
             document.getElementById('mainForm').reset();
         });
 
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
+
+        // Enter 키 이벤트
+        document.getElementById('mainForm').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 폼 제출 방지
+                document.getElementById('btnInq').click();
+            }
+        });
+
+
        document.getElementById('btnInq').addEventListener('click', async () => {
             const inData = formToJson(mainForm);
 
@@ -162,15 +169,6 @@
                 alert("등록 가능합니다.");
             }
         });
-
-        // Enter 키 이벤트
-        document.getElementById('mainForm').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // 폼 제출 방지
-                document.getElementById('btnInq').click();
-            }
-        });
-
     });
 </script>
 </body>

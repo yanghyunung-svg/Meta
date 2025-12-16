@@ -14,14 +14,15 @@
 <div class="container">
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
-        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header">
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 공통코드 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
-            <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnInit" class="btn">초기화</button>
+            <div class="button-group">
                 <button id="btnSearch" class="btn">조회</button>
+                <button id="btnReg" class="btn">등록</button>
+                <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
 
@@ -30,12 +31,12 @@
             <table class="search-table">
                 <tr>
                     <th>공통코드</th>
-                    <td><input type="text" id="grpCd"  name="grpCd" class="form-input"></td>
+                    <td><input type="text" id="grpCd" name="grpCd" class="form-input"></td>
                     <th>공통코드명</th>
                     <td><input type="text" id="grpNm"  name="grpNm" class="form-input"></td>
                     <th>상태</th>
                     <td>
-                        <select id="stat"  name="stat" class="form-input">
+                        <select id="stat"  name="stat" class="form-select">
                             <option value="">전체</option>
                         </select>
                     </td>
@@ -55,6 +56,7 @@
                 <th>비고</th>
                 <th width="120px" style="text-align: center;">정렬순서</th>
                 <th width="120px" style="text-align: center;">상태</th>
+                <th width="120px" style="text-align: center;">상세</th>
 
             </tr>
             </thead>
@@ -107,20 +109,21 @@
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr class="row-click" data-id="${item.grpCd}">
                     <td style="text-align: center;"> ${start + index + 1} </td>
-                    <td class="clickable"
-                            data-id="${item.grpCd}"
-                            data-grpNm="${item.grpNm}"
-                            style="text-align: left;">  ${item.grpCd} </td>
+                    <td style="text-align: left;">  ${item.grpCd} </td>
                     <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.rmk}</td>
                     <td style="text-align: center;">${item.ord}</td>
                     <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
+                    <td class="clickable"
+                            data-id="${item.grpCd}"
+                            data-grpNm="${item.grpNm}"
+                            style="text-align: center;">  ▶ </td>
                 </tr>
             `).join('');
 
             /** 상세 클릭  **/
             document.querySelectorAll(".row-click").forEach(tr => {
-                tr.addEventListener("click", () => {
+                tr.addEventListener("dblclick", () => {
                     const grpCd = tr.getAttribute("data-id");
                     const payload = { mode: "S", grpCd: grpCd };
                     openWindowWithJSON(payload, "/meta/codeGroupChg", 700, 550);
@@ -190,6 +193,13 @@
                 alert("에러 발생: " + err);
             });
         });
+    });
+
+
+    /** 등록 **/
+    document.getElementById('btnReg').addEventListener('click', () => {
+        const payload = {};
+        openWindowWithJSON(payload, "/meta/codeGroupReg", 800, 600);
     });
 </script>
 <script src="/js/commonCombo.js"></script>

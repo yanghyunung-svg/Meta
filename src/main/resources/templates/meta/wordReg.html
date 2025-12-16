@@ -10,28 +10,25 @@
 </head>
 <body>
 
-<div id="topbarContainer"></div>
-<div class="container">
-    <div id="sidebarContainer"></div>
-    <div class="regContainer" id="regContainer">
-        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-            <h2 style="margin:0;"> ✅ 표준단어 신청</h2>
-            <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnInq" class="btn-row">단어검증</button>
-                <button id="btnInit" class="btn">초기화</button>
-                <button id="btnSave"  class="btn">저장</button>
-            </div>
+<div class="popupContainer" id="popupContainer">
+    <div class="popup-header">
+        <h2 class="popup-title"> ✅ 표준단어 신청</h2>
+        <div class="button-group">
+            <button id="btnInit" class="btn">초기화</button>
+            <button id="btnSave" class="btn">저장</button>
+            <button id="btnClose" class="btn">닫기</button>
         </div>
+    </div>
         <div class="divider-h"></div>
             <form id="mainForm">
-                <table class="form-table">
+                <table class="popup-table">
                 <tr>
                     <th>단어명 <span style="color:red">*</span></th>
                     <td colspan="2"><input type="text" id="wordNm" name="wordNm" class="form-input" required> </td>
                 </tr>
                 </table>
                 <div class="divider-h"></div>
-                <table class="form-table">
+                <table class="popup-table">
                 <tr>
                     <th>영문약어명 <span style="color:red">*</span></th>
                     <td colspan="2"> <input type="text" id="engAbbrNm" name="engAbbrNm" class="form-input"  required> </td>
@@ -59,7 +56,7 @@
                     <td colspan="2"> <input type="text" id="id" name="id" class="form-input" readonly> </td>
                 </tr>
                 </table>
-                <table class="form-table">
+                <table class="popup-table">
                 <tr>
                     <th>최초등록</th>
                     <td style="display:flex; gap:5px;">
@@ -150,9 +147,14 @@
             }
         });
 
+
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
+        });
+
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
         });
 
        document.getElementById('btnInq').addEventListener('click', async () => {

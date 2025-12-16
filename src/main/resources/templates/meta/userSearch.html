@@ -14,14 +14,15 @@
 <div class="container">
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
-        <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div class="form-header">
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 사용자 정보 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
-            <div class="button-group" style="display:flex; gap:8px;">
-                <button id="btnInit" class="btn">초기화</button>
+            <div class="button-group">
                 <button id="btnSearch" class="btn">조회</button>
+                <button id="btnReg" class="btn">등록</button>
+                <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
         <div class="divider-h"></div>
@@ -34,7 +35,7 @@
                     <td><input type="text" id="userNm"  name="userNm" class="form-input"></td>
                     <th>상태</th>
                     <td>
-                        <select id="stat"  name="stat" class="form-input">
+                        <select id="stat"  name="stat" class="form-select">
                             <option value="">전체</option>
                         </select>
                     </td>
@@ -117,7 +118,7 @@
 
             /** 상세 클릭  **/
             document.querySelectorAll(".row-click").forEach(tr => {
-                tr.addEventListener("click", () => {
+                tr.addEventListener("dblclick", () => {
                     const id = tr.getAttribute("data-id");
                     const payload = { mode: "S", userId: id };
                     openWindowWithJSON(payload, "/meta/userChg", 700, 500);
@@ -145,6 +146,13 @@
             dataAll = [];
             const old = document.querySelector(".pagination");
             if (old) old.remove();
+        });
+
+
+        /** 등록 **/
+        document.getElementById('btnReg').addEventListener('click', () => {
+            const payload = {};
+            openWindowWithJSON(payload, "/meta/userReg", 800, 600);
         });
 
         /** 검색 **/

@@ -4,83 +4,73 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/sidebar.js" defer></script>
-    <script src="/js/layout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
-
-<div id="topbarContainer"></div>
-<div class="container">
-    <div id="sidebarContainer"></div>
-    <div class="regContainer" id="regContainer">
-
-    <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-        <h2 style="margin:0;"> ✅ 표준용어 신청</h2>
-        <div class="button-group" style="display:flex; gap:8px;">
-            <button id="btnInq" class="btn">용어검증</button>
-            <button id="btnInit" class="btn">초기화</button>
-            <button id="btnSave"  class="btn">저장</button>
+    <div class="popupContainer" id="popupContainer">
+        <div class="popup-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <h2 class="popup-title"> ✅ 표준용어 신청</h2>
+            <div class="button-group">
+                <button id="btnInq" class="btn">용어검증</button>
+                <button id="btnInit" class="btn">초기화</button>
+                <button id="btnSave"  class="btn">저장</button>
+                <button id="btnClose" class="btn">닫기</button>
+            </div>
         </div>
-    </div>
-
         <div class="divider-h"></div>
-    <form id="mainForm">
-        <table class="form-table">
-            <tr>
-                <th>용어명 <span style="color:red">*</span></th>
-                <td style="display:flex; align-items:center; gap:4px;">
-                 <input type="text" id="trmNm" name="trmNm" class="form-input" required>
-                </td>
-            </tr>
-        </table>
-        <div class="divider-h"></div>
-        <table class="form-table">
-            <tr>
-                <th>영문명 <span style="color:red">*</span></th>
-                <td > <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
-            </tr>
-            <tr>
-                <th>도메인명</th>
-                <td colspan="2">
-                    <select id="dmnNm" name="dmnNm" class="form-input">
-                        <option value="" selected>선택</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th>설명</th>
-                <td > <textarea id="trmExpln" name="trmExpln" class="form-input" rows="20" ></textarea> </td>
-            </tr>
-            <tr>
-                <th>상태</th>
-                <td colspan="2">
-                    <select id="stat" name="stat" class="form-input">
-                        <option value="0" selected>신청</option>
-                        <option value="1">사용</option>
-                        <option value="9">미사용</option>
-                    </select>
-                </td>
-            </tr>
-        </table>
-        <table class="form-table">
-            <tr>
-                <th>최초등록</th>
-                <td style="display:flex; gap:5px;">
-                    <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
-                    <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
-            </tr>
-            <tr>
-                <th>최종변경</th>
-                <td style="display:flex; gap:5px;">
-                    <input type="text" id="updId" name="updId" class="form-input" readonly>
-                    <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
-            </tr>
-        </table>
-    </form>
+        <form id="mainForm">
+            <table class="popup-table">
+                <tr>
+                    <th>용어명 <span style="color:red">*</span></th>
+                    <td colspan="2"> <input type="text" id="trmNm" name="trmNm" class="form-input" required> </td>
+                </tr>
+            </table>
+            <table class="popup-table">
+                <tr>
+                    <th>영문명 <span style="color:red">*</span></th>
+                    <td > <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
+                </tr>
+                <tr>
+                    <th>도메인명</th>
+                    <td colspan="2">
+                        <select id="dmnNm" name="dmnNm" class="form-input">
+                            <option value="" selected>선택</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>설명</th>
+                    <td > <textarea id="trmExpln" name="trmExpln" class="form-input" rows="20" ></textarea> </td>
+                </tr>
+                <tr>
+                    <th>상태</th>
+                    <td colspan="2">
+                        <select id="stat" name="stat" class="form-input">
+                            <option value="0" selected>신청</option>
+                            <option value="1">사용</option>
+                            <option value="9">미사용</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <table class="popup-table">
+                <tr>
+                    <th>최초등록</th>
+                    <td style="display:flex; gap:5px;">
+                        <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
+                        <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+                </tr>
+                <tr>
+                    <th>최종변경</th>
+                    <td style="display:flex; gap:5px;">
+                        <input type="text" id="updId" name="updId" class="form-input" readonly>
+                        <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
+                </tr>
+            </table>
+        </form>
         <div class="divider-h"></div>
     </div>
-</div>
+<!--</div>-->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         loadDomainCombo();
@@ -231,6 +221,10 @@
         });
     }
 
+
+    document.getElementById("btnClose").addEventListener("click", () => {
+        window.close();
+    });
 
 </script>
 </body>
