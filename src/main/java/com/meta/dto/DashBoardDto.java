@@ -17,7 +17,7 @@ public class DashBoardDto {
     private String     korNm;                           // 한글명
     private String     engNm;                           // 영문명
     private String     expln;                           // 설명
-    private String     stat;                            // 상태 0=신청 1=사용 9=미사용
+    private String     stat;                            // 상태 0=등록 1=사용 9=미사용
     private String     crtDttm;                         // 생성일시 DATETIME
     private String     crtId;                           // 생성자ID VARCHAR(50)
 }

@@ -10,11 +10,12 @@
 
 <div class="popupContainer" id="popupContainer">
     <div class="popup-header">
-        <h2 class="popup-title"> ✅ 표준도메인 신청</h2>
+        <h2 class="popup-title"> ✅ 표준도메인 등록</h2>
         <div class="button-group">
+            <button id="btnInq" class="btn-chk">도메인검증</button>
+            <button id="btnSave"  class="btn">저장</button>
             <button id="btnInit" class="btn">초기화</button>
-            <button id="btnSave" class="btn">저장</button>
-            <button id="btnClose" class="btn">닫기</button>
+            <button id="btnClose"  class="btn">닫기</button>
         </div>
     </div>
         <div class="divider-h"></div>
@@ -43,7 +44,7 @@
                     <th>상태</th>
                     <td colspan="2">
                         <select id="sttsCd"  name="sttsCd" class="form-input">
-                            <option value="0">신청</option>
+                            <option value="0">등록</option>
                             <option value="1">사용</option>
                             <option value="9">미사용</option>
                         </select>
@@ -75,15 +76,16 @@
         btnSave.disabled = true;
 
         const userId = localStorage.getItem('userId');
+
         document.getElementById("crtId").value = userId;
         document.getElementById("updId").value = userId;
 
-        // 현재 화면 상태: I(신규), S(상세)
-        let mode = "I";
+        let mode = "";
         let originalData = {};
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
+
             let data = formToJson(mainForm);
             data = addUserAuditFields(data);
 
@@ -115,6 +117,7 @@
 
                 if (result.success) {
                     alert("저장되었습니다.");
+                    window.close();
                 } else {
                     alert("오류: " + result.message);
                 }
@@ -125,27 +128,8 @@
             }
         });
 
-        /** 초기화 **/
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
-        });
-
-        document.getElementById("btnClose").addEventListener("click", () => {
-            window.close();
-        });
-
-        // Enter 키 이벤트
-        document.getElementById('mainForm').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // 폼 제출 방지
-                document.getElementById('btnInq').click();
-            }
-        });
-
-
        document.getElementById('btnInq').addEventListener('click', async () => {
             const inData = formToJson(mainForm);
-
             if (!inData.dmnNm.trim()) {
                 alert("도메인명을 입력하세요.");
                 mainForm.dmnNm.focus();
@@ -167,6 +151,23 @@
 
             } catch (err) {
                 alert("등록 가능합니다.");
+                btnSave.disabled = false;
+            }
+        });
+
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+        });
+
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
+
+        // Enter 키 이벤트
+        document.getElementById('mainForm').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('btnInq').click();
             }
         });
     });

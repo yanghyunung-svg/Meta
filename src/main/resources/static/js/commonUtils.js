@@ -62,7 +62,7 @@ function addUserAuditFields(data) {
     return {
         ...data,
         updId: userId,
-        crtId: data.crtId || userId   // regId 없으면 자동 주입
+        crtId: data.crtId || userId   // crtId 없으면 자동 주입
     };
 }
 
@@ -640,7 +640,7 @@ window.updateRowDataFlexible = function(data, idKey, updateMap) {
                     }
                     if (dataField === 'stat') {
                         newValue =
-                            newValue === '0' ? '신청' :
+                            newValue === '0' ? '등록' :
                             newValue === '1' ? '사용' :
                             newValue === '9' ? '미사용' : newValue;
                     }
@@ -676,7 +676,6 @@ function ensureGlobalModal() {
 
 
 const GlobalModalManager = (() => {
-
     let modal, overlay, titleEl, msgEl, okBtn, cancelBtn;
     let isOpen = false;
     const queue = [];

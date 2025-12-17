@@ -26,6 +26,8 @@
           , DMN_ENG_NM
           , DMN_ATRB
           , STTS_CD
+          , CRT_ID
+          , UPD_ID
      )
      VALUES (
             #{dmnNm}
@@ -33,6 +35,8 @@
           , #{dmnEngNm}
           , #{dmnAtrb}
           , #{sttsCd}
+          , #{crtId}
+          , #{updId}
      ) 
   </insert>
 

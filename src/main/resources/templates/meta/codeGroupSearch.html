@@ -113,7 +113,7 @@
                     <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.rmk}</td>
                     <td style="text-align: center;">${item.ord}</td>
-                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
+                    <td> ${item.stat === '0' ? '등록'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                     <td class="clickable"
                             data-id="${item.grpCd}"
                             data-grpNm="${item.grpNm}"
@@ -162,6 +162,14 @@
                 });
             });
         }
+
+
+        // Enter Key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btnSearch').click();
+            }
+        });
 
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {

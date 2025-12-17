@@ -55,7 +55,7 @@
                 <th>상태</th>
                 <td colspan="2">
                     <select id="stat"  name="stat" class="form-input">
-                        <option value="0">신청</option>
+                        <option value="0">등록</option>
                         <option value="1">사용</option>
                         <option value="9">미사용</option>
                     </select>
@@ -81,8 +81,16 @@
 
  <div id="passwordChangeModal" class="modal" style="display: none;">
     <div class="modal-content">
-        <div class="divider-h"></div>
         <input type="hidden" id="modalUserId">
+
+        <div class="popup-header">
+            <h2 class="popup-title"> ✅ 비밀번호 변경</h2>
+            <div class="button-group">
+                <button id="changePasswordBtn" class="btn">변경</button>
+                <button id="closePasswordModalBtn" class="btn">취소</button>
+            </div>
+        </div>
+        <div class="divider-h"></div>
 
         <table class="popup-table">
             <tr>
@@ -99,10 +107,6 @@
             </tr>
         </table>
         <div class="divider-h"></div>
-        <div class="button-bottom" style="display:flex; gap:8px;">
-            <button id="changePasswordBtn" class="btn">변경</button>
-            <button id="closePasswordModalBtn" class="btn">취소</button>
-        </div>
     </div>
 </div>
 

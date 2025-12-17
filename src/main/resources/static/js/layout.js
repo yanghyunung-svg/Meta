@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadSidebar();
 
 });
+
 /* Header 불러오기 */
 function loadHeader() {
     fetch("/common/header.html")
@@ -30,8 +31,6 @@ function loadHeader() {
                 window.location.href = '/meta/dashboard';
             });
         }
-
-
         if (headerSpan && logoutBtn) {
             headerSpan.innerText = userNm + ' (' +  userId  + ') ' ;
             // Logout

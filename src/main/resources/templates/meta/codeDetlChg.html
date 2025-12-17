@@ -12,7 +12,6 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 상세코드 관리</h2>
         <div class="button-group">
-            <button id="btnInit" class="btn">초기화</button>
             <button id="btnSave" class="btn">저장</button>
             <button id="btnClose" class="btn">닫기</button>
         </div>
@@ -52,7 +51,7 @@
                 <th>상태코드</th>
                 <td colspan="2">
                     <select id="stat"  name="stat" class="form-input">
-                        <option value="0">신청</option>
+                        <option value="0">등록</option>
                         <option value="1">사용</option>
                         <option value="9">미사용</option>
                     </select>
@@ -80,7 +79,7 @@
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
 
-        let mode = "I";
+        let mode = "";
         let originalData = {};
 
         const checkChanged = () => {
@@ -187,10 +186,6 @@
             }
         });
 
-        /** 초기화 **/
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
-        });
 
         document.getElementById("btnClose").addEventListener("click", () => {
             window.close();

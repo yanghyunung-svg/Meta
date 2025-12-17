@@ -112,7 +112,7 @@
                     <td style="text-align: left;">${item.email}</td>
                     <td style="text-align: left;">${item.phone}</td>
                     <td> ${item.role === '2' ? 'USER' : item.role === '1' ? 'ADMIN' : '-'} </td>
-                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
+                    <td> ${item.stat === '0' ? '등록'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                 </tr>
             `).join('');
 
@@ -137,6 +137,14 @@
             window.updateRowDataFlexible(data, 'userId', refreshMap);
         }
 
+
+
+        // Enter Key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btnSearch').click();
+            }
+        });
 
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {

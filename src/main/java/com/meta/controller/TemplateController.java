@@ -28,7 +28,7 @@ public class TemplateController {
 
         // Header 생성
         Row header = sheet.createRow(0);
-        String[] titles = { "번호", "공통코드", "공통코드명", "상세코드", "상세코드명", "정렬순서", "비고", "상태", "신청자" };
+        String[] titles = { "번호", "공통코드", "공통코드명", "상세코드", "상세코드명", "정렬순서", "비고", "상태", "등록자" };
 
         for (int i = 0; i < titles.length; i++) {
             Cell cell = header.createCell(i);
@@ -71,7 +71,7 @@ public class TemplateController {
 
         // Header 생성
         Row header = sheet.createRow(0);
-        String[] titles = { "번호","용어명", "영문명", "도메인명", "설명", "상태","신청자" };
+        String[] titles = { "번호","용어명", "영문명", "도메인명", "설명", "상태","등록자" };
 
         for (int i = 0; i < titles.length; i++) {
             Cell cell = header.createCell(i);
@@ -82,7 +82,7 @@ public class TemplateController {
         // 샘플 데이터 (옵션)
         Row sample = sheet.createRow(1);
         sample.createCell(0).setCellValue("1");
-        sample.createCell(1).setCellValue("감면신청일자");
+        sample.createCell(1).setCellValue("감면등록일자");
         sample.createCell(2).setCellValue("RDCT_APLY_YMD");
         sample.createCell(3).setCellValue("연월일C8");
         sample.createCell(4).setCellValue("매겨야 할 부담 따위를 덜어 주거나 면제해 줄 것을 알려 요청한 날짜");

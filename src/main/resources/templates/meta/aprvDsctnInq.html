@@ -20,30 +20,31 @@
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
-                <button id="btnApprove" class="btn-row">일괄승인</button>
-                <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSearch" class="btn">조회</button>
+                <button id="btnApprove" class="btn">일괄승인</button>
+                <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
         <div class="divider-h"></div>
+
         <form id="mainForm">
             <table class="search-table">
-            <tr>
-                <th>신청자ID</th>
-                <td style="display:flex; align-items:center; gap:4px;">
-                    <input type="text" id="userId"  name="userId" class="form-input">
-                    <button id="btnPopup"   >🔍</button>
-                </td>
-                <th>신청자이름</th>
-                <td><input type="text" id="userNm"  name="userNm" class="form-input"  readonly></td>
-                <th>신청구분</th>
-                <td width="10%">
-                    <select id="se"  name="se" class="form-select">
-                        <option value="">전체</option>
-                    </select>
-                </td>
-            </tr>
-        </table>
+                <tr>
+                    <th>등록자ID</th>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="text" id="userId"  name="userId" class="form-input">
+                        <button id="btnPopup"   >🔍</button>
+                    </td>
+                    <th>등록자이름</th>
+                    <td><input type="text" id="userNm"  name="userNm" class="form-input"  readonly></td>
+                    <th>등록구분</th>
+                    <td width="10%">
+                        <select id="se"  name="se" class="form-select">
+                            <option value="">전체</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
         </form>
         <div class="divider-h"></div>
 
@@ -56,12 +57,12 @@
                 <th style="width: 40px; text-align:center;">
                     <input type="checkbox" id="checkAll">
                 </th>
-                <th width="100px" style="text-align: center;">신청구분</th>
-                <th width="200px">신청내용</th>
+                <th width="100px" style="text-align: center;">등록구분</th>
+                <th width="200px">등록내용</th>
                 <th width="200px">영문명</th>
                 <th>비고</th>
-                <th width="80px" style="text-align: center;">신청자</th>
-                <th width="150px" style="text-align: center;">신청일자</th>
+                <th width="80px" style="text-align: center;">등록자</th>
+                <th width="150px" style="text-align: center;">등록일자</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -80,9 +81,9 @@
 
         window.tableBody = document.querySelector('.data-table tbody');
         const btnSearch = document.getElementById('btnSearch');
-        setTimeout(() => {
-            btnSearch.click();
-        }, 30);
+<!--        setTimeout(() => {-->
+<!--            btnSearch.click();-->
+<!--        }, 30);-->
 
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageTopBarContainer");
@@ -220,6 +221,15 @@
         });
         return list;
     }
+
+
+
+    // Enter Key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('btnSearch').click();
+        }
+    });
 
     function receiveCode(id, nm) {
         document.getElementById("userId").value = id;

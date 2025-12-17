@@ -18,14 +18,23 @@
             <h2 style="margin:0;"> ✅ 표준용어 단어검색</h2>
             <div class="button-group">
                 <button id="btnInit" class="btn">초기화</button>
-                <button id="btnDownload" class="btn">템플릿</button>
-                <button id="btnUpload" class="btn">엑셀 업로드</button>
-                <button id="btnAddRow" class="btn">1줄 추가</button>
                 <button id="btnVal" class="btn">단어검색</button>
+                <button id="btnAddRow" class="btn">1줄 추가</button>
+                <button id="btnUpload" class="btn">Excel 업로드</button>
+                <button id="btnDownload" class="btn">템플릿</button>
             </div>
         </div>
         <div class="divider-h"></div>
-        <div style="display:flex; align-items:left;"> <input type="file" id="excelFile" accept=".xlsx,.xls" > </div>
+
+        <table class="search-table">
+            <tr>
+                <td class="align-left">
+                    <input type="file" id="excelFile" name="excelFile" accept=".xlsx,.xls">
+                </td>
+            </tr>
+        </table>
+
+
         <div class="divider-h"></div>
 
         <table id="uploadPreviewTable" class="data-table" style="margin-top:10px; ">
@@ -139,7 +148,7 @@
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td class="col-no">${index + 1}</td>
-                <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
+                <td class="form-input" style="text-align: left;" contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
                 <td style="text-align: left;">${row.engNm}</td>
                 <td style="text-align: left;">${row.trmExpln}</td>
             `;
