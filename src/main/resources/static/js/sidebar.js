@@ -25,7 +25,7 @@
     observer.observe(document.documentElement, { childList: true, subtree: true });
 
     function initSidebarToggle() {
-        const sidebar = document.getElementById('sidebar');
+        const sidebar = document.getElementById('sidebarContainer');
         const toggleBtn = document.getElementById('sidebarToggleBtn');
         const content = document.querySelector('.container') || document.getElementById('content');
 

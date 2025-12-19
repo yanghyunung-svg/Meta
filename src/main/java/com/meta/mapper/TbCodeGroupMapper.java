@@ -21,4 +21,5 @@ public interface TbCodeGroupMapper {
     public int updateData(TbCodeGroupDto tbCodeGroupDto);
     public int deleteData(TbCodeGroupDto tbCodeGroupDto);
     public List<TbCodeGroupDto> getListData(TbCodeGroupDto tbCodeGroupDto);
+    public int countCode(TbCodeGroupDto tbCodeGroupDto);
 }

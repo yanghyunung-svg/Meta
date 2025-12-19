@@ -1,69 +1,104 @@
-
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
     loadHeader();
     loadSidebar();
-
+    loadFooter();
 });
 
-/* Header 불러오기 */
 function loadHeader() {
-    fetch("/common/header.html")
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById("topbarContainer").innerHTML = html;
-        })
-        .catch(err => console.error("Header load error:", err)
-     );
+    const container = document.getElementById("topbarContainer");
+    if (!container) return;
+    if (container.dataset.loaded === "true") return;
 
-    const userNm = localStorage.getItem('userNm');
-    const userId = localStorage.getItem('userId');
-    const role = localStorage.getItem('role');
+    if (container.innerHTML === "") {
+        fetch("/common/header.html")
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                container.dataset.loaded = "true";
+                bindHeaderEvents();
+            })
+            .catch(err => console.error("Header load error:", err));
+    }
+}
 
-    const interval = setInterval(() => {
-        const dashboard = document.querySelector('.topbar-left .dashboard');
-        const headerSpan = document.getElementById('headerUserNm');
-        const userInfo = document.querySelector('.topbar-right .userInfo');
-        const logoutBtn = document.querySelector('.topbar-right .logout');
+function bindHeaderEvents() {
+    const dashboard = document.querySelector('.topbar-left .dashboard');
+    const logoutBtn = document.querySelector('.topbar-right .logout');
 
-        if (dashboard) {
-            dashboard.addEventListener('click', () => {
-                window.location.href = '/meta/dashboard';
-            });
-        }
-        if (headerSpan && logoutBtn) {
-            headerSpan.innerText = userNm + ' (' +  userId  + ') ' ;
-            // Logout
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('userNm');
-                localStorage.removeItem('userId');
-                localStorage.removeItem('role');
-                localStorage.removeItem('menuId');
-                window.location.href = '/meta/login';
-            });
-        }
-        if (headerSpan && userInfo) {
-            userInfo.addEventListener('click', () => {
-                const payload = { mode: "S", userId: userId };
-                openWindowWithJSON(payload, "/meta/userChg", 700, 500);
-            });
-        }
-    }, 100);
+    if (dashboard) {
+        dashboard.addEventListener('click', () => {
+            location.href = '/meta/dashboard';
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            location.href = '/meta/login';
+        });
+    }
 }
 
 
 /* Sidebar 불러오기  */
 function loadSidebar(menuId = null) {
-    const sidebarContainer = document.getElementById("sidebarContainer");
+    const container = document.getElementById("sidebarContainer");
+    if (!container) return;
+    if (container.dataset.loaded === "true") return;
 
-    if (sidebarContainer.innerHTML === "") {
+    if (container.innerHTML === "") {
         fetch("/common/sidebar.html")
             .then(res => res.text())
             .then(html => {
-                sidebarContainer.innerHTML = html;
+                container.innerHTML = html;
+                container.dataset.loaded = "true";
             })
             .catch(err => console.error("Sidebar load error:", err));
     }
+}
+
+function loadFooter() {
+    const container = document.getElementById("footbarContainer");
+    if (!container) return;
+    if (container.dataset.loaded === "true") return;
+
+    if (container.innerHTML === "") {
+        fetch("/common/footer.html")
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                container.dataset.loaded = "true";
+                bindFooterEvents();
+            })
+            .catch(err => console.error("footer load error:", err));
+    }
+}
+
+
+function bindFooterEvents() {
+    const userNm = localStorage.getItem('userNm');
+    const userId = localStorage.getItem('userId');
+    const userInfo = document.querySelector('.footbar-left .userInfo');
+    const footerSpan = document.getElementById('footerUserNm');
+
+    if (footerSpan && userNm && userId) {
+        footerSpan.innerText = `${userNm} (${userId})`;
+    }
+
+    if (userInfo && userId) {
+        userInfo.addEventListener('click', () => {
+            openWindowWithJSON( { mode: "S", userId },  "/meta/userChg", 700, 500 );
+        });
+    }
+}
+
+
+function initScreen() {
+    tableBody.innerHTML = "";
+    document.getElementById('pageInfo').innerText = "";
+    dataAll = [];
+    const old = document.querySelector(".pagination");
+    if (old) old.remove();
 }
 
 function openWindowWithJSON(payload, url, width, height) {
@@ -74,4 +109,14 @@ function openWindowWithJSON(payload, url, width, height) {
     win.addEventListener('load', () => {
         win.postMessage(payload, window.location.origin);
     });
+}
+
+function receiveCode(grpCd, grpNm) {
+    document.getElementById("grpCd").value = grpCd;
+    document.getElementById("grpNm").value = grpNm;
+}
+
+function receiveUser(id, nm) {
+    document.getElementById("userId").value = id;
+    document.getElementById("userNm").value = nm;
 }

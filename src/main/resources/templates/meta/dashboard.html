@@ -10,8 +10,8 @@
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div id="topbarContainer"></div>
 <div class="container">
+<div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
@@ -141,12 +141,12 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageTopBarContainer"></div>
+        <div id="pageInfoContainer"></div>
 
         <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
-                <th width="50px" style="text-align: center;">번호</th>
+                <th class="col-no">번호</th>
                 <th width="100px" style="text-align: center;">등록구분</th>
                 <th width="250px">등록내용</th>
                 <th width="250px">영문명</th>
@@ -160,6 +160,7 @@
 
     </div><!-- /mainContainer -->
 </div><!-- /container -->
+<div id="footbarContainer"></div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -192,7 +193,7 @@
         }, 30);
 
         // 페이지 탑바 container에 include
-        const container = document.getElementById("pageTopBarContainer");
+        const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')

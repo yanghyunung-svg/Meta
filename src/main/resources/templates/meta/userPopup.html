@@ -8,7 +8,6 @@
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div class="container">
     <div class="popupContainer" id="popupContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
@@ -34,7 +33,7 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageTopBarContainer"></div>
+        <div id="pageInfoContainer"></div>
 
         <table style="margin-top:12px" class="data-table">
             <thead>
@@ -51,7 +50,6 @@
         </table>
 
     </div><!-- /mainContainer -->
-</div><!-- /container -->
 
 
 <script>
@@ -63,7 +61,7 @@
 
         window.tableBody = document.querySelector('.data-table tbody');
 
-        const container = document.getElementById("pageTopBarContainer");
+        const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')
@@ -109,7 +107,7 @@
                 tr.addEventListener("dblclick", () => {
                     const { id, nm } = tr.dataset;
                     if (window.opener && !window.opener.closed && typeof window.opener.receiveCode === 'function') {
-                        window.opener.receiveCode(id, nm);
+                        window.opener.receiveUser(id, nm);
                     }
                     window.close();
                 });

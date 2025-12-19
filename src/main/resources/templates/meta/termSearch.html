@@ -10,8 +10,8 @@
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div id="topbarContainer"></div>
 <div class="container">
+<div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
@@ -23,16 +23,15 @@
                 <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
-        <div class="divider-t"></div>
-
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th class="text-label">한글명</th>
+                    <th>한글명</th>
                     <td><input type="text" id="trmNm"  name="trmNm" class="form-input" ></td>
-                    <th class="text-label">영문명</th>
+                    <th>영문명</th>
                     <td><input type="text" id="engNm"  name="engNm" class="form-input" ></td>
-                    <th class="text-label">상태</th>
+                    <th>상태</th>
                     <td>
                         <select id="stat" name="stat" class="form-select">
                             <option value="">전체</option>
@@ -41,9 +40,8 @@
                 </tr>
             </table>
         </form>
-
         <div class="divider-h"></div>
-         <div id="pageTopBarContainer"></div>
+        <div id="pageInfoContainer"></div>
 
         <table style="margin-top:12px" class="data-table">
             <thead>
@@ -58,21 +56,22 @@
             </thead>
             <tbody></tbody>
         </table>
-
-    </div><!-- /mainContainer -->
-</div><!-- /container -->
+    </div>
+</div>
+<div id="footbarContainer"></div>
 
 <script>
 
 document.addEventListener("DOMContentLoaded", () => {
     loadCodeCombo('STAT', 'stat');
+
     let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
     let dataAll = [];
     let currentPage = 1;
     window.tableBody = document.querySelector('.data-table tbody');
 
     // 페이지 탑바 container에 include
-    const container = document.getElementById("pageTopBarContainer");
+    const container = document.getElementById("pageInfoContainer");
     if (!container) return;
 
     fetch('/common/pageSize.html')
@@ -131,8 +130,9 @@ document.addEventListener("DOMContentLoaded", () => {
         window.updateRowDataFlexible(data, 'trmNm', refreshMap);
     }
 
-    /** 검색 **/
+    /** 조회 **/
     document.getElementById('btnSearch').addEventListener('click', () => {
+        initScreen();
         const data = formToJson(document.getElementById('mainForm'));
         fetch('/meta/getTermListData', {
             method: 'POST',
@@ -155,11 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /** 초기화 **/
     document.getElementById('btnInit').addEventListener('click', () => {
         document.getElementById('mainForm').reset();
-        tableBody.innerHTML = "";
-        document.getElementById('pageInfo').innerText = "";
-        dataAll = [];
-        const old = document.querySelector(".pagination");
-        if (old) old.remove();
+            initScreen();
     });
 
     /** 등록 **/

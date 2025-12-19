@@ -10,7 +10,6 @@
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div class="container">
     <div class="popupContainer" id="popupContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
@@ -37,7 +36,7 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageTopBarContainer"></div>
+        <div id="pageInfoContainer"></div>
 
         <table style="margin-top:12px" class="data-table">
             <thead>
@@ -54,7 +53,6 @@
         </table>
 
     </div><!-- /mainContainer -->
-</div><!-- /container -->
 
 <script>
 
@@ -78,7 +76,7 @@
         }
 
         // 페이지 탑바 container에 include
-        const container = document.getElementById("pageTopBarContainer");
+        const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')

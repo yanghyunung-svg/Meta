@@ -53,7 +53,12 @@ public class CodeService {
      */
     public TbCodeDto getData(TbCodeDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
-        return tbCodeMapper.getData(inputDto);
+
+        TbCodeDto outputDto = new TbCodeDto();
+        outputDto =  tbCodeMapper.getData(inputDto);
+
+        log.debug(BizUtils.logInfo("END"));
+        return outputDto;
     }
 
     /**

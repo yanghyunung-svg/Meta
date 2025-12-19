@@ -22,4 +22,5 @@ public interface TbStdDmnBscMapper {
     public int deleteData(TbStdDmnBscDto tbStdDmnBscDto);
     public List<TbStdDmnBscDto> getListData(TbStdDmnBscDto tbStdDmnBscDto);
     public List<TbStdDmnBscDto> getDmnComboData();
+    public int countCode(TbStdDmnBscDto tbStdDmnBscDto);
 }

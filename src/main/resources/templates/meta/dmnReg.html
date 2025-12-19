@@ -12,7 +12,6 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 표준도메인 등록</h2>
         <div class="button-group">
-            <button id="btnInq" class="btn-chk">도메인검증</button>
             <button id="btnSave"  class="btn">저장</button>
             <button id="btnInit" class="btn">초기화</button>
             <button id="btnClose"  class="btn">닫기</button>
@@ -23,28 +22,31 @@
                 <table class="popup-table">
                 <tr>
                     <th>도메인명 <span style="color:red">*</span></th>
-                    <td colspan="2"><input type="text" id="dmnNm" name="dmnNm" class="form-input" required> </td>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="text" id="dmnNm" name="dmnNm" class="form-input" required>
+                        <button id="btnCheck" class="btn-chk">도메인검증</button>
+                    </td>
                 </tr>
                 </table>
                 <div class="divider-h"></div>
                 <table class="popup-table">
                 <tr>
                     <th>도메인분류명 <span style="color:red">*</span></th>
-                    <td colspan="2"> <input type="text" id="dmnClsfNm" name="dmnClsfNm" class="form-input"  required> </td>
+                    <td> <input type="text" id="dmnClsfNm" name="dmnClsfNm" class="form-input"  required> </td>
                 </tr>
                 <tr>
                     <th>영문명</th>
-                    <td colspan="2"><input type="text" id="dmnEngNm" name="dmnEngNm" class="form-input"  > </td>
+                    <td><input type="text" id="dmnEngNm" name="dmnEngNm" class="form-input"  > </td>
                 </tr>
                 <tr>
                     <th>속성</th>
-                    <td colspan="2"><input type="text" id="dmnAtrb" name="dmnAtrb" class="form-input"  > </td>
+                    <td><input type="text" id="dmnAtrb" name="dmnAtrb" class="form-input"  > </td>
                 </tr>
                 <tr>
                     <th>상태</th>
-                    <td colspan="2">
+                    <td>
                         <select id="sttsCd"  name="sttsCd" class="form-input">
-                            <option value="0">등록</option>
+                            <option value="0">신청</option>
                             <option value="1">사용</option>
                             <option value="9">미사용</option>
                         </select>
@@ -69,19 +71,13 @@
         <div class="divider-h"></div>
     </div>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-
+    document.addEventListener("DOMContentLoaded", () => { 
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
-        btnSave.disabled = true;
-
-        const userId = localStorage.getItem('userId');
-
-        document.getElementById("crtId").value = userId;
-        document.getElementById("updId").value = userId;
-
-        let mode = "";
-        let originalData = {};
+        const btnInit = document.getElementById("btnInit");
+        const btnClose = document.getElementById("btnClose");
+        const btnCheck = document.getElementById("btnCheck");
+        btnSave.disabled = true; 
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
@@ -128,49 +124,47 @@
             }
         });
 
-       document.getElementById('btnInq').addEventListener('click', async () => {
-            const inData = formToJson(mainForm);
+        /** 2. 도메인 검증/조회 **/
+       btnCheck.addEventListener('click', async () => {
+            let inData = formToJson(mainForm);
+            
             if (!inData.dmnNm.trim()) {
                 alert("도메인명을 입력하세요.");
                 mainForm.dmnNm.focus();
                 return;
             }
-            try {
-                const res = await fetch('/meta/getDmnData', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(inData)
-                });
 
-                if (!res.ok) {
-                    throw new Error("서버 응답 오류");
-                    return;
-                }
-                const outData = await res.json();
-                fillForm(mainForm, outData);
+            const res = await fetch('/meta/getDmnData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(inData)
+            });
 
-            } catch (err) {
-                alert("등록 가능합니다.");
+            const textData = await res.text();
+            if (!textData) {
+                alert("사용 가능한 코드입니다.");
+                ["dmnClsfNm", "dmnEngNm", "dmnAtrb"].forEach(id => document.getElementById(id).value = "");
+                document.getElementById("stat").value = "0";
+                mainForm.dmnClsfNm.focus();
                 btnSave.disabled = false;
+            } else {
+                const outData = JSON.parse(textData);
+                fillForm(mainForm, outData);
             }
         });
 
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
-        });
-
-        document.getElementById("btnClose").addEventListener("click", () => {
-            window.close();
-        });
+        btnInit.addEventListener('click', () => mainForm.reset());
+        btnClose.addEventListener("click", () => window.close());
 
         // Enter 키 이벤트
-        document.getElementById('mainForm').addEventListener('keypress', (e) => {
+        mainForm.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                document.getElementById('btnInq').click();
+                document.getElementById('btnCheck').click();
             }
         });
     });
+
 </script>
 </body>
 </html>

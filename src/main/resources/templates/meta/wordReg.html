@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/sidebar.js" defer></script>
-    <script src="/js/layout.js" defer></script>
     <script src="/js/commonUtils.js"></script>
 </head>
 <body>
@@ -162,6 +160,7 @@
             const inData = formToJson(mainForm);
 
             if (!inData.wordNm.trim()) {
+                console.log("단어명을 입력하세요.");
                 alert("단어명을 입력하세요.");
                 mainForm.wordNm.focus();
                 return;

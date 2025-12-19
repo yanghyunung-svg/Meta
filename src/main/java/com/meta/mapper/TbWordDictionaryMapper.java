@@ -25,4 +25,5 @@ public interface TbWordDictionaryMapper {
 //    public int deleteData(TbWordDictionaryDto tbWordDictionaryDto);
 
     public List<WordMappingDto> getAllData();
+    public int countCode(TbWordDictionaryDto tbWordDictionaryDto);
 }

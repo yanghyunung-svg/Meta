@@ -89,15 +89,15 @@
         AND B.CD = A.STAT
         WHERE 1=1
             <if test="wordNm != null and wordNm != ''">
-                AND WORD_NM LIKE CONCAT('%', #{wordNm}, '%')
+                AND A.WORD_NM LIKE CONCAT('%', #{wordNm}, '%')
             </if>
             <if test="engAbbrNm != null and engAbbrNm != ''">
-                AND ENG_ABBR_NM LIKE CONCAT('%', #{engAbbrNm}, '%')
+                AND A.ENG_ABBR_NM LIKE CONCAT('%', #{engAbbrNm}, '%')
             </if>
             <if test="stat != null and stat != ''">
-                AND STAT = #{stat}
+                AND A.STAT = #{stat}
             </if>
-        ORDER BY WORD_NM, ENG_NM
+        ORDER BY A.WORD_NM, A.ENG_NM
     </select>
 
 
@@ -108,4 +108,10 @@
         WHERE  1=1
     </select>
 
+
+    <select id="countCode" parameterType="com.meta.dto.WordMappingDto" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_word_dictionary
+        WHERE WORD_NM = #{wordNm}
+    </select>
 </mapper>

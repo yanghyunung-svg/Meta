@@ -6,16 +6,17 @@ import com.meta.dto.TbCodeGroupDto;
 import com.meta.service.CodeGroupService;
 import jakarta.servlet.http.HttpSession;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Controller
@@ -71,4 +72,44 @@ public class CodeGroupController {
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
+
+
+    /**
+     * @ ID : uploadCodeExcelPreview
+     * @ NAME : 코드그룹 엑셀업로드
+     */
+    @PostMapping("/uploadCodeGroupExcelPreview")
+    public ResponseEntity<Map<String, Object>> uploadCodeGroupExcelPreview(@RequestParam("file") MultipartFile file) {
+        Map<String, Object> res = new HashMap<>();
+        try {
+            List<TbCodeGroupDto> list = codeGroupService.parseExcelPreview(file);
+            res.put("success", true);
+            res.put("data", list);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        }
+    }
+
+    /**
+     * @ ID : uploadCodeExcelSave
+     * @ NAME : 코드그룹 엑셀업로드 저장
+     */
+    @PostMapping("/uploadCodeGroupExcelSave")
+    public ResponseEntity<Map<String, Object>> uploadCodeGroupExcelSave(@RequestBody List<TbCodeGroupDto> list) {
+        Map<String, Object> res = new HashMap<>();
+        try {
+            int count = codeGroupService.saveUploadedExcel(list);
+            res.put("success", true);
+            res.put("count", count);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        }
+    }
+
 }

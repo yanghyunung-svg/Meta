@@ -60,7 +60,7 @@
         });
 
         document.getElementById("btnUpload").addEventListener("click", () => {
-            initScreen();
+            initView();
             document.getElementById("excelFile").click();
         });
 
@@ -145,7 +145,7 @@
 
                 if (result.success) {
                     alert(result.count + "건 저장되었습니다.");
-                    initScreen();
+                    initView();
 
                 } else {
                     alert("오류: " + result.message);
@@ -157,7 +157,8 @@
         });
 
     });
-    function initScreen() {
+    
+    function initView() {
         document.getElementById("excelFile").value = "";
         document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
         window.uploadPreviewData = null;

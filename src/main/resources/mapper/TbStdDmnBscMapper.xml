@@ -114,4 +114,10 @@
         ORDER BY DMN_NM
     </select>
 
+
+    <select id="countCode" parameterType="com.meta.dto.TbStdDmnBscDto" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_STD_DMN_BSC
+        WHERE DMN_NM = #{dmnNm}
+    </select>
 </mapper>

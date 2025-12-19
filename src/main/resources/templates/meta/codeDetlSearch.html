@@ -10,8 +10,8 @@
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div id="topbarContainer"></div>
 <div class="container">
+<div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
@@ -55,12 +55,12 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageTopBarContainer"></div>
+        <div id="pageInfoContainer"></div>
 
         <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
-                <th width="50px" style="text-align: center;">번호</th>
+                <th class="col-no">번호</th>
                 <th>공통코드</th>
                 <th>공통코드명</th>
                 <th>상세코드</th>
@@ -76,8 +76,8 @@
     </div><!-- /mainContainer -->
 </div><!-- /container -->
 
+<div id="footbarContainer"></div>
 <script>
-
     document.addEventListener("DOMContentLoaded", () => {
         loadCodeCombo('STAT', 'stat');
 
@@ -97,7 +97,7 @@
         }
 
         // 페이지 탑바 container에 include
-        const container = document.getElementById("pageTopBarContainer");
+        const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')
@@ -157,26 +157,9 @@
             document.getElementById("btnSearch").click();
         }
 
-
-        // Enter Key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('btnSearch').click();
-            }
-        });
-
-        /** 초기화 **/
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
-            tableBody.innerHTML = "";
-            document.getElementById('pageInfo').innerText = "";
-            dataAll = [];
-            const old = document.querySelector(".pagination");
-            if (old) old.remove();
-        });
-
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
+            initScreen();
             const data = formToJson(document.getElementById('mainForm'));
 
             if (!data.grpCd.trim() && !data.grpNm.trim()) {
@@ -206,19 +189,26 @@
     /** 코드검색 팝업 **/
     document.getElementById('btnPopup').addEventListener('click', () => {
         const payload = {};
-        openWindowWithJSON(payload, "/meta/codeGroupPopup", 700, 500);
+        openWindowWithJSON(payload, "/meta/codeGroupPopup", 800, 600);
     });
 
+    // Enter Key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('btnSearch').click();
+        }
+    });
 
-    function receiveCode(grpCd, grpNm) {
-        document.getElementById("grpCd").value = grpCd;
-        document.getElementById("grpNm").value = grpNm;
-    }
+    /** 초기화 **/
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        initScreen();
+    });
 
-    /** 코드등록 **/
+    /** 등록 **/
     document.getElementById('btnReg').addEventListener('click', () => {
         const payload = {};
-        openWindowWithJSON(payload, "/meta/codeDetlReg", 800, 700);
+        openWindowWithJSON(payload, "/meta/codeDetlReg", 800, 650);
     });
 
     /** 일괄등록 **/

@@ -15,7 +15,7 @@
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
-            <h2 style="margin:0;"> ✅ 표준용어 일괄등록</h2>
+            <h2 style="margin:0;"> ✅ 도메인 일괄등록</h2>
             <div class="button-group">
                 <button id="btnDownload" class="btn">템플릿</button>
                 <button id="btnUpload" class="btn">Excel 업로드</button>
@@ -37,10 +37,10 @@
         <thead>
         <tr>
             <th class="col-no">번호</th>
-            <th style="text-align: left;">용어명</th>
-            <th style="text-align: left;">영문명</th>
             <th style="text-align: left;">도메인명</th>
-            <th style="text-align: left;">설명</th>
+            <th style="text-align: left;">도메인분류명 </th>
+            <th style="text-align: left;">영문명</th>
+            <th style="text-align: left;">속성</th>
             <th style="text-align: center;">상태</th>
         </tr>
         </thead>
@@ -54,7 +54,7 @@
     document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("btnDownload").addEventListener("click", () => {
-            window.location.href = "/meta/downloadTermExcelTemplate";
+            window.location.href = "/meta/downloadDmnExcelTemplate";
         });
 
         document.getElementById("btnUpload").addEventListener("click", () => {
@@ -70,7 +70,7 @@
             formData.append("file", file);
 
             try {
-                const res = await fetch("/meta/uploadTermExcelPreview", {
+                const res = await fetch("/meta/uploadDmnExcelPreview", {
                     method: "POST",
                     body: formData
                 });
@@ -107,11 +107,11 @@
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td style="text-align: center;"> ${index + 1} </td>
-                    <td contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
-                    <td contenteditable="true" data-index="${index}" data-field="engNm">${row.engNm}</td>
                     <td contenteditable="true" data-index="${index}" data-field="dmnNm">${row.dmnNm}</td>
-                    <td contenteditable="true" data-index="${index}" data-field="trmExpln">${row.trmExpln}</td>
-                    <td contenteditable="true" style="text-align: center;">${row.stat}</td>
+                    <td contenteditable="true" data-index="${index}" data-field="dmnClsfNm">${row.dmnClsfNm}</td>
+                    <td contenteditable="true" data-index="${index}" data-field="dmnEngNm">${row.dmnEngNm}</td>
+                    <td contenteditable="true" data-index="${index}" data-field="dmnAtrb">${row.dmnAtrb}</td>
+                    <td contenteditable="true" style="text-align: center;">${row.sttsCd}</td>
                     <td class="hidden">${row.crtId}</td>
                 `;
                 tbody.appendChild(tr);
@@ -131,7 +131,7 @@
             if (!confirm("검증된 데이터를 저장하시겠습니까?")) return;
 
             try {
-                const res = await fetch("/meta/uploadTermExcelSave", {
+                const res = await fetch("/meta/uploadDmnExcelSave", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(window.uploadPreviewData)

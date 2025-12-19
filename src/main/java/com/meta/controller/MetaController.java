@@ -47,6 +47,8 @@ public class MetaController {
     public String wordRegView() { return "meta/wordReg"; }
     @GetMapping("/wordChg")
     public String wordChgView() { return "meta/wordChg"; }
+    @GetMapping("/wordRegEblc")
+    public String wordRegEblcView() { return "meta/wordRegEblc"; }
 
     /* 도메인 */
     @GetMapping("/dmnSearch")
@@ -55,6 +57,8 @@ public class MetaController {
     public String dmnRegView() { return "meta/dmnReg"; }
     @GetMapping("/dmnChg")
     public String dmnChgView() { return "meta/dmnChg"; }
+    @GetMapping("/dmnRegEblc")
+    public String dmnRegEblcView() { return "meta/dmnRegEblc"; }
 
     /* Code Group */
     @GetMapping("/codeGroupSearch")
@@ -65,6 +69,8 @@ public class MetaController {
     public String codeGroupChgView() { return "meta/codeGroupChg"; }
     @GetMapping("/codeGroupPopup")
     public String codeGroupPopupView() { return "meta/codeGroupPopup"; }
+    @GetMapping("/codeGroupRegEblc")
+    public String codeGroupRegEblcView() { return "meta/codeGroupRegEblc"; }
 
     /* Code */
     @GetMapping("/codeDetlSearch")

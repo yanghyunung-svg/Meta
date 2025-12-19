@@ -10,8 +10,8 @@
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div id="topbarContainer"></div>
 <div class="container">
+<div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
@@ -22,6 +22,7 @@
             <div class="button-group">
                 <button id="btnSearch" class="btn">조회</button>
                 <button id="btnReg" class="btn">등록</button>
+                <button id="btnRegEblc" class="btn">일괄등록</button>
                 <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
@@ -45,12 +46,12 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageTopBarContainer"></div>
+        <div id="pageInfoContainer"></div>
 
         <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
-                <th width="50px">번호</th>
+                <th class="col-no">번호</th>
                 <th width="150px">단어명</th>
                 <th width="150px">영문약어명</th>
                 <th width="250px">영문명</th>
@@ -64,6 +65,7 @@
     </div><!-- /mainContainer -->
 </div><!-- /container -->
 
+<div id="footbarContainer"></div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         loadCodeCombo('STAT', 'stat');
@@ -75,7 +77,7 @@
         window.tableBody = document.querySelector('.data-table tbody');
 
         // 페이지 탑바 container에 include
-        const container = document.getElementById("pageTopBarContainer");
+        const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')
@@ -136,31 +138,9 @@
         }
 
 
-        // Enter Key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('btnSearch').click();
-            }
-        });
-
-        /** 초기화 **/
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
-            tableBody.innerHTML = "";
-            document.getElementById('pageInfo').innerText = "";
-            dataAll = [];
-            const old = document.querySelector(".pagination");
-            if (old) old.remove();
-        });
-
-        /** 코드등록 **/
-        document.getElementById('btnReg').addEventListener('click', () => {
-            const payload = {};
-            openWindowWithJSON(payload, "/meta/wordReg", 800, 700);
-        });
-
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
+            initScreen();
             const data = formToJson(document.getElementById('mainForm'));
             fetch('/meta/getWordListData', {
                 method: 'POST',
@@ -180,6 +160,32 @@
             });
         });
     });
+
+
+    // Enter Key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('btnSearch').click();
+        }
+    });
+
+    /** 초기화 **/
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        initScreen();
+    });
+
+    /** 등록 **/
+    document.getElementById('btnReg').addEventListener('click', () => {
+        const payload = {};
+        openWindowWithJSON(payload, "/meta/wordReg", 800, 700);
+    });
+
+    /** 일괄등록 **/
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = '/meta/wordRegEblc';
+    });
+
 </script>
 <script src="/js/commonCombo.js"></script>
 </body>

@@ -10,13 +10,14 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Controller
@@ -78,4 +79,42 @@ public class WordDictionaryController {
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
+    /**
+     * @ ID : uploadWordExcelPreview
+     * @ NAME : 표준단어 엑셀업로드
+     */
+    @PostMapping("/uploadWordExcelPreview")
+    public ResponseEntity<Map<String, Object>> uploadwordExcelPreview(@RequestParam("file") MultipartFile file) {
+        Map<String, Object> res = new HashMap<>();
+        try {
+            List<TbWordDictionaryDto> list = wordDictionaryService.parseExcelPreview(file);
+            res.put("success", true);
+            res.put("data", list);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        }
+    }
+
+    /**
+     * @ ID : uploadWordExcelSave
+     * @ NAME : 표준단어 엑셀업로드 저장
+     */
+    @PostMapping("/uploadWordExcelSave")
+    public ResponseEntity<Map<String, Object>> uploadwordExcelSave(@RequestBody List<TbWordDictionaryDto> list) {
+        Map<String, Object> res = new HashMap<>();
+        try {
+            int count = wordDictionaryService.saveUploadedExcel(list);
+            res.put("success", true);
+            res.put("count", count);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        }
+    }
+
 }

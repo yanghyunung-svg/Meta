@@ -8,7 +8,6 @@
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div class="container">
     <div class="popupContainer" id="popupContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
@@ -34,7 +33,7 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageTopBarContainer"></div>
+        <div id="pageInfoContainer"></div>
 
         <table style="margin-top:12px" class="data-table">
             <thead>
@@ -49,7 +48,6 @@
         </table>
 
     </div><!-- /mainContainer -->
-</div><!-- /container -->
 
 
 <script>
@@ -60,7 +58,7 @@
 
         window.tableBody = document.querySelector('.data-table tbody');
 
-        const container = document.getElementById("pageTopBarContainer");
+        const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')
@@ -108,6 +106,7 @@
                     // 부모창으로 값 전달
                     if (window.opener && !window.opener.closed && typeof window.opener.receiveCode === 'function') {
                         window.opener.receiveCode(grpCd, grpNm);
+                        const payload = JSON.parse(sessionStorage.getItem('codeGroupPayload') || "{}");
                     }
 
                     // 팝업 닫기

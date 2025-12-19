@@ -10,8 +10,8 @@
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div id="topbarContainer"></div>
 <div class="container">
+<div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
@@ -48,12 +48,12 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageTopBarContainer"></div>
+        <div id="pageInfoContainer"></div>
 
         <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
-                <th width="50px" style="text-align: center;">번호</th>
+                <th class="col-no">번호</th>
                 <th style="width: 40px; text-align:center;">
                     <input type="checkbox" id="checkAll">
                 </th>
@@ -70,6 +70,7 @@
 
     </div><!-- /mainContainer -->
 </div><!-- /container -->
+<div id="footbarContainer"></div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -86,7 +87,7 @@
 <!--        }, 30);-->
 
         // 페이지 탑바 container에 include
-        const container = document.getElementById("pageTopBarContainer");
+        const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')
@@ -131,16 +132,12 @@
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
-            tableBody.innerHTML = "";
-            document.getElementById('pageInfo').innerText = "";
-            dataAll = [];
-            document.getElementById("checkAll").checked = false;
-            const old = document.querySelector(".pagination");
-            if (old) old.remove();
+            initScreen();
         });
 
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
+            initScreen();
             const data = formToJson(document.getElementById('mainForm'));
             document.getElementById("checkAll").checked = false;
             fetch('/meta/getAprvDsctnList', {
@@ -222,8 +219,6 @@
         return list;
     }
 
-
-
     // Enter Key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -231,10 +226,6 @@
         }
     });
 
-    function receiveCode(id, nm) {
-        document.getElementById("userId").value = id;
-        document.getElementById("userNm").value = nm;
-    }
 </script>
 <script src="/js/commonCombo.js"></script>
 </body>

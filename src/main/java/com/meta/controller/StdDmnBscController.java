@@ -3,6 +3,7 @@ package com.meta.controller;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbStdDmnBscDto;
+import com.meta.dto.TbStdDmnBscDto;
 import com.meta.service.StdDmnBscService;
 import jakarta.servlet.http.HttpSession;
 import lombok.Data;
@@ -11,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Controller
@@ -81,6 +82,43 @@ public class StdDmnBscController {
         ApiResponse<Void> outputDto = stdDmnBscService.updateData(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
+    }
+    /**
+     * @ ID : uploadCodeExcelPreview
+     * @ NAME : 코드그룹 엑셀업로드
+     */
+    @PostMapping("/uploadDmnExcelPreview")
+    public ResponseEntity<Map<String, Object>> uploadDmnExcelPreview(@RequestParam("file") MultipartFile file) {
+        Map<String, Object> res = new HashMap<>();
+        try {
+            List<TbStdDmnBscDto> list = stdDmnBscService.parseExcelPreview(file);
+            res.put("success", true);
+            res.put("data", list);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        }
+    }
+
+    /**
+     * @ ID : uploadCodeExcelSave
+     * @ NAME : 코드그룹 엑셀업로드 저장
+     */
+    @PostMapping("/uploadDmnExcelSave")
+    public ResponseEntity<Map<String, Object>> uploadDmnExcelSave(@RequestBody List<TbStdDmnBscDto> list) {
+        Map<String, Object> res = new HashMap<>();
+        try {
+            int count = stdDmnBscService.saveUploadedExcel(list);
+            res.put("success", true);
+            res.put("count", count);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("success", false);
+            res.put("message", e.getMessage());
+            return ResponseEntity.ok(res);
+        }
     }
 
 }

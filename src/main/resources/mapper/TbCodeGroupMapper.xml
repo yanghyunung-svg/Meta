@@ -97,4 +97,11 @@
         ORDER BY GRP_CD, GRP_NM
 
     </select>
+
+
+    <select id="countCode" parameterType="com.meta.dto.TbCodeGroupDto" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_code_group
+        WHERE GRP_CD = #{grpCd}
+    </select>
 </mapper>

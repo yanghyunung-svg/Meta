@@ -15,7 +15,7 @@
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
-            <h2 style="margin:0;"> ✅ 표준용어 일괄등록</h2>
+            <h2 style="margin:0;"> ✅ 공통코드 일괄등록</h2>
             <div class="button-group">
                 <button id="btnDownload" class="btn">템플릿</button>
                 <button id="btnUpload" class="btn">Excel 업로드</button>
@@ -31,34 +31,34 @@
                 </td>
             </tr>
         </table>
-        <div class="divider-h"></div>
 
-    <table id="uploadPreviewTable" class="data-table" style="margin-top:10px; ">
+        <div class="divider-h"></div>
+    <table id="uploadPreviewTable" class="data-table" style="margin-top:20px; ">
         <thead>
         <tr>
             <th class="col-no">번호</th>
-            <th style="text-align: left;">용어명</th>
-            <th style="text-align: left;">영문명</th>
-            <th style="text-align: left;">도메인명</th>
-            <th style="text-align: left;">설명</th>
-            <th style="text-align: center;">상태</th>
+            <th>공통코드</th>
+            <th>공통코드명</th>
+            <th>비고</th>
+            <th>상태</th>
         </tr>
         </thead>
         <tbody></tbody>
     </table>
-    <div class="divider-h"></div>
+        <div class="divider-h"></div>
     </div>
+
 </div>
 <div id="footbarContainer"></div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("btnDownload").addEventListener("click", () => {
-            window.location.href = "/meta/downloadTermExcelTemplate";
+            window.location.href = "/meta/downloadCodeGroupExcelTemplate";
         });
 
         document.getElementById("btnUpload").addEventListener("click", () => {
-           initView()
+            initView();
             document.getElementById("excelFile").click();
         });
 
@@ -70,7 +70,7 @@
             formData.append("file", file);
 
             try {
-                const res = await fetch("/meta/uploadTermExcelPreview", {
+                const res = await fetch("/meta/uploadCodeGroupExcelPreview", {
                     method: "POST",
                     body: formData
                 });
@@ -107,12 +107,12 @@
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td style="text-align: center;"> ${index + 1} </td>
-                    <td contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
-                    <td contenteditable="true" data-index="${index}" data-field="engNm">${row.engNm}</td>
-                    <td contenteditable="true" data-index="${index}" data-field="dmnNm">${row.dmnNm}</td>
-                    <td contenteditable="true" data-index="${index}" data-field="trmExpln">${row.trmExpln}</td>
-                    <td contenteditable="true" style="text-align: center;">${row.stat}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="grpCd">${row.grpCd}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="grpNm">${row.grpNm}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="rmk">${row.rmk}</td>
+                    <td style="text-align: left;" contenteditable="true" data-index="${index}" data-field="stat">${row.stat}</td>
                     <td class="hidden">${row.crtId}</td>
+
                 `;
                 tbody.appendChild(tr);
             });
@@ -120,18 +120,17 @@
             attachEditListeners();
         }
 
+
         document.getElementById("btnUploadSave").addEventListener("click", async () => {
             if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
                 alert("업로드된 데이터가 없습니다.");
                 return;
             }
 
-            console.log('uploadPreviewData', window.uploadPreviewData);
-
             if (!confirm("검증된 데이터를 저장하시겠습니까?")) return;
 
             try {
-                const res = await fetch("/meta/uploadTermExcelSave", {
+                const res = await fetch("/meta/uploadCodeGroupExcelSave", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(window.uploadPreviewData)
@@ -140,8 +139,9 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    alert(result.count + "건 처리되었습니다.");
-                    initView()
+                    alert(result.count + "건 저장되었습니다.");
+                    initView();
+
                 } else {
                     alert("오류: " + result.message);
                 }

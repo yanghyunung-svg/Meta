@@ -10,8 +10,8 @@
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div id="topbarContainer"></div>
 <div class="container">
+<div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
@@ -22,6 +22,7 @@
             <div class="button-group">
                 <button id="btnSearch" class="btn">조회</button>
                 <button id="btnReg" class="btn">등록</button>
+                <button id="btnRegEblc" class="btn">일괄등록</button>
                 <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
@@ -45,16 +46,15 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageTopBarContainer"></div>
+        <div id="pageInfoContainer"></div>
 
         <table style="margin-top:12px" class="data-table">
             <thead>
             <tr>
-                <th width="50px" style="text-align: center;">번호</th>
+                <th class="col-no">번호</th>
                 <th width="150px">공통코드</th>
                 <th width="250px">공통코드명</th>
                 <th>비고</th>
-                <th width="120px" style="text-align: center;">정렬순서</th>
                 <th width="120px" style="text-align: center;">상태</th>
                 <th width="120px" style="text-align: center;">상세</th>
 
@@ -65,6 +65,7 @@
 
     </div><!-- /mainContainer -->
 </div><!-- /container -->
+<div id="footbarContainer"></div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -77,7 +78,7 @@
         window.tableBody = document.querySelector('.data-table tbody');
 
         // 페이지 탑바 container에 include
-        const container = document.getElementById("pageTopBarContainer");
+        const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')
@@ -112,12 +113,11 @@
                     <td style="text-align: left;">  ${item.grpCd} </td>
                     <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.rmk}</td>
-                    <td style="text-align: center;">${item.ord}</td>
-                    <td> ${item.stat === '0' ? '등록'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
+                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                     <td class="clickable"
                             data-id="${item.grpCd}"
                             data-grpNm="${item.grpNm}"
-                            style="text-align: center;">  ▶ </td>
+                            style="text-align: center;">🔍</td>
                 </tr>
             `).join('');
 
@@ -174,15 +174,12 @@
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
-            tableBody.innerHTML = "";
-            document.getElementById('pageInfo').innerText = "";
-            dataAll = [];
-            const old = document.querySelector(".pagination");
-            if (old) old.remove();
+            initScreen();
         });
 
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
+            initScreen();
             const data = formToJson(document.getElementById('mainForm'));
             fetch('/meta/getCodeGroupListData', {
                 method: 'POST',
@@ -203,12 +200,17 @@
         });
     });
 
-
     /** 등록 **/
     document.getElementById('btnReg').addEventListener('click', () => {
         const payload = {};
         openWindowWithJSON(payload, "/meta/codeGroupReg", 800, 600);
     });
+
+    /** 일괄등록 **/
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = '/meta/codeGroupRegEblc';
+    });
+
 </script>
 <script src="/js/commonCombo.js"></script>
 </body>
