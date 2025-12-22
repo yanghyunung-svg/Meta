@@ -3,7 +3,6 @@ package com.meta.service;
 import ch.qos.logback.core.util.StringUtil;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
-import com.meta.dto.TbCodeDto;
 import com.meta.dto.TbTermDictionaryDto;
 import com.meta.dto.TbWordDictionaryDto;
 import com.meta.dto.WordMappingDto;
@@ -103,6 +102,7 @@ public class TermDictionaryService {
 
         outputDto.setTrmNm(inText);
         outputDto.setEngNm(outTxt);
+        outputDto.setDmnNm("");
         outputDto.setTrmExpln(prettyPrintKeywords(keywords));
         outputDto.setStat("9");
 

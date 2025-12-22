@@ -15,8 +15,9 @@
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
-            <h2 style="margin:0;"> ✅ 공통코드 일괄등록</h2>
+            <h2 style="margin:0;"> ✅ 그룹코드 일괄등록</h2>
             <div class="button-group">
+                <button id="btnInq" class="btn">목록조회</button>
                 <button id="btnDownload" class="btn">템플릿</button>
                 <button id="btnUpload" class="btn">Excel 업로드</button>
                 <button id="btnUploadSave" class="btn" disabled>업로드 저장</button>
@@ -37,8 +38,8 @@
         <thead>
         <tr>
             <th class="col-no">번호</th>
-            <th>공통코드</th>
-            <th>공통코드명</th>
+            <th>그룹코드</th>
+            <th>그룹코드명</th>
             <th>비고</th>
             <th>상태</th>
         </tr>
@@ -52,6 +53,11 @@
 <div id="footbarContainer"></div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+
+        /** 목록조회 **/
+        document.getElementById('btnInq').addEventListener('click', () => {
+            window.location.href = '/meta/codeGroupSearch';
+        });
 
         document.getElementById("btnDownload").addEventListener("click", () => {
             window.location.href = "/meta/downloadCodeGroupExcelTemplate";

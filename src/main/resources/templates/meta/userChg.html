@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/layout.js"></script>
     <script src="/js/commonUtils.js"></script>
 </head>
 <body>
@@ -22,28 +23,26 @@
         <table class="popup-table">
             <tr>
                 <th>사용자ID <span style="color:red">*</span></th>
-                <td colspan="2"><input type="text" id="userId" name="userId" class="form-input" required></td>
+                <td><input type="text" id="userId" name="userId" class="form-input" required></td>
             </tr>
+        </table>
+        <div class="divider-h"></div>
+        <table class="popup-table">
             <tr>
                 <th>사용자이름 <span style="color:red">*</span></th>
-                <td colspan="2"><input type="text" id="userNm" name="userNm" class="form-input"  required></td>
-            </tr>
-            <tr>
-                <th>비밀번호</th>
-                <td colspan="2">
-                    <button id="btnPswd" type="button" class="btn">비밀번호변경</button>
-            </tr>
+                <td><input type="text" id="userNm" name="userNm" class="form-input"  required></td>
+            </tr> 
             <tr>
                 <th>이메일</th>
-                <td colspan="2"><input type="text" id="email" name="email" class="form-input"></td>
+                <td><input type="text" id="email" name="email" class="form-input"></td>
             </tr>
             <tr>
                 <th>전화번호</th>
-                <td colspan="2"><input type="text" id="phone" name="phone" class="form-input"></td>
+                <td><input type="text" id="phone" name="phone" class="form-input"></td>
             </tr>
             <tr>
                 <th>권한</th>
-                <td colspan="2">
+                <td>
                     <select id="role" name="role" class="form-input">
                         <option value="">선택</option>
                         <option value="1">ADMIN</option>
@@ -53,14 +52,17 @@
             </tr>
             <tr>
                 <th>상태</th>
-                <td colspan="2">
+                <td>
                     <select id="stat"  name="stat" class="form-input">
-                        <option value="0">등록</option>
+                        <option value="0">신청</option>
                         <option value="1">사용</option>
                         <option value="9">미사용</option>
                     </select>
                 </td>
             </tr>
+        </table>
+        <div class="divider-h"></div>
+        <table class="popup-table">
             <tr>
                 <th>최초등록</th>
                 <td style="display:flex; gap:5px;">
@@ -74,24 +76,19 @@
                     <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
             </tr>
         </table>
-    </form>
-
-    <div class="divider-h"></div>
-</div>
-
- <div id="passwordChangeModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <input type="hidden" id="modalUserId">
-
-        <div class="popup-header">
-            <h2 class="popup-title"> ✅ 비밀번호 변경</h2>
-            <div class="button-group">
-                <button id="changePasswordBtn" class="btn">변경</button>
-                <button id="closePasswordModalBtn" class="btn">취소</button>
-            </div>
-        </div>
         <div class="divider-h"></div>
+    </form>
+<br>
 
+    <form id="pwdForm">
+    <div class="popup-header">
+        <h2 class="popup-title"> ✅ 비밀번호 변경</h2>
+        <div class="button-group">
+            <button id="btnPwd" type="button" class="btn">변경</button>
+        </div>
+    </div>
+
+        <div class="divider-h"></div>
         <table class="popup-table">
             <tr>
                 <th>현재 비밀번호</th>
@@ -106,29 +103,33 @@
                 <td><input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required></td>
             </tr>
         </table>
-        <div class="divider-h"></div>
-    </div>
+    </form>
+
+    <div class="divider-h"></div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
-        const btnPswd = document.getElementById("btnPswd");
+        const btnPwd = document.getElementById("btnPwd");
 
         let originalData = {};
 
-         // 🔸 현재 값이 수정되었는지 체크
-          const checkChanged = () => {
+        // 🔸 현재 값이 수정되었는지 체크 (비교 로직 강화)
+        const checkChanged = () => {
             const current = formToJson(mainForm);
-            const changed = Object.keys(current).some(
-                key => current[key] !== originalData[key]
-            );
-            btnSave.disabled = !changed;
+            // 모든 키를 비교하여 하나라도 다르면 true
+            const isDirty = Object.keys(current).some(key => {
+                // null/undefined 값을 빈 문자열과 동일하게 취급하여 오탐 방지
+                const orgVal = originalData[key] == null ? "" : String(originalData[key]);
+                const curVal = current[key] == null ? "" : String(current[key]);
+                return orgVal !== curVal;
+            });
+            btnSave.disabled = !isDirty;
         };
 
-        // 🔸 입력값 변경 감지 (입력/선택 모두 반응)
+        // 🔸 입력값 변경 감지
         mainForm.querySelectorAll("input, textarea, select").forEach(el => {
             el.addEventListener("input", checkChanged);
             el.addEventListener("change", checkChanged);
@@ -136,13 +137,12 @@
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
-
             let data = formToJson(mainForm);
-            data = addUserAuditFields(data);
 
-            if (!data.userId.trim()) {
-                alert("사용자ID를 입력하세요.");
-                mainForm.userId.focus();
+            // 유효성 검사
+            if (!data.phone.trim()) {
+                alert("전화번호를 입력하세요.");
+                mainForm.phone.focus();
                 return;
             }
             if (!data.userNm.trim()) {
@@ -150,6 +150,9 @@
                 mainForm.userNm.focus();
                 return;
             }
+
+            // 공통 필드 추가 (수정자, 수정일시 등)
+            data = typeof addUserAuditFields === 'function' ? addUserAuditFields(data) : data;
 
             try {
                 const res = await fetch("/meta/updateUserData", {
@@ -161,160 +164,121 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    alert("저장되었습니다.");
+                    alert("성공적으로 저장되었습니다.");
+                    // 부모창(리스트) 그리드 새로고침
                     if (window.opener && typeof window.opener.refreshParentRow === 'function') {
                         window.opener.refreshParentRow(data);
                     }
                     window.close();
                 } else {
-                    alert("오류: " + result.message);
+                    alert("저장 실패: " + result.message);
                 }
-
             } catch (err) {
-                console.error(err);
-                alert("요청 중 오류가 발생했습니다.");
+                console.error("Save Error:", err);
+                alert("서버 통신 중 오류가 발생했습니다.");
             }
         });
 
-        // 부모창에서 데이터 받기
+
+        // 비밀번호 변경 버튼
+        btnPwd.addEventListener("click", (e) => {
+            e.preventDefault();
+
+             const userId = document.getElementById('userId').value;
+             const currentPass = document.getElementById('currentPassword').value;
+             const newPass = document.getElementById('newPassword').value;
+             const confirmPass = document.getElementById('confirmPassword').value;
+
+             // 1. 필수 입력 항목 체크
+             if (!currentPass || !newPass || !confirmPass) {
+                 alert("모든 비밀번호 항목을 입력해야 합니다.");
+                 return;
+             }
+
+             // 2. 새 비밀번호 일치 확인
+             if (newPass !== confirmPass) {
+                 alert("새 비밀번호 확인이 일치하지 않습니다.");
+                 return;
+             }
+
+             // 3. (추가 권장) 현재 비밀번호와 새 비밀번호 동일 여부 체크
+             if (currentPass === newPass) {
+                 alert("새 비밀번호는 현재 비밀번호와 다르게 설정해야 합니다.");
+                 return;
+             }
+
+             // 모든 검증 통과 시 API 호출
+             changePasswordApi(userId, currentPass, newPass);
+         });
+
+         const changePasswordApi = async (userId, currentPassword, newPassword) => {
+             btnSave.disabled = true; // 중복 클릭 방지
+             try {
+                 const res = await fetch("/meta/changePassword", {
+                     method: "POST",
+                     headers: { "Content-Type": "application/json" },
+                     body: JSON.stringify({ userId, currentPassword, newPassword })
+                 });
+
+                 const result = await res.json();
+
+                 if (result.success) {
+                     alert("✅ 비밀번호가 성공적으로 변경되었습니다.");
+                     window.close(); // 부모창에서 열린 팝업 닫기
+                 } else {
+                     alert(`비밀번호 변경 실패: ${result.message || '알 수 없는 오류'}`);
+                 }
+             } catch (err) {
+                 console.error(err);
+                 alert("서버와 통신 중 문제가 발생했습니다.");
+             } finally {
+                 btnSave.disabled = false;
+             }
+         };
+
+
+
+        // 부모창(리스트)에서 데이터 수신
         window.addEventListener("message", (event) => {
             if (event.origin !== window.location.origin) return;
+            const { userId, mode } = event.data;
 
-            const sendId  = event.data.userId;
-
-            // 상세모드
-            if (sendId ) {
+            if (userId) {
                 (async () => {
                     try {
                         const res = await fetch('/meta/getUserData', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId: sendId  })
+                            body: JSON.stringify({ userId })
                         });
 
                         const data = await res.json();
 
+                        // 1. 폼 채우기
                         fillForm(mainForm, data);
-                        // 읽기 전용
-                        document.getElementById("userId").readOnly = true;
 
-                        originalData = data; // 변경감지 기준 등록
+                        // 2. 수정 모드 처리
+                        document.getElementById("userId").readOnly = true;
+                        document.getElementById("userId").classList.add("readonly-style"); // 시각적 처리
+
+                        // 3. 변경 감지 기준점 설정 (폼에 채워진 값 기준으로 다시 추출)
+                        originalData = formToJson(mainForm);
+
+                        btnSave.disabled = true; // 초기 상태는 비활성
 
                     } catch (err) {
-                        console.error(err);
-                        alert("상세 데이터 조회 중 오류가 발생했습니다.");
+                        console.error("Fetch Error:", err);
+                        alert("데이터 로드 중 오류가 발생했습니다.");
                     }
                 })();
-
-                btnSave.disabled = true;
             }
         });
 
-        document.getElementById("btnClose").addEventListener("click", () => {
-            window.close();
-        });
 
-        // ------------------------------------------------------------------
-        // 🔑 PasswordModal 객체 (모듈화된 비밀번호 변경 로직)
-        // ------------------------------------------------------------------
-        const PasswordModal = (() => {
-            const modal = document.getElementById('passwordChangeModal');
-            const changeBtn = document.getElementById('changePasswordBtn');
-            const closeBtn = document.getElementById('closePasswordModalBtn');
-
-            // 헬퍼: 모달 닫기 및 초기화
-            const close = () => {
-                document.getElementById('currentPassword').value = '';
-                document.getElementById('newPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-                modal.style.display = 'none';
-            };
-
-            // 이벤트 리스너: 변경하기 버튼 클릭
-            changeBtn.addEventListener('click', () => {
-                const userId = document.getElementById('modalUserId').value;
-                const currentPass = document.getElementById('currentPassword').value;
-                const newPass = document.getElementById('newPassword').value;
-                const confirmPass = document.getElementById('confirmPassword').value;
-
-                // 1. 필수 입력 항목 체크
-                if (!currentPass || !newPass || !confirmPass) {
-                    alert("모든 비밀번호 항목을 입력해야 합니다.");
-                    return;
-                }
-
-                // 2. 새 비밀번호 일치 확인
-                if (newPass !== confirmPass) {
-                    alert("새 비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
-                    return;
-                }
-
-                // 모든 검증 통과 시 API 호출
-                changePasswordApi(userId, currentPass, newPass);
-            });
-
-            // 이벤트 리스너: 취소 버튼
-            closeBtn.addEventListener('click', close);
+        document.getElementById("btnClose").addEventListener("click", () => window.close());
 
 
-            const changePasswordApi = async (userId, currentPassword, newPassword) => {
-                changeBtn.disabled = true;
-                try {
-                    const res = await fetch("/meta/changePassword", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ userId, currentPassword, newPassword })
-                    });
 
-                    const result = await res.json();
-
-                    if (result.success) {
-                        alert("✅ 비밀번호가 성공적으로 변경되었습니다.");
-                        close();
-                        window.close();
-                    } else {
-                        // 서버에서 전달된 오류 메시지 사용 (예: 현재 비밀번호 불일치)
-                        alert(`❌ 비밀번호 변경 실패: ${result.message || '알 수 없는 오류'}`);
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("❌ 서버와 통신 중 문제가 발생했습니다.");
-                } finally {
-                    changeBtn.disabled = false; // 버튼 활성화
-                }
-            };
-
-
-            // 외부 노출 함수 (모달 열기)
-            const open = (userId) => {
-                if (!userId) {
-                    alert("사용자 ID가 지정되지 않았습니다.");
-                    return;
-                }
-                document.getElementById('modalUserId').value = userId;
-                modal.style.display = 'block';
-                document.getElementById('currentPassword').focus(); // 현재 비밀번호 필드에 포커스
-            };
-
-            // 외부 노출 함수들
-            return {
-                open: open,
-                close: close
-            };
-
-        })();
-        // ------------------------------------------------------------------
-
-
-        // 🆕 비밀번호 변경 버튼 클릭 이벤트 처리 (PasswordModal.open 호출)
-        btnPswd.addEventListener("click", () => {
-            const userId = document.getElementById("userId").value;
-            if (!userId) {
-                alert("사용자 조회 후 가능합니다.");
-                return;
-            }
-            PasswordModal.open(userId);
-        });
 
     });
 </script>

@@ -11,7 +11,7 @@
     <div class="popupContainer" id="popupContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 공통코드 조회</h2>
+            <h2 style="margin:0;"> ✅ 그룹코드 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
@@ -33,9 +33,9 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageInfoContainer"></div>
+        <div id="pageInfoContainer" class="page-header"></div>
 
-        <table style="margin-top:12px" class="data-table">
+        <table style="margin-top:12px" class="data-table" id="mainTable">
             <thead>
             <tr>
                 <th width="100px" style="text-align: center;">번호</th>
@@ -56,7 +56,7 @@
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.data-table tbody');
+        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
 
         const container = document.getElementById("pageInfoContainer");
         if (!container) return;
@@ -69,7 +69,7 @@
                 if (!pageSizeSelect) return;
 
                 pageSizeSelect.addEventListener("change", () => {
-                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
                     currentPage = 1;
                     renderTable(currentPage);
                     renderPagination(dataAll, currentPage, page_size);
@@ -107,6 +107,7 @@
                     if (window.opener && !window.opener.closed && typeof window.opener.receiveCode === 'function') {
                         window.opener.receiveCode(grpCd, grpNm);
                         const payload = JSON.parse(sessionStorage.getItem('codeGroupPayload') || "{}");
+                        localStorage.setItem('grpCd', grpCd);
                     }
 
                     // 팝업 닫기

@@ -16,7 +16,7 @@
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 공통코드 조회</h2>
+            <h2 style="margin:0;"> ✅ 그룹코드 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
@@ -31,9 +31,9 @@
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th>공통코드</th>
+                    <th>그룹코드</th>
                     <td><input type="text" id="grpCd" name="grpCd" class="form-input"></td>
-                    <th>공통코드명</th>
+                    <th>그룹코드명</th>
                     <td><input type="text" id="grpNm"  name="grpNm" class="form-input"></td>
                     <th>상태</th>
                     <td>
@@ -46,9 +46,9 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageInfoContainer"></div>
+        <div id="pageInfoContainer" class="page-header"></div>
 
-        <table style="margin-top:12px" class="data-table">
+        <table id="mainTable"  style="margin-top:12px" class="data-table">
             <thead>
             <tr>
                 <th class="col-no">번호</th>
@@ -56,8 +56,6 @@
                 <th width="250px">공통코드명</th>
                 <th>비고</th>
                 <th width="120px" style="text-align: center;">상태</th>
-                <th width="120px" style="text-align: center;">상세</th>
-
             </tr>
             </thead>
             <tbody></tbody>
@@ -75,7 +73,8 @@
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.data-table tbody');
+        const table = document.getElementById("mainTable");
+        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
 
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageInfoContainer");
@@ -88,7 +87,7 @@
             const pageSizeSelect = document.getElementById("pageSize");
             if (!pageSizeSelect) return;
             pageSizeSelect.addEventListener("change", () => {
-                PAGE_SIZE = Number(pageSizeSelect.value);
+                <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
                 currentPage = 1;
                 renderTable(currentPage);
                 renderPagination(dataAll, currentPage, PAGE_SIZE);
@@ -108,16 +107,12 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-id="${item.grpCd}">
+                <tr class="row-click" data-id="${item.grpCd}" data-grpNm="${item.grpNm}">
                     <td style="text-align: center;"> ${start + index + 1} </td>
                     <td style="text-align: left;">  ${item.grpCd} </td>
                     <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.rmk}</td>
                     <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
-                    <td class="clickable"
-                            data-id="${item.grpCd}"
-                            data-grpNm="${item.grpNm}"
-                            style="text-align: center;">🔍</td>
                 </tr>
             `).join('');
 
@@ -130,12 +125,31 @@
                 });
             });
 
+            document.querySelectorAll(".row-click").forEach(tr => {
+                tr.addEventListener("click", () => {
+                    const grpCd = tr.getAttribute("data-id");
+                    const grpNm = tr.getAttribute("data-grpNm");
+
+                    localStorage.setItem('grpCd', grpCd);
+                    localStorage.setItem('grpNm', grpNm);
+
+                    const width = 800;
+                    const height = 820;
+                    const left = window.screenX + (window.outerWidth - width) / 2;
+                    const top = window.screenY + (window.outerHeight - height) / 2;
+                    const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
+                    const win = window.open("/meta/codeDetlPopup",  "공통코드상세", features);
+                    win.addEventListener('load', () => {
+                        win.postMessage(payload, window.location.origin);
+                    });
+                });
+            });
+
             window.refreshParentRow = function(data) {
                 const refreshMap = {
                     grpNm: 'td:nth-child(3)',
                     rmk: 'td:nth-child(4)',
-                    ord: 'td:nth-child(5)',
-                    stat: 'td:nth-child(6)'
+                    stat: 'td:nth-child(5)'
                 };
                 window.updateRowDataFlexible(data, 'grpCd', refreshMap);
             }

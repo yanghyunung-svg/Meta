@@ -11,7 +11,7 @@
 
 <div class="popupContainer" id="popupContainer">
     <div class="popup-header">
-        <h2 class="popup-title"> ✅ 공통코드 등록</h2>
+        <h2 class="popup-title"> ✅ 그룹코드 등록</h2>
         <div class="button-group">
             <button id="btnSave"  class="btn">저장</button>
             <button id="btnInit" class="btn">초기화</button>
@@ -23,7 +23,7 @@
         <form id="mainForm">
             <table class="popup-table">
                 <tr>
-                    <th>공통코드 <span style="color:red">*</span></th>
+                    <th>그룹코드 <span style="color:red">*</span></th>
                     <td style="display:flex; align-items:center; gap:4px;">
                         <input type="text" id="grpCd" name="grpCd" class="form-input" required>
                         <button id="btnCheck" class="btn-chk">코드검증</button>
@@ -33,7 +33,7 @@
             <div class="divider-h"></div>
             <table class="popup-table">
                 <tr>
-                    <th>공통코드명 <span style="color:red">*</span></th>
+                    <th>그룹코드명 <span style="color:red">*</span></th>
                     <td> <input type="text" id="grpNm" name="grpNm" class="form-input"  required> </td>
                 </tr>
                 <tr>
@@ -140,7 +140,9 @@
         });
 
         btnInit.addEventListener('click', () => mainForm.reset());
-        btnClose.addEventListener("click", () => window.close());
+        btnClose.addEventListener("click", () => {
+            if (confirm("닫으시겠습니까?")) window.close();
+        });
 
         // Enter 키 이벤트
         mainForm.addEventListener('keypress', (e) => {

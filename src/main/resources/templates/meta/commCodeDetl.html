@@ -4,17 +4,12 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/sidebar.js" defer></script>
     <script src="/js/layout.js" defer></script>
     <script src="/js/commonUtils.js"></script>
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div class="container">
-<div id="topbarContainer"></div>
-    <div id="sidebarContainer"></div>
-
-    <div class="mainContainer" id="mainContainer">
+<div class="iframeMainContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 상세코드 조회</h2>
@@ -22,8 +17,6 @@
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
                 <button id="btnSearch" class="btn">조회</button>
-                <button id="btnReg" class="btn">등록</button>
-                <button id="btnRegEblc" class="btn">일괄등록</button>
                 <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
@@ -38,18 +31,8 @@
                         <button id="btnPopup">🔍</button>
                     </td>
                     <th>공통코드명</th>
-                    <td><input type="text" id="grpNm"  name="grpNm" class="form-input"   ></td>
+                    <td><input type="text" id="grpNm"  name="grpNm" class="form-input"  readonly ></td>
 
-                    <th>상세코드</th>
-                    <td><input type="text" id="cd"  name="cd" class="form-input" ></td>
-                    <th>상세코드명</th>
-                    <td><input type="text" id="cdNm"  name="cdNm" class="form-input" ></td>
-                    <th>상태</th>
-                    <td>
-                        <select id="stat" name="stat" class="form-select">
-                            <option value="">전체</option>
-                        </select>
-                    </td>
                 </tr>
 
             </table>
@@ -62,25 +45,17 @@
             <thead>
             <tr>
                 <th class="col-no">번호</th>
-                <th>공통코드</th>
-                <th>공통코드명</th>
                 <th>상세코드</th>
                 <th>상세코드명</th>
-                <th>비고</th>
-                <th width="120px" style="text-align: center;">정렬순서</th>
                 <th  width="120px"  style="text-align: center;">상태</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
 
-    </div><!-- /mainContainer -->
 </div><!-- /container -->
-
-<div id="footbarContainer"></div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        loadCodeCombo('STAT', 'stat');
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
@@ -99,7 +74,6 @@
             const pageSizeSelect = document.getElementById("pageSize");
             if (!pageSizeSelect) return;
             pageSizeSelect.addEventListener("change", () => {
-                <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
                 currentPage = 1;
                 renderTable(currentPage);
                 renderPagination(dataAll, currentPage, PAGE_SIZE);
@@ -121,12 +95,8 @@
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr class="row-click" data-grp="${item.grpCd}" data-cd="${item.cd}" data-id="${item.grpCd}" + "${item.cd}">
                     <td style="text-align: center;"> ${start + index + 1} </td>
-                    <td style="text-align: left;">${item.grpCd}</td>
-                    <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.cd}</td>
                     <td style="text-align: left;">${item.cdNm}</td>
-                    <td style="text-align: left;">${item.rmk}</td>
-                    <td style="text-align: center;">${item.ord}</td>
                     <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                 </tr>
             `).join('');
@@ -140,6 +110,8 @@
                     openWindowWithJSON(payload, "/meta/codeDetlChg", 700, 650);
                 });
             });
+
+
         }
 
         window.refreshParentRow = function(data) {
@@ -153,12 +125,6 @@
         document.getElementById('btnSearch').addEventListener('click', () => {
             initScreen();
             const data = formToJson(document.getElementById('mainForm'));
-
-<!--            if (!data.grpCd.trim() && !data.grpNm.trim()) {-->
-<!--                alert("공통코드를 입력하세요.");-->
-<!--                mainForm.grpCd.focus();-->
-<!--                return;-->
-<!--            }-->
             fetch('/meta/getCodeListData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -186,15 +152,22 @@
 
     window.addEventListener('storage', (e) => {
         if (e.key === 'grpCd' && e.newValue) {
-            const grpCdInput = document.getElementById('grpCd');
             const btnSearch = document.getElementById('btnSearch');
 
-            if (grpCdInput && btnSearch) {
-                grpCdInput.value = e.newValue;
+            const savedGrpCd = localStorage.getItem('grpCd');
+            const savedGrpNm = localStorage.getItem('grpNm');
+
+            document.getElementById('grpCd').value = savedGrpCd;
+            document.getElementById('grpNm').value = savedGrpNm;
+
+            console.log('grpCd=', localStorage.getItem('grpCd'));
+            console.log('grpNm=', localStorage.getItem('grpNm'));
+
+            if (savedGrpCd && btnSearch) {
+                savedGrpCd.value = e.newValue;
                 btnSearch.click();
             }
 
-            localStorage.removeItem('grpCd');
         }
     });
 
@@ -211,18 +184,7 @@
         initScreen();
     });
 
-    /** 등록 **/
-    document.getElementById('btnReg').addEventListener('click', () => {
-        const payload = {};
-        openWindowWithJSON(payload, "/meta/codeDetlReg", 800, 650);
-    });
-
-    /** 일괄등록 **/
-    document.getElementById('btnRegEblc').addEventListener('click', () => {
-        window.location.href = '/meta/codeDetlRegEblc';
-    });
 
 </script>
-<script src="/js/commonCombo.js"></script>
 </body>
 </html>

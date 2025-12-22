@@ -79,19 +79,24 @@ function bindFooterEvents() {
     const userNm = localStorage.getItem('userNm');
     const userId = localStorage.getItem('userId');
     const userInfo = document.querySelector('.footbar-left .userInfo');
-    const footerSpan = document.getElementById('footerUserNm');
+    const footerUserNm = document.getElementById('footerUserNm');
+    const userAgent = document.getElementById('userAgent');
 
-    if (footerSpan && userNm && userId) {
-        footerSpan.innerText = `${userNm} (${userId})`;
+    if (footerUserNm && userNm && userId) {
+        footerUserNm.innerText = `${userNm} (${userId})`;
+    }
+    if (userAgent) {
+        const ua = navigator.userAgent;
+//        userAgent.innerText = `Browser: ${ua.split(') ')[2]})`;
+          userAgent.innerText = `${ua}`;
     }
 
     if (userInfo && userId) {
         userInfo.addEventListener('click', () => {
-            openWindowWithJSON( { mode: "S", userId },  "/meta/userChg", 700, 500 );
+            openWindowWithJSON( { mode: "S", userId },  "/meta/userChg", 800, 700 );
         });
     }
 }
-
 
 function initScreen() {
     tableBody.innerHTML = "";
@@ -100,15 +105,48 @@ function initScreen() {
     const old = document.querySelector(".pagination");
     if (old) old.remove();
 }
+let popupWin = null;
 
 function openWindowWithJSON(payload, url, width, height) {
     const left = window.screenX + (window.outerWidth - width) / 2;
     const top = window.screenY + (window.outerHeight - height) / 2;
-    const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=no,resizable=yes`;
-    const win = window.open(url, "Meta System", features);
-    win.addEventListener('load', () => {
-        win.postMessage(payload, window.location.origin);
-    });
+
+    const features = [
+        `width=${width}`,
+        `height=${height}`,
+        `left=${left}`,
+        `top=${top}`,
+        'scrollbars=no',
+        'resizable=yes'
+    ].join(',');
+
+    // 팝업이 이미 열려 있으면 재사용
+    if (popupWin && !popupWin.closed) {
+        popupWin.focus();
+        popupWin.postMessage(payload, window.location.origin);
+        return;
+    }
+
+    popupWin = window.open(url, 'MetaSystemPopup', features);
+
+    if (!popupWin) {
+        alert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
+        return;
+    }
+
+    // load 이벤트 보장
+    const sendPayload = () => {
+        try {
+            popupWin.postMessage(payload, window.location.origin);
+        } catch (e) {
+            console.error('postMessage failed:', e);
+        }
+    };
+
+    popupWin.addEventListener('load', sendPayload, { once: true });
+
+    // 일부 브라우저 대응 (load 미발생 대비)
+    setTimeout(sendPayload, 500);
 }
 
 function receiveCode(grpCd, grpNm) {

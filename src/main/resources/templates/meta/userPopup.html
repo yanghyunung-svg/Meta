@@ -33,9 +33,9 @@
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageInfoContainer"></div>
+        <div id="pageInfoContainer" class="page-header"></div>
 
-        <table style="margin-top:12px" class="data-table">
+        <table style="margin-top:12px" class="data-table" id="mainTable">
             <thead>
             <tr>
                 <th width="50px">번호</th>
@@ -59,7 +59,7 @@
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.data-table tbody');
+        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
 
         const container = document.getElementById("pageInfoContainer");
         if (!container) return;
@@ -72,7 +72,7 @@
                 if (!pageSizeSelect) return;
 
                 pageSizeSelect.addEventListener("change", () => {
-                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
                     currentPage = 1;
                     renderTable(currentPage);
                     renderPagination(dataAll, currentPage, page_size);

@@ -22,7 +22,10 @@
             , CRT_ID
             , CRT_DTTM
             FROM tb_term_dictionary
-            WHERE STAT = #{stat}
+            WHERE 1=1
+            <if test="stat != null and stat != ''">
+                AND STAT = #{stat}
+            </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
             </if>
@@ -38,13 +41,15 @@
             , CRT_ID
             , CRT_DTTM
             FROM tb_word_dictionary
-            WHERE STAT = #{stat}
+            WHERE 1=1
+            <if test="stat != null and stat != ''">
+                AND STAT = #{stat}
+            </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
             </if>
 
         UNION ALL
-
             SELECT  '3'  AS SE
             , 0  AS ID
             , DMN_NM  AS KOR_NM
@@ -54,13 +59,15 @@
             , CRT_ID
             , CRT_DTTM
             FROM TB_STD_DMN_BSC
-            WHERE STTS_CD = #{stat}
+            WHERE 1=1
+            <if test="stat != null and stat != ''">
+                AND STTS_CD = #{stat}
+            </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
             </if>
 
         UNION ALL
-
             SELECT  '4'  AS SE
             , 0  AS ID
             , GRP_CD  AS KOR_NM
@@ -70,13 +77,15 @@
             , CRT_ID
             , CRT_DTTM
             FROM tb_code_group
-            WHERE STAT = #{stat}
+            WHERE 1=1
+            <if test="stat != null and stat != ''">
+                AND STAT = #{stat}
+            </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
             </if>
 
          UNION ALL
-
             SELECT  '5'  AS SE
             , 0 AS ID
             , GRP_CD  AS KOR_NM
@@ -86,7 +95,10 @@
             , CRT_ID
             , CRT_DTTM
             FROM tb_code
-            WHERE STAT = #{stat}
+            WHERE 1=1
+            <if test="stat != null and stat != ''">
+                AND STAT = #{stat}
+            </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
             </if>

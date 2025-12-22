@@ -6,7 +6,6 @@ import com.meta.dto.TbLoginLogDto;
 import com.meta.dto.TbUserInfoDto;
 import com.meta.service.UserInfoService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,20 +32,16 @@ public class UserInfoController {
      */
     @PostMapping("/getLogin")
     @ResponseBody
-    public ApiResponse<TbUserInfoDto>  getLogin(@RequestBody TbUserInfoDto inputDto, HttpServletRequest session) throws Exception {
+    public ApiResponse<TbUserInfoDto>  getLogin(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
 
-        inputDto.setIpAddr(BizUtils.getClientIp(session));
-        inputDto.setUserAgent(session.getHeader("User-Agent"));
+        inputDto.setIpAddr(BizUtils.getClientIp(request));
+        inputDto.setUserAgent(request.getHeader("User-Agent"));
 
-        ApiResponse<TbUserInfoDto> outputDto = userInfoService.getLogin(inputDto);
+        ApiResponse<TbUserInfoDto> outputDto = userInfoService.getLogin(inputDto, request);
         if (!outputDto.isSuccess()) {
             return outputDto;
         }
-        TbUserInfoDto user = outputDto.getData();
-        session.setAttribute("userId", user.getUserId());
-        session.setAttribute("userNm", user.getUserNm());
-        session.setAttribute("role", user.getRole());
 
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
@@ -58,7 +53,7 @@ public class UserInfoController {
      */
     @PostMapping("/getUserListData")
     @ResponseBody
-    public List<TbUserInfoDto> getUserListData(@RequestBody TbUserInfoDto inputDto, HttpSession session) throws Exception {
+    public List<TbUserInfoDto> getUserListData(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         return userInfoService.getListData(inputDto);
     }
@@ -69,7 +64,7 @@ public class UserInfoController {
      */
     @PostMapping("/getUserData")
     @ResponseBody
-    public TbUserInfoDto getUserData(@RequestBody TbUserInfoDto inputDto, HttpSession session) throws Exception {
+    public TbUserInfoDto getUserData(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         return userInfoService.getData(inputDto);
     }
@@ -80,7 +75,7 @@ public class UserInfoController {
      */
     @PostMapping("/insertUserData")
     @ResponseBody
-    public ApiResponse<Void> insertUserData(@RequestBody TbUserInfoDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> insertUserData(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         ApiResponse<Void> outputDto = userInfoService.insertData(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
@@ -92,7 +87,7 @@ public class UserInfoController {
      */
     @PostMapping("/changePassword")
     @ResponseBody
-    public ApiResponse<Void> changePassword(@RequestBody TbUserInfoDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> changePassword(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         ApiResponse<Void> outputDto = userInfoService.changePassword(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
@@ -104,7 +99,7 @@ public class UserInfoController {
      */
     @PostMapping("/updateUserData")
     @ResponseBody
-    public ApiResponse<Void> updateUserData(@RequestBody TbUserInfoDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> updateUserData(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         ApiResponse<Void> outputDto = userInfoService.updateData(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
@@ -117,7 +112,7 @@ public class UserInfoController {
      */
     @PostMapping("/getLoginLogList")
     @ResponseBody
-    public List<TbLoginLogDto> getLoginLogList(@RequestBody TbLoginLogDto inputDto, HttpSession session) throws Exception {
+    public List<TbLoginLogDto> getLoginLogList(@RequestBody TbLoginLogDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         log.debug(BizUtils.logVoKey(inputDto));
         return userInfoService.getLoginLogList(inputDto);

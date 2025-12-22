@@ -1,14 +1,8 @@
 package com.meta.service;
 
 import com.common.utils.BizUtils;
-import com.meta.dto.ApproveDto;
-import com.meta.dto.TbStdDmnBscDto;
-import com.meta.dto.TbTermDictionaryDto;
-import com.meta.dto.TbWordDictionaryDto;
-import com.meta.mapper.ApproveMapper;
-import com.meta.mapper.TbStdDmnBscMapper;
-import com.meta.mapper.TbTermDictionaryMapper;
-import com.meta.mapper.TbWordDictionaryMapper;
+import com.meta.dto.*;
+import com.meta.mapper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +25,13 @@ public class ApproveService {
     private TbTermDictionaryMapper tbTermDictionaryMapper;
     @Autowired
     private TbStdDmnBscMapper tbStdDmnBscMapper;
+    @Autowired
+    private TbCodeGroupMapper tbCodeGroupMapper;
 
 
     /**
      * @ ID   : getListData
-     * @ NAME     : 승인 목록 조회
+     * @ NAME     : 목록 조회
      */
     public List<ApproveDto> getListData(ApproveDto inputDto)  {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
@@ -44,8 +40,8 @@ public class ApproveService {
         return outputDto;
     }
     /**
-     * @ ID   : getListData
-     * @ NAME     : 승인 목록 조회
+     * @ ID   : prcsAprvDsctn
+     * @ NAME     : 상태변경처리
      */
     public ApproveDto prcsAprvDsctn(ApproveDto inputDto)  {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
@@ -56,7 +52,7 @@ public class ApproveService {
             termIn.setTrmNm(inputDto.getKorNm());
             TbTermDictionaryDto termOut = tbTermDictionaryMapper.getLockData(termIn);
             if (termOut != null) {
-                termOut.setStat("1");
+                termOut.setStat(inputDto.getStat());
                 termOut.setUpdId(inputDto.getUserId());
                 tbTermDictionaryMapper.updateData(termOut);
             }
@@ -66,7 +62,7 @@ public class ApproveService {
             wordIn.setId(inputDto.getId());
             TbWordDictionaryDto wordOut = tbWordDictionaryMapper.getLockData(wordIn);
             if (wordOut != null) {
-                wordOut.setStat("1");
+                wordOut.setStat(inputDto.getStat());
                 wordOut.setUpdId(inputDto.getUserId());
                 tbWordDictionaryMapper.updateData(wordOut);
             }
@@ -76,9 +72,19 @@ public class ApproveService {
             dmnIn.setDmnNm(inputDto.getKorNm());
             TbStdDmnBscDto dmnOut = tbStdDmnBscMapper.getLockData(dmnIn);
             if (dmnOut != null) {
-                dmnOut.setSttsCd("1");
+                dmnOut.setSttsCd(inputDto.getStat());
                 dmnOut.setUpdId(inputDto.getUserId());
                 tbStdDmnBscMapper.updateData(dmnOut);
+            }
+            break;
+        case "4":
+            TbCodeGroupDto codeIn = new TbCodeGroupDto();
+            codeIn.setGrpCd(inputDto.getKorNm());
+            TbCodeGroupDto codeOut = tbCodeGroupMapper.getLockData(codeIn);
+            if (codeOut != null) {
+                codeOut.setStat(inputDto.getStat());
+                codeOut.setUpdId(inputDto.getUserId());
+                tbCodeGroupMapper.updateData(codeOut);
             }
             break;
         default:

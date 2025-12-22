@@ -118,22 +118,31 @@ public class BizUtils {
     }
 
     public static String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip.split(",")[0].trim(); }
+        String[] headerKeys = {
+                "X-Forwarded-For",
+                "Proxy-Client-IP",
+                "WL-Proxy-Client-IP",
+                "HTTP_CLIENT_IP",
+                "HTTP_X_FORWARDED_FOR",
+                "X-Real-IP"
+        };
 
-        ip = request.getHeader("Proxy-Client-IP");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip; }
+        for (String header : headerKeys) {
+            String ip = request.getHeader(header);
+            if (ip != null && ip.length() > 0 && !"unknown".equalsIgnoreCase(ip)) {
+                // 다중 프록시 대응
+                return ip.split(",")[0].trim();
+            }
+        }
 
-        ip = request.getHeader("WL-Proxy-Client-IP");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip; }
+        String ip = request.getRemoteAddr();
 
-        ip = request.getHeader("HTTP_CLIENT_IP");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip; }
+        // IPv6 localhost 처리
+        if ("0:0:0:0:0:0:0:1".equals(ip)) {
+            ip = "127.0.0.1";
+        }
 
-        ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) { return ip; }
-
-        return request.getRemoteAddr(); // 마지막 fallback
+        return ip;
     }
 
 

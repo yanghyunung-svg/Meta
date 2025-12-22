@@ -1,5 +1,6 @@
 package com.meta.controller;
 
+import com.common.utils.BizUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -16,17 +17,19 @@ public class MetaController {
     @GetMapping("/login")
     public String loginView(Model model) { return "meta/login"; }
     @GetMapping("/loginLogSearch")
-    public String loginLogSearchView() {   return "meta/loginLogSearch";  }
+    public String loginLogSearchView() {  return "meta/loginLogSearch";  }
 
     /* 사용자 */
     @GetMapping("/userSearch")
-    public String userSearchView() {  return "meta/userSearch";  }
+    public String userSearchView() { return "meta/userSearch";  }
     @GetMapping("/userReg")
-    public String userRegView() {   return "meta/userReg";  }
+    public String userRegView() {  return "meta/userReg";  }
     @GetMapping("/userChg")
-    public String userChgView() {   return "meta/userChg";  }
+    public String userChgView() {  return "meta/userChg";  }
     @GetMapping("/userPopup")
-    public String userPopupView() {  return "meta/userPopup";  }
+    public String userPopupView() { return "meta/userPopup";  }
+    @GetMapping("/userPasswordChg")
+    public String userPasswordChgView() { log.debug(BizUtils.logInfo("START")); return "meta/userPasswordChg"; }
 
     /* 용어 */
     @GetMapping("/termSearch")
@@ -59,6 +62,21 @@ public class MetaController {
     public String dmnChgView() { return "meta/dmnChg"; }
     @GetMapping("/dmnRegEblc")
     public String dmnRegEblcView() { return "meta/dmnRegEblc"; }
+
+    @GetMapping("/dmnMng")
+    public String dmnMngView() { return "meta/dmnMng"; }
+    @GetMapping("/dmnList")
+    public String dmnListView() { return "meta/dmnList"; }
+    @GetMapping("/dmnDetl")
+    public String dmnDetlView() { return "meta/dmnDetl"; }
+
+    /* 공통코드 */
+    @GetMapping("/commCodeSearch")
+    public String commCodeSearchView() { return "meta/commCodeSearch"; }
+    @GetMapping("/commCodeList")
+    public String commCodeListView() { return "meta/commCodeList"; }
+    @GetMapping("/commCodeDetl")
+    public String commCodeDetlView() { return "meta/commCodeDetl"; }
 
     /* Code Group */
     @GetMapping("/codeGroupSearch")

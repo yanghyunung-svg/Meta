@@ -16,24 +16,24 @@
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 승인내역 조회</h2>
+            <h2 style="margin:0;"> ✅ 신청내역 상태 변경</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
                 <button id="btnSearch" class="btn">조회</button>
-                <button id="btnApprove" class="btn">일괄승인</button>
+                <button id="btnApprove" class="btn">일괄변경</button>
                 <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
-        <div class="divider-h"></div>
 
+        <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
                     <th>등록자ID</th>
                     <td style="display:flex; align-items:center; gap:4px;">
                         <input type="text" id="userId"  name="userId" class="form-input">
-                        <button id="btnPopup"   >🔍</button>
+                        <button id="btnPopup">🔍</button>
                     </td>
                     <th>등록자이름</th>
                     <td><input type="text" id="userNm"  name="userNm" class="form-input"  readonly></td>
@@ -43,14 +43,20 @@
                             <option value="">전체</option>
                         </select>
                     </td>
+                    <th>상태</th>
+                    <td>
+                        <select id="stat" name="stat" class="form-select">
+                            <option value="">전체</option>
+                        </select>
+                    </td>
                 </tr>
             </table>
         </form>
         <div class="divider-h"></div>
 
-        <div id="pageInfoContainer"></div>
+        <div id="pageInfoContainer" class="page-header"></div>
 
-        <table style="margin-top:12px" class="data-table">
+        <table style="margin-top:12px" class="data-table" id="mainTable">
             <thead>
             <tr>
                 <th class="col-no">번호</th>
@@ -62,6 +68,7 @@
                 <th width="200px">영문명</th>
                 <th>비고</th>
                 <th width="80px" style="text-align: center;">등록자</th>
+                <th style="width: 50px; text-align:center;">상태</th>
                 <th width="150px" style="text-align: center;">등록일자</th>
             </tr>
             </thead>
@@ -75,12 +82,15 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         loadCodeCombo('APRV_CD', 'se');
+        loadCodeCombo('STAT', 'stat');
+
+        console.log(window.pathname);
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector('.data-table tbody');
+        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
         const btnSearch = document.getElementById('btnSearch');
 <!--        setTimeout(() => {-->
 <!--            btnSearch.click();-->
@@ -97,7 +107,7 @@
             const pageSizeSelect = document.getElementById("pageSize");
             if (!pageSizeSelect) return;
             pageSizeSelect.addEventListener("change", () => {
-                PAGE_SIZE = Number(pageSizeSelect.value);
+                <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
                 currentPage = 1;
                 renderTable(currentPage);
                 renderPagination(dataAll, currentPage, PAGE_SIZE)
@@ -108,7 +118,7 @@
         /** 테이블 렌더링 **/
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
             }
             const start = (page - 1) * PAGE_SIZE;
@@ -122,8 +132,9 @@
                     <td style="text-align: center;">${item.seNm}</td>
                     <td style="text-align: left;">${item.korNm}</td>
                     <td style="text-align: left;">${item.engNm}</td>
-                    <td style="text-align: left;">${truncateText(item.rmk, 100)}</td>
+                    <td style="text-align: left;">${truncateText(item.rmk, 80)}</td>
                     <td style="text-align: center;">${item.crtId}</td>
+                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' : item.stat === '9' ? '미사용' : item.stat } </td>
                     <td style="text-align: center;">${item.crtDttm}</td>
                 </tr>
             `).join('');
@@ -162,18 +173,28 @@
         document.getElementById("btnApprove").addEventListener("click", async () => {
             const rows = getCheckedRowValues();
             if (rows.length === 0) {
-                alert("승인할 항목을 선택하세요.");
+                alert("변경할 항목을 선택하세요.");
                 return;
             }
-            if (!confirm(`${rows.length}건을 승인하시겠습니까?`)) return;
+
+            const statElement = document.getElementById("stat");
+            const statValue = statElement.value.trim();
+
+            if (!statValue.trim()) {
+                alert("상태코드를 선택하세요.");
+                statElement.focus();
+                return;
+            }
+
+            if (!confirm(`${rows.length}건을 변경하시겠습니까?`)) return;
 
             const results = await Promise.all(
-                rows.map(row => approveOne(row.se, row.id, row.korNm))
+                rows.map(row => approveOne(row.se, row.id, row.korNm, statValue))
             );
 
             const resultsCount = results.length;
 
-            alert(`일괄 승인 완료\n처리: ${resultsCount}건 `);
+            alert(`일괄 변경 완료\n처리: ${resultsCount}건 `);
 
             document.getElementById("checkAll").checked = false;
             btnSearch.click();
@@ -187,16 +208,16 @@
             }
         });
 
-        // 승인내역처리
-        async function approveOne(se, id, korNm) {
+        // 변경내역처리
+        async function approveOne(se, id, korNm, stat) {
             const userId = localStorage.getItem("userId");
             const response = await fetch("/meta/prcsAprvDsctn", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ se, id, korNm, userId })
+                body: JSON.stringify({ se, id, korNm, userId, stat })
             });
             if (!response.ok) {
-                console.error(`승인 실패: ${id}`);
+                console.error(`변경 실패: ${id}`);
             }
         }
 

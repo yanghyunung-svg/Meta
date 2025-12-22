@@ -3,7 +3,7 @@ package com.meta.controller;
 import com.common.utils.BizUtils;
 import com.meta.dto.ApproveDto;
 import com.meta.service.ApproveService;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +35,10 @@ public class ApproveController {
      */
     @PostMapping("/getAprvDsctnList")
     @ResponseBody
-    public List<ApproveDto> getAprvDsctnList(@RequestBody ApproveDto inputDto, HttpSession session) throws Exception {
+    public List<ApproveDto> getAprvDsctnList(@RequestBody ApproveDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-        inputDto.setStat("0");
+        String userId = (String) request.getSession().getAttribute("userId");
+        log.debug(BizUtils.logInfo("userId", userId));
         List<ApproveDto> outputDto =  approveService.getListData(inputDto);
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
@@ -48,8 +49,11 @@ public class ApproveController {
      */
     @PostMapping("/prcsAprvDsctn")
     @ResponseBody
-    public ApproveDto prcsAprvDsctn(@RequestBody ApproveDto inputDto, HttpSession session) throws Exception {
+    public ApproveDto prcsAprvDsctn(@RequestBody ApproveDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
+
+        String userId = (String) request.getSession().getAttribute("userId");
+        log.debug(BizUtils.logInfo("userId", userId));
         ApproveDto outputDto =  approveService.prcsAprvDsctn(inputDto);
         log.debug(BizUtils.logInfo("END"));
         return outputDto;

@@ -17,6 +17,7 @@
         <div class="form-header">
             <h2 style="margin:0;"> ✅ 표준단어 일괄등록</h2>
             <div class="button-group">
+                <button id="btnInq" class="btn">목록조회</button>
                 <button id="btnDownload" class="btn">템플릿</button>
                 <button id="btnUpload" class="btn">Excel 업로드</button>
                 <button id="btnUploadSave" class="btn" disabled>업로드 저장</button>
@@ -52,6 +53,11 @@
 <div id="footbarContainer"></div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+
+        /** 목록조회 **/
+        document.getElementById('btnInq').addEventListener('click', () => {
+            window.location.href = '/meta/wordSearch';
+        });
 
         document.getElementById("btnDownload").addEventListener("click", () => {
             window.location.href = "/meta/downloadWordExcelTemplate";

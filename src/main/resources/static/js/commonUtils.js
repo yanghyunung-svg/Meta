@@ -8,63 +8,7 @@ window.CONFIG = {
 window.MENU = '';
 window.KOR = /[가-힣]/;
 
-// 폼 전체 값을 JSON 객체로 만들기
-function formToJson(form) {
-    return Object.fromEntries(new FormData(form).entries());
-}
-
-// 서버에서 받은 데이터를 폼에 전체 매핑
-function fillForm(form, data) {
-    Object.keys(data).forEach(key => {
-        let field = form.querySelector(`[name="${key}"]`);
-        if (field) field.value = data[key] ?? "";
-    });
-}
-
-function truncateText(text, maxLength = 100) {
-    if (text.length > maxLength) {
-        return text.slice(0, maxLength) + '...';
-    }
-    return text;
-}
-
-function formatDate(date) {
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
-}
-
-function getToday() {
-    const t = new Date();
-    const yyyy = t.getFullYear();
-    const mm = String(t.getMonth() + 1).padStart(2, '0');
-    const dd = String(t.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
-}
-
-// 오늘 / 7일 전 날짜 구하기
-function getDefaultDates() {
-    const today = new Date();
-
-    // 오늘 - 7일
-    const before7 = new Date();
-    before7.setDate(today.getDate() - 7);
-
-    return {
-        start: formatDate(before7),
-        end: formatDate(today)
-    };
-}
-
-function addUserAuditFields(data) {
-    const userId = localStorage.getItem("userId");
-    return {
-        ...data,
-        updId: userId,
-        crtId: data.crtId || userId   // crtId 없으면 자동 주입
-    };
-}
+window.pathname = window.location.pathname;
 
 const common = {
     /**
@@ -308,34 +252,6 @@ const common = {
         // timeString Date 객체로 변환
         return timeString.replace(/(\d{2})(\d{2})(\d{2})/, '$1:$2:$3');
     },
-    /**
-     * 사업자번호 '123-45-67890' 포맷팅
-     * @param bizNumber
-     * @returns {*|string}
-     */
-    formatBizNumber: (bizNumber) => {
-        if (common.isEmpty(bizNumber) || isNaN(bizNumber)) {
-            return "-";
-        } else if (bizNumber.length === 10) {
-            return bizNumber.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3');
-        } else {
-            return bizNumber;
-        }
-    },
-    /**
-     * 법인번호 '123456-1234567' 포맷팅
-     * @param corpNumber
-     * @returns {*|string}
-     */
-    formatCorpNumber: (corpNumber) => {
-        if (common.isEmpty(corpNumber) || isNaN(corpNumber)) {
-            return "-";
-        } else if (corpNumber.length === 13) {
-            return corpNumber.replace(/(\d{6})(\d{7})/, '$1-$2');
-        } else {
-            return corpNumber;
-        }
-    },
 
     /**
      * 법인번호, 사업자번호 통합 '123456-1234567' 포맷팅
@@ -394,124 +310,6 @@ const common = {
         return `${year}-${month}-${day} ${hours}:${minutes}`;
     },
 
-    /**
-     * 금액에 소수점 제거
-     * @param value
-     * @returns {number}
-     * @Desc 10000.123 -> 10000
-     * @author ckr
-     * @date 2025.05.30
-     */
-    formatAmount : (value) => {
-        if (value === null || value === undefined || value === '') return '';
-
-        const num = Number(value);
-        const convertedNumber =  isNaN(num) ? '' : parseInt(num).toString();
-        return convertedNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    },
-
-    /**
-     * 전화번호 값에 하이푼 추가
-     * @param phoneNumber
-     * @returns {*}
-     */
-    getDashAddPhoneNum: (phoneNumber) => {
-
-        try {
-
-            if (!phoneNumber) {
-                phoneNumber = "";
-            }
-
-            phoneNumber = phoneNumber.trim();
-            const digitsOnly = phoneNumber.replace(/\D/g, "");
-
-            if (phoneNumber.includes("*")) {
-                  // 마스킹된 전화번호 처리: '*' 문자만 존재하는 경우 하이픈 처리
-                  const masked = phoneNumber.replace(/\*/g, "");
-                  const len = phoneNumber.length;
-
-                  if (len === 11) {
-                    return phoneNumber.replace(/^(...)(....)(....)$/, "$1-$2-$3"); // 예: *** **** ****
-                  } else if (len === 10) {
-                    return phoneNumber.replace(/^(...)(...)(....)$/, "$1-$2-$3");
-                  } else if (len === 8) {
-                    return phoneNumber.replace(/^(....)(....)$/, "$1-$2");
-                  } else if (len === 4) {
-                    return phoneNumber.replace(/^(....)$/, "$1");
-                  }
-
-                  return phoneNumber; // 기본 반환
-
-                } else if (common.isNumberic(digitsOnly)) {
-
-                if (digitsOnly.length > 4 && digitsOnly.length <= 8 &&
-                    (digitsOnly.indexOf("13") == 0 || digitsOnly.indexOf("14") == 0 || digitsOnly.indexOf("15") == 0
-                      || digitsOnly.indexOf("16") == 0 || digitsOnly.indexOf("17") == 0 || digitsOnly.indexOf("18") == 0
-                      || digitsOnly.indexOf("19") == 0)) {
-
-                    // 13YY 공공기관 생활정보, 안내, 상담
-                    // 14YY (예비; 기간통신사업자 부가서비스)
-                    // 15YY 기간통신사업자 공통부가서비스 및 자율부가서비스 (전국대표번호 등)
-                    // 16YY 기간통신사업자 공통부가서비스 (전국대표번호 등)
-                    // 18YY 기간통신사업자 공통부가서비스 (전국대표번호 등)
-                    // 17YY·19YY (예비)
-                    return digitsOnly.replace(/\D/g, "").replace(/^(\d{4})(\d{1,4})*$/, "$1-$2");
-
-                } else {
-                 			// 기타
-                    return digitsOnly.replace(/\D/g, "").replace(/^(02|0[0-1][1-9]|0[0-9]0|0[0-6]\d|1\d{2,3})(\d{3,4})(\d{4})*$/, "$1-$2-$3").replace(/--/, "-").replace(/-$/, "");
-
-                }
-
-            }
-
-            return phoneNumber;
-
-        } catch (e) {
-            return phoneNumber;
-        }
-    },
-
-
-    /**
-     * 시간 combo
-     * @param divId, selId
-     * @returns
-     */
-    setHourSelect: (divId, selId, tabIdx) => {
-
-        const select = document.createElement("select");
-        select.className = "select2-single form-control wx-175";
-        select.id = selId;
-        select.name = selId;
-
-        if (typeof tabIdx !== "undefined" && tabIdx !== null) {
-            select.tabIndex = tabIdx;
-        }
-
-        const blankOption = document.createElement("option");
-        blankOption.value = "";
-        select.appendChild(blankOption);
-
-        for (let i = 0; i < 24; i++) {
-            const option = document.createElement("option");
-            const hour = String(i).padStart(2, "0");
-            option.value = hour;
-            option.textContent = `${hour}:00`;
-            select.appendChild(option);
-        }
-
-        const container = document.getElementById(divId);
-
-        if (container) {
-            container.appendChild(select);
-            $('.select2-single').select2(); // CSS 재초기화
-        } else {
-            console.warn(`${containerId} 요소가 존재하지 않습니다.`);
-        }
-
-    },
 
     /**
      * 숫자만 입력
@@ -633,7 +431,7 @@ window.updateRowDataFlexible = function(data, idKey, updateMap) {
                     let newValue = data[dataField];
 
                     // 2. 상태(stat)처럼 특수 로직이 필요한 경우를 위한 예외 처리 (선택 사항)
-                    if (dataField === 'rolw') {
+                    if (dataField === 'role') {
                         newValue =
                             newValue === '1' ? 'ADMIN' :
                             newValue === '2' ? 'USER' : newValue;
@@ -687,4 +485,63 @@ function validateRequired(rules) {
         }
     }
     return true;
+}
+
+
+// 폼 전체 값을 JSON 객체로 만들기
+function formToJson(form) {
+    return Object.fromEntries(new FormData(form).entries());
+}
+
+// 서버에서 받은 데이터를 폼에 전체 매핑
+function fillForm(form, data) {
+    Object.keys(data).forEach(key => {
+        let field = form.querySelector(`[name="${key}"]`);
+        if (field) field.value = data[key] ?? "";
+    });
+}
+
+function truncateText(text, maxLength = 100) {
+    if (text.length > maxLength) {
+        return text.slice(0, maxLength) + '...';
+    }
+    return text;
+}
+
+function formatDate(date) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+function getToday() {
+    const t = new Date();
+    const yyyy = t.getFullYear();
+    const mm = String(t.getMonth() + 1).padStart(2, '0');
+    const dd = String(t.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+// 오늘 / 7일 전 날짜 구하기
+function getDefaultDates() {
+    const today = new Date();
+
+    // 오늘 - 7일
+    const before7 = new Date();
+    before7.setDate(today.getDate() - 7);
+
+    return {
+        start: formatDate(before7),
+        end: formatDate(today)
+    };
+}
+
+function addUserAuditFields(data) {
+    const userId = localStorage.getItem("userId");
+    return {
+        ...data,
+        updId: userId,
+        crtId: data.crtId || userId   // crtId 없으면 자동 주입
+    };
 }

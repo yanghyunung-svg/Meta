@@ -7,6 +7,8 @@ import com.meta.dto.TbLoginLogDto;
 import com.meta.dto.TbUserInfoDto;
 import com.meta.mapper.TbLoginLogMapper;
 import com.meta.mapper.TbUserInfoMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,7 +164,7 @@ public class UserInfoService {
      * method   : getLoginData
      * desc     : Login 검증
      */
-    public  ApiResponse<TbUserInfoDto> getLogin(TbUserInfoDto inputDto) {
+    public  ApiResponse<TbUserInfoDto> getLogin(TbUserInfoDto inputDto, HttpServletRequest request ) {
         log.debug(BizUtils.logInfo("START"));
         try {
             TbLoginLogDto tbLoginLogDto = new TbLoginLogDto();
@@ -206,6 +208,11 @@ public class UserInfoService {
             tbLoginLogDto.setFailReason("");
 
             this.insertLoginLog(tbLoginLogDto);
+
+            HttpSession session = request.getSession(true);
+            session.setAttribute("userId", outputDto.getUserId());
+            session.setAttribute("userNm", outputDto.getUserNm());
+            session.setAttribute("role", outputDto.getRole());
 
             return new ApiResponse<>(true, "로그인 성공", outputDto );
 

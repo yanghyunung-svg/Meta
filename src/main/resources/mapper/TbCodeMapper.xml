@@ -103,10 +103,7 @@
         FROM tb_code A
         JOIN tb_code_group B
         ON A.GRP_CD = B.GRP_CD
-        WHERE 1=1
-        <if test="grpCd != null and grpCd != ''">
-            AND A.GRP_CD LIKE CONCAT('%', #{grpCd}, '%')
-        </if>
+        WHERE  A.GRP_CD = #{grpCd}
         <if test="cd != null and cd != ''">
             AND A.CD LIKE CONCAT('%', #{cd}, '%')
         </if>

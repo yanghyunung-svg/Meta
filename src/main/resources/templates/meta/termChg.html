@@ -39,7 +39,7 @@
                 <th>상태</th>
                 <td colspan="2">
                     <select id="stat" name="stat" class="form-input">
-                        <option value="0">등록</option>
+                        <option value="0">신청</option>
                         <option value="1">사용</option>
                         <option value="9">미사용</option>
                     </select>
@@ -130,17 +130,16 @@
         // 부모창에서 데이터 받기
         window.addEventListener("message", (event) => {
             if (event.origin !== window.location.origin) return;
-            const mode = event.data.mode;
-            const sendId  = event.data.trmNm;
+            const trmNmIn  = event.data.trmNm;
 
             // 상세모드
-            if (mode === "S" && sendId ) {
+            if (trmNmIn ) {
                 (async () => {
                     try {
                         const res = await fetch('/meta/getTermData', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ trmNm: sendId  })
+                            body: JSON.stringify({ trmNm: trmNmIn  })
                         });
 
                         const data = await res.json();

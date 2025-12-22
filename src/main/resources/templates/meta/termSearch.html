@@ -41,9 +41,10 @@
             </table>
         </form>
         <div class="divider-h"></div>
-        <div id="pageInfoContainer"></div>
 
-        <table style="margin-top:12px" class="data-table">
+        <div id="pageInfoContainer" class="page-header"></div>
+
+        <table class="data-table" id="mainTable">
             <thead>
             <tr>
                 <th class="col-no">번호</th>
@@ -68,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
     let dataAll = [];
     let currentPage = 1;
-    window.tableBody = document.querySelector('.data-table tbody');
+    window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
 
     // 페이지 탑바 container에 include
     const container = document.getElementById("pageInfoContainer");
@@ -81,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const pageSizeSelect = document.getElementById("pageSize");
         if (!pageSizeSelect) return;
         pageSizeSelect.addEventListener("change", () => {
-            PAGE_SIZE = Number(pageSizeSelect.value);
+            <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
             currentPage = 1;
             renderTable(currentPage);
             renderPagination(dataAll, currentPage, PAGE_SIZE);
@@ -161,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /** 등록 **/
     document.getElementById('btnReg').addEventListener('click', () => {
         const payload = {};
-        openWindowWithJSON(payload, "/meta/termReg", 700, 700);
+        openWindowWithJSON(payload, "/meta/termReg", 700, 750);
     });
 
     /** 일괄등록 **/

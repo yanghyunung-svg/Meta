@@ -11,7 +11,6 @@
         <div class="popup-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
             <h2 class="popup-title"> ✅ 표준용어 등록</h2>
             <div class="button-group">
-                <button id="btnInq" class="btn-chk">용어검증</button>
                 <button id="btnInit" class="btn">초기화</button>
                 <button id="btnSave"  class="btn">저장</button>
                 <button id="btnClose" class="btn">닫기</button>
@@ -22,7 +21,9 @@
             <table class="popup-table">
                 <tr>
                     <th>용어명 <span style="color:red">*</span></th>
-                    <td colspan="2"> <input type="text" id="trmNm" name="trmNm" class="form-input" required> </td>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" id="trmNm" name="trmNm" class="form-input" required> 
+                    <button id="btnCheck" class="btn-chk">중복검증</button></td>
                 </tr>
             </table>
             <table class="popup-table">
@@ -32,7 +33,7 @@
                 </tr>
                 <tr>
                     <th>도메인명</th>
-                    <td colspan="2">
+                    <td>
                         <select id="dmnNm" name="dmnNm" class="form-input">
                             <option value="" selected>선택</option>
                         </select>
@@ -44,7 +45,7 @@
                 </tr>
                 <tr>
                     <th>상태</th>
-                    <td colspan="2">
+                    <td>
                         <select id="stat" name="stat" class="form-input">
                             <option value="0" selected>등록</option>
                             <option value="1">사용</option>
@@ -73,10 +74,19 @@
 <!--</div>-->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        loadDomainCombo();
+        if (!document.forms.mainForm) return;
+
+        const dmnNm = document.forms.mainForm.dmnNm;
+
+        if (!dmnNm || !dmnNm.value) {
+            loadDomainCombo();
+        }
 
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
+        const btnInit = document.getElementById("btnInit");
+        const btnClose = document.getElementById("btnClose");
+        const btnCheck = document.getElementById("btnCheck");
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
@@ -119,7 +129,6 @@
                 return;
             }
 
-
             try {
                 const res = await fetch("/meta/insertTermData", {
                     method: "POST",
@@ -142,45 +151,57 @@
             }
         });
 
-       document.getElementById('btnInq').addEventListener('click', async () => {
-            const inData = formToJson(mainForm);
+        btnCheck.addEventListener('click', async (e) => {
+            e.preventDefault();
+            let inData = formToJson(mainForm);
 
             if (!inData.trmNm.trim()) {
                 alert("용어명을 입력하세요.");
                 mainForm.trmNm.focus();
                 return;
             }
-            try {
-                const res = await fetch('/meta/getTermSplitData', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(inData)
-                });
 
-                if (!res.ok) {
-                    throw new Error("서버 응답 오류");
-                    return;
-                }
-                const outData = await res.json();
+            const res = await fetch('/meta/getTermSplitData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(inData)
+            });
+
+            const textData = await res.text();
+
+            if (!textData) {
+                alert("사용 가능한 코드입니다.");
+                ["engNm", "trmExpln", "dmnNm"].forEach(id => document.getElementById(id).value = "");
+                document.getElementById("stat").value = "0";
+                mainForm.engNm.focus();
+                btnSave.disabled = false;
+            } else {
+                const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
-                mainForm.stat.value = '0';
 
-            } catch (err) {
-                showError("상세 데이터 조회 중 오류가 발생했습니다.");
+                if (outData.stat.value === '9') {
+                    alert("사용 가능한 코드입니다.");
+                    ["engNm", "trmExpln", "dmnNm"].forEach(id => document.getElementById(id).value = "");
+                    document.getElementById("stat").value = "0";
+                    mainForm.engNm.focus();
+                    btnSave.disabled = false;
+                } else {
+                    btnSave.disabled = true;
+                }
+
             }
         });
 
-
-        /** 초기화 **/
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
+        btnInit.addEventListener('click', () => mainForm.reset());
+        btnClose.addEventListener("click", () => {
+            if (confirm("닫으시겠습니까?")) window.close();
         });
 
         // Enter 키 이벤트
         document.getElementById('mainForm').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault(); // 폼 제출 방지
-                document.getElementById('btnInq').click();
+                document.getElementById('btnCheck').click();
             }
         });
 
@@ -220,11 +241,6 @@
             selectElement.appendChild(option);
         });
     }
-
-
-    document.getElementById("btnClose").addEventListener("click", () => {
-        window.close();
-    });
 
 </script>
 </body>

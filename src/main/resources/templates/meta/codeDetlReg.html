@@ -30,7 +30,7 @@
                 <th>상세코드 <span style="color:red">*</span></th>
                 <td style="display:flex; align-items:center; gap:4px;">
                     <input type="text" id="cd" name="cd" class="form-input"  required>
-                    <button id="btnCodeCheck" class="btn-chk">코드검증</button>
+                    <button id="btnCodeCheck" class="btn-chk">중복검증</button>
                 </td>
             </tr>
             </table>
@@ -191,7 +191,9 @@
 
         /** 4. 기타 유틸리티 **/
         btnInit.addEventListener('click', () => mainForm.reset());
-        btnClose.addEventListener("click", () => window.close());
+        btnClose.addEventListener("click", () => {
+            if (confirm("닫으시겠습니까?")) window.close();
+        });
 
         // Enter 키 이벤트 (상세코드 입력 후 검증 실행)
         mainForm.addEventListener('keydown', (e) => {

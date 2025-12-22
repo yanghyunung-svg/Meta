@@ -24,7 +24,7 @@
                     <th>도메인명 <span style="color:red">*</span></th>
                     <td style="display:flex; align-items:center; gap:4px;">
                         <input type="text" id="dmnNm" name="dmnNm" class="form-input" required>
-                        <button id="btnCheck" class="btn-chk">도메인검증</button>
+                        <button id="btnCheck" class="btn-chk">중복검증</button>
                     </td>
                 </tr>
                 </table>
@@ -154,7 +154,9 @@
         });
 
         btnInit.addEventListener('click', () => mainForm.reset());
-        btnClose.addEventListener("click", () => window.close());
+        btnClose.addEventListener("click", () => {
+            if (confirm("닫으시겠습니까?")) window.close();
+        });
 
         // Enter 키 이벤트
         mainForm.addEventListener('keypress', (e) => {

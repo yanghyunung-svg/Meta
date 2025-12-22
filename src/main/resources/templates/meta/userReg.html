@@ -63,7 +63,7 @@
                 <th>상태</th>
                 <td colspan="2">
                     <select id="stat"  name="stat" class="form-input">
-                        <option value="0">등록</option>
+                        <option value="0">신청</option>
                         <option value="1">사용</option>
                         <option value="9">미사용</option>
                     </select>
@@ -92,6 +92,8 @@
 
         const mainForm = document.getElementById("mainForm");
         const btnSave = document.getElementById("btnSave");
+        const btnInit = document.getElementById("btnInit");
+        const btnClose = document.getElementById("btnClose");
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
@@ -173,14 +175,9 @@
         });
 
 
-
-        /** 초기화 **/
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
-        });
-
-        document.getElementById("btnClose").addEventListener("click", () => {
-            window.close();
+        btnInit.addEventListener('click', () => mainForm.reset());
+        btnClose.addEventListener("click", () => {
+            if (confirm("닫으시겠습니까?")) window.close();
         });
 
         // Enter 키 이벤트

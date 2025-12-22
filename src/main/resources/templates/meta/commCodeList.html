@@ -4,35 +4,32 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/sidebar.js" defer></script>
     <script src="/js/layout.js" defer></script>
     <script src="/js/commonUtils.js"></script>
     <script src="/js/pagenation.js"></script>
 </head>
 <body>
-<div class="container">
-<div id="topbarContainer"></div>
-    <div id="sidebarContainer"></div>
-    <div class="mainContainer" id="mainContainer">
+
+<div class="iframeMainContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 사용자 정보 조회</h2>
+            <h2 style="margin:0;"> ✅ 공통코드 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
                 <button id="btnSearch" class="btn">조회</button>
-                <button id="btnReg" class="btn">등록</button>
                 <button id="btnInit" class="btn">초기화</button>
             </div>
         </div>
+
         <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th>사용자ID</th>
-                    <td><input type="text" id="userId"  name="userId" class="form-input"></td>
-                    <th>사용자이름</th>
-                    <td><input type="text" id="userNm"  name="userNm" class="form-input"></td>
+                    <th>공통코드</th>
+                    <td><input type="text" id="grpCd" name="grpCd" class="form-input"></td>
+                    <th>공통코드명</th>
+                    <td><input type="text" id="grpNm"  name="grpNm" class="form-input"></td>
                     <th>상태</th>
                     <td>
                         <select id="stat"  name="stat" class="form-select">
@@ -46,24 +43,21 @@
 
         <div id="pageInfoContainer" class="page-header"></div>
 
-        <table style="margin-top:12px" class="data-table" id="mainTable">
+        <table id="mainTable"  style="margin-top:12px" class="data-table">
             <thead>
             <tr>
                 <th class="col-no">번호</th>
-                <th class="align-center">사용자ID</th>
-                <th class="align-center">사용자이름</th>
-                <th class="align-center">이메일</th>
-                <th class="align-center">전화번호</th>
-                <th class="align-center">권한</th>
-                <th class="align-center">상태코드</th>
+                <th width="150px">공통코드</th>
+                <th width="250px">공통코드명</th>
+                <th>비고</th>
+                <th width="120px" style="text-align: center;">상태</th>
+
             </tr>
             </thead>
             <tbody></tbody>
         </table>
 
-    </div><!-- /mainContainer -->
 </div><!-- /container -->
-<div id="footbarContainer"></div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -73,6 +67,7 @@
         let dataAll = [];
         let currentPage = 1;
 
+        const table = document.getElementById("mainTable");
         window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
 
         // 페이지 탑바 container에 include
@@ -106,36 +101,42 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-id="${item.userId}">
-                    <td class="col-no"> ${start + index + 1} </td>
-                    <td class="align-left">${item.userId}</td>
-                    <td class="align-left"">${item.userNm}</td>
-                    <td class="align-left">${item.email}</td>
-                    <td class="align-left">${item.phone}</td>
-                    <td class="align-center">${item.role === '2' ? 'USER' : item.role === '1' ? 'ADMIN' : '-'} </td>
-                    <td class="align-center">${item.stat === '0' ? '등록'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
+                <tr class="row-click" data-id="${item.grpCd}" data-grpNm="${item.grpNm}" >
+                    <td style="text-align: center;"> ${start + index + 1} </td>
+                    <td style="text-align: left;">  ${item.grpCd} </td>
+                    <td style="text-align: left;">${item.grpNm}</td>
+                    <td style="text-align: left;">${item.rmk}</td>
+                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                 </tr>
             `).join('');
 
-            /** 상세 클릭  **/
+
             document.querySelectorAll(".row-click").forEach(tr => {
                 tr.addEventListener("dblclick", () => {
-                    const id = tr.getAttribute("data-id");
-                    const payload = { mode: "S", userId: id };
-                    openWindowWithJSON(payload, "/meta/userChg", 800, 700);
+                    const grpCd = tr.getAttribute("data-id");
+                    const payload = { mode: "S", grpCd: grpCd };
+                    openWindowWithJSON(payload, "/meta/codeGroupChg", 700, 550);
                 });
             });
-        }
 
-        window.refreshParentRow = function(data) {
-            const refreshMap = {
-                userNm: 'td:nth-child(3)',
-                email: 'td:nth-child(4)',
-                phone: 'td:nth-child(5)',
-                role: 'td:nth-child(6)',
-                stat: 'td:nth-child(7)'
-            };
-            window.updateRowDataFlexible(data, 'userId', refreshMap);
+            document.querySelectorAll(".row-click").forEach(tr => {
+                tr.addEventListener("click", () => {
+                    const grpCd = tr.getAttribute("data-id");
+                    const grpNm = tr.getAttribute("data-grpNm");
+
+                    localStorage.setItem('grpCd', grpCd);
+                    localStorage.setItem('grpNm', grpNm);
+                });
+            });
+
+            window.refreshParentRow = function(data) {
+                const refreshMap = {
+                    grpNm: 'td:nth-child(3)',
+                    rmk: 'td:nth-child(4)',
+                    stat: 'td:nth-child(5)'
+                };
+                window.updateRowDataFlexible(data, 'grpCd', refreshMap);
+            }
         }
 
 
@@ -152,18 +153,11 @@
             initScreen();
         });
 
-
-        /** 등록 **/
-        document.getElementById('btnReg').addEventListener('click', () => {
-            const payload = {};
-            openWindowWithJSON(payload, "/meta/userReg", 800, 600);
-        });
-
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
             initScreen();
             const data = formToJson(document.getElementById('mainForm'));
-            fetch('/meta/getUserListData', {
+            fetch('/meta/getCodeGroupListData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -173,8 +167,8 @@
                 dataAll = Array.isArray(data) ? data : [];
                 currentPage = 1;
                 renderTable(currentPage);
-                renderPagination(dataAll, currentPage, PAGE_SIZE);
-                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+                renderPagination(dataAll, currentPage, PAGE_SIZE)
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE)
             })
             .catch(err => {
                 alert("에러 발생: " + err);
