@@ -21,7 +21,6 @@ public class UrlAccessLogInterceptor implements HandlerInterceptor {
     ) {
         // 시작 시간
         request.setAttribute("startTime", System.currentTimeMillis());
-
         accessLogService.logRequest(request);
         return true;
     }
@@ -34,7 +33,6 @@ public class UrlAccessLogInterceptor implements HandlerInterceptor {
             Exception ex
     ) {
         request.setAttribute("endTime", System.currentTimeMillis());
-
         long startTime = (long) request.getAttribute("startTime");
         long elapsed = System.currentTimeMillis() - startTime;
 

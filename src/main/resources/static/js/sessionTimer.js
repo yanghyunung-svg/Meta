@@ -1,43 +1,41 @@
-// sessionTimer.js
 export class SessionTimer {
-    constructor(timerElementId, expireTime) {
+    constructor(timerElementId) {
         this.timerEl = document.getElementById(timerElementId);
-        this.expireTime = expireTime;
+        this.timerTextEl = this.timerEl.querySelector("#timerText");
+        this.expireTime = 0;
         this.timerInterval = null;
     }
 
-    start() {
-        this.update(); // 즉시 표시
+    async start() {
+        await this.syncExpireTime();
+        this.update();
         this.timerInterval = setInterval(() => this.update(), 1000);
     }
 
-    update() {
-        const now = Date.now();
-        const diff = this.expireTime - now;
+    async syncExpireTime() {
+        const res = await fetch("/session/expire-time");
+        const data = await res.json();
+        this.expireTime = data.expireTime;
+    }
 
-        const timerTextEl = this.timerEl.querySelector("#timerText");
+    update() {
+        const diff = this.expireTime - Date.now();
 
         if (diff <= 0) {
-            clearInterval(this.timerInterval);
-            timerTextEl.innerText = "세션 만료됨";
-
-            // 서버 로그아웃 후 로그인 페이지 이동
-            fetch("/logout", { method: "POST" }).finally(() => {
-                window.location.href = "/login";
-            });
+            localStorage.setItem("SESSION_EXPIRED", Date.now());
+            location.replace("/logout?timeout=true");
             return;
         }
 
-        const min = Math.floor(diff / 1000 / 60);
-        const sec = Math.floor((diff / 1000) % 60);
+        const min = Math.floor(diff / 60000);
+        const sec = Math.floor((diff % 60000) / 1000);
 
-        timerTextEl.innerText = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        this.timerTextEl.innerText =
+            `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 
-        // 만료 5분 전 경고 색 변경
-        if (diff <= 5 * 60 * 1000) {
-            this.timerEl.classList.add("timer-warning");
-        } else {
-            this.timerEl.classList.remove("timer-warning");
-        }
+        this.timerEl.classList.toggle(
+            "timer-warning",
+            diff <= 5 * 60 * 1000
+        );
     }
 }

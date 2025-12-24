@@ -33,7 +33,7 @@ public class CodeController {
      */
     @PostMapping("/getCodeListData")
     @ResponseBody
-    public List<TbCodeDto> getCodeListData(@RequestBody TbCodeDto inputDto, HttpSession session) throws Exception {
+    public List<TbCodeDto> getCodeListData(@RequestBody TbCodeDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         return codeService.getListData(inputDto);
     }
@@ -44,7 +44,7 @@ public class CodeController {
      */
     @PostMapping("/getCodeData")
     @ResponseBody
-    public TbCodeDto getCodeData(@RequestBody TbCodeDto inputDto, HttpSession session) throws Exception {
+    public TbCodeDto getCodeData(@RequestBody TbCodeDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         return codeService.getData(inputDto);
     }
@@ -55,7 +55,7 @@ public class CodeController {
      */
     @PostMapping("/insertCodeData")
     @ResponseBody
-    public ApiResponse<Void> insertCodeData(@RequestBody TbCodeDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> insertCodeData(@RequestBody TbCodeDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         ApiResponse<Void> outputDto = codeService.insertData(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));

@@ -5,7 +5,7 @@ import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbWordDictionaryDto;
 import com.meta.service.WordDictionaryService;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class WordDictionaryController {
      */
     @PostMapping("/getWordListData")
     @ResponseBody
-    public List<TbWordDictionaryDto> getWordListData(@RequestBody TbWordDictionaryDto inputDto, HttpSession session) throws Exception {
+    public List<TbWordDictionaryDto> getWordListData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         return wordDictionaryService.getListData(inputDto);
     }
@@ -44,7 +44,7 @@ public class WordDictionaryController {
      */
     @PostMapping("/getWordData")
     @ResponseBody
-    public TbWordDictionaryDto getWordData(@RequestBody TbWordDictionaryDto inputDto, HttpSession session) throws Exception {
+    public TbWordDictionaryDto getWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         if (StringUtil.notNullNorEmpty(inputDto.getWordNm())) {
             return wordDictionaryService.getDataByName(inputDto);
@@ -60,7 +60,7 @@ public class WordDictionaryController {
      */
     @PostMapping("/insertWordData")
     @ResponseBody
-    public ApiResponse<Void> insertWordData(@RequestBody TbWordDictionaryDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> insertWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
         ApiResponse<Void> outputDto = wordDictionaryService.insertData(inputDto);
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
@@ -73,7 +73,7 @@ public class WordDictionaryController {
      */
     @PostMapping("/updateWordData")
     @ResponseBody
-    public ApiResponse<Void> updateWordData(@RequestBody TbWordDictionaryDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> updateWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
         ApiResponse<Void> outputDto = wordDictionaryService.updateData(inputDto);
         log.debug(BizUtils.logInfo("END"));

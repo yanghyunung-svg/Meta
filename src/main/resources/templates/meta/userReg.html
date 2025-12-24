@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>Meta System</title>
-    <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/commonUtils.js"></script>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
 
@@ -12,10 +12,27 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 사용자정보 등록</h2>
         <div class="button-group">
-            <button id="btnInq" class="btn-chk">검증</button>
-            <button id="btnSave" class="btn">저장</button>
-            <button id="btnInit" class="btn">초기화</button>
-            <button id="btnClose" class="btn">닫기</button>
+            <button id="btnSave" type="button" class="btn">
+                <svg viewBox="0 0 24 24" width="15" height="15">
+                    <path d="M5 3h14v18H5z" fill="none" stroke="currentColor"/>
+                    <path d="M9 3v6h6V3" stroke="currentColor"/>
+                </svg>
+                저장
+            </button>
+            <button id="btnInit" type="button" class="btn">
+                <svg viewBox="0 0 24 24" width="15" height="15">
+                    <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
+                    <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
+                </svg>
+                초기화
+            </button>
+            <button id="btnClose" type="button" class="btn">
+                <svg viewBox="0 0 24 24" width="15" height="15">
+                    <line x1="4" y1="4" x2="20" y2="20" stroke="currentColor"/>
+                    <line x1="20" y1="4" x2="4" y2="20" stroke="currentColor"/>
+                </svg>
+                닫기
+            </button>
         </div>
     </div>
 
@@ -24,7 +41,10 @@
             <table class="popup-table">
             <tr>
                 <th>사용자ID <span style="color:red">*</span></th>
-                <td colspan="2"><input type="text" id="userId" name="userId" class="form-input" required></td>
+                <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" id="userId" name="userId" class="form-input" required>
+                    <button id="btnCheck" type="button"  class="btn-chk">중복검증</button>
+                </td>
             </tr>
             </table>
             <div class="divider-h"></div>
@@ -94,6 +114,49 @@
         const btnSave = document.getElementById("btnSave");
         const btnInit = document.getElementById("btnInit");
         const btnClose = document.getElementById("btnClose");
+        const btnCheck = document.getElementById("btnCheck");
+
+        btnSave.disabled = true;
+        btnCheck.disabled = true;
+
+        document.getElementById("userId").addEventListener("input", () => {
+            btnCheck.disabled = false;
+        });
+
+
+       btnCheck.addEventListener('click', async () => {
+            const inData = formToJson(mainForm);
+
+            if (!inData.userId || !inData.userId.trim()) {
+                alert("사용자ID를 입력하세요.");
+                mainForm.userId.focus();
+                return;
+            }
+
+            const res = await fetch('/meta/getUserData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(inData)
+            });
+
+            btnCheck.disabled = true;
+
+            const textData = await res.text();
+            if (!textData) {
+                alert("등록 가능합니다");
+                mainForm.reset();
+                document.getElementById("userId").value = inData.userId;
+                mainForm.userNm.focus();
+                btnSave.disabled = false;
+                btnCheck.disabled = true;
+            } else {
+                alert("이미 등록되어 있습니다");
+                const outData = JSON.parse(textData);
+                fillForm(mainForm, outData);
+                btnSave.disabled = true;
+            }
+        });
+
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
@@ -146,45 +209,23 @@
             }
         });
 
-       document.getElementById('btnInq').addEventListener('click', async () => {
-            const inData = formToJson(mainForm);
 
-            if (!inData.userId.trim()) {
-                alert("사용자ID를 입력하세요.");
-                mainForm.userId.focus();
-                return;
-            }
-            try {
-                const res = await fetch('/meta/getUserData', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(inData)
-                });
-
-                if (!res.ok) {
-                    throw new Error("서버 응답 오류");
-                    return;
-                }
-
-                const outData = await res.json();
-                fillForm(mainForm, outData);
-
-            } catch (err) {
-                alert("등록 가능합니다.");
-            }
+        /* 초기화 */
+        btnInit.addEventListener('click', () => {
+            mainForm.reset();
+            btnSave.disabled = true;
+            btnCheck.disabled = false;
         });
 
-
-        btnInit.addEventListener('click', () => mainForm.reset());
         btnClose.addEventListener("click", () => {
             if (confirm("닫으시겠습니까?")) window.close();
         });
 
-        // Enter 키 이벤트
-        document.getElementById('mainForm').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // 폼 제출 방지
-                document.getElementById('btnInq').click();
+        /* Enter Key */
+        document.getElementById("userId").addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                btnCheck.click();
             }
         });
 

@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <title>Meta System</title>
-    <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/commonUtils.js"></script>
-    <script src="/js/pagenation.js"></script>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/commonUtils.js" defer></script>
+
 </head>
 <body>
     <div class="popupContainer" id="popupContainer">
@@ -15,9 +15,9 @@
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
-                <button id="btnInit" class="btn">초기화</button>
-                <button id="btnSearch" class="btn">조회</button>
-                <button id="btnClose" class="btn">닫기</button>
+                <button id="btnInit" type="button" class="btn">초기화</button>
+                <button id="btnSearch" type="button" class="btn">조회</button>
+                <button id="btnClose" type="button" class="btn">닫기</button>
             </div>
         </div>
         <div class="divider-h"></div>
@@ -35,7 +35,7 @@
 
         <div id="pageInfoContainer" class="page-header"></div>
 
-        <table style="margin-top:12px" class="data-table" id="mainTable">
+        <table class="data-table" id="mainTable">
             <thead>
             <tr>
                 <th width="50px">번호</th>

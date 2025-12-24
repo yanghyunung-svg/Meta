@@ -26,7 +26,7 @@ spring:
       on-profile: local
   servlet:
     session:
-      timeout: 2h
+      timeout: 20h
 
   datasource:
     url: jdbc:mysql://localhost:3306/meta?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true

@@ -5,7 +5,7 @@ import com.common.utils.BizUtils;
 import com.meta.dto.TbTermDictionaryDto;
 import com.meta.mapper.TbTermDictionaryMapper;
 import com.meta.service.TermDictionaryService;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +35,9 @@ public class TermDictionaryController {
      */
     @PostMapping("/getTermListData")
     @ResponseBody
-    public List<TbTermDictionaryDto> getTermListData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
+    public List<TbTermDictionaryDto> getTermListData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-        List<TbTermDictionaryDto> outputDto = tbTermDictionaryMapper.getListData(inputDto);
+        List<TbTermDictionaryDto> outputDto = termDictionaryService.getListData(inputDto);
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
@@ -48,9 +48,9 @@ public class TermDictionaryController {
      */
     @PostMapping("/getTermData")
     @ResponseBody
-    public TbTermDictionaryDto getTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
+    public TbTermDictionaryDto getTermData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-        TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getData(inputDto);
+        TbTermDictionaryDto outputDto = termDictionaryService.getData(inputDto);
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
@@ -61,7 +61,7 @@ public class TermDictionaryController {
      */
     @PostMapping("/insertTermData")
     @ResponseBody
-    public ApiResponse<Void> insertTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> insertTermData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         ApiResponse<Void> outputDto = termDictionaryService.insertData(inputDto);
         log.debug(BizUtils.logInfo("END"));
@@ -74,7 +74,7 @@ public class TermDictionaryController {
      */
     @PostMapping("/updateTermData")
     @ResponseBody
-    public ApiResponse<Void> updateTermData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
+    public ApiResponse<Void> updateTermData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         ApiResponse<Void> outputDto = termDictionaryService.updateData(inputDto);
         log.debug(BizUtils.logInfo("END"));
@@ -87,7 +87,7 @@ public class TermDictionaryController {
      */
     @PostMapping("/getTermSplitData")
     @ResponseBody
-    public TbTermDictionaryDto getTermSplitData(@RequestBody TbTermDictionaryDto inputDto, HttpSession session) throws Exception {
+    public TbTermDictionaryDto getTermSplitData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         TbTermDictionaryDto outputDto = termDictionaryService.getTermSplitData(inputDto);
         log.debug(BizUtils.logInfo("END"));
@@ -148,12 +148,12 @@ public class TermDictionaryController {
     }
 
     @PostMapping("/uploadTermExcelSave")
-    public ResponseEntity<Map<String, Object>> uploadTermExcelSave(@RequestBody List<TbTermDictionaryDto> list, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> uploadTermExcelSave(@RequestBody List<TbTermDictionaryDto> list, HttpServletRequest request) {
         log.debug(BizUtils.logInfo("START"));
 
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = termDictionaryService.uploadTermExcelSave(list, session);
+            int count = termDictionaryService.uploadTermExcelSave(list);
             res.put("success", true);
             res.put("count", count);
             log.debug(BizUtils.logInfo("END", "success"));

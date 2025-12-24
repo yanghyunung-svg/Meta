@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>Meta System</title>
-    <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/commonUtils.js"></script>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
 
@@ -13,9 +13,27 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 그룹코드 등록</h2>
         <div class="button-group">
-            <button id="btnSave"  class="btn">저장</button>
-            <button id="btnInit" class="btn">초기화</button>
-            <button id="btnClose"  class="btn">닫기</button>
+            <button id="btnSave" type="button" class="btn">
+                <svg viewBox="0 0 24 24" width="15" height="15">
+                    <path d="M5 3h14v18H5z" fill="none" stroke="currentColor"/>
+                    <path d="M9 3v6h6V3" stroke="currentColor"/>
+                </svg>
+                저장
+            </button>
+            <button id="btnInit" type="button" class="btn">
+                <svg viewBox="0 0 24 24" width="15" height="15">
+                    <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
+                    <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
+                </svg>
+                초기화
+            </button>
+            <button id="btnClose" type="button" class="btn">
+                <svg viewBox="0 0 24 24" width="15" height="15">
+                    <line x1="4" y1="4" x2="20" y2="20" stroke="currentColor"/>
+                    <line x1="20" y1="4" x2="4" y2="20" stroke="currentColor"/>
+                </svg>
+                닫기
+            </button>
         </div>
     </div>
 
@@ -26,7 +44,7 @@
                     <th>그룹코드 <span style="color:red">*</span></th>
                     <td style="display:flex; align-items:center; gap:4px;">
                         <input type="text" id="grpCd" name="grpCd" class="form-input" required>
-                        <button id="btnCheck" class="btn-chk">코드검증</button>
+                        <button id="btnCheck" type="button"  class="btn">중복검증</button>
                     </td>
                 </tr>
             </table>
@@ -75,7 +93,13 @@
         const btnInit = document.getElementById("btnInit");
         const btnClose = document.getElementById("btnClose");
         const btnCheck = document.getElementById("btnCheck");
+
         btnSave.disabled = true;
+        btnCheck.disabled = true;
+
+        document.getElementById("grpCd").addEventListener("input", () => {
+            btnCheck.disabled = false;
+        });
 
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
@@ -105,6 +129,7 @@
 
                 if (result.success) {
                     alert("저장되었습니다.");
+                    document.getElementById('mainForm').reset();
                 } else {
                     alert("오류: " + result.message);
                 }
@@ -116,39 +141,52 @@
 
        btnCheck.addEventListener('click', async () => {
             const inData = formToJson(mainForm);
-            if (!inData.grpCd.trim()) {
+
+            if (!inData.grpCd || !inData.grpCd.trim()) {
                 alert("공통코드를 입력하세요.");
                 mainForm.grpCd.focus();
                 return;
             }
+
             const res = await fetch('/meta/getCodeGroupData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(inData)
             });
+
+            btnCheck.disabled = true;
+
             const textData = await res.text();
             if (!textData) {
-                alert("사용 가능한 코드입니다.");
-                ["grpNm", "rmk"].forEach(id => document.getElementById(id).value = "");
-                document.getElementById("stat").value = "0";
-                mainForm.grpNm.focus();
+                alert("등록 가능합니다");
+                mainForm.reset();
+                document.getElementById("grpCd").value = inData.grpCd;
                 btnSave.disabled = false;
+                btnCheck.disabled = true;
             } else {
+                alert("이미 등록되어 있습니다");
                 const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
+                btnSave.disabled = true;
             }
         });
 
-        btnInit.addEventListener('click', () => mainForm.reset());
+        /* 초기화 */
+        btnInit.addEventListener('click', () => {
+            mainForm.reset();
+            btnSave.disabled = true;
+            btnCheck.disabled = false;
+        });
+
         btnClose.addEventListener("click", () => {
             if (confirm("닫으시겠습니까?")) window.close();
         });
 
-        // Enter 키 이벤트
-        mainForm.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+        /* Enter Key */
+        document.getElementById("grpCd").addEventListener("keydown", e => {
+            if (e.key === "Enter") {
                 e.preventDefault();
-                document.getElementById('btnCheck').click();
+                btnCheck.click();
             }
         });
 

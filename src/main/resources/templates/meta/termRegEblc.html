@@ -3,10 +3,11 @@
 <head>
     <meta charset="utf-8">
     <title>Meta System</title>
-    <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/sidebar.js" defer></script>
-    <script src="/js/layout.js" defer></script>
-    <script src="/js/commonUtils.js"></script>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+
 </head>
 <body>
 
@@ -17,24 +18,18 @@
         <div class="form-header">
             <h2 style="margin:0;"> ✅ 표준용어 일괄등록</h2>
             <div class="button-group">
-                <button id="btnInq" class="btn">목록조회</button>
-                <button id="btnDownload" class="btn">템플릿</button>
-                <button id="btnUpload" class="btn">Excel 업로드</button>
-                <button id="btnUploadSave" class="btn" disabled>업로드 저장</button>
+                <button id="btnInq" type="button" class="btn">목록조회</button>
+                <button id="btnDownload" type="button" class="btn">템플릿</button>
+                <button id="btnUpload" type="button" class="btn">Excel 업로드</button>
+                <button id="btnUploadSave" type="button" class="btn" disabled>업로드 저장</button>
+
             </div>
         </div>
         <div class="divider-h"></div>
 
-        <table class="search-table">
-            <tr>
-                <td class="align-left">
-                    <input type="file" id="excelFile" name="excelFile" accept=".xlsx,.xls">
-                </td>
-            </tr>
-        </table>
-        <div class="divider-h"></div>
+        <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx,.xls">
 
-    <table id="uploadPreviewTable" class="data-table" style="margin-top:10px; ">
+        <table id="uploadPreviewTable" class="data-table" style="margin-top:10px; ">
         <thead>
         <tr>
             <th class="col-no">번호</th>
@@ -43,6 +38,7 @@
             <th style="text-align: left;">도메인명</th>
             <th style="text-align: left;">설명</th>
             <th style="text-align: center;">상태</th>
+            <th class="hidden"> </th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -50,7 +46,7 @@
     <div class="divider-h"></div>
     </div>
 </div>
-<div id="footbarContainer"></div>
+<!-- <div id="footbarContainer"></div> -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
@@ -105,19 +101,16 @@
             tbody.innerHTML = "";
             table.style.display = "table";
 
-            rows.forEach(row => {
-                row.crtId = crtId || '';
-            });
-
             rows.forEach((row, index) => {
+                row.crtId = crtId || '';
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td style="text-align: center;"> ${index + 1} </td>
-                    <td contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
-                    <td contenteditable="true" data-index="${index}" data-field="engNm">${row.engNm}</td>
-                    <td contenteditable="true" data-index="${index}" data-field="dmnNm">${row.dmnNm}</td>
-                    <td contenteditable="true" data-index="${index}" data-field="trmExpln">${row.trmExpln}</td>
-                    <td contenteditable="true" style="text-align: center;">${row.stat}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="engNm">${row.engNm}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="dmnNm">${row.dmnNm}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="trmExpln">${row.trmExpln}</td>
+                    <td style="text-align: left;" >${row.stat}</td>
                     <td class="hidden">${row.crtId}</td>
                 `;
                 tbody.appendChild(tr);

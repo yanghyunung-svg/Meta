@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>Meta System</title>
-    <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/commonUtils.js"></script>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
 
@@ -12,9 +12,27 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 표준단어 등록</h2>
         <div class="button-group">
-            <button id="btnInit" class="btn">초기화</button>
-            <button id="btnSave" class="btn">저장</button>
-            <button id="btnClose" class="btn">닫기</button>
+            <button id="btnSave" type="button" class="btn">
+                <svg viewBox="0 0 24 24" width="15" height="15">
+                    <path d="M5 3h14v18H5z" fill="none" stroke="currentColor"/>
+                    <path d="M9 3v6h6V3" stroke="currentColor"/>
+                </svg>
+                저장
+            </button>
+            <button id="btnInit" type="button" class="btn">
+                <svg viewBox="0 0 24 24" width="15" height="15">
+                    <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
+                    <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
+                </svg>
+                초기화
+            </button>
+            <button id="btnClose" type="button" class="btn">
+                <svg viewBox="0 0 24 24" width="15" height="15">
+                    <line x1="4" y1="4" x2="20" y2="20" stroke="currentColor"/>
+                    <line x1="20" y1="4" x2="4" y2="20" stroke="currentColor"/>
+                </svg>
+                닫기
+            </button>
         </div>
     </div>
         <div class="divider-h"></div>
@@ -24,7 +42,7 @@
                     <th>단어명 <span style="color:red">*</span></th>
                     <td style="display:flex; align-items:center; gap:4px;">
                         <input type="text" id="wordNm" name="wordNm" class="form-input" required>
-                        <button id="btnCheck" class="btn-chk">중복검증</button>
+                        <button id="btnCheck" type="button" class="btn">중복검증</button>
                     </td>
                 </tr>
                 </table>
@@ -84,6 +102,11 @@
         const btnClose = document.getElementById("btnClose");
         const btnCheck = document.getElementById("btnCheck");
         btnSave.disabled = true;
+        btnCheck.disabled = true;
+
+        document.getElementById("wordNm").addEventListener("input", () => {
+            btnCheck.disabled = false;
+        });
 
 
         // 저장 버튼
@@ -119,6 +142,7 @@
 
                 if (result.success) {
                     alert("저장되었습니다.");
+                    document.getElementById('mainForm').reset();
                 } else {
                     alert("오류: " + result.message);
                 }
@@ -148,18 +172,26 @@
 
             const textData = await res.text();
             if (!textData) {
-                alert("사용 가능한 코드입니다.");
-                ["engAbbrNm", "engNm", "expln"].forEach(id => document.getElementById(id).value = "");
-                document.getElementById("stat").value = "0";
-                mainForm.dmnClsfNm.focus();
+                alert("등록 가능합니다");
+                mainForm.reset();
+                document.getElementById("wordNm").value = inData.wordNm;
+                mainForm.engAbbrNm.focus();
                 btnSave.disabled = false;
+                btnCheck.disabled = true;
             } else {
                 const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
+                btnSave.disabled = true;
             }
         });
 
-        btnInit.addEventListener('click', () => mainForm.reset());
+        /* 초기화 */
+        btnInit.addEventListener('click', () => {
+            mainForm.reset();
+            btnSave.disabled = true;
+            btnCheck.disabled = false;
+        });
+
         btnClose.addEventListener("click", () => {
             if (confirm("닫으시겠습니까?")) window.close();
         });
@@ -168,7 +200,7 @@
         document.getElementById('mainForm').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault(); // 폼 제출 방지
-                document.getElementById('btnCheck').click();
+                btnCheck.click();
             }
         });
 

@@ -1,13 +1,9 @@
 window.CONFIG = {
-    PAGE_SIZE: 20,
-    PAGE_RANGE: 10,
-    URL: {
-        GET_CODE: '/meta/getCodeGroupListData'
-    }
+    PAGE_SIZE: 25,
+    PAGE_RANGE: 10
 };
 window.MENU = '';
 window.KOR = /[가-힣]/;
-
 window.pathname = window.location.pathname;
 
 const common = {
@@ -438,7 +434,7 @@ window.updateRowDataFlexible = function(data, idKey, updateMap) {
                     }
                     if (dataField === 'stat') {
                         newValue =
-                            newValue === '0' ? '등록' :
+                            newValue === '0' ? '신청' :
                             newValue === '1' ? '사용' :
                             newValue === '9' ? '미사용' : newValue;
                     }
@@ -463,24 +459,17 @@ window.updateRowDataFlexible = function(data, idKey, updateMap) {
 function validateRequired(rules) {
     for (const rule of rules) {
         const { value, message, element, type = 'alert' } = rule;
-
         if (value === undefined || value === null || value === '') {
-
-            // 사용자 수정 가능 → alert
             if (type === 'alert') {
                 alert(message);
-
                 if (element) {
                     element.focus();
                     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
-
-            // 시스템 상태 문제 → error
             if (type === 'error') {
                 showError(message);
             }
-
             return false;
         }
     }
@@ -544,4 +533,88 @@ function addUserAuditFields(data) {
         updId: userId,
         crtId: data.crtId || userId   // crtId 없으면 자동 주입
     };
+}
+
+
+
+function openAlert(message, callback) {
+    const modal = document.getElementById("commonModal");
+    const msg = document.getElementById("modalMessage");
+    const okBtn = document.getElementById("modalOkBtn");
+
+    msg.textContent = message;
+    modal.classList.remove("hidden");
+
+    const close = () => {
+        modal.classList.add("hidden");
+        okBtn.removeEventListener("click", handler);
+        if (callback) callback();
+    };
+
+    const handler = () => close();
+    okBtn.addEventListener("click", handler);
+}
+
+function openConfirm(message, onYes) {
+    const modal = document.getElementById("commonModal");
+    const msg = document.getElementById("modalMessage");
+    const footer = modal.querySelector(".modal-footer");
+
+    footer.innerHTML = `
+        <button id="modalYes" type="button" class="btn">확인</button>
+        <button id="modalNo" type="button" class="btn">취소</button>
+    `;
+
+    msg.textContent = message;
+    modal.classList.remove("hidden");
+
+    document.getElementById("modalYes").onclick = () => {
+        modal.classList.add("hidden");
+        onYes();
+    };
+    document.getElementById("modalNo").onclick = () => {
+        modal.classList.add("hidden");
+    };
+}
+
+
+function loadDomainCombo() {
+    fetch('/meta/getDmnComboData', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        populateDomainCombo(data);
+    })
+    .catch(error => {
+        showError("도메인 데이터 로드 실패.");
+        console.error("도메인 데이터 로드 실패:", error);
+    });
+}
+
+function populateDomainCombo(dataArray) {
+    const selectElement = document.getElementById('dmnNm');
+    while (selectElement.options.length > 1) {
+        selectElement.remove(1);
+    }
+    dataArray.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.dmnNm;
+        option.text = item.dmnClsfNm + ' (' + item.dmnNm + ')';
+        selectElement.appendChild(option);
+    });
+}
+
+function getCurrentFileName() {
+    const path = window.location.pathname;
+    const fileName = path.substring(path.lastIndexOf('/') + 1);
+    return fileName || 'login.html';
 }

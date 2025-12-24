@@ -3,10 +3,11 @@
 <head>
     <meta charset="utf-8">
     <title>Meta System</title>
-    <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/sidebar.js" defer></script>
-    <script src="/js/layout.js" defer></script>
-    <script src="/js/commonUtils.js"></script>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -17,25 +18,17 @@
         <div class="form-header">
             <h2 style="margin:0;"> ✅ 표준용어 단어검색</h2>
             <div class="button-group">
-                <button id="btnInit" class="btn">초기화</button>
-                <button id="btnVal" class="btn">단어검색</button>
-                <button id="btnAddRow" class="btn">1줄 추가</button>
-                <button id="btnUpload" class="btn">Excel 업로드</button>
-                <button id="btnDownload" class="btn">템플릿</button>
+                <button id="btnInit" type="button" class="btn">초기화</button>
+                <button id="btnVal" type="button" class="btn">단어검색</button>
+                <button id="btnAddRow" type="button" class="btn">행추가</button>
+                <button id="btnUpload" type="button" class="btn">Excel 업로드</button>
+                <button id="btnTemplate" type="button" class="btn">Excel 템플릿</button>
+                <button id="btnExcelDownload" type="button" class="btn">Excel 다운로드</button>
             </div>
         </div>
         <div class="divider-h"></div>
 
-        <table class="search-table">
-            <tr>
-                <td class="align-left">
-                    <input type="file" id="excelFile" name="excelFile" accept=".xlsx,.xls">
-                </td>
-            </tr>
-        </table>
-
-
-        <div class="divider-h"></div>
+        <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx,.xls">
 
         <table id="uploadPreviewTable" class="data-table" style="margin-top:10px; ">
         <thead>
@@ -44,6 +37,7 @@
             <th style="text-align: left;">용어명</th>
             <th style="text-align: left;">영문명</th>
             <th style="text-align: left;">설명</th>
+            <th style="text-align: left;">상태</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -53,18 +47,16 @@
 
 </div>
 
-<div id="footbarContainer"></div>
+<!-- <div id="footbarContainer"></div> -->
 <script>
 
     document.addEventListener("DOMContentLoaded", () => {
+        const btnExcelDownload = document.getElementById("btnExcelDownload");
+        btnExcelDownload.disabled = true;
+
         const emptyRows = createEmptyRows(1);
         window.uploadPreviewData = emptyRows;
         renderPreviewTable(emptyRows);
-    });
-
-
-    document.getElementById("btnDownload").addEventListener("click", () => {
-        window.location.href = "/meta/downloadTermExcelTemplate";
     });
 
 
@@ -72,16 +64,21 @@
         document.getElementById("excelFile").value = "";
         document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
         window.uploadPreviewData = null;
-
         const emptyRows = createEmptyRows(1);
         window.uploadPreviewData = emptyRows;
         renderPreviewTable(emptyRows);
+        btnExcelDownload.disabled = true;
+    });
+
+    document.getElementById("btnTemplate").addEventListener("click", () => {
+        window.location.href = "/meta/downloadTermExcelTemplate";
     });
 
 
     document.getElementById("btnUpload").addEventListener("click", () => {
         document.getElementById("btnInit").click();
         document.getElementById("excelFile").click();
+        btnExcelDownload.disabled = true;
     });
 
     document.getElementById("excelFile").addEventListener("change", async (e) => {
@@ -114,6 +111,7 @@
 
     document.getElementById('btnVal').addEventListener('click', async () => {
         if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
+            btnExcelDownload.disabled = false;
             alert("업로드된 데이터가 없습니다.");
             return;
         }
@@ -132,7 +130,19 @@
                 return;
             }
 
-            renderPreviewTable(result.data);
+            const mappedData = result.data.map(row => ({
+                trmNm: row.trmNm || row.trm_nm || row["용어명"] || "",
+                engNm: row.engNm || row.eng_nm || row["영문명"] || "",
+                dmnNm: row.dmnNm || row.dmn_nm || row["도메인명"] || "",
+                trmExpln: row.trmExpln || row.trm_expln || row["설명"] || "",
+                stat: row.stat || row.stat || row["상태"] || ""
+            }));
+
+            renderPreviewTable(mappedData);
+            window.uploadPreviewData = mappedData;
+
+            btnExcelDownload.disabled = false;
+
 
         } catch(err) {
             console.error(err);
@@ -150,13 +160,13 @@
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td class="col-no">${index + 1}</td>
-                <td class="form-input" style="text-align: left;" contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
+                <td style="text-align: left;" class="form-input no-enter" contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
                 <td style="text-align: left;">${row.engNm}</td>
                 <td style="text-align: left;">${row.trmExpln}</td>
+                <td style="text-align: left;">${row.stat}</td>
             `;
             tbody.appendChild(tr);
         });
-
         attachEditListeners();
     }
 
@@ -181,19 +191,19 @@
             rows.push({
                 trmNm: '',
                 engNm: '',
-                trmExpln: ''
+                trmExpln: '',
+                stat: ''
             });
         }
         return rows;
     }
 
     document.getElementById("btnAddRow").addEventListener("click", () => {
-
-        // 빈 행 데이터 생성
         const newEmptyRow = {
             trmNm: '',
             engNm: '',
-            trmExpln: ''
+            trmExpln: '',
+            stat: ''
         };
 
         // window.uploadPreviewData가 아직 초기화되지 않았다면 빈 배열로 시작
@@ -207,6 +217,59 @@
         // 업데이트된 데이터를 사용하여 테이블 다시 렌더링
         renderPreviewTable(window.uploadPreviewData);
     });
+
+    document.getElementById("btnExcelDownload").addEventListener("click", () => {
+        if (!window.uploadPreviewData || window.uploadPreviewData.length === 0) {
+            alert("다운로드할 데이터가 없습니다.");
+            return;
+        }
+
+        syncEditableTableToData();
+
+        const excelData = window.uploadPreviewData.map((row, idx) => ({
+            번호: idx + 1,
+            용어명: row.trmNm || "",
+            영문명: row.engNm || "",
+            도메인명: row.dmnNm || "",
+            설명: row.trmExpln || "",
+            상태: row.stat || ""
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(excelData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "표준용어");
+
+        XLSX.writeFile(wb, "표준용어.xlsx");
+    });
+
+    function syncEditableTableToData() {
+        const cells = document.querySelectorAll(
+            "#uploadPreviewTable tbody td[data-index][data-field]"
+        );
+
+        cells.forEach(cell => {
+            const idx = cell.dataset.index;
+            const field = cell.dataset.field;
+            if (window.uploadPreviewData[idx]) {
+                window.uploadPreviewData[idx][field] = cell.textContent.trim();
+            }
+        });
+    }
+
+    document.addEventListener("keydown", function (e) {
+        if (e.target.classList.contains("no-enter") && e.key === "Enter") {
+            e.preventDefault();
+        }
+    });
+
+    // Enter Key
+<!--    document.addEventListener('keydown', (e) => {-->
+<!--            e.preventDefault();-->
+<!--        if (e.key === 'Enter') {-->
+<!--            document.getElementById('btnVal').click();-->
+<!--        }-->
+<!--    });-->
+
 
 </script>
 </body>

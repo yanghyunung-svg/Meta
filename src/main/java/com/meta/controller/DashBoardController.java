@@ -3,7 +3,7 @@ package com.meta.controller;
 import com.common.utils.BizUtils;
 import com.meta.dto.ApproveDto;
 import com.meta.service.DashBoardService;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class DashBoardController {
      */
     @PostMapping("/getDashBoardList")
     @ResponseBody
-    public List<ApproveDto> getDashBoardList(@RequestBody ApproveDto inputDto, HttpSession session) throws Exception {
+    public List<ApproveDto> getDashBoardList(@RequestBody ApproveDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo("START"));
         inputDto.setStat("0");
         List<ApproveDto> outputDto =  dashBoardService.getListData(inputDto);

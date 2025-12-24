@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <title>Meta System</title>
-    <link rel="stylesheet" href="/css/layout.css">
-    <script src="/js/sidebar.js" defer></script>
-    <script src="/js/layout.js" defer></script>
-    <script src="/js/commonUtils.js"></script>
-    <script src="/js/pagenation.js"></script>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+
 </head>
 <body>
 <div class="container">
@@ -20,8 +20,20 @@
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
-                <button id="btnInit" class="btn">초기화</button>
-                <button id="btnSearch" class="btn">조회</button>
+                <button id="btnSearch" type="button" class="btn">
+                    <svg viewBox="0 0 24 24" width="15" height="15">
+                        <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor"/>
+                        <line x1="16" y1="16" x2="22" y2="22" stroke="currentColor"/>
+                    </svg>
+                    조회
+                </button>
+                <button id="btnInit" type="button" class="btn">
+                    <svg viewBox="0 0 24 24" width="15" height="15">
+                        <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
+                        <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
+                    </svg>
+                    초기화
+                </button>
             </div>
         </div>
 
@@ -32,16 +44,16 @@
                     <th>사용자 ID</th>
                     <td style="display:flex; align-items:center; gap:4px;">
                         <input type="text" id="userId"  name="userId" class="form-input">
-                        <button id="btnPopup" type="button">🔍</button>
+                        <button id="btnPopup" type="button" class="btn-search">🔍</button>
                     </td>
                     <th>사용자이름</th>
                     <td><input type="text" id="userNm"  name="userNm" class="form-input"  readonly></td>
 
                     <th>조회일자</th>
                     <td style="display:flex; align-items:center; gap:4px;">
-                        <input type="date" id="startDate" name="startDate" class="form-input">
+                        <input type="date" id="startDate" name="startDate" class="form-date">
                         <span>/</span>
-                        <input type="date" id="endDate" name="endDate" class="form-input">
+                        <input type="date" id="endDate" name="endDate" class="form-date">
                     </td>
 
                     <th>상태</th>
@@ -59,7 +71,7 @@
 
         <div id="pageInfoContainer" class="page-header"></div>
 
-        <table style="margin-top:12px" class="data-table" id="mainTable">
+        <table class="data-table" id="mainTable">
             <thead>
             <tr>
                 <th class="col-no">번호</th>
@@ -77,7 +89,7 @@
 
     </div><!-- /mainContainer -->
 </div><!-- /container -->
-<div id="footbarContainer"></div>
+<!-- <div id="footbarContainer"></div> -->
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {

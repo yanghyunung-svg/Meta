@@ -4,6 +4,8 @@ import ch.qos.logback.core.util.StringUtil;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbCodeDto;
+import com.meta.dto.TbCodeGroupDto;
+import com.meta.mapper.TbCodeGroupMapper;
 import com.meta.mapper.TbCodeMapper;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
@@ -26,6 +28,8 @@ public class CodeService {
 
     @Autowired
     private TbCodeMapper tbCodeMapper;
+    @Autowired
+    private TbCodeGroupMapper tbCodeGroupMapper;
 
 
     /**
@@ -69,8 +73,14 @@ public class CodeService {
         log.debug(BizUtils.logInfo("START"));
         log.debug(BizUtils.logVo(inputDto));
         try {
-            TbCodeDto outputDto = tbCodeMapper.getData(inputDto);
+            TbCodeGroupDto tbCodeGroupDtoIn = new TbCodeGroupDto();
+            tbCodeGroupDtoIn.setGrpCd(inputDto.getGrpCd());
+            TbCodeGroupDto tbCodeGroupDtoOut = tbCodeGroupMapper.getData(tbCodeGroupDtoIn);
+            if (tbCodeGroupDtoOut == null) {
+                return new ApiResponse<Void>(false, "그룹코드가 없습니다. =" + inputDto.getGrpCd());
+            }
 
+            TbCodeDto outputDto = tbCodeMapper.getData(inputDto);
             if (outputDto != null) {
                 return new ApiResponse<Void>(false, "기등록된 데이타가 있습니다. =" + outputDto.getCdNm());
             }

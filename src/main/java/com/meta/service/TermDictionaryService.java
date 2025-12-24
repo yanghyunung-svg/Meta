@@ -8,7 +8,6 @@ import com.meta.dto.TbWordDictionaryDto;
 import com.meta.dto.WordMappingDto;
 import com.meta.mapper.TbTermDictionaryMapper;
 import com.meta.mapper.TbWordDictionaryMapper;
-import jakarta.servlet.http.HttpSession;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,28 @@ public class TermDictionaryService {
     private TbTermDictionaryMapper tbTermDictionaryMapper;
     @Autowired
     private TbWordDictionaryMapper tbWordDictionaryMapper;
+
+
+    /**
+     * method   : getListData
+     * desc     : 단어사전 목록 조회
+     */
+    public List<TbTermDictionaryDto> getListData(TbTermDictionaryDto inputDto)  {
+        log.debug(BizUtils.logInfo("START"));
+        return tbTermDictionaryMapper.getListData(inputDto);
+    }
+
+    /**
+     * method   : getData
+     * desc     : 단어사전 상세 조회
+     */
+    public TbTermDictionaryDto getData(TbTermDictionaryDto inputDto)  {
+        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
+        TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getData(inputDto);
+        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
+        return outputDto;
+    }
+
 
     /**
      * method   : insertData
@@ -104,7 +125,7 @@ public class TermDictionaryService {
         outputDto.setEngNm(outTxt);
         outputDto.setDmnNm("");
         outputDto.setTrmExpln(prettyPrintKeywords(keywords));
-        outputDto.setStat("9");
+        outputDto.setStat("0");
 
         log.debug(BizUtils.logInfo("END"));
         return outputDto;
@@ -195,6 +216,7 @@ public class TermDictionaryService {
             dto.setTrmNm(getCell(row, 1));
             dto.setEngNm(getCell(row, 2));
             dto.setTrmExpln(getCell(row, 4));
+            dto.setStat(getCell(row, 5));
 
             result.add(dto);
         }
@@ -264,7 +286,7 @@ public class TermDictionaryService {
         return null;  // 정상
     }
 
-    public int uploadTermExcelSave(List<TbTermDictionaryDto> list, HttpSession session)  {
+    public int uploadTermExcelSave(List<TbTermDictionaryDto> list)  {
         log.debug(BizUtils.logInfo("START"));
 
         int count = 0;

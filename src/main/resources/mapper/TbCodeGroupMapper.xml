@@ -6,13 +6,13 @@
    <!--tb_code_group SELECT-->
    <select id="getData" parameterType="com.meta.dto.TbCodeGroupDto" resultType="com.meta.dto.TbCodeGroupDto">
       SELECT GRP_CD
-           , GRP_NM
-           , STAT
-           , ORD
-           , RMK
-       , CRT_ID, UPD_ID
-       , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
-       , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        , GRP_NM
+        , STAT
+        , ORD
+        , RMK
+        , CRT_ID, UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM tb_code_group
        WHERE GRP_CD = #{grpCd}
   </select>
