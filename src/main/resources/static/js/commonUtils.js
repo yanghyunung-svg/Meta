@@ -398,59 +398,6 @@ const common = {
 
 }
 
-
-/**
- * [공통 함수] updateRowDataFlexible: 테이블 구조에 독립적으로 행 데이터를 업데이트합니다.
- * @param {Object} data - 업데이트할 데이터 객체 (예: {trmNm: 'ID', engNm: 'New Name', ...})
- * @param {string} idKey - 행을 찾을 때 사용할 data-id 속성의 키 (예: 'trmNm', 'empNo' 등)
- * @param {Object} updateMap - 업데이트할 필드와 해당 셀렉터를 매핑한 객체
- * 형식: { 데이터_필드명: '셀렉터_문자열' }
- * 예: { engNm: 'td:nth-child(3)', dmnNm: '.domain-cell' }
- */
-window.updateRowDataFlexible = function(data, idKey, updateMap) {
-    const targetId = data[idKey];
-    if (!targetId) {
-        console.error(`업데이트할 행의 ID 값 (${idKey})이 데이터에 없습니다.`, data);
-        return;
-    }
-
-    const targetRow = document.querySelector(`.row-click[data-id="${targetId}"]`);
-
-    if (targetRow) {
-        // 1. 매핑된 필드를 순회하며 업데이트 수행
-        for (const dataField in updateMap) {
-            if (data.hasOwnProperty(dataField)) {
-                const selector = updateMap[dataField];
-                const targetCell = targetRow.querySelector(selector);
-
-                if (targetCell) {
-                    let newValue = data[dataField];
-
-                    // 2. 상태(stat)처럼 특수 로직이 필요한 경우를 위한 예외 처리 (선택 사항)
-                    if (dataField === 'role') {
-                        newValue =
-                            newValue === '1' ? 'ADMIN' :
-                            newValue === '2' ? 'USER' : newValue;
-                    }
-                    if (dataField === 'stat') {
-                        newValue =
-                            newValue === '0' ? '신청' :
-                            newValue === '1' ? '사용' :
-                            newValue === '9' ? '미사용' : newValue;
-                    }
-
-                    targetCell.textContent = newValue;
-                }
-            }
-        }
-
-        // 3. 업데이트 시각 효과 (공통)
-        targetRow.classList.add('highlight-update');
-        setTimeout(() => targetRow.classList.remove('highlight-update'), 3000);
-    }
-}
-
-
 /**
  * 필수값 검증
  * @param {Array} rules - 검증 규칙 목록
@@ -461,7 +408,7 @@ function validateRequired(rules) {
         const { value, message, element, type = 'alert' } = rule;
         if (value === undefined || value === null || value === '') {
             if (type === 'alert') {
-                alert(message);
+                msgEvents(message);
                 if (element) {
                     element.focus();
                     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -618,3 +565,56 @@ function getCurrentFileName() {
     const fileName = path.substring(path.lastIndexOf('/') + 1);
     return fileName || 'login.html';
 }
+
+
+
+function msgEvents(msgString) {
+    const msgInfo = document.getElementById('msgInfo');
+    if (msgInfo) {
+        msgInfo.innerText = msgString;
+    }
+ }
+
+
+/**
+ * [공통 함수] updateRowDataFlexible: 테이블 구조에 독립적으로 행 데이터를 업데이트합니다.
+ */
+window.updateRowDataFlexible = function(data, idKey, updateMap) {
+    const targetId = data[idKey];
+    if (!targetId) {
+        console.error(`업데이트할 행의 ID 값 (${idKey})이 데이터에 없습니다.`, data);
+        return;
+    }
+
+    const targetRow = document.querySelector(`.row-click[data-id="${targetId}"]`);
+
+    if (targetRow) {
+        // 1. 매핑된 필드를 순회하며 업데이트 수행
+        for (const dataField in updateMap) {
+            if (data.hasOwnProperty(dataField)) {
+                const selector = updateMap[dataField];
+                const targetCell = targetRow.querySelector(selector);
+                if (targetCell) {
+                    let newValue = data[dataField];
+                    if (dataField === 'role') {
+                        newValue =
+                            newValue === '1' ? 'ADMIN' :
+                            newValue === '2' ? 'USER' : newValue;
+                    }
+                    if (dataField === 'stat' || dataField === 'sttsCd') {
+                        newValue =
+                            newValue === '0' ? '신청' :
+                            newValue === '1' ? '사용' :
+                            newValue === '9' ? '미사용' : newValue;
+                    }
+                    targetCell.textContent = newValue;
+                }
+            }
+        }
+
+        // 3. 업데이트 시각 효과 (공통)
+        targetRow.classList.add('highlight-update');
+        setTimeout(() => targetRow.classList.remove('highlight-update'), 3000);
+    }
+}
+
