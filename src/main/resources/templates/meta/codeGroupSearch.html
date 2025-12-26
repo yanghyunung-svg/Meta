@@ -4,57 +4,30 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/mainLayout.css">
-    <script src="/js/mainLayout.js" defer></script>
-    <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
+
 </head>
 <body>
-<div class="container">
-<div id="topbarContainer"></div>
-    <div id="sidebarContainer"></div>
-    <div class="mainContainer" id="mainContainer">
+    <div class="popupContainer" id="popupContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 그룹코드 조회</h2>
 
+            <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
-                <button id="btnSearch" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor"/>
-                        <line x1="16" y1="16" x2="22" y2="22" stroke="currentColor"/>
-                    </svg>
-                    조회
-                </button>
-                <button id="btnReg" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <polyline points="4,12 9,17 20,6" fill="none" stroke="currentColor"/>
-                    </svg>
-                    등록
-                </button>
-                <button id="btnInit" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
-                        <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
-                    </svg>
-                    초기화
-                </button>
+                <button id="btnInit" type="button" class="btn">초기화</button>
+                <button id="btnSearch" type="button" class="btn">조회</button>
+                <button id="btnClose" type="button" class="btn">닫기</button>
             </div>
         </div>
-
         <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th>그룹코드</th>
-                    <td><input type="text" id="grpCd" name="grpCd" class="form-input"></td>
-                    <th>그룹코드명</th>
-                    <td><input type="text" id="grpNm"  name="grpNm" class="form-input"></td>
-                    <th>상태</th>
-                    <td>
-                        <select id="stat"  name="stat" class="form-select">
-                            <option value="">전체</option>
-                        </select>
-                    </td>
+                    <th>공통코드명</th>
+                    <td><input type="text" id="grpNm" class="form-input" placeholder="코드명 입력"></td>
+                    <th>공통코드</th>
+                    <td><input type="text" id="grpCd" class="form-input" placeholder="코드 입력"></td>
                 </tr>
             </table>
         </form>
@@ -62,57 +35,52 @@
 
         <div id="pageInfoContainer" class="page-header"></div>
 
-        <table id="mainTable"  style="margin-top:12px" class="data-table">
+        <table class="data-table" id="mainTable">
             <thead>
             <tr>
-                <th class="col-no">번호</th>
-                <th width="150px">공통코드</th>
-                <th width="250px">공통코드명</th>
+                <th width="100px" style="text-align: center;">번호</th>
+                <th>공통코드명</th>
+                <th>공통코드</th>
                 <th>비고</th>
-                <th width="120px" style="text-align: center;">상태</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
 
     </div><!-- /mainContainer -->
-</div><!-- /container -->
-<!-- <div id="footbarContainer"></div> -->
+
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        loadCodeCombo('STAT', 'stat');
-
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
-        const table = document.getElementById("mainTable");
         window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
 
-        // 페이지 탑바 container에 include
         const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
         fetch('/common/pageSize.html')
-        .then(res => res.text())
-        .then(html => {
-            container.innerHTML = html;
-            const pageSizeSelect = document.getElementById("pageSize");
-            if (!pageSizeSelect) return;
-            pageSizeSelect.addEventListener("change", () => {
-                <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
-                currentPage = 1;
-                renderTable(currentPage);
-                renderPagination(dataAll, currentPage, PAGE_SIZE);
-                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                const pageSizeSelect = document.getElementById("pageSize");
+                if (!pageSizeSelect) return;
+
+                pageSizeSelect.addEventListener("change", () => {
+                    <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
+                    currentPage = 1;
+                    renderTable(currentPage);
+                    renderPagination(dataAll, currentPage, page_size);
+                    updatePageInfo(dataAll, currentPage, page_size);
+                });
             });
-        });
 
         /** 테이블 렌더링 **/
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
             }
 
@@ -121,98 +89,52 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-id="${item.grpCd}" data-grpNm="${item.grpNm}">
-                    <td style="text-align: center;"> ${start + index + 1} </td>
-                    <td style="text-align: left;">  ${item.grpCd} </td>
+                <tr class="row-click" data-grpcd="${item.grpCd}" data-grpnm="${item.grpNm}">
+                    <td style="text-align: center;">  ${start + index + 1}</td>
                     <td style="text-align: left;">${item.grpNm}</td>
+                    <td style="text-align: left;">${item.grpCd}</td>
                     <td style="text-align: left;">${item.rmk}</td>
-                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                 </tr>
             `).join('');
 
-            /** 상세 클릭  **/
+            /** 상세 클릭 이벤트 **/
             document.querySelectorAll(".row-click").forEach(tr => {
                 tr.addEventListener("dblclick", () => {
-                    const grpCd = tr.getAttribute("data-id");
-                    const payload = { mode: "S", grpCd: grpCd };
-                    openWindowWithJSON(payload, "/meta/codeGroupChg", 700, 550);
-                });
-            });
+                    const grpCd = tr.dataset.grpcd;
+                    const grpNm = tr.dataset.grpnm;
 
-            document.querySelectorAll(".row-click").forEach(tr => {
-                tr.addEventListener("click", () => {
-                    const grpCd = tr.getAttribute("data-id");
-                    const grpNm = tr.getAttribute("data-grpNm");
+                    // 부모창으로 값 전달
+                    if (window.opener && !window.opener.closed && typeof window.opener.receiveCode === 'function') {
+                        window.opener.receiveCode(grpCd, grpNm);
+                        const sendData = JSON.parse(sessionStorage.getItem('codeGroupsendData') || "{}");
+                        localStorage.setItem('grpCd', grpCd);
+                    }
 
-                    localStorage.setItem('grpCd', grpCd);
-                    localStorage.setItem('grpNm', grpNm);
-
-                    const width = 800;
-                    const height = 820;
-                    const left = window.screenX + (window.outerWidth - width) / 2;
-                    const top = window.screenY + (window.outerHeight - height) / 2;
-                    const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
-                    const win = window.open("/meta/codeDetlPopup",  "공통코드상세", features);
-                    win.addEventListener('load', () => {
-                        win.postMessage(payload, window.location.origin);
-                    });
-                });
-            });
-
-            window.refreshParentRow = function(data) {
-                const refreshMap = {
-                    grpNm: 'td:nth-child(3)',
-                    rmk: 'td:nth-child(4)',
-                    stat: 'td:nth-child(5)'
-                };
-                window.updateRowDataFlexible(data, 'grpCd', refreshMap);
-            }
-
-            /** 코드상세 클릭 **/
-            tableBody.querySelectorAll(".clickable").forEach(td => {
-                td.addEventListener("click", () => {
-                    const grpCd = td.getAttribute("data-id");
-                    const grpNm = td.getAttribute("data-grpNm");
-
-                    localStorage.setItem('grpCd', grpCd);
-                    localStorage.setItem('grpNm', grpNm);
-
-                    const width = 800;
-                    const height = 820;
-                    const left = window.screenX + (window.outerWidth - width) / 2;
-                    const top = window.screenY + (window.outerHeight - height) / 2;
-                    const features = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
-                    const win = window.open("/meta/codeDetlPopup",  "공통코드상세", features);
-                    win.addEventListener('load', () => {
-                        win.postMessage(payload, window.location.origin);
-                    });
-
+                    // 팝업 닫기
+                    window.close();
                 });
             });
         }
 
 
-        // Enter Key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('btnSearch').click();
-            }
-        });
-
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
-            initScreen();
+            tableBody.innerHTML = "";
+            dataAll = [];
+            document.getElementById('pageInfo').innerText = "";
+            const old = document.querySelector(".pagination");
+            if (old) old.remove();
         });
 
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
-            initScreen();
-            const data = formToJson(document.getElementById('mainForm'));
+            const grpCd = document.querySelector("#grpCd").value.trim();
+            const grpNm = document.querySelector("#grpNm").value.trim();
             fetch('/meta/getCodeGroupListData', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ grpCd: grpCd, grpNm: grpNm, stat: '1' })
             })
             .then(res => res.json())
             .then(data => {
@@ -226,16 +148,11 @@
                 alert("에러 발생: " + err);
             });
         });
+
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
     });
-
-    /** 등록 **/
-    document.getElementById('btnReg').addEventListener('click', () => {
-        const payload = {};
-        openWindowWithJSON(payload, "/meta/codeGroupReg", 800, 600);
-    });
-
-
 </script>
-<script src="/js/commonCombo.js"></script>
 </body>
 </html>

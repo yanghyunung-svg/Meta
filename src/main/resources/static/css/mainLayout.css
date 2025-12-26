@@ -39,7 +39,9 @@
      --bx-#1565c0: #5c9ad3
   }
 
-body, html { font-family: "Malgun Gothic", sans-serif; height: 100%; }
+body, html { font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont,
+                              "Segoe UI", Roboto, "Apple SD Gothic Neo",
+                              "Malgun Gothic", Arial, sans-serif; height: 100%; }
 
 .container { display: flex; width: 900px; height: 940px; font-size: 12px; background-color: white}
 
@@ -48,27 +50,23 @@ body, html { font-family: "Malgun Gothic", sans-serif; height: 100%; }
         position: fixed; top: 5px; left: 5px; width: calc(100% - 10px); height: 40px;
         background-color: var(--main-bg-color); color: var(--main-text-color);
         border: 1px solid var(--main-border-color); border-radius: 4px;
-        font-family: "Malgun Gothic", sans-serif;
         display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 1000;
         }
 .sidebarContainer {
         position: fixed; top:50px; left: 5px; width: 180px; height: 880px;
         background-color: var(--main-bg-color); color: var(--main-text-color);
         border: 1px solid var(--main-border-color); border-radius: 4px;
-        font-family: "Malgun Gothic", sans-serif;
         overflow-y: auto; transition: width 0.25s ease; z-index: 999; font-size: 14px;
         }
 .mainContainer {
         position: absolute; left: 190px; top: 50px; width: calc(100% - 195px); height: 880px;
         background-color: var(--main-bg-color); color: var(--main-text-color);
         border: 1px solid var(--main-border-color); border-radius: 4px;
-        font-family: "Malgun Gothic", sans-serif;
         padding: 10px; overflow-y: auto; background-color: white; transition: margin-left 0.25s ease, width 0.25s ease;
         }
 .footbarContainer {
         position: absolute; top: 1050px; left: 5px; width: calc(100% - 10px); height: 10px;
         background-color: magenta; color: var(--main-text-color);
-        font-family: "Malgun Gothic", sans-serif; font-size: 12px;
         display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 1000;
         }
 
@@ -76,7 +74,6 @@ body, html { font-family: "Malgun Gothic", sans-serif; height: 100%; }
         position: absolute; left: 190px; top: 50px; width: calc(100% - 195px); height: 880px;
         background-color: var(--main-bg-color); color: var(--main-text-color);
         border: 0px solid var(--main-border-color); border-radius: 4px;
-        font-family: "Malgun Gothic", sans-serif;
         display: flex;  gap: 5px;
         }
 
@@ -98,14 +95,16 @@ body, html { font-family: "Malgun Gothic", sans-serif; height: 100%; }
 
 ul { list-style: none; padding: 0; margin: 0;}
 
-.sidebar-title  { padding: 5px 0px 5px 20px; margin: 5px; font-size: 14px; font-weight: bold; border: 0px solid blue; background-color: #white; color: blue;}
-.sidebar-menu   { padding: 0px 5px 0px 30px; margin: 5px; font-size: 12px; font-weight: bold; border: 0px solid white;}
-.sidebar-menu li a { display: block; padding: 8px 0; text-decoration: none; background-color: var(--main-bg-color); color: var(--main-text-color);}
+.sidebar-title  { padding: 10px 0px 1px 20px; margin: 5px; font-size: 14px; font-weight: bold; border: 0px solid blue; background-color: #white; color: blue;}
+.sidebar-menu   { padding: 0px 5px 0px 20px; margin: 5px; font-size: 12px; font-weight: bold; border: 0px solid white;}
+.sidebar-menu li a { display: block; padding: 3px 0; text-decoration: none; background-color: var(--main-bg-color); color: var(--main-text-color);}
 .sidebar-menu li a:hover,
-.sidebar-menu a:active { font-size: 12px; background-color: var(--main-over-color); color: var(--main-over-text-color);}
+.sidebar-menu a:active { font-size: 12px;    border: 1px solid #1565c0;}
+
 .sidebar-menu li a:link,
 .sidebar-menu a:visited { background-color: var(--main-bg-color); color: var(--main-text-color);}
 .timer-warning { color: red !important; font-weight: bold; }
+
 
 /* 테이블 */
 table { width: 100%; border-collapse: collapse; }
@@ -158,6 +157,7 @@ th { background-color: #fff; }
 .popupContainer { position: absolute; left: 0px; top: 0px; width: 100%; padding: 20px; overflow-y: auto; background-color: white; transition: margin-left 0.25s ease, width 0.25s ease; }
 .popup-header { padding: 5px; display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; margin-bottom: 10px; }
 .popup-title { margin: 0; font-size: 20px; }
+
 .popup-table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; margin: 5px auto; }
 .popup-table tr td input { display: block; margin: 0 auto; }
 .popup-table th { padding: 6px 10px; text-align: center; font-weight: bold; font-size: 12px; background-color: #f0f0f0; border: 1px solid #ddd; width: 150px; }
@@ -175,7 +175,7 @@ th { background-color: #fff; }
 .code-table { margin: 12px auto; border-collapse: collapse; width: 400px; }
 
 input[readonly],textarea[readonly],select[readonly]  {
-    background-color: #fff; color: #black; border: 1px solid #ccc;
+    background-color: #f0f0f0; color: black; border: 1px solid #ccc;
 }
 
 .form-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; }
@@ -201,17 +201,16 @@ input[readonly],textarea[readonly],select[readonly]  {
     display: none !important;
 }
 
-
-
 .divider   { height: 3px; background: var(--main-border-color); margin: 3px 10px; flex-wrap: nowrap; }
 .divider-h { height: 1px; background: var(--main-border-color); flex-wrap: nowrap; }
+.divider-t { height: 1px; background: #1565c0; margin: 0px 0px; }
 
-.page-header {
-    display: flex; margin: 0px 0px 5px 10px;
-    align-items: center;        /* 수직 정렬 */
-    justify-content: space-between; /* 좌 / 우 분리 */
+.page-header { display: flex; margin: 0px 0px 5px 10px; align-items: center; justify-content: space-between; }
+
+.msgInfo { width: 100%;  height: 30px; margin: 5px 0px; padding:5px; text-align: center; align-items: center; font-size: 12px;
+    border: 1px solid #ddd; border-radius: 3px;
+    background-color: white; color: blue;
 }
-
 
 /* 버튼 그룹 */
 .button-group { display: flex; flex-wrap: wrap; gap: 3px; justify-content: flex-end; }
@@ -263,13 +262,11 @@ input[readonly],textarea[readonly],select[readonly]  {
     flex-shrink: 0;
 }
 
-
 .btn.primary { background:#2563eb; color:#fff; border-color:#2563eb; }
 .btn.success { background:#16a34a; color:#fff; border-color:#16a34a; }
 .btn.warning { background:#f59e0b; color:#fff; border-color:#f59e0b;}
 
 textarea.form-input {
-    font-family: "Malgun Gothic", sans-serif;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -294,46 +291,4 @@ textarea.form-input {
     height: 880px;
     border: 1px solid var(--main-border-color);
     border-radius: 4px;
-}
-
-
-
-.modal.hidden { display: none; }
-
-.modal {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-}
-
-.modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-}
-
-.modal-box {
-    position: relative;
-    width: 360px;
-    margin: 15% auto;
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 5px 15px rgba(0,0,0,.3);
-}
-
-.modal-header {
-    padding: 12px;
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
-}
-
-.modal-body {
-    padding: 20px;
-    text-align: center;
-}
-
-.modal-footer {
-    padding: 10px;
-    text-align: center;
-    border-top: 1px solid #eee;
 }

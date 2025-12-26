@@ -13,10 +13,11 @@
 <div class="container">
 <div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
+
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 표준도메인 조회</h2>
+            <h2 style="margin:0;"> ✅ 상세코드 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
@@ -47,17 +48,26 @@
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th>도메인명</th>
-                    <td><input type="text" id="dmnNm"  name="dmnNm" class="form-input" ></td>
-                    <th>영문명</th>
-                    <td><input type="text" id="dmnEngNm"  name="dmnEngNm" class="form-input" ></td>
+                    <th>공통코드</th>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="text" id="grpCd" name="grpCd" class="form-input">
+                        <button id="btnPopup">🔍</button>
+                    </td>
+                    <th>공통코드명</th>
+                    <td><input type="text" id="grpNm"  name="grpNm" class="form-input"   ></td>
+
+                    <th>상세코드</th>
+                    <td><input type="text" id="cd"  name="cd" class="form-input" ></td>
+                    <th>상세코드명</th>
+                    <td><input type="text" id="cdNm"  name="cdNm" class="form-input" ></td>
                     <th>상태</th>
                     <td>
-                        <select id="stat"  name="stat" class="form-select">
+                        <select id="stat" name="stat" class="form-select">
                             <option value="">전체</option>
                         </select>
                     </td>
                 </tr>
+
             </table>
         </form>
         <div class="divider-h"></div>
@@ -68,11 +78,13 @@
             <thead>
             <tr>
                 <th class="col-no">번호</th>
-                <th width="150px">도메인명</th>
-                <th width="150px">도메인분류명</th>
-                <th width="150px">도메인영문명</th>
-                <th width="250px">도메인속성</th>
-                <th width="50px" style="text-align: center;">상태</th>
+                <th>공통코드</th>
+                <th>공통코드명</th>
+                <th>상세코드</th>
+                <th>상세코드명</th>
+                <th>비고</th>
+                <th width="120px" style="text-align: center;">정렬순서</th>
+                <th  width="120px"  style="text-align: center;">상태</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -85,6 +97,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         loadCodeCombo('STAT', 'stat');
+
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
@@ -96,67 +109,73 @@
         if (!container) return;
 
         fetch('/common/pageSize.html')
-            .then(res => res.text())
-            .then(html => {
-                container.innerHTML = html;
-                const pageSizeSelect = document.getElementById("pageSize");
-                if (!pageSizeSelect) return;
-
-                pageSizeSelect.addEventListener("change", () => {
-                    <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
-                    currentPage = 1;
-                    renderTable(currentPage);
-                    renderPagination(dataAll, currentPage, PAGE_SIZE);
-                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-                });
+        .then(res => res.text())
+        .then(html => {
+            container.innerHTML = html;
+            const pageSizeSelect = document.getElementById("pageSize");
+            if (!pageSizeSelect) return;
+            pageSizeSelect.addEventListener("change", () => {
+                <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
             });
+        });
 
         /** 테이블 렌더링 **/
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
             }
+
             const start = (page - 1) * PAGE_SIZE;
             const end = start + PAGE_SIZE;
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-id="${item.dmnNm}">
+                <tr class="row-click" data-grp="${item.grpCd}" data-cd="${item.cd}" data-id="${item.grpCd}" + "${item.cd}">
                     <td style="text-align: center;"> ${start + index + 1} </td>
-                    <td style="text-align: left;">${item.dmnNm}</td>
-                    <td style="text-align: left;">${item.dmnClsfNm}</td>
-                    <td style="text-align: left;">${item.dmnEngNm}</td>
-                    <td style="text-align: left;">${item.dmnAtrb}</td>
-                    <td style="text-align: center;">${item.sttsNm}</td>
+                    <td style="text-align: left;">${item.grpCd}</td>
+                    <td style="text-align: left;">${item.grpNm}</td>
+                    <td style="text-align: left;">${item.cd}</td>
+                    <td style="text-align: left;">${item.cdNm}</td>
+                    <td style="text-align: left;">${item.rmk}</td>
+                    <td style="text-align: center;">${item.ord}</td>
+                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                 </tr>
             `).join('');
 
             /** 상세 클릭  **/
             document.querySelectorAll(".row-click").forEach(tr => {
                 tr.addEventListener("dblclick", () => {
-                    const dmnNmIn = tr.getAttribute("data-id");
-                    const sendData = { mode: "S", dmnNm: dmnNmIn };
-                    openWindowWithJSON(sendData, "/meta/dmnMng", 800, 450);
+                    const grpCdS = tr.getAttribute("data-grp");
+                    const cdS = tr.getAttribute("data-cd");
+                    const sendData = { mode: "S", grpCd: grpCdS, cd: cdS };
+                    openWindowWithJSON(sendData, "/meta/codeDetlMng", 800, 650);
                 });
             });
         }
 
         window.refreshParentRow = function(data) {
             const refreshMap = {
-                dmnClsfNm: 'td:nth-child(3)',
-                dmnEngNm: 'td:nth-child(4)',
-                dmnAtrb: 'td:nth-child(5)',
-                sttsCd: 'td:nth-child(6)'
+                grpCd: 'td:nth-child(2)',
             };
-            window.updateRowDataFlexible(data, 'dmnNm', refreshMap);
+            document.getElementById("btnSearch").click();
         }
 
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
             initScreen();
             const data = formToJson(document.getElementById('mainForm'));
-            fetch('/meta/getDmnListData', {
+
+<!--            if (!data.grpCd.trim() && !data.grpNm.trim()) {-->
+<!--                alert("공통코드를 입력하세요.");-->
+<!--                mainForm.grpCd.focus();-->
+<!--                return;-->
+<!--            }-->
+            fetch('/meta/getCodeListData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -175,6 +194,26 @@
         });
     });
 
+    /** 코드검색 팝업 **/
+    document.getElementById('btnPopup').addEventListener('click', () => {
+        const sendData = {};
+        openWindowWithJSON(sendData, "/meta/codeGroupSearch", 800, 900);
+    });
+
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'grpCd' && e.newValue) {
+            const grpCdInput = document.getElementById('grpCd');
+            const btnSearch = document.getElementById('btnSearch');
+
+            if (grpCdInput && btnSearch) {
+                grpCdInput.value = e.newValue;
+                btnSearch.click();
+            }
+
+            localStorage.removeItem('grpCd');
+        }
+    });
+
     // Enter Key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -190,8 +229,8 @@
 
     /** 등록 **/
     document.getElementById('btnReg').addEventListener('click', () => {
-        const sendData = { mode: "I"};
-        openWindowWithJSON(sendData, "/meta/dmnMng", 800, 450);
+        const sendData = {};
+        openWindowWithJSON(sendData, "/meta/codeDetlMng", 800, 650);
     });
 
 </script>

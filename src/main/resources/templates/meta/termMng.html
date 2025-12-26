@@ -10,7 +10,7 @@
 
 <div class="popupContainer" id="popupContainer">
     <div class="popup-header">
-        <h2 class="popup-title"> ✅ 표준도메인</h2>
+        <h2 class="popup-title"> ✅ 표준용어</h2>
         <div class="button-group">
             <button id="btnReg" type="button" class="btn">
                 <svg viewBox="0 0 24 24" width="15" height="15">
@@ -41,66 +41,70 @@
             </button>
         </div>
     </div>
-<!--    <div class="divider-t"></div>-->
-            <form id="mainForm">
-                <table class="popup-table">
-                <tr>
-                    <th>도메인명 <span style="color:red">*</span></th>
-                    <td style="display:flex; align-items:center; gap:4px;">
-                        <input type="text" id="dmnNm" name="dmnNm" class="form-input" required>
-                        <button id="btnCheck" type="button" class="btn">중복검증</button>
-                    </td>
-                </tr>
-                </table>
-                <!-- <div class="divider-h"></div>-->
-                <table class="popup-table">
-                <tr>
-                    <th>도메인분류명 <span style="color:red">*</span></th>
-                    <td> <input type="text" id="dmnClsfNm" name="dmnClsfNm" class="form-input"  required> </td>
-                </tr>
-                <tr>
-                    <th>영문명</th>
-                    <td><input type="text" id="dmnEngNm" name="dmnEngNm" class="form-input"  > </td>
-                </tr>
-                <tr>
-                    <th>속성</th>
-                    <td><input type="text" id="dmnAtrb" name="dmnAtrb" class="form-input"  > </td>
-                </tr>
-                <tr>
-                    <th>상태</th>
-                    <td>
-                        <select id="sttsCd"  name="sttsCd" class="form-input">
-                            <option value="">선택</option>
-                            <option value="0">신청</option>
-                            <option value="1">사용</option>
-                            <option value="9">미사용</option>
-                        </select>
-                    </td>
-                </tr>
-                </table>
-                <!-- <div class="divider-h"></div>-->
-
-                <table class="popup-table">
-                <tr>
-                    <th>최초등록</th>
-                    <td style="display:flex; gap:5px;">
-                        <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
-                        <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
-                </tr>
-                <tr>
-                    <th>최종변경</th>
-                    <td style="display:flex; gap:5px;">
-                        <input type="text" id="updId" name="updId" class="form-input" readonly>
-                        <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
-                </tr>
-                </table>
-                <!-- <div class="divider-h"></div>-->
-
-                <div class="msgInfo"> <span id="msgInfo"></span>   </div>
-            </form>
+    
+    <form id="mainForm">
+        <table class="popup-table">
+            <tr>
+                <th>용어명 <span style="color:red">*</span></th>
+                <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" id="trmNm" name="trmNm" class="form-input" required>
+                    <button id="btnCheck" type="button" class="btn">중복검증</button></td>
+            </tr>
+        </table>
+        <table class="popup-table">
+            <tr>
+                <th>영문명 <span style="color:red">*</span></th>
+                <td > <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
+            </tr>
+            <tr>
+                <th>도메인명</th>
+                <td>
+                    <select id="dmnNm" name="dmnNm" class="form-input">
+                        <option value="" selected>선택</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>설명</th>
+                <td > <textarea id="trmExpln" name="trmExpln" class="form-input" rows="20" ></textarea> </td>
+            </tr>
+            <tr>
+                <th>상태</th>
+                <td>
+                    <select id="stat" name="stat" class="form-input">
+                        <option value="0" selected>등록</option>
+                        <option value="1">사용</option>
+                        <option value="9">미사용</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <table class="popup-table">
+            <tr>
+                <th>최초등록</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
+                    <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+            </tr>
+            <tr>
+                <th>최종변경</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="updId" name="updId" class="form-input" readonly>
+                    <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
+            </tr>
+        </table>
+        <div class="msgInfo"> <span id="msgInfo"></span>   </div>
+        </form>
     </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        if (!document.forms.mainForm) return;
+
+        const dmnNm = document.forms.mainForm.dmnNm;
+        if (!dmnNm || !dmnNm.value) {
+            loadDomainCombo();
+        }
+
         const mainForm = document.getElementById("mainForm");
         const btnReg = document.getElementById("btnReg");
         const btnChange = document.getElementById("btnChange");
@@ -119,22 +123,22 @@
         window.addEventListener("message", (event) => {
             if (event.origin !== window.location.origin) return;
             mode = event.data.mode;
-            const dmnNmIn  = event.data.dmnNm;
+            const trmNmIn  = event.data.trmNm;
 
-            if (mode === "S" && dmnNmIn ) {
+            if (mode === "S" && trmNmIn ) {
                 btnInit.disabled = true;
                 (async () => {
                     try {
-                        const res = await fetch('/meta/getDmnData', {
+                        const res = await fetch('/meta/getTermData', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ dmnNm: dmnNmIn  })
+                            body: JSON.stringify({ trmNm: trmNmIn  })
                         });
 
                         const data = await res.json();
 
                         fillForm(mainForm, data);
-                        document.getElementById("dmnNm").readOnly = true;
+                        document.getElementById("trmNm").readOnly = true;
                         btnInit.disabled = true;
                         originalData = data;
 
@@ -164,7 +168,7 @@
             el.addEventListener("change", checkChanged);
         });
 
-        document.getElementById("dmnNm").addEventListener("input", () => {
+        document.getElementById("trmNm").addEventListener("input", () => {
             btnReg.disabled = true;
             btnChange.disabled = true;
             btnCheck.disabled = false;
@@ -175,17 +179,17 @@
             let data = formToJson(mainForm);
             data = addUserAuditFields(data);
 
-            const ok = validateRequired([
-                { value: data.dmnNm.trim(), message: ' 필수 입력 항목 (도메인명) ', element: mainForm.dmnNm },
-                { value: data.dmnClsfNm.trim(),  message: '필수 입력 항목 (도메인분류명)', element: mainForm.dmnClsfNm },
-                { value: data.dmnEngNm.trim(),  message: '필수 입력 항목 (도메인영문명)', element: mainForm.dmnEngNm },
-                { value: data.sttsCd.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.sttsCd }
+             const ok = validateRequired([
+                { value: data.engNm.trim(),  message: '영문명은 필수 입력 항목입니다.', element: mainForm.engNm },
+                { value: data.trmExpln,  message: '설명은 필수 입력 항목입니다.', element: mainForm.trmExpln },
+                { value: data.dmnNm,  message: '도메인명은 필수 입력 항목입니다.', element: mainForm.dmnNm },
+                { value: data.stat.trim(),  message: '상태코드는 필수 입력 항목입니다.', element: mainForm.stat }
             ]);
 
             if (!ok) return;
 
             try {
-                const res = await fetch("/meta/updateDmnData", {
+                const res = await fetch("/meta/updateTermData", {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
@@ -212,13 +216,13 @@
        btnCheck.addEventListener('click', async () => {
             let inData = formToJson(mainForm);
 
-            if (!inData.dmnNm.trim()) {
-                msgEvents("도메인명을 입력하세요.");
-                mainForm.dmnNm.focus();
+            if (!inData.trmNm.trim()) {
+                msgEvents("용어명을 입력하세요.");
+                mainForm.trmNm.focus();
                 return;
             }
 
-            const res = await fetch('/meta/getDmnData', {
+            const res = await fetch('/meta/getTermSplitData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(inData)
@@ -230,15 +234,21 @@
             const textData = await res.text();
             if (!textData) {
                 mainForm.reset();
-                mainForm.dmnNm.value = inData.dmnNm;
-                mainForm.dmnClsfNm.focus();
+                mainForm.trmNm.value = inData.trmNm;
+                mainForm.engNm.focus();
                 btnReg.disabled = false;
                 msgEvents( "등록 가능합니다");
             } else {
                 const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
-                btnReg.disabled = true;
-                msgEvents( "이미 등록되어 있습니다");
+                if (mainForm.stat.value === '0') {
+                    msgEvents( "등록 가능합니다");
+                    mainForm.engNm.focus();
+                    btnSave.disabled = false;
+                } else {
+                    msgEvents("등록된 용어가 있습니다.."  );
+                    btnSave.disabled = true;
+                }
             }
         });
 
@@ -248,16 +258,23 @@
             data = addUserAuditFields(data);
 
             const ok = validateRequired([
-                { value: data.dmnNm.trim(), message: ' 필수 입력 항목 (도메인명) ', element: mainForm.dmnNm },
-                { value: data.dmnClsfNm.trim(),  message: '필수 입력 항목 (도메인분류명)', element: mainForm.dmnClsfNm },
-                { value: data.dmnEngNm.trim(),  message: '필수 입력 항목 (도메인영문명)', element: mainForm.dmnEngNm },
-                { value: data.sttsCd.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.sttsCd }
+                { value: data.trmNm.trim(), message: '용어명은 필수 입력 항목입니다.', element: mainForm.trmNm },
+                { value: data.engNm.trim(),  message: '영문명은 필수 입력 항목입니다.', element: mainForm.engNm },
+                { value: data.trmExpln,  message: '설명은 필수 입력 항목입니다.', element: mainForm.trmExpln },
+                { value: data.dmnNm,  message: '도메인명은 필수 입력 항목입니다.', element: mainForm.dmnNm },
+                { value: data.stat.trim(),  message: '상태코드는 필수 입력 항목입니다.', element: mainForm.stat }
             ]);
 
             if (!ok) return;
 
+            if (window.KOR.test(data.engNm)) {
+                alert("영문명에는 한글을 입력할 수 없습니다.");
+                mainForm.engNm.focus();
+                return;
+            }
+
             try {
-                let url = "/meta/insertDmnData";
+                let url = "/meta/insertTermData";
                 const res = await fetch(url, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -285,11 +302,11 @@
             btnChange.disabled = true;
             btnCheck.disabled = true;
             msgEvents("");
-            document.getElementById("dmnNm").focus();
+            document.getElementById("trmNm").focus();
         });
 
         // Enter Key
-        document.getElementById("dmnNm").addEventListener("keydown", e => {
+        document.getElementById("trmNm").addEventListener("keydown", e => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 btnCheck.click();
@@ -301,6 +318,40 @@
 
     });
 
+
+    function loadDomainCombo() {
+        fetch('/meta/getDmnComboData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            populateDomainCombo(data);
+        })
+        .catch(error => {
+            console.error("도메인 데이터 로드 실패:", error);
+        });
+    }
+
+    function populateDomainCombo(dataArray) {
+        const selectElement = document.getElementById('dmnNm');
+        while (selectElement.options.length > 1) {
+            selectElement.remove(1);
+        }
+        dataArray.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.dmnNm;
+            option.text = item.dmnClsfNm + ' (' + item.dmnNm + ')';
+            selectElement.appendChild(option);
+        });
+    }
 </script>
 </body>
 </html>

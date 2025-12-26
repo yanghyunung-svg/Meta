@@ -22,7 +22,7 @@ function loadHeader() {
 }
 
 function bindHeaderEvents() {
-    const dashboard = document.querySelector('.topbar-left .dashboard');
+    const termSearch = document.querySelector('.topbar-left .termSearch');
     const logoutBtn = document.querySelector('.topbar-right .logout');
     const userNm = localStorage.getItem('userNm');
     const userId = localStorage.getItem('userId');
@@ -33,9 +33,9 @@ function bindHeaderEvents() {
         headerUserNm.innerText = `${userNm} (${userId})`;
     }
 
-    if (dashboard) {
-        dashboard.addEventListener('click', () => {
-            location.href = '/meta/termEdit';
+    if (termSearch) {
+        termSearch.addEventListener('click', () => {
+            location.href = '/meta/termSearch';
         });
     }
 
@@ -97,7 +97,7 @@ function initScreen() {
 }
 let popupWin = null;
 
-function openWindowWithJSON(payload, url, width, height) {
+function openWindowWithJSON(sendData, url, width, height) {
     const left = window.screenX + (window.outerWidth - width) / 2;
     const top = window.screenY + (window.outerHeight - height) / 2;
     const features = [
@@ -112,7 +112,7 @@ function openWindowWithJSON(payload, url, width, height) {
     // 팝업이 이미 열려 있으면 재사용
     if (popupWin && !popupWin.closed) {
         popupWin.focus();
-        popupWin.postMessage(payload, window.location.origin);
+        popupWin.postMessage(sendData, window.location.origin);
         return;
     }
 
@@ -124,18 +124,18 @@ function openWindowWithJSON(payload, url, width, height) {
     }
 
     // load 이벤트 보장
-    const sendPayload = () => {
+    const sendsendData = () => {
         try {
-            popupWin.postMessage(payload, window.location.origin);
+            popupWin.postMessage(sendData, window.location.origin);
         } catch (e) {
             console.error('postMessage failed:', e);
         }
     };
 
-    popupWin.addEventListener('load', sendPayload, { once: true });
+    popupWin.addEventListener('load', sendsendData, { once: true });
 
     // 일부 브라우저 대응 (load 미발생 대비)
-    setTimeout(sendPayload, 500);
+    setTimeout(sendsendData, 500);
 }
 
 function receiveCode(grpCd, grpNm) {
@@ -148,81 +148,4 @@ function receiveUser(id, nm) {
     document.getElementById("userNm").value = nm;
 }
 
-
-function updatePageInfo(dataAll, currentPage, page_size) {
-    const totalCount = dataAll.length;
-    const totalPage = Math.ceil(totalCount / page_size);
-    document.getElementById("pageInfo").innerText = `전체 ${totalCount} 건 | ${currentPage} / ${totalPage} 페이지`;
-}
-
-function renderPagination(dataAll, currentPage, page_size) {
-    const totalPage = Math.ceil(dataAll.length / page_size);
-    if (totalPage === 0) return;
-
-    const blockIndex = Math.floor((currentPage - 1) / 10);
-    let start = blockIndex * 10 + 1;
-    let end = start + 9;
-    end = Math.min(end, totalPage);
-
-    const container = document.createElement("div");
-    container.className = "pagination";
-    container.style.cssText = "margin-top:15px;text-align:center;";
-
-    container.appendChild(makeNavBtn("first", "«", currentPage === 1));
-    container.appendChild(makeNavBtn("prev", "‹", currentPage === 1));
-
-    for (let i = start; i <= end; i++) {
-        const btn = document.createElement("button");
-        btn.className = "page-btn";
-        btn.dataset.page = i;
-        btn.textContent = i;
-
-        if (i === currentPage) {
-            btn.style.background = "#1f2937";
-            btn.style.color = "white";
-        }
-
-        btn.addEventListener("click", () => {
-            currentPage = i;
-            renderTable(currentPage);
-            renderPagination(dataAll, currentPage, page_size);
-            updatePageInfo(dataAll, currentPage, page_size);
-        });
-
-        container.appendChild(btn);
-    }
-
-    container.appendChild(makeNavBtn("next", "›", currentPage === totalPage));
-    container.appendChild(makeNavBtn("last", "»", currentPage === totalPage));
-
-    const oldNav = document.querySelector(".pagination");
-    if (oldNav) oldNav.replaceWith(container);
-    else tableBody.parentElement.insertAdjacentElement("afterend", container);
-
-    function makeNavBtn(type, label, disabled) {
-        const btn = document.createElement("button");
-        btn.className = "page-btn-nav";
-        btn.dataset.page = type;
-        btn.textContent = label;
-        btn.style.margin = "0 4px";
-
-        if (disabled) {
-            btn.disabled = true;
-            btn.style.opacity = "0.4";
-        }
-
-        btn.addEventListener("click", () => {
-            if (type === "first") currentPage = 1;
-            else if (type === "prev") currentPage = Math.max(1, currentPage - 1);
-            else if (type === "next") currentPage = Math.min(totalPage, currentPage + 1);
-            else if (type === "last") currentPage = totalPage;
-
-            renderTable(currentPage);
-            renderPagination(dataAll, currentPage, page_size);
-            updatePageInfo(dataAll, currentPage, page_size);
-        });
-
-        return btn;
-    }
-}
 

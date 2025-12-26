@@ -16,7 +16,7 @@
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 표준도메인 조회</h2>
+            <h2 style="margin:0;"> ✅ 사용자 정보 조회</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
@@ -42,15 +42,14 @@
                 </button>
             </div>
         </div>
-
         <div class="divider-h"></div>
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th>도메인명</th>
-                    <td><input type="text" id="dmnNm"  name="dmnNm" class="form-input" ></td>
-                    <th>영문명</th>
-                    <td><input type="text" id="dmnEngNm"  name="dmnEngNm" class="form-input" ></td>
+                    <th>사용자ID</th>
+                    <td><input type="text" id="userId"  name="userId" class="form-input"></td>
+                    <th>사용자이름</th>
+                    <td><input type="text" id="userNm"  name="userNm" class="form-input"></td>
                     <th>상태</th>
                     <td>
                         <select id="stat"  name="stat" class="form-select">
@@ -68,11 +67,12 @@
             <thead>
             <tr>
                 <th class="col-no">번호</th>
-                <th width="150px">도메인명</th>
-                <th width="150px">도메인분류명</th>
-                <th width="150px">도메인영문명</th>
-                <th width="250px">도메인속성</th>
-                <th width="50px" style="text-align: center;">상태</th>
+                <th class="align-left">사용자ID</th>
+                <th class="align-left">사용자이름</th>
+                <th class="align-left">이메일</th>
+                <th class="align-left">전화번호</th>
+                <th class="align-center">권한</th>
+                <th class="align-center">상태코드</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -80,11 +80,12 @@
 
     </div><!-- /mainContainer -->
 </div><!-- /container -->
-
 <!-- <div id="footbarContainer"></div> -->
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         loadCodeCombo('STAT', 'stat');
+
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
@@ -96,39 +97,40 @@
         if (!container) return;
 
         fetch('/common/pageSize.html')
-            .then(res => res.text())
-            .then(html => {
-                container.innerHTML = html;
-                const pageSizeSelect = document.getElementById("pageSize");
-                if (!pageSizeSelect) return;
-
-                pageSizeSelect.addEventListener("change", () => {
-                    <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
-                    currentPage = 1;
-                    renderTable(currentPage);
-                    renderPagination(dataAll, currentPage, PAGE_SIZE);
-                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-                });
+        .then(res => res.text())
+        .then(html => {
+            container.innerHTML = html;
+            const pageSizeSelect = document.getElementById("pageSize");
+            if (!pageSizeSelect) return;
+            pageSizeSelect.addEventListener("change", () => {
+                <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
             });
+        });
 
         /** 테이블 렌더링 **/
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
             }
+
             const start = (page - 1) * PAGE_SIZE;
             const end = start + PAGE_SIZE;
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-id="${item.dmnNm}">
-                    <td style="text-align: center;"> ${start + index + 1} </td>
-                    <td style="text-align: left;">${item.dmnNm}</td>
-                    <td style="text-align: left;">${item.dmnClsfNm}</td>
-                    <td style="text-align: left;">${item.dmnEngNm}</td>
-                    <td style="text-align: left;">${item.dmnAtrb}</td>
-                    <td style="text-align: center;">${item.sttsNm}</td>
+                <tr class="row-click" data-id="${item.userId}">
+                    <td class="col-no"> ${start + index + 1} </td>
+                    <td class="align-left">${item.userId}</td>
+                    <td class="align-left"">${item.userNm}</td>
+                    <td class="align-left">${item.email}</td>
+                    <td class="align-left">${item.phone}</td>
+                    <td class="align-center">${item.role === '2' ? 'USER' : item.role === '1' ? 'ADMIN' : '-'} </td>
+                    <td class="align-center">${item.stat === '0' ? '등록'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
                 </tr>
             `).join('');
 
@@ -136,16 +138,49 @@
             document.querySelectorAll(".row-click").forEach(tr => {
                 tr.addEventListener("dblclick", () => {
                     const id = tr.getAttribute("data-id");
-                    const payload = { mode: "S", dmnNm: id };
-                    openWindowWithJSON(payload, "/meta/dmnChg", 800, 450);
+                    const sendData = { mode: "S", userId: id };
+                    openWindowWithJSON(sendData, "/meta/userChg", 800, 700);
                 });
             });
         }
+
+        window.refreshParentRow = function(data) {
+            const refreshMap = {
+                userNm: 'td:nth-child(3)',
+                email: 'td:nth-child(4)',
+                phone: 'td:nth-child(5)',
+                role: 'td:nth-child(6)',
+                stat: 'td:nth-child(7)'
+            };
+            window.updateRowDataFlexible(data, 'userId', refreshMap);
+        }
+
+
+        // Enter Key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btnSearch').click();
+            }
+        });
+
+        /** 초기화 **/
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+            initScreen();
+        });
+
+
+        /** 등록 **/
+        document.getElementById('btnReg').addEventListener('click', () => {
+            const sendData = {};
+            openWindowWithJSON(sendData, "/meta/userReg", 800, 600);
+        });
+
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
             initScreen();
             const data = formToJson(document.getElementById('mainForm'));
-            fetch('/meta/getDmnListData', {
+            fetch('/meta/getUserListData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -162,25 +197,6 @@
                 alert("에러 발생: " + err);
             });
         });
-    });
-
-    // Enter Key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            document.getElementById('btnSearch').click();
-        }
-    });
-
-    /** 초기화 **/
-    document.getElementById('btnInit').addEventListener('click', () => {
-        document.getElementById('mainForm').reset();
-        initScreen();
-    });
-
-    /** 등록 **/
-    document.getElementById('btnReg').addEventListener('click', () => {
-        const payload = {};
-        openWindowWithJSON(payload, "/meta/dmnReg", 800, 500);
     });
 
 </script>

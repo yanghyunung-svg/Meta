@@ -118,11 +118,10 @@
                 tr.addEventListener("dblclick", () => {
                     const grpCdS = tr.getAttribute("data-grp");
                     const cdS = tr.getAttribute("data-cd");
-                    const payload = { mode: "S", grpCd: grpCdS, cd: cdS };
-                    openWindowWithJSON(payload, "/meta/codeDetlChg", 700, 650);
+                    const sendData = { mode: "S", grpCd: grpCdS, cd: cdS };
+                    openWindowWithJSON(sendData, "/meta/codeDetlMng", 800, 550);
                 });
             });
-
 
         }
 
@@ -181,8 +180,8 @@
 
     /** 등록 **/
     document.getElementById('btnReg').addEventListener('click', () => {
-        const payload = {};
-        openWindowWithJSON(payload, "/meta/codeDetlReg", 800, 650);
+        const sendData = {};
+        openWindowWithJSON(sendData, "/meta/codeDetlMng", 800, 550);
     });
 
     /** 초기화 **/

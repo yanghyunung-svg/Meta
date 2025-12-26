@@ -10,7 +10,7 @@
 
 <div class="popupContainer" id="popupContainer">
     <div class="popup-header">
-        <h2 class="popup-title"> ✅ 표준도메인</h2>
+        <h2 class="popup-title"> ✅ 상세코드</h2>
         <div class="button-group">
             <button id="btnReg" type="button" class="btn">
                 <svg viewBox="0 0 24 24" width="15" height="15">
@@ -45,31 +45,43 @@
             <form id="mainForm">
                 <table class="popup-table">
                 <tr>
-                    <th>도메인명 <span style="color:red">*</span></th>
+                    <th>그룹코드 <span style="color:red">*</span></th>
                     <td style="display:flex; align-items:center; gap:4px;">
-                        <input type="text" id="dmnNm" name="dmnNm" class="form-input" required>
-                        <button id="btnCheck" type="button" class="btn">중복검증</button>
+                        <input type="text" id="grpCd" name="grpCd" class="form-input" required>
+                        <button id="btnGroupCheck" type="button" class="btn">그룹코드</button>
+                    </td>
+                </tr>
+                 <tr>
+                    <th>그룹코드명 <span style="color:red">*</span></th>
+                    <td colspan="2"><input type="text" id="grpNm"  name="grpNm" class="form-input" readonly></td>
+                </tr>
+                </table>
+                <table class="popup-table">
+                <tr>
+                    <th>상세코드 <span style="color:red">*</span></th>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="text" id="cd" name="cd" class="form-input"  required>
+                        <button id="btnCodeCheck" type="button" class="btn">중복검증</button>
                     </td>
                 </tr>
                 </table>
-                <!-- <div class="divider-h"></div>-->
                 <table class="popup-table">
                 <tr>
-                    <th>도메인분류명 <span style="color:red">*</span></th>
-                    <td> <input type="text" id="dmnClsfNm" name="dmnClsfNm" class="form-input"  required> </td>
+                    <th>상세코드명 <span style="color:red">*</span></th>
+                    <td> <input type="text" id="cdNm" name="cdNm" class="form-input"  required> </td>
                 </tr>
                 <tr>
-                    <th>영문명</th>
-                    <td><input type="text" id="dmnEngNm" name="dmnEngNm" class="form-input"  > </td>
+                    <th>정렬순서</th>
+                    <td><input type="text" id="ord" name="ord" class="form-input"  > </td>
                 </tr>
                 <tr>
-                    <th>속성</th>
-                    <td><input type="text" id="dmnAtrb" name="dmnAtrb" class="form-input"  > </td>
+                    <th>비고</th>
+                    <td><input type="text" id="rmk" name="rmk" class="form-input"  > </td>
                 </tr>
                 <tr>
                     <th>상태</th>
                     <td>
-                        <select id="sttsCd"  name="sttsCd" class="form-input">
+                        <select id="stat"  name="stat" class="form-input">
                             <option value="">선택</option>
                             <option value="0">신청</option>
                             <option value="1">사용</option>
@@ -106,11 +118,12 @@
         const btnChange = document.getElementById("btnChange");
         const btnInit = document.getElementById("btnInit");
         const btnClose = document.getElementById("btnClose");
-        const btnCheck = document.getElementById("btnCheck");
+        const btnGroupCheck = document.getElementById("btnGroupCheck");
+        const btnCodeCheck = document.getElementById("btnCodeCheck");
 
         btnReg.disabled = true;
         btnChange.disabled = true;
-        btnCheck.disabled = true;
+        btnCodeCheck.disabled = true;
 
         let mode = "";
         let originalData = {};
@@ -119,22 +132,25 @@
         window.addEventListener("message", (event) => {
             if (event.origin !== window.location.origin) return;
             mode = event.data.mode;
-            const dmnNmIn  = event.data.dmnNm;
+            const sendGrpCd = event.data.grpCd;
+            const sendCd = event.data.cd;
 
-            if (mode === "S" && dmnNmIn ) {
+            if (mode === "S" && sendGrpCd ) {
+                btnGroupCheck.disabled = true;
                 btnInit.disabled = true;
                 (async () => {
                     try {
-                        const res = await fetch('/meta/getDmnData', {
+                        const res = await fetch('/meta/getCodeData', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ dmnNm: dmnNmIn  })
+                            body: JSON.stringify({ grpCd: sendGrpCd, cd: sendCd })
                         });
 
                         const data = await res.json();
 
                         fillForm(mainForm, data);
-                        document.getElementById("dmnNm").readOnly = true;
+                        document.getElementById("grpCd").readOnly = true;
+                        document.getElementById("cd").readOnly = true;
                         btnInit.disabled = true;
                         originalData = data;
 
@@ -142,8 +158,9 @@
                         msgEvents("상세 데이터 조회 중 오류가 발생했습니다.");
                     }
                 })();
-
                 btnChange.disabled = true;
+            } else {
+                btnGroupCheck.disabled = false;
             }
         });
 
@@ -158,16 +175,25 @@
             }
         };
 
+        document.getElementById("grpCd").addEventListener("input", () => {
+            btnReg.disabled = true;
+            btnChange.disabled = true;
+            btnGroupCheck.disabled = false;
+            return;
+        });
+
+        document.getElementById("cd").addEventListener("input", () => {
+            btnReg.disabled = true;
+            btnChange.disabled = true;
+            btnGroupCheck.disabled = true;
+            btnCodeCheck.disabled = false;
+            return;
+        });
+
         // 입력값 변경 감지 (입력/선택 모두 반응)
         mainForm.querySelectorAll("input, textarea, select").forEach(el => {
             el.addEventListener("input", checkChanged);
             el.addEventListener("change", checkChanged);
-        });
-
-        document.getElementById("dmnNm").addEventListener("input", () => {
-            btnReg.disabled = true;
-            btnChange.disabled = true;
-            btnCheck.disabled = false;
         });
 
         // 변경 버튼
@@ -176,16 +202,16 @@
             data = addUserAuditFields(data);
 
             const ok = validateRequired([
-                { value: data.dmnNm.trim(), message: ' 필수 입력 항목 (도메인명) ', element: mainForm.dmnNm },
-                { value: data.dmnClsfNm.trim(),  message: '필수 입력 항목 (도메인분류명)', element: mainForm.dmnClsfNm },
-                { value: data.dmnEngNm.trim(),  message: '필수 입력 항목 (도메인영문명)', element: mainForm.dmnEngNm },
-                { value: data.sttsCd.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.sttsCd }
+                { value: data.grpCd.trim(), message: ' 필수 입력 항목 (그룹코드) ', element: mainForm.grpCd },
+                { value: data.cd.trim(),  message: '필수 입력 항목 (상세코드)', element: mainForm.cd },
+                { value: data.cdNm.trim(),  message: '필수 입력 항목 (상세코드명)', element: mainForm.cdNm },
+                { value: data.stat.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.stat }
             ]);
 
             if (!ok) return;
 
             try {
-                const res = await fetch("/meta/updateDmnData", {
+                const res = await fetch("/meta/updateCodeData", {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
@@ -208,30 +234,70 @@
             }
         });
 
-        // 중복검증
-       btnCheck.addEventListener('click', async () => {
+        // 그룹코드 조회
+        btnGroupCheck.addEventListener('click', async () => {
             let inData = formToJson(mainForm);
 
-            if (!inData.dmnNm.trim()) {
-                msgEvents("도메인명을 입력하세요.");
-                mainForm.dmnNm.focus();
+            if (!inData.grpCd.trim()) {
+                msgEvents("그룹코드를 입력하세요.");
+                mainForm.grpCd.focus();
+                return;
+            }
+            const res = await fetch('/meta/getCodeGroupData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(inData)
+            });
+            const textData = await res.text();
+            if (!textData) {
+                msgEvents("조회된 그룹 정보가 없습니다.");
+                mainForm.reset();
+                document.getElementById("grpCd").value = inData.grpCd;
+                btnGroupCheck.disabled = true;
+                btnCodeCheck.disabled = true;
+            } else {
+                const result = JSON.parse(textData);
+                document.getElementById("grpCd").value = result.grpCd;
+                document.getElementById("grpNm").value = result.grpNm;
+                mainForm.cd.focus();
+                btnReg.disabled = true;
+                btnGroupCheck.disabled = true;
+                btnCodeCheck.disabled = true;
+            }
+        });
+
+        // 중복검증
+       btnCodeCheck.addEventListener('click', async () => {
+            let inData = formToJson(mainForm);
+
+            if (!inData.grpCd.trim()) {
+                msgEvents("그룹코드를 입력하세요.");
+                mainForm.grpCd.focus();
                 return;
             }
 
-            const res = await fetch('/meta/getDmnData', {
+            if (!inData.cd.trim()) {
+                msgEvents("상세코드를 입력하세요.");
+                mainForm.cd.focus();
+                return;
+            }
+
+            const res = await fetch('/meta/getCodeData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(inData)
             });
 
-            btnCheck.disabled = true;
+            btnCodeCheck.disabled = true;
             btnChange.disabled = true;
 
             const textData = await res.text();
             if (!textData) {
                 mainForm.reset();
-                mainForm.dmnNm.value = inData.dmnNm;
-                mainForm.dmnClsfNm.focus();
+                mainForm.grpCd.value = inData.grpCd;
+                mainForm.grpNm.value = inData.grpNm;
+                mainForm.cd.value = inData.cd;
+                mainForm.cdNm.focus();
                 btnReg.disabled = false;
                 msgEvents( "등록 가능합니다");
             } else {
@@ -248,16 +314,16 @@
             data = addUserAuditFields(data);
 
             const ok = validateRequired([
-                { value: data.dmnNm.trim(), message: ' 필수 입력 항목 (도메인명) ', element: mainForm.dmnNm },
-                { value: data.dmnClsfNm.trim(),  message: '필수 입력 항목 (도메인분류명)', element: mainForm.dmnClsfNm },
-                { value: data.dmnEngNm.trim(),  message: '필수 입력 항목 (도메인영문명)', element: mainForm.dmnEngNm },
-                { value: data.sttsCd.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.sttsCd }
+                { value: data.grpCd.trim(), message: ' 필수 입력 항목 (그룹코드) ', element: mainForm.grpCd },
+                { value: data.cd.trim(),  message: '필수 입력 항목 (상세코드)', element: mainForm.cd },
+                { value: data.cdNm.trim(),  message: '필수 입력 항목 (상세코드명)', element: mainForm.cdNm },
+                { value: data.stat.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.stat }
             ]);
 
             if (!ok) return;
 
             try {
-                let url = "/meta/insertDmnData";
+                let url = "/meta/insertCodeData";
                 const res = await fetch(url, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -278,21 +344,23 @@
         });
 
 
+
         // 초기화
         btnInit.addEventListener('click', () => {
             mainForm.reset();
             btnReg.disabled = true;
             btnChange.disabled = true;
-            btnCheck.disabled = true;
+            btnGroupCheck.disabled = false;
+            btnCodeCheck.disabled = true;
             msgEvents("");
-            document.getElementById("dmnNm").focus();
+            document.getElementById("grpCd").focus();
         });
 
         // Enter Key
-        document.getElementById("dmnNm").addEventListener("keydown", e => {
+        document.getElementById("grpCd").addEventListener("keydown", e => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                btnCheck.click();
+                btnCodeCheck.click();
             }
         });
 
