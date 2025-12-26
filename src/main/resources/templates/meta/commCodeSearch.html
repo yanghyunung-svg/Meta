@@ -17,7 +17,7 @@
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 상세코드 조회</h2>
+            <h2 style="margin:0;"> ✅ 공통코드 통합검색 </h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
@@ -27,12 +27,6 @@
                         <line x1="16" y1="16" x2="22" y2="22" stroke="currentColor"/>
                     </svg>
                     조회
-                </button>
-                <button id="btnReg" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <polyline points="4,12 9,17 20,6" fill="none" stroke="currentColor"/>
-                    </svg>
-                    등록
                 </button>
                 <button id="btnInit" type="button" class="btn">
                     <svg viewBox="0 0 24 24" width="15" height="15">
@@ -49,25 +43,14 @@
             <table class="search-table">
                 <tr>
                     <th>공통코드</th>
-                    <td style="display:flex; align-items:center; gap:4px;">
-                        <input type="text" id="grpCd" name="grpCd" class="form-input">
-                        <button id="btnPopup">🔍</button>
-                    </td>
+                    <td><input type="text" id="grpCd"  name="grpCd" class="form-input"   ></td>
                     <th>공통코드명</th>
                     <td><input type="text" id="grpNm"  name="grpNm" class="form-input"   ></td>
-
                     <th>상세코드</th>
                     <td><input type="text" id="cd"  name="cd" class="form-input" ></td>
                     <th>상세코드명</th>
                     <td><input type="text" id="cdNm"  name="cdNm" class="form-input" ></td>
-                    <th>상태</th>
-                    <td>
-                        <select id="stat" name="stat" class="form-select">
-                            <option value="">전체</option>
-                        </select>
-                    </td>
                 </tr>
-
             </table>
         </form>
         <div class="divider-h"></div>
@@ -78,12 +61,12 @@
             <thead>
             <tr>
                 <th class="col-no">번호</th>
+                <th>코드구분</th>
                 <th>공통코드</th>
                 <th>공통코드명</th>
                 <th>상세코드</th>
                 <th>상세코드명</th>
                 <th>비고</th>
-                <th width="120px" style="text-align: center;">정렬순서</th>
                 <th  width="120px"  style="text-align: center;">상태</th>
             </tr>
             </thead>
@@ -96,7 +79,6 @@
 <!-- <div id="footbarContainer"></div> -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        loadCodeCombo('STAT', 'stat');
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
@@ -135,15 +117,15 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-grp="${item.grpCd}" data-cd="${item.cd}" data-id="${item.grpCd}" + "${item.cd}">
+                <tr class="row-click" data-grp="${item.grpCd}" data-cd="${item.cd}" data-se="${item.se}">
                     <td style="text-align: center;"> ${start + index + 1} </td>
+                    <td style="text-align: left;">${item.seNm}</td>
                     <td style="text-align: left;">${item.grpCd}</td>
                     <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: left;">${item.cd}</td>
                     <td style="text-align: left;">${item.cdNm}</td>
                     <td style="text-align: left;">${item.rmk}</td>
-                    <td style="text-align: center;">${item.ord}</td>
-                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
+                    <td>${getStatLabel(item.stat)}</td>
                 </tr>
             `).join('');
 
@@ -152,8 +134,13 @@
                 tr.addEventListener("dblclick", () => {
                     const grpCdS = tr.getAttribute("data-grp");
                     const cdS = tr.getAttribute("data-cd");
+                    const seS = tr.getAttribute("data-se");
                     const sendData = { mode: "S", grpCd: grpCdS, cd: cdS };
-                    openWindowWithJSON(sendData, "/meta/codeDetlMng", 800, 650);
+                    if( seS === '4') {
+                        openWindowWithJSON(sendData, "/meta/codeGroupMng", 800, 550);
+                    } else {
+                        openWindowWithJSON(sendData, "/meta/codeDetlMng", 800, 550);
+                    }
                 });
             });
         }
@@ -170,12 +157,7 @@
             initScreen();
             const data = formToJson(document.getElementById('mainForm'));
 
-<!--            if (!data.grpCd.trim() && !data.grpNm.trim()) {-->
-<!--                alert("공통코드를 입력하세요.");-->
-<!--                mainForm.grpCd.focus();-->
-<!--                return;-->
-<!--            }-->
-            fetch('/meta/getCodeListData', {
+            fetch('/meta/getCommCodeSearch', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -194,26 +176,6 @@
         });
     });
 
-    /** 코드검색 팝업 **/
-    document.getElementById('btnPopup').addEventListener('click', () => {
-        const sendData = {};
-        openWindowWithJSON(sendData, "/meta/codeGroupSearch", 800, 900);
-    });
-
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'grpCd' && e.newValue) {
-            const grpCdInput = document.getElementById('grpCd');
-            const btnSearch = document.getElementById('btnSearch');
-
-            if (grpCdInput && btnSearch) {
-                grpCdInput.value = e.newValue;
-                btnSearch.click();
-            }
-
-            localStorage.removeItem('grpCd');
-        }
-    });
-
     // Enter Key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -227,13 +189,6 @@
         initScreen();
     });
 
-    /** 등록 **/
-    document.getElementById('btnReg').addEventListener('click', () => {
-        const sendData = {};
-        openWindowWithJSON(sendData, "/meta/codeDetlMng", 800, 650);
-    });
-
 </script>
-<script src="/js/commonCombo.js"></script>
 </body>
 </html>

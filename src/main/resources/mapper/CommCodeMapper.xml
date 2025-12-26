@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meta.mapper.CommCodeMapper">
+    <select id="getCommCodeList" parameterType="com.meta.dto.CommCodeDto" resultType="com.meta.dto.CommCodeDto">
+
+        SELECT Z.SE , X.CD_NM AS SE_NM
+            , Z.GRP_CD , Z.GRP_NM
+            , Z.CD , Z.CD_NM
+            , Z.RMK , Z.STAT
+        FROM (
+            SELECT  '4'  AS SE
+            , GRP_CD , GRP_NM
+            , '' AS CD  , '' AS CD_NM
+            , RMK , STAT
+            FROM tb_code_group
+            WHERE 1=1
+        <choose>
+            <when test="(grpCd != null and grpCd != '') or (grpNm != null and grpNm != '')">
+                <if test="grpCd != null and grpCd != ''">
+                    AND GRP_CD = #{grpCd}
+                </if>
+                <if test="grpNm != null and grpNm != ''">
+                    AND GRP_NM LIKE CONCAT('%', #{grpNm}, '%')
+                </if>
+            </when>
+            <otherwise>
+                AND GRP_CD = ''
+            </otherwise>
+        </choose>
+
+         UNION ALL
+            SELECT  '5'  AS SE
+            , C.GRP_CD , D.GRP_NM
+            , C.CD , C.CD_NM
+            , C.RMK , C.STAT
+            FROM tb_code C
+            LEFT JOIN tb_code_group  D
+            ON   C.GRP_CD = D.GRP_CD
+            WHERE 1=1
+        <choose>
+            <when test="(cd != null and cd != '') or (cdNm != null and cdNm != '') or (grpNm != null and grpNm != '')" >
+                <if test="cd != null and cd != ''">
+                    AND C.CD = #{cd}
+                </if>
+                <if test="cdNm != null and cdNm != ''">
+                    AND C.CD_NM LIKE CONCAT('%', #{cdNm}, '%')
+                </if>
+                <if test="grpNm != null and grpNm != ''">
+                    AND D.GRP_NM LIKE CONCAT('%', #{grpNm}, '%')
+                </if>
+            </when>
+            <otherwise>
+                AND C.CD = ''
+            </otherwise>
+        </choose>
+
+        ) Z
+        LEFT JOIN tb_code  X
+        ON   X.GRP_CD = 'APRV_CD'
+        AND  X.CD = Z.SE
+        WHERE 1=1
+        ORDER BY Z.GRP_CD, Z.CD
+
+    </select>
+
+
+</mapper>

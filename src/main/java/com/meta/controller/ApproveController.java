@@ -9,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -23,11 +25,20 @@ public class ApproveController {
     private ApproveService approveService;
 
     /**
-     * @ ID : aprvDsctnInqView
-     * @ NAME : 용어단어 승인내역 조회
+     * @ ID : getAprvDsctnList
+     * @ NAME : 신청내역 조회
      */
-    @GetMapping("/aprvDsctnInq")
-    public String aprvDsctnInqView(Model model) { return "meta/aprvDsctnInq"; }
+    @PostMapping("/getAplyDsctnList")
+    @ResponseBody
+    public List<ApproveDto> getAplyDsctnList(@RequestBody ApproveDto inputDto, HttpServletRequest request) throws Exception {
+        log.debug(BizUtils.logInfo("START"));
+        String userId = (String) request.getSession().getAttribute("userId");
+        inputDto.setStat("0");
+        log.debug(BizUtils.logInfo("userId", userId));
+        List<ApproveDto> outputDto =  approveService.getListData(inputDto);
+        log.debug(BizUtils.logInfo("END"));
+        return outputDto;
+    }
 
     /**
      * @ ID : getAprvDsctnList

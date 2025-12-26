@@ -85,4 +85,15 @@ public class MetaController {
     @GetMapping("/codeDetlPopup")
     public String codeDetlPopup() { return "meta/codeDetlPopup"; }
 
+    /* 신청.승인 */
+    @GetMapping("/aplyDsctnInq")
+    public String aplyDsctnInq() { return "meta/aplyDsctnInq"; }
+    @GetMapping("/aprvDsctnInq")
+    public String aprvDsctnInq() { return "meta/aprvDsctnInq"; }
+
+
+    /* 조회 */
+    @GetMapping("/commCodeSearch")
+    public String commCodeSearch() { return "meta/commCodeSearch"; }
+
 }

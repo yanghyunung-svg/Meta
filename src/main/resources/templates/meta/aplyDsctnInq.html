@@ -212,7 +212,10 @@
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr>
                     <td style="text-align: center;"> ${start + index + 1}</td>
-                    <td style="text-align: center;"> ${item.se === '1' ? '용어' : item.se === '2' ? '단어' : item.se === '3' ? '코드' : ''} </td>
+                    <td style="text-align: center;"> ${item.se === '1' ? '용어' :
+                                                        item.se === '2' ? '단어' :
+                                                        item.se === '3' ? '도메인' :
+                                                        item.se === '4' ? '공통코드' : ''} </td>
                     <td style="text-align: left;">${item.korNm}</td>
                     <td style="text-align: left;">${item.engNm}</td>
                     <td style="text-align: left;">${truncateText(item.rmk, 100)}</td>
@@ -225,7 +228,7 @@
         document.getElementById('btnSearch').addEventListener('click', () => {
             const data = formToJson(document.getElementById('mainForm'));
 
-            fetch('/meta/getDashBoardList', {
+            fetch('/meta/getAplyDsctnList', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)

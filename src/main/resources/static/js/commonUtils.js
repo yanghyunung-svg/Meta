@@ -583,6 +583,16 @@ window.updateRowDataFlexible = function(data, idKey, updateMap) {
     }
 }
 
+function getStatLabel(stat) {
+    const map = {
+        '0': '신청',
+        '1': '사용',
+        '9': '미사용'
+    };
+    return map[stat] ?? stat;
+}
+
+
 
 function updatePageInfo(dataAll, currentPage, page_size) {
     const totalCount = dataAll.length;
@@ -601,7 +611,7 @@ function renderPagination(dataAll, currentPage, page_size) {
 
     const container = document.createElement("div");
     container.className = "pagination";
-    container.style.cssText = "margin-top:15px;text-align:center;";
+    container.style.cssText = "margin-top:20px;text-align:center;";
 
     container.appendChild(makeNavBtn("first", "«", currentPage === 1));
     container.appendChild(makeNavBtn("prev", "‹", currentPage === 1));

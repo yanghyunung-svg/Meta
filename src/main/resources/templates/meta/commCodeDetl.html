@@ -109,7 +109,7 @@
                     <td style="text-align: center;"> ${start + index + 1} </td>
                     <td style="text-align: left;">${item.cd}</td>
                     <td style="text-align: left;">${item.cdNm}</td>
-                    <td> ${item.stat === '0' ? '신청'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
+                    <td>${getStatLabel(item.stat)}</td>
                 </tr>
             `).join('');
 

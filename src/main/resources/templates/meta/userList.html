@@ -130,7 +130,7 @@
                     <td class="align-left">${item.email}</td>
                     <td class="align-left">${item.phone}</td>
                     <td class="align-center">${item.role === '2' ? 'USER' : item.role === '1' ? 'ADMIN' : '-'} </td>
-                    <td class="align-center">${item.stat === '0' ? '등록'  : item.stat === '1' ? '사용' :   item.stat === '9' ? '미사용' : '-'} </td>
+                    <td>${getStatLabel(item.stat)}</td>
                 </tr>
             `).join('');
 

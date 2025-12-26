@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td style="text-align: left;">${item.engNm}</td>
                 <td style="text-align: left;">${truncateText(item.trmExpln, 100)}</td>
                 <td style="text-align: left;">${item.dmnNm}</td>
-                <td style="text-align: center;"> ${item.stat === '0' ? '등록' : item.stat === '1' ? '사용' : item.stat === '9' ? '미사용' : ''} </td>
+                <td>${getStatLabel(item.stat)}</td>
             </tr>
         `).join('');
 
