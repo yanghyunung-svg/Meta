@@ -123,7 +123,7 @@
             const pageSizeSelect = document.getElementById("pageSize");
             if (!pageSizeSelect) return;
             pageSizeSelect.addEventListener("change", () => {
-                <!--                PAGE_SIZE = Number(pageSizeSelect.value);-->
+                PAGE_SIZE = Number(pageSizeSelect.value);
                 currentPage = 1;
                 renderTable(currentPage);
                 renderPagination(dataAll, currentPage, PAGE_SIZE)
