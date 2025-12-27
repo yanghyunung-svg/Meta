@@ -42,18 +42,16 @@
         </div>
     </div>
 <!--    <div class="divider-t"></div>-->
+
             <form id="mainForm">
                 <table class="popup-table">
                 <tr>
                     <th>그룹코드 <span style="color:red">*</span></th>
-                    <td style="display:flex; align-items:center; gap:4px;">
-                        <input type="text" id="grpCd" name="grpCd" class="form-input" required>
-                        <button id="btnGroupCheck" type="button" class="btn">그룹코드</button>
-                    </td>
+                    <td> <input type="text" id="grpCd" name="grpCd" class="form-input" readonly> </td>
                 </tr>
                  <tr>
                     <th>그룹코드명 <span style="color:red">*</span></th>
-                    <td colspan="2"><input type="text" id="grpNm" name="grpNm" class="form-input" readonly></td>
+                    <td> <input type="text" id="grpNm" name="grpNm" class="form-input" readonly></td>
                 </tr>
                 </table>
                 <table class="popup-table">
@@ -61,7 +59,7 @@
                     <th>상세코드 <span style="color:red">*</span></th>
                     <td style="display:flex; align-items:center; gap:4px;">
                         <input type="text" id="cd" name="cd" class="form-input" required>
-                        <button id="btnCodeCheck" type="button" class="btn">중복검증</button>
+                        <button id="btnCheck" type="button" class="btn">중복검증</button>
                     </td>
                 </tr>
                 </table>
@@ -118,12 +116,11 @@
         const btnChange = document.getElementById("btnChange");
         const btnInit = document.getElementById("btnInit");
         const btnClose = document.getElementById("btnClose");
-        const btnGroupCheck = document.getElementById("btnGroupCheck");
-        const btnCodeCheck = document.getElementById("btnCodeCheck");
+        const btnCheck = document.getElementById("btnCheck");
 
         btnReg.disabled = true;
         btnChange.disabled = true;
-        btnCodeCheck.disabled = true;
+        btnCheck.disabled = true;
 
         let mode = "";
         let originalData = {};
@@ -135,8 +132,13 @@
             const sendGrpCd = event.data.grpCd;
             const sendCd = event.data.cd;
 
+            if (mode === "I" && sendGrpCd ) {
+                const sendGrpNm = event.data.grpNm;
+                document.getElementById("grpCd").value = sendGrpCd;
+                document.getElementById("grpNm").value = sendGrpNm;
+            }
+            else
             if (mode === "S" && sendGrpCd ) {
-                btnGroupCheck.disabled = true;
                 btnInit.disabled = true;
                 (async () => {
                     try {
@@ -159,8 +161,6 @@
                     }
                 })();
                 btnChange.disabled = true;
-            } else {
-                btnGroupCheck.disabled = false;
             }
         });
 
@@ -178,15 +178,13 @@
         document.getElementById("grpCd").addEventListener("input", () => {
             btnReg.disabled = true;
             btnChange.disabled = true;
-            btnGroupCheck.disabled = false;
             return;
         });
 
         document.getElementById("cd").addEventListener("input", () => {
             btnReg.disabled = true;
             btnChange.disabled = true;
-            btnGroupCheck.disabled = true;
-            btnCodeCheck.disabled = false;
+            btnCheck.disabled = false;
             return;
         });
 
@@ -234,40 +232,9 @@
             }
         });
 
-        // 그룹코드 조회
-        btnGroupCheck.addEventListener('click', async () => {
-            let inData = formToJson(mainForm);
-
-            if (!inData.grpCd.trim()) {
-                msgEvents("그룹코드를 입력하세요.");
-                mainForm.grpCd.focus();
-                return;
-            }
-            const res = await fetch('/meta/getCodeGroupData', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(inData)
-            });
-            const textData = await res.text();
-            if (!textData) {
-                msgEvents("조회된 그룹 정보가 없습니다.");
-                mainForm.reset();
-                document.getElementById("grpCd").value = inData.grpCd;
-                btnGroupCheck.disabled = true;
-                btnCodeCheck.disabled = true;
-            } else {
-                const result = JSON.parse(textData);
-                document.getElementById("grpCd").value = result.grpCd;
-                document.getElementById("grpNm").value = result.grpNm;
-                mainForm.cd.focus();
-                btnReg.disabled = true;
-                btnGroupCheck.disabled = true;
-                btnCodeCheck.disabled = true;
-            }
-        });
 
         // 중복검증
-       btnCodeCheck.addEventListener('click', async () => {
+       btnCheck.addEventListener('click', async () => {
             let inData = formToJson(mainForm);
 
             if (!inData.grpCd.trim()) {
@@ -288,7 +255,7 @@
                 body: JSON.stringify(inData)
             });
 
-            btnCodeCheck.disabled = true;
+            btnCheck.disabled = true;
             btnChange.disabled = true;
 
             const textData = await res.text();
@@ -343,15 +310,12 @@
             }
         });
 
-
-
         // 초기화
         btnInit.addEventListener('click', () => {
             mainForm.reset();
             btnReg.disabled = true;
             btnChange.disabled = true;
-            btnGroupCheck.disabled = false;
-            btnCodeCheck.disabled = true;
+            btnCheck.disabled = true;
             msgEvents("");
             document.getElementById("grpCd").focus();
         });
@@ -360,7 +324,7 @@
         document.getElementById("grpCd").addEventListener("keydown", e => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                btnCodeCheck.click();
+                btnCheck.click();
             }
         });
 

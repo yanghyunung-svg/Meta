@@ -75,7 +75,12 @@
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
+        const btnReg = document.getElementById("btnReg");
+        btnReg.disabled = true;
+
+<!--        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');-->
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+
 
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageInfoContainer");
@@ -87,7 +92,9 @@
             container.innerHTML = html;
             const pageSizeSelect = document.getElementById("pageSize");
             if (!pageSizeSelect) return;
+
             pageSizeSelect.addEventListener("change", () => {
+                PAGE_SIZE = Number(pageSizeSelect.value);
                 currentPage = 1;
                 renderTable(currentPage);
                 renderPagination(dataAll, currentPage, PAGE_SIZE);
@@ -95,10 +102,26 @@
             });
         });
 
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'grpCd' && e.newValue) {
+                const savedGrpCd = localStorage.getItem('grpCd');
+                const savedGrpNm = localStorage.getItem('grpNm');
+
+                document.getElementById('grpCd').value = savedGrpCd;
+                document.getElementById('grpNm').value = savedGrpNm;
+
+                if (savedGrpCd) {
+                    btnSearch.click();
+                    btnReg.disabled = false;
+                }
+
+            }
+        });
+
         /** 테이블 렌더링 **/
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
             }
 
@@ -107,11 +130,15 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-grp="${item.grpCd}" data-cd="${item.cd}" data-id="${item.grpCd}" + "${item.cd}">
-                    <td style="text-align: center;"> ${start + index + 1} </td>
-                    <td style="text-align: left;">${item.cd}</td>
-                    <td style="text-align: left;">${item.cdNm}</td>
-                    <td>${getStatLabel(item.stat)}</td>
+                <tr class="row-click"
+                    data-grp="${item.grpCd}"
+                    data-cd="${item.cd}"
+                    data-id="${item.grpCd}_${item.cd}">
+
+                    <td style="text-align:center;"> ${start + index + 1} </td>
+                    <td style="text-align:left;">${item.cd}</td>
+                    <td style="text-align:left;">${item.cdNm}</td>
+                    <td style="text-align:center;">${getStatLabel(item.stat)}</td>
                 </tr>
             `).join('');
 
@@ -125,13 +152,6 @@
                 });
             });
 
-        }
-
-        window.refreshParentRow = function(data) {
-            const refreshMap = {
-                grpCd: 'td:nth-child(2)',
-            };
-            document.getElementById("btnSearch").click();
         }
 
         /** 검색 **/
@@ -157,32 +177,27 @@
         });
     });
 
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'grpCd' && e.newValue) {
-            const btnSearch = document.getElementById('btnSearch');
-            const savedGrpCd = localStorage.getItem('grpCd');
-            const savedGrpNm = localStorage.getItem('grpNm');
-            document.getElementById('grpCd').value = savedGrpCd;
-            document.getElementById('grpNm').value = savedGrpNm;
-
-            if (savedGrpCd && btnSearch) {
-                savedGrpCd.value = e.newValue;
-                btnSearch.click();
-            }
-
-        }
-    });
-
     // Enter Key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            document.getElementById('btnSearch').click();
+    document.getElementById("mainForm").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            document.getElementById("btnSearch").click();
         }
     });
+
+    window.refreshParentRow = function(data) {
+        const refreshMap = {
+            grpCd: 'td:nth-child(2)',
+        };
+        document.getElementById("btnSearch").click();
+    }
+
 
     /** 등록 **/
     document.getElementById('btnReg').addEventListener('click', () => {
-        const sendData = {};
+        const grpCdS = mainForm.grpCd.value;
+        const grpNmS = mainForm.grpNm.value;
+        const sendData = { mode: "I", grpCd: grpCdS,  grpNm: grpNmS  };
         openWindowWithJSON(sendData, "/meta/codeDetlMng", 800, 550);
     });
 
@@ -191,6 +206,7 @@
         document.getElementById('mainForm').reset();
         initScreen();
     });
+    /** 엑셀저장 **/
     document.getElementById('btnExcel').addEventListener('click', () => {
         downloadTableToExcel('mainTable', '공통코드상세목록');
     });

@@ -87,8 +87,9 @@
         let dataAll = [];
         let currentPage = 1;
 
-        const table = document.getElementById("mainTable");
-        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
+<!--        const table = document.getElementById("mainTable");-->
+<!--        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');-->
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
 
         // 페이지 탑바 container에 include
         const container = document.getElementById("pageInfoContainer");
@@ -112,7 +113,7 @@
         /** 테이블 렌더링 **/
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
             }
 
@@ -121,7 +122,9 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-id="${item.grpCd}" data-grpNm="${item.grpNm}" >
+                <tr class="row-click"
+                    data-grpCd="${item.grpCd}"
+                    data-grpNm="${item.grpNm}" >
                     <td style="text-align: center;"> ${start + index + 1} </td>
                     <td style="text-align: left;">  ${item.grpCd} </td>
                     <td style="text-align: left;">${item.grpNm}</td>
@@ -130,22 +133,22 @@
                 </tr>
             `).join('');
 
-
-            document.querySelectorAll(".row-click").forEach(tr => {
-                tr.addEventListener("dblclick", () => {
-                    const grpCd = tr.getAttribute("data-id");
-                    const sendData = { mode: "S", grpCd: grpCd };
-                    openWindowWithJSON(sendData, "/meta/codeGroupMng", 800, 600);
-                });
-            });
-
             document.querySelectorAll(".row-click").forEach(tr => {
                 tr.addEventListener("click", () => {
-                    const grpCd = tr.getAttribute("data-id");
+                    const grpCd = tr.getAttribute("data-grpCd");
                     const grpNm = tr.getAttribute("data-grpNm");
 
                     localStorage.setItem('grpCd', grpCd);
                     localStorage.setItem('grpNm', grpNm);
+                });
+            });
+
+            // 따블클릭
+            document.querySelectorAll(".row-click").forEach(tr => {
+                tr.addEventListener("dblclick", () => {
+                    const grpCd = tr.getAttribute("data-grpCd");
+                    const sendData = { mode: "S", grpCd: grpCd };
+                    openWindowWithJSON(sendData, "/meta/codeGroupMng", 800, 600);
                 });
             });
 

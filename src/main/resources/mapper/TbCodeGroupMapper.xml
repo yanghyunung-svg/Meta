@@ -32,7 +32,7 @@
             #{grpCd}
           , #{grpNm}
           , #{stat}
-          , #{ord}
+          , 0
           , #{rmk}
           , #{crtId}
           , #{updId}
