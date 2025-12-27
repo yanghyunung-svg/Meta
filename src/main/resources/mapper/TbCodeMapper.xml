@@ -123,6 +123,7 @@
         SELECT CD, CD_NM
         FROM tb_code
         WHERE GRP_CD = #{grpCd}
+        AND   STAT = '1'
         ORDER BY GRP_CD, ORD, CD
     </select>
 

@@ -55,11 +55,11 @@
                 <table class="popup-table">
                 <tr>
                     <th>영문약어명 <span style="color:red">*</span></th>
-                    <td> <input type="text" id="engAbbrNm" name="engAbbrNm" class="form-input"  required> </td>
+                    <td> <input type="text" id="engAbbrNm" name="engAbbrNm" class="form-input" required> </td>
                 </tr>
                 <tr>
                     <th>영문명</th>
-                    <td><input type="text" id="engNm" name="engNm" class="form-input"  > </td>
+                    <td><input type="text" id="engNm" name="engNm" class="form-input" > </td>
                 </tr>
                 <tr>
                     <th>설명</th>
@@ -68,13 +68,17 @@
                 <tr>
                     <th>상태</th>
                     <td>
-                        <select id="stat"  name="stat" class="form-input">
+                        <select id="stat" name="stat" class="form-input">
                             <option value="">선택</option>
                             <option value="0">신청</option>
                             <option value="1">사용</option>
                             <option value="9">미사용</option>
                         </select>
                     </td>
+                </tr>
+                <tr>
+                    <th>ID</th>
+                    <td><input type="text" id="id" name="id" class="form-input" readonly> </td>
                 </tr>
                 </table>
                 
@@ -83,8 +87,8 @@
                 <tr>
                     <th>최초등록</th>
                     <td style="display:flex; gap:5px;">
-                        <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
-                        <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+                        <input type="text" id="crtId" name="crtId" class="form-input" readonly>
+                        <input type="text" id="crtDttm" name="crtDttm" class="form-input" readonly>   </td>
                 </tr>
                 <tr>
                     <th>최종변경</th>
@@ -118,16 +122,16 @@
         window.addEventListener("message", (event) => {
             if (event.origin !== window.location.origin) return;
             mode = event.data.mode;
-            const wordNmIn  = event.data.wordNm;
+            const idIn  = event.data.id;
 
-            if (mode === "S" && wordNmIn ) {
+            if (mode === "S" && idIn ) {
                 btnInit.disabled = true;
                 (async () => {
                     try {
                         const res = await fetch('/meta/getWordData', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ wordNm: wordNmIn  })
+                            body: JSON.stringify({ id: idIn  })
                         });
 
                         const data = await res.json();

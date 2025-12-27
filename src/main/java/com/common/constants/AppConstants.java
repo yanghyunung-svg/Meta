@@ -10,7 +10,7 @@ public class AppConstants {
         public static final Short NOR = 0;     // 실행결과정상
         public static final Short ERR = 1;     // 실행결과오류
     }
-    public static final class DB_FUNC { //DB FUNCTION
+    public static final class FUNC_SE { //DB FUNCTION
         public static final String SEL = "S";     // SELECT
         public static final String INS = "I";     // INSERT
         public static final String UPD = "U";     // UPDATE

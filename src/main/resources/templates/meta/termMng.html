@@ -54,7 +54,7 @@
         <table class="popup-table">
             <tr>
                 <th>영문명 <span style="color:red">*</span></th>
-                <td > <input type="text" id="engNm" name="engNm" class="form-input"  > </td>
+                <td > <input type="text" id="engNm" name="engNm" class="form-input" > </td>
             </tr>
             <tr>
                 <th>도메인명</th>
@@ -72,7 +72,8 @@
                 <th>상태</th>
                 <td>
                     <select id="stat" name="stat" class="form-input">
-                        <option value="0" selected>등록</option>
+                        <option value="" >선택</option>
+                        <option value="0" selected>신청</option>
                         <option value="1">사용</option>
                         <option value="9">미사용</option>
                     </select>
@@ -83,14 +84,14 @@
             <tr>
                 <th>최초등록</th>
                 <td style="display:flex; gap:5px;">
-                    <input type="text" id="crtId" name="crtId" class="form-input"  readonly>
-                    <input type="text" id="crtDttm" name="crtDttm" class="form-input"  readonly>   </td>
+                    <input type="text" id="crtId" name="crtId" class="form-input" readonly>
+                    <input type="text" id="crtDttm" name="crtDttm" class="form-input" readonly>   </td>
             </tr>
             <tr>
                 <th>최종변경</th>
                 <td style="display:flex; gap:5px;">
                     <input type="text" id="updId" name="updId" class="form-input" readonly>
-                    <input type="text" id="updDttm" name="updDttm" class="form-input"  readonly> </td>
+                    <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
             </tr>
         </table>
         <div class="msgInfo"> <span id="msgInfo"></span>   </div>
@@ -98,6 +99,8 @@
     </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('STAT', 'stat');
+
         if (!document.forms.mainForm) return;
 
         const dmnNm = document.forms.mainForm.dmnNm;
@@ -244,10 +247,10 @@
                 if (mainForm.stat.value === '0') {
                     msgEvents( "등록 가능합니다");
                     mainForm.engNm.focus();
-                    btnSave.disabled = false;
+                btnReg.disabled = false;
                 } else {
-                    msgEvents("등록된 용어가 있습니다.."  );
-                    btnSave.disabled = true;
+                    msgEvents("등록된 용어가 있습니다.." );
+                    btnReg.disabled = true;
                 }
             }
         });
@@ -353,5 +356,6 @@
         });
     }
 </script>
+<script src="/js/commonCombo.js"></script>
 </body>
 </html>
