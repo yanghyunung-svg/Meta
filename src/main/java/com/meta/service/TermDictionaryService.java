@@ -32,35 +32,27 @@ public class TermDictionaryService {
     @Autowired
     private TbWordDictionaryMapper tbWordDictionaryMapper;
 
-
     /**
      * method   : getListData
-     * desc     : 단어사전 목록 조회
+     * desc     : 용어사전 목록 조회
      */
     public List<TbTermDictionaryDto> getListData(TbTermDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
         return tbTermDictionaryMapper.getListData(inputDto);
     }
 
     /**
      * method   : getData
-     * desc     : 단어사전 상세 조회
+     * desc     : 용어사전 상세 조회
      */
     public TbTermDictionaryDto getData(TbTermDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getData(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
-        return outputDto;
+        return tbTermDictionaryMapper.getData(inputDto);
     }
-
 
     /**
      * method   : insertData
      * desc     : 용어사전 등록
      */
     public ApiResponse<Void> insertData(TbTermDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-
         try {
             TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getData(inputDto);
             if (outputDto != null) {
@@ -69,7 +61,7 @@ public class TermDictionaryService {
             if (tbTermDictionaryMapper.insertData(inputDto) == 0) {
                 return new ApiResponse<Void>(false, "등록 오류");
             }
-            log.debug(BizUtils.logInfo("END"));
+            log.debug(com.common.utils.BizUtils.logInfo("END"));
             return new ApiResponse<Void>(true, "등록 성공");
         } catch (Exception e) {
             return new ApiResponse<Void>(false, "등록 처리 중 오류가 발생했습니다.");
@@ -81,7 +73,7 @@ public class TermDictionaryService {
      * desc     : 용어사전 변경
      */
     public ApiResponse<Void> updateData(TbTermDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
+        log.debug(com.common.utils.BizUtils.logInfo("START"));
         try {
             TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getData(inputDto);
             if (outputDto == null) {
@@ -102,8 +94,6 @@ public class TermDictionaryService {
      * desc     : 용어사전 단어목록 조회
      */
     public TbTermDictionaryDto getTermSplitData(TbTermDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVoKey(inputDto));
 
         TbTermDictionaryDto tbTermDictionaryDto = tbTermDictionaryMapper.getData(inputDto);
         if (tbTermDictionaryDto != null) {
@@ -179,7 +169,6 @@ public class TermDictionaryService {
         return sb.toString();
     }
 
-
     private String getWordDta(String wordNm)  {
         TbWordDictionaryDto wordDto = new TbWordDictionaryDto();
         wordDto.setWordNm(wordNm);
@@ -213,10 +202,10 @@ public class TermDictionaryService {
 
             TbTermDictionaryDto dto = new TbTermDictionaryDto();
 
-            dto.setTrmNm(getCell(row, 1));
-            dto.setEngNm(getCell(row, 2));
-            dto.setTrmExpln(getCell(row, 4));
-            dto.setStat(getCell(row, 5));
+            dto.setTrmNm(BizUtils.getCell(row, 1));
+            dto.setEngNm(BizUtils.getCell(row, 2));
+            dto.setTrmExpln(BizUtils.getCell(row, 4));
+            dto.setStat(BizUtils.getCell(row, 5));
 
             result.add(dto);
         }
@@ -239,12 +228,12 @@ public class TermDictionaryService {
 
             TbTermDictionaryDto dto = new TbTermDictionaryDto();
 
-            dto.setTrmNm(getCell(row, 1));
-            dto.setEngNm(getCell(row, 2));
-            dto.setDmnNm(getCell(row, 3));
-            dto.setTrmExpln(getCell(row, 4));
-            dto.setStat(getCell(row, 5));
-            dto.setCrtId(getCell(row, 6));
+            dto.setTrmNm(BizUtils.getCell(row, 1));
+            dto.setEngNm(BizUtils.getCell(row, 2));
+            dto.setDmnNm(BizUtils.getCell(row, 3));
+            dto.setTrmExpln(BizUtils.getCell(row, 4));
+            dto.setStat(BizUtils.getCell(row, 5));
+            dto.setCrtId(BizUtils.getCell(row, 6));
 
             // 검증 로직
             String error = validateRow(dto);
@@ -287,8 +276,6 @@ public class TermDictionaryService {
     }
 
     public int uploadTermExcelSave(List<TbTermDictionaryDto> list)  {
-        log.debug(BizUtils.logInfo("START"));
-
         int count = 0;
         for (TbTermDictionaryDto dto : list) {
             if (StringUtils.equals(dto.getStat(), "0")) {
@@ -300,44 +287,7 @@ public class TermDictionaryService {
                 }
             }
         }
-
-        log.debug(BizUtils.logInfo("END", String.valueOf(count)));
         return count;
-    }
-
-    private String getCell(Row row, int cellIndex) {
-        Cell cell = row.getCell(cellIndex);
-        if (cell == null) return "";
-
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue().trim();
-            case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString();
-                }
-                return String.valueOf((long) cell.getNumericCellValue());
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
-                try {
-                    return cell.getStringCellValue();
-                } catch (IllegalStateException e) {
-                    return String.valueOf(cell.getNumericCellValue());
-                }
-            case BLANK:
-            default:
-                return "";
-        }
-    }
-
-    private Integer parseInt(String value) {
-        if (value == null || value.trim().isEmpty()) return null;
-        try {
-            return Integer.parseInt(value.trim());
-        } catch (NumberFormatException e) {
-            return null; // 또는 기본값 0
-        }
-    }
+    } 
 }
 

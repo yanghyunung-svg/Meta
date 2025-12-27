@@ -16,85 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TemplateController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * @ ID : downloadCodeGroupExcelTemplate
-     * @ NAME : 그룹코드 UPLOAD Template
-     */
-    @GetMapping("/downloadCodeGroupExcelTemplate")
-    public void downloadCodeGroupExcelTemplate(HttpServletResponse response) throws Exception {
-
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("그룹코드");
-
-        // Header 생성
-        Row header = sheet.createRow(0);
-        String[] titles = { "번호", "공통코드", "공통코드명",  "비고", "상태" };
-
-        for (int i = 0; i < titles.length; i++) {
-            Cell cell = header.createCell(i);
-            cell.setCellValue(titles[i]);
-            sheet.autoSizeColumn(i);
-        }
-
-        // 샘플 데이터
-        Row sample = sheet.createRow(1);
-        sample.createCell(0).setCellValue("1");
-        sample.createCell(1).setCellValue("SYS");
-        sample.createCell(2).setCellValue("시스템");
-        sample.createCell(3).setCellValue("....");
-        sample.createCell(4).setCellValue("1"); 
-
-        // 파일명
-        String fileName = "그룹코드_업로드_템플릿.xlsx";
-
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=" +
-                java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20")); 
-        workbook.write(response.getOutputStream());
-        workbook.close();
-    }
-
-
-    /**
-     * @ ID : downloadCodeExcelTemplate
-     * @ NAME : 상세코드 UPLOAD Template
-     */
-    @GetMapping("/downloadCodeExcelTemplate")
-    public void downloadCodeExcelTemplate(HttpServletResponse response) throws Exception {
-
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("상세코드");
-
-        // Header 생성
-        Row header = sheet.createRow(0);
-        String[] titles = { "번호", "공통코드", "공통코드명", "상세코드", "상세코드명", "정렬순서", "비고", "상태" };
-
-        for (int i = 0; i < titles.length; i++) {
-            Cell cell = header.createCell(i);
-            cell.setCellValue(titles[i]);
-            sheet.autoSizeColumn(i);
-        }
-
-        // 샘플 데이터
-        Row sample = sheet.createRow(1);
-        sample.createCell(0).setCellValue("1");
-        sample.createCell(1).setCellValue("SYS");
-        sample.createCell(2).setCellValue("시스템");
-        sample.createCell(3).setCellValue("ROLE");
-        sample.createCell(4).setCellValue("권한코드");
-        sample.createCell(5).setCellValue("1");
-        sample.createCell(6).setCellValue("....");
-        sample.createCell(7).setCellValue("1"); 
-
-        // 파일명
-        String fileName = "상세코드_업로드_템플릿.xlsx";
-
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=" +
-                java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20")); 
-        workbook.write(response.getOutputStream());
-        workbook.close();
-    }
 
     /**
      * @ ID : downloadTermExcelTemplate
@@ -127,46 +48,6 @@ public class TemplateController {
 
         // 파일명
         String fileName = "표준용어_업로드_템플릿.xlsx";
-
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=" +
-                java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20")); 
-        workbook.write(response.getOutputStream());
-        workbook.close();
-    }
-
-
-    /**
-     * @ ID : downloadDmnExcelTemplate
-     * @ NAME : 도메인 UPLOAD Template
-     */
-    @GetMapping("/downloadDmnExcelTemplate")
-    public void downloadDmnExcelTemplate(HttpServletResponse response) throws Exception {
-
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("도메인");
-
-        // Header 생성
-        Row header = sheet.createRow(0);
-        String[] titles = { "번호","도메인명", "도메인분류명", "도메인영문명", "도메인속성", "상태"};
-
-        for (int i = 0; i < titles.length; i++) {
-            Cell cell = header.createCell(i);
-            cell.setCellValue(titles[i]);
-            sheet.autoSizeColumn(i);
-        }
-
-        // 샘플 데이터
-        Row sample = sheet.createRow(1);
-        sample.createCell(0).setCellValue("1");
-        sample.createCell(1).setCellValue("가격N10");
-        sample.createCell(2).setCellValue("가격");
-        sample.createCell(3).setCellValue("PRC");
-        sample.createCell(4).setCellValue("N10");
-        sample.createCell(5).setCellValue("0"); 
-
-        // 파일명
-        String fileName = "도메인_업로드_템플릿.xlsx";
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=" +
@@ -211,9 +92,169 @@ public class TemplateController {
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=" +
+                java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20"));
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+    /**
+     * @ ID : downloadDmnExcelTemplate
+     * @ NAME : 도메인 UPLOAD Template
+     */
+    @GetMapping("/downloadDmnExcelTemplate")
+    public void downloadDmnExcelTemplate(HttpServletResponse response) throws Exception {
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("도메인");
+
+        // Header 생성
+        Row header = sheet.createRow(0);
+        String[] titles = { "번호","도메인명", "도메인분류명", "도메인영문명", "도메인속성", "상태"};
+
+        for (int i = 0; i < titles.length; i++) {
+            Cell cell = header.createCell(i);
+            cell.setCellValue(titles[i]);
+            sheet.autoSizeColumn(i);
+        }
+
+        // 샘플 데이터
+        Row sample = sheet.createRow(1);
+        sample.createCell(0).setCellValue("1");
+        sample.createCell(1).setCellValue("가격N10");
+        sample.createCell(2).setCellValue("가격");
+        sample.createCell(3).setCellValue("PRC");
+        sample.createCell(4).setCellValue("N10");
+        sample.createCell(5).setCellValue("0"); 
+
+        // 파일명
+        String fileName = "도메인_업로드_템플릿.xlsx";
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=" +
                 java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20")); 
         workbook.write(response.getOutputStream());
         workbook.close();
     }
+
+    /**
+     * @ ID : downloadCodeGroupExcelTemplate
+     * @ NAME : 그룹코드 UPLOAD Template
+     */
+    @GetMapping("/downloadCodeGroupExcelTemplate")
+    public void downloadCodeGroupExcelTemplate(HttpServletResponse response) throws Exception {
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("그룹코드");
+
+        // Header 생성
+        Row header = sheet.createRow(0);
+        String[] titles = { "번호", "공통코드", "공통코드명",  "비고", "상태" };
+
+        for (int i = 0; i < titles.length; i++) {
+            Cell cell = header.createCell(i);
+            cell.setCellValue(titles[i]);
+            sheet.autoSizeColumn(i);
+        }
+
+        // 샘플 데이터
+        Row sample = sheet.createRow(1);
+        sample.createCell(0).setCellValue("1");
+        sample.createCell(1).setCellValue("SYS");
+        sample.createCell(2).setCellValue("시스템");
+        sample.createCell(3).setCellValue("....");
+        sample.createCell(4).setCellValue("1");
+
+        // 파일명
+        String fileName = "그룹코드_업로드_템플릿.xlsx";
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=" +
+                java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20"));
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+
+    /**
+     * @ ID : downloadCodeExcelTemplate
+     * @ NAME : 상세코드 UPLOAD Template
+     */
+    @GetMapping("/downloadCodeExcelTemplate")
+    public void downloadCodeExcelTemplate(HttpServletResponse response) throws Exception {
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("상세코드");
+
+        // Header 생성
+        Row header = sheet.createRow(0);
+        String[] titles = { "번호", "공통코드", "공통코드명", "상세코드", "상세코드명", "정렬순서", "비고", "상태" };
+
+        for (int i = 0; i < titles.length; i++) {
+            Cell cell = header.createCell(i);
+            cell.setCellValue(titles[i]);
+            sheet.autoSizeColumn(i);
+        }
+
+        // 샘플 데이터
+        Row sample = sheet.createRow(1);
+        sample.createCell(0).setCellValue("1");
+        sample.createCell(1).setCellValue("SYS");
+        sample.createCell(2).setCellValue("시스템");
+        sample.createCell(3).setCellValue("ROLE");
+        sample.createCell(4).setCellValue("권한코드");
+        sample.createCell(5).setCellValue("1");
+        sample.createCell(6).setCellValue("....");
+        sample.createCell(7).setCellValue("1");
+
+        // 파일명
+        String fileName = "상세코드_업로드_템플릿.xlsx";
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=" +
+                java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20"));
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+
+    /**
+     * @ ID : downloadUserExcelTemplate
+     * @ NAME : 사용자정보 UPLOAD Template
+     */
+    @GetMapping("/downloadUserExcelTemplate")
+    public void downloadUserExcelTemplate(HttpServletResponse response) throws Exception {
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("사용자정보");
+
+        // Header 생성
+        Row header = sheet.createRow(0);
+        String[] titles = { "번호", "사용자ID", "사용자명",  "이메일", "전화번호", "권한", "상태" };
+
+        for (int i = 0; i < titles.length; i++) {
+            Cell cell = header.createCell(i);
+            cell.setCellValue(titles[i]);
+            sheet.autoSizeColumn(i);
+        }
+
+        // 샘플 데이터
+        Row sample = sheet.createRow(1);
+        sample.createCell(0).setCellValue("-");
+        sample.createCell(1).setCellValue("-");
+        sample.createCell(2).setCellValue("-");
+        sample.createCell(3).setCellValue("-");
+        sample.createCell(4).setCellValue("-");
+        sample.createCell(5).setCellValue("-");
+        sample.createCell(6).setCellValue("-");
+
+        // 파일명
+        String fileName = "사용자정보_업로드_템플릿.xlsx";
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=" +
+                java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20"));
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
 
 }

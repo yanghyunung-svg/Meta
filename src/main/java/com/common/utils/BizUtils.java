@@ -1,6 +1,9 @@
 package com.common.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -146,4 +149,41 @@ public class BizUtils {
     }
 
 
+
+    public static  String getCell(Row row, int cellIndex) {
+
+        Cell cell = row.getCell(cellIndex);
+        if (cell == null) return "";
+
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue().trim();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                }
+                return String.valueOf((long) cell.getNumericCellValue());
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                try {
+                    return cell.getStringCellValue();
+                } catch (IllegalStateException e) {
+                    return String.valueOf(cell.getNumericCellValue());
+                }
+            case BLANK:
+            default:
+                return "";
+        }
+    }
+
+    public static  Integer parseInt(String value) {
+        if (value == null || value.trim().isEmpty()) return null;
+
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return null; // 또는 기본값 0
+        }
+    }
 }

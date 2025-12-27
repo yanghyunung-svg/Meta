@@ -3,21 +3,22 @@ package com.meta.service;
 import ch.qos.logback.core.util.StringUtil;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
-import com.meta.dto.TbLoginLogDto;
 import com.meta.dto.TbUserInfoDto;
 import com.meta.mapper.TbLoginLogMapper;
 import com.meta.mapper.TbUserInfoMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -159,84 +160,75 @@ public class UserInfoService {
             return new ApiResponse<Void>(false, "수정 처리 중 오류가 발생했습니다.");
         }
     }
+  
+
 
     /**
-     * method   : getLoginData
-     * desc     : Login 검증
+     * @ ID : parseExcelPreview
+     * @ NAME : 사용자정보 엑셀업로드
      */
-    public  ApiResponse<TbUserInfoDto> getLogin(TbUserInfoDto inputDto, HttpServletRequest request ) {
+    public List<TbUserInfoDto> parseExcelPreview(MultipartFile file) throws Exception {
         log.debug(BizUtils.logInfo("START"));
-        try {
-            TbLoginLogDto tbLoginLogDto = new TbLoginLogDto();
-            tbLoginLogDto.setUserId(inputDto.getUserId());
-            tbLoginLogDto.setIpAddr(inputDto.getIpAddr());
-            tbLoginLogDto.setUserAgent(inputDto.getUserAgent());
-            tbLoginLogDto.setLoginResult("1");
 
-            // 사용자 조회
-            TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
-            if (outputDto == null) {
-                tbLoginLogDto.setFailReason("사용자가 없습니다.");
-                this.insertLoginLog(tbLoginLogDto);
-                return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
-            }
+        List<TbUserInfoDto> result = new ArrayList<>();
+        Workbook workbook = WorkbookFactory.create(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
 
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String rawPassword = inputDto.getPassword();
-            String dbPw = outputDto.getPassword();
-            // 비밀번호 검증
-            if (!encoder.matches(rawPassword, dbPw)) {
-                tbLoginLogDto.setFailReason("비밀번호 오류");
-                this.insertLoginLog(tbLoginLogDto);
-                return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
-            }
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            if (row == null) continue;
 
-            // 상태코드 검증
-            if (StringUtils.equals(outputDto.getStat(), "0")) {
-                tbLoginLogDto.setFailReason("시스템사용 미승인");
-                this.insertLoginLog(tbLoginLogDto);
-                return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
-            }
+            TbUserInfoDto dto = new TbUserInfoDto();
 
-            if (StringUtils.equals(outputDto.getStat(), "9")) {
-                tbLoginLogDto.setFailReason("시스템사용 불가");
-                this.insertLoginLog(tbLoginLogDto);
-                return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
-            }
+            dto.setUserId   (BizUtils.getCell(row, 1));
+            dto.setUserNm   (BizUtils.getCell(row, 2));
+            dto.setEmail    (BizUtils.getCell(row, 3));
+            dto.setPhone    (BizUtils.getCell(row, 4));
+            dto.setRole     (BizUtils.getCell(row, 5));
+            dto.setStat     ("0");
 
-            tbLoginLogDto.setLoginResult("0");
-            tbLoginLogDto.setFailReason("");
+            // 검증 로직
+            String error = validateRow(dto);
+            if (StringUtil.notNullNorEmpty(error))  dto.setStat(error);
 
-            this.insertLoginLog(tbLoginLogDto);
-
-            HttpSession session = request.getSession(true);
-            session.setAttribute("userId", outputDto.getUserId());
-            session.setAttribute("userNm", outputDto.getUserNm());
-            session.setAttribute("role", outputDto.getRole());
-
-            return new ApiResponse<>(true, "로그인 성공", outputDto );
-
-        } catch (Exception e) {
-            log.error("Login 처리 중 오류", e);
-            return new  ApiResponse<>(false, "로그인 처리 중 오류가 발생했습니다.");
+            result.add(dto);
         }
-    }
-    /**
-     * method   : getLoginLogList
-     * desc     : 로그인 로그 조회
-     */
-    public List<TbLoginLogDto> getLoginLogList(TbLoginLogDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        return tbLoginLogMapper.getLoginLogList(inputDto);
+
+        log.debug(BizUtils.logInfo("END"));
+        return result;
     }
 
-    /**
-     * method   : insertLoginLog
-     * desc     : Login Log insert
-     */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void insertLoginLog(TbLoginLogDto inputDto) {
-        tbLoginLogMapper.insertData(inputDto);
+    private String validateRow(TbUserInfoDto dto) {
+        if (dto.getUserId() == null || dto.getUserId().isEmpty()) return "사용자ID 누락";
+        if (dto.getUserNm() == null || dto.getUserNm().isEmpty()) return "사용자명 누락";
+        if (dto.getEmail() == null || dto.getEmail().isEmpty()) return "이메일 누락";
+        if (dto.getPhone() == null || dto.getPhone().isEmpty()) return "전화번호 누락";
+        if (dto.getRole() == null || dto.getRole().isEmpty()) return "권한 누락";
+        
+        // DB 중복 체크
+        int exists = tbUserInfoMapper.countCode(dto);
+        if (exists > 0) return "이미 존재하는 코드";
+        return null;  // 정상
+    }
+
+    public int saveUploadedExcel(List<TbUserInfoDto> list) {
+        log.debug(BizUtils.logInfo("START"));
+        String rawPassword = "1";
+        String encodedPassword = encoder.encode(rawPassword);
+
+        int count = 0;
+        for (TbUserInfoDto dto : list) {
+            if(StringUtils.equals(dto.getStat(), "0")) {
+                dto.setUpdId(dto.getCrtId());
+                dto.setStat("1");
+                dto.setPassword(encodedPassword);
+                tbUserInfoMapper.insertData(dto);
+                count++;
+            }
+        }
+
+        log.debug(BizUtils.logInfo("END", String.valueOf(count)));
+        return count;
     }
 }
 

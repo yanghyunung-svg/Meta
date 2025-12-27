@@ -20,7 +20,7 @@ public interface TbStdDmnBscMapper {
     public int insertData(TbStdDmnBscDto tbStdDmnBscDto);
     public int updateData(TbStdDmnBscDto tbStdDmnBscDto);
     public int deleteData(TbStdDmnBscDto tbStdDmnBscDto);
+    public int countCode(TbStdDmnBscDto tbStdDmnBscDto);
     public List<TbStdDmnBscDto> getListData(TbStdDmnBscDto tbStdDmnBscDto);
     public List<TbStdDmnBscDto> getDmnComboData();
-    public int countCode(TbStdDmnBscDto tbStdDmnBscDto);
 }

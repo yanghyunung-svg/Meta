@@ -78,4 +78,11 @@
          FOR UPDATE
   </select>
 
+
+    <select id="countCode" parameterType="com.meta.dto.TbUserInfoDto" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_user_info
+        WHERE USER_ID = #{userId}
+    </select>
+
 </mapper>

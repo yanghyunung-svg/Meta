@@ -1,5 +1,6 @@
 package com.meta.mapper;
 
+import com.meta.dto.TbStdDmnBscDto;
 import com.meta.dto.TbUserInfoDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -20,5 +21,6 @@ public interface TbUserInfoMapper {
     public int insertData(TbUserInfoDto tbUserDto);
     public int updateData(TbUserInfoDto tbUserDto);
     public int deleteData(TbUserInfoDto tbUserDto);
+    public int countCode(TbUserInfoDto tbUserDto);
     public List<TbUserInfoDto> getListData(TbUserInfoDto tbUserDto);
 }

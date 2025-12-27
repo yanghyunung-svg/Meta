@@ -44,7 +44,6 @@
      UPDATE tb_code_group
         SET GRP_NM = #{grpNm}
           , STAT = #{stat}
-          , ORD = #{ord}
           , RMK = #{rmk}
           , UPD_ID = #{updId}
       WHERE GRP_CD = #{grpCd}

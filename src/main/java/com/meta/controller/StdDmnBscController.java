@@ -82,9 +82,10 @@ public class StdDmnBscController {
         log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
         return outputDto;
     }
+
     /**
      * @ ID : uploadCodeExcelPreview
-     * @ NAME : 코드그룹 엑셀업로드
+     * @ NAME : 표준도메인 엑셀업로드
      */
     @PostMapping("/uploadDmnExcelPreview")
     public ResponseEntity<Map<String, Object>> uploadDmnExcelPreview(@RequestParam("file") MultipartFile file) {
@@ -103,7 +104,7 @@ public class StdDmnBscController {
 
     /**
      * @ ID : uploadCodeExcelSave
-     * @ NAME : 코드그룹 엑셀업로드 저장
+     * @ NAME : 표준도메인 엑셀업로드 저장
      */
     @PostMapping("/uploadDmnExcelSave")
     public ResponseEntity<Map<String, Object>> uploadDmnExcelSave(@RequestBody List<TbStdDmnBscDto> list) {

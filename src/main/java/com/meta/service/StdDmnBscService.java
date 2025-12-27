@@ -111,7 +111,7 @@ public class StdDmnBscService {
 
     /**
      * @ ID : parseExcelPreview
-     * @ NAME : 코드그룹 엑셀업로드
+     * @ NAME : 표준도메인 엑셀업로드
      */
     public List<TbStdDmnBscDto> parseExcelPreview(MultipartFile file) throws Exception {
         log.debug(BizUtils.logInfo("START"));
@@ -126,12 +126,12 @@ public class StdDmnBscService {
 
             TbStdDmnBscDto dto = new TbStdDmnBscDto();
 
-            dto.setDmnNm        (getCell(row, 1));
-            dto.setDmnClsfNm    (getCell(row, 2));
-            dto.setDmnEngNm     (getCell(row, 3));
-            dto.setDmnAtrb      (getCell(row, 4));
-            dto.setSttsCd       (getCell(row, 5));
-            dto.setCrtId        (getCell(row, 6));
+            dto.setDmnNm        (BizUtils.getCell(row, 1));
+            dto.setDmnClsfNm    (BizUtils.getCell(row, 2));
+            dto.setDmnEngNm     (BizUtils.getCell(row, 3));
+            dto.setDmnAtrb      (BizUtils.getCell(row, 4));
+            dto.setSttsCd       (BizUtils.getCell(row, 5));
+            dto.setCrtId        (BizUtils.getCell(row, 6));
 
             // 검증 로직
             String error = validateRow(dto);
@@ -171,41 +171,5 @@ public class StdDmnBscService {
         return count;
     }
 
-    private String getCell(Row row, int cellIndex) {
-
-        Cell cell = row.getCell(cellIndex);
-        if (cell == null) return "";
-
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue().trim();
-            case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString();
-                }
-                return String.valueOf((long) cell.getNumericCellValue());
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
-                try {
-                    return cell.getStringCellValue();
-                } catch (IllegalStateException e) {
-                    return String.valueOf(cell.getNumericCellValue());
-                }
-            case BLANK:
-            default:
-                return "";
-        }
-    }
-
-    private Integer parseInt(String value) {
-        if (value == null || value.trim().isEmpty()) return null;
-
-        try {
-            return Integer.parseInt(value.trim());
-        } catch (NumberFormatException e) {
-            return null; // 또는 기본값 0
-        }
-    }
 }
 

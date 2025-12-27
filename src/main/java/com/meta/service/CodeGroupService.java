@@ -115,12 +115,12 @@ public class CodeGroupService {
 
             TbCodeGroupDto dto = new TbCodeGroupDto();
 
-            dto.setGrpCd    (getCell(row, 1));
-            dto.setGrpNm    (getCell(row, 2));
-            dto.setOrd      (parseInt(getCell(row, 3)));
-            dto.setRmk      (getCell(row, 4));
-            dto.setStat     (getCell(row, 5));
-            dto.setCrtId    (getCell(row, 6));
+            dto.setGrpCd    (BizUtils.getCell(row, 1));
+            dto.setGrpNm    (BizUtils.getCell(row, 2));
+            dto.setOrd      (BizUtils.parseInt(BizUtils.getCell(row, 3)));
+            dto.setRmk      (BizUtils.getCell(row, 4));
+            dto.setStat     (BizUtils.getCell(row, 5));
+            dto.setCrtId    (BizUtils.getCell(row, 6));
 
             // 검증 로직
             String error = validateRow(dto);
@@ -157,41 +157,5 @@ public class CodeGroupService {
         log.debug(BizUtils.logInfo("END", String.valueOf(count)));
         return count;
     }
-
-    private String getCell(Row row, int cellIndex) {
-
-        Cell cell = row.getCell(cellIndex);
-        if (cell == null) return "";
-
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue().trim();
-            case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString();
-                }
-                return String.valueOf((long) cell.getNumericCellValue());
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
-                try {
-                    return cell.getStringCellValue();
-                } catch (IllegalStateException e) {
-                    return String.valueOf(cell.getNumericCellValue());
-                }
-            case BLANK:
-            default:
-                return "";
-        }
-    }
-
-    private Integer parseInt(String value) {
-        if (value == null || value.trim().isEmpty()) return null;
-
-        try {
-            return Integer.parseInt(value.trim());
-        } catch (NumberFormatException e) {
-            return null; // 또는 기본값 0
-        }
-    }
+ 
 }
