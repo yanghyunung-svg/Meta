@@ -10,18 +10,18 @@ import java.util.UUID;
 public class AccessLogService {
 
     public void logRequest(HttpServletRequest request) {
-        if (request.getRequestURI().startsWith("/common")) {
-            return;
-        }
+//        if (request.getRequestURI().startsWith("/common")) {
+//            return;
+//        }
 
         String userId = (String) request.getSession().getAttribute("userId");
         String traceId = UUID.randomUUID().toString();
         String query = request.getQueryString();
         request.getSession().setAttribute("traceId", traceId);
 
-        System.out.println("-----[REQ] " + traceId
+        System.out.println(traceId + " | [REQ]"
+                        + " | " + request.getMethod()
                 + " | " + request.getRequestURI()
-                + " | " + request.getMethod()
                 + " | user=" + userId + " "
                 + " | query=" + (query != null ? "?" + query : "")
                    );
@@ -34,16 +34,16 @@ public class AccessLogService {
             Exception ex
     ) {
 
-        if (request.getRequestURI().startsWith("/common")) {
-            return;
-        }
+//        if (request.getRequestURI().startsWith("/common")) {
+//            return;
+//        }
 
         String userId = (String) request.getSession().getAttribute("userId");
         String traceId = (String) request.getSession().getAttribute("traceId");
 
-        System.out.println("-----[RES] " + traceId
-                + " | " + request.getRequestURI()
+        System.out.println(traceId + " | [RES]"
                 + " | " + request.getMethod()
+                + " | " + request.getRequestURI()
                 + " | user=" + userId + " "
                 + " | status=" + response.getStatus()
                 + " | time=" + elapsed + "ms"
