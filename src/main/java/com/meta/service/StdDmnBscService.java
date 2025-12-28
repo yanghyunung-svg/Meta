@@ -33,7 +33,6 @@ public class StdDmnBscService {
      * desc     : 표준도메인 목록 조회
      */
     public List<TbStdDmnBscDto> getListData(TbStdDmnBscDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
         return tbStdDmnBscMapper.getListData(inputDto);
     }
 
@@ -42,7 +41,6 @@ public class StdDmnBscService {
      * desc     : 표준도메인 상세 조회
      */
     public List<TbStdDmnBscDto> getDmnComboData()  {
-        log.debug(BizUtils.logInfo("START"));
         return tbStdDmnBscMapper.getDmnComboData();
     }
 
@@ -60,8 +58,6 @@ public class StdDmnBscService {
      * desc     : 표준도메인 등록
      */
     public ApiResponse<Void> insertData(TbStdDmnBscDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVo(inputDto));
         try {
             TbStdDmnBscDto outputDto = tbStdDmnBscMapper.getData(inputDto);
 
@@ -87,9 +83,6 @@ public class StdDmnBscService {
      * desc     : 표준도메인 변경
      */
     public ApiResponse<Void> updateData(TbStdDmnBscDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVo(inputDto));
-
         try {
             TbStdDmnBscDto outputDto = tbStdDmnBscMapper.getData(inputDto);
 
@@ -100,11 +93,10 @@ public class StdDmnBscService {
             if (tbStdDmnBscMapper.updateData(inputDto) == 0) {
                 return new ApiResponse<Void>(false, "수정 오류");
             }
-
-            log.debug(BizUtils.logVoKey(outputDto));
             return new ApiResponse<Void>(true, "수정 성공");
 
         } catch (Exception e) {
+            log.debug(BizUtils.logInfo("Exception"));
             return new ApiResponse<Void>(false, "수정 처리 중 오류가 발생했습니다.");
         }
     }
@@ -114,8 +106,6 @@ public class StdDmnBscService {
      * @ NAME : 표준도메인 엑셀업로드
      */
     public List<TbStdDmnBscDto> parseExcelPreview(MultipartFile file) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-
         List<TbStdDmnBscDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
@@ -139,8 +129,6 @@ public class StdDmnBscService {
 
             result.add(dto);
         }
-
-        log.debug(BizUtils.logInfo("END"));
         return result;
     }
 
@@ -156,8 +144,6 @@ public class StdDmnBscService {
     }
 
     public int saveUploadedExcel(List<TbStdDmnBscDto> list) {
-        log.debug(BizUtils.logInfo("START"));
-
         int count = 0;
         for (TbStdDmnBscDto dto : list) {
             if(StringUtils.equals(dto.getSttsCd(), "0")) {
@@ -166,8 +152,6 @@ public class StdDmnBscService {
                 count++;
             }
         }
-
-        log.debug(BizUtils.logInfo("END", String.valueOf(count)));
         return count;
     }
 

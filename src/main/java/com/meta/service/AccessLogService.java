@@ -19,7 +19,7 @@ public class AccessLogService {
         String query = request.getQueryString();
         request.getSession().setAttribute("traceId", traceId);
 
-        System.out.println("[REQ] " + traceId
+        System.out.println("-----[REQ] " + traceId
                 + " | " + request.getRequestURI()
                 + " | " + request.getMethod()
                 + " | user=" + userId + " "
@@ -41,7 +41,7 @@ public class AccessLogService {
         String userId = (String) request.getSession().getAttribute("userId");
         String traceId = (String) request.getSession().getAttribute("traceId");
 
-        System.out.println("[RES] " + traceId
+        System.out.println("-----[RES] " + traceId
                 + " | " + request.getRequestURI()
                 + " | " + request.getMethod()
                 + " | user=" + userId + " "

@@ -33,7 +33,6 @@ public class WordDictionaryService {
      * desc     : 단어사전 목록 조회
      */
     public List<TbWordDictionaryDto> getListData(TbWordDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
         return tbWordDictionaryMapper.getListData(inputDto);
     }
 
@@ -42,20 +41,14 @@ public class WordDictionaryService {
      * desc     : 단어사전 상세 조회
      */
     public TbWordDictionaryDto getData(TbWordDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        TbWordDictionaryDto outputDto = tbWordDictionaryMapper.getData(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
-        return outputDto;
+        return tbWordDictionaryMapper.getData(inputDto);
     }
     /**
      * method   : getDataByName
      * desc     : 단어사전 단어명 상세 조회
      */
     public TbWordDictionaryDto getDataByName(TbWordDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        TbWordDictionaryDto outputDto = tbWordDictionaryMapper.getDataByName(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
-        return outputDto;
+        return tbWordDictionaryMapper.getDataByName(inputDto);
     }
 
     /**
@@ -63,8 +56,6 @@ public class WordDictionaryService {
      * desc     : 단어사전 등록
      */
     public ApiResponse<Void> insertData(TbWordDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVo(inputDto));
         try {
             TbWordDictionaryDto outputDto = tbWordDictionaryMapper.getDataByName(inputDto);
 
@@ -89,8 +80,6 @@ public class WordDictionaryService {
      * desc     : 단어사전 변경
      */
     public ApiResponse<Void> updateData(TbWordDictionaryDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVo(inputDto));
 
         try {
             TbWordDictionaryDto outputDto = tbWordDictionaryMapper.getData(inputDto);
@@ -115,7 +104,6 @@ public class WordDictionaryService {
      * @ NAME : 표준단어 엑셀업로드
      */
     public List<TbWordDictionaryDto> parseExcelPreview(MultipartFile file) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
 
         List<TbWordDictionaryDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
@@ -140,8 +128,6 @@ public class WordDictionaryService {
 
             result.add(dto);
         }
-
-        log.debug(BizUtils.logInfo("END"));
         return result;
     }
 
@@ -161,8 +147,6 @@ public class WordDictionaryService {
      * @ NAME : 표준단어 엑셀업로드 저장
      */
     public int saveUploadedExcel(List<TbWordDictionaryDto> list) {
-        log.debug(BizUtils.logInfo("START"));
-
         int count = 0;
         for (TbWordDictionaryDto dto : list) {
             if(StringUtils.equals(dto.getStat(), "0")) {
@@ -171,8 +155,6 @@ public class WordDictionaryService {
                 count++;
             }
         }
-
-        log.debug(BizUtils.logInfo("END", String.valueOf(count)));
         return count;
     }
  

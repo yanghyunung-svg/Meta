@@ -1,16 +1,13 @@
 package com.meta.service;
 
-import ch.qos.logback.core.util.StringUtil;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbLoginLogDto;
-import com.meta.dto.TbStdDmnBscDto;
 import com.meta.dto.TbUserInfoDto;
 import com.meta.mapper.TbLoginLogMapper;
 import com.meta.mapper.TbUserInfoMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -37,6 +32,8 @@ public class LoginService {
     private TbUserInfoMapper tbUserInfoMapper;
     @Autowired
     private TbLoginLogMapper tbLoginLogMapper;
+    @Autowired
+    private CommService commService;
 
     /**
      * method   : getLoginData
@@ -55,7 +52,7 @@ public class LoginService {
             TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
             if (outputDto == null) {
                 tbLoginLogDto.setFailReason("사용자가 없습니다.");
-                this.insertLoginLog(tbLoginLogDto);
+                commService.insertLoginLog(tbLoginLogDto);
                 return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
             }
 
@@ -65,27 +62,27 @@ public class LoginService {
             // 비밀번호 검증
             if (!encoder.matches(rawPassword, dbPw)) {
                 tbLoginLogDto.setFailReason("비밀번호 오류");
-                this.insertLoginLog(tbLoginLogDto);
+                commService.insertLoginLog(tbLoginLogDto);
                 return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
             }
 
             // 상태코드 검증
             if (StringUtils.equals(outputDto.getStat(), "0")) {
                 tbLoginLogDto.setFailReason("시스템사용 미승인");
-                this.insertLoginLog(tbLoginLogDto);
+                commService.insertLoginLog(tbLoginLogDto);
                 return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
             }
 
             if (StringUtils.equals(outputDto.getStat(), "9")) {
                 tbLoginLogDto.setFailReason("시스템사용 불가");
-                this.insertLoginLog(tbLoginLogDto);
+                commService.insertLoginLog(tbLoginLogDto);
                 return new ApiResponse<>(false, tbLoginLogDto.getFailReason());
             }
 
             tbLoginLogDto.setLoginResult("0");
             tbLoginLogDto.setFailReason("");
 
-            this.insertLoginLog(tbLoginLogDto);
+            commService.insertLoginLog(tbLoginLogDto);
 
             HttpSession session = request.getSession(true);
             session.setAttribute("userId", outputDto.getUserId());
@@ -109,14 +106,6 @@ public class LoginService {
         return tbLoginLogMapper.getLoginLogList(inputDto);
     }
 
-    /**
-     * method   : insertLoginLog
-     * desc     : Login Log insert
-     */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void insertLoginLog(TbLoginLogDto inputDto) {
-        tbLoginLogMapper.insertData(inputDto);
-    }
 
 }
 

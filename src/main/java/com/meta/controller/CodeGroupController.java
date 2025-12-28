@@ -33,7 +33,6 @@ public class CodeGroupController {
     @PostMapping("/getCodeGroupListData")
     @ResponseBody
     public List<TbCodeGroupDto> getCodeGroupListData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
         return codeGroupService.getListData(inputDto);
     }
 
@@ -44,7 +43,6 @@ public class CodeGroupController {
     @PostMapping("/getCodeGroupData")
     @ResponseBody
     public TbCodeGroupDto getCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
         return codeGroupService.getData(inputDto);
     }
 
@@ -55,10 +53,7 @@ public class CodeGroupController {
     @PostMapping("/insertCodeGroupData")
     @ResponseBody
     public ApiResponse<Void> insertCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-        ApiResponse<Void> outputDto = codeGroupService.insertData(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
-        return outputDto;
+        return codeGroupService.insertData(inputDto);
     }
     /**
      * @ ID : updateCodeGroupData
@@ -67,10 +62,7 @@ public class CodeGroupController {
     @PostMapping("/updateCodeGroupData")
     @ResponseBody
     public ApiResponse<Void> updateCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-        ApiResponse<Void> outputDto = codeGroupService.updateData(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
-        return outputDto;
+        return codeGroupService.updateData(inputDto);
     }
 
 

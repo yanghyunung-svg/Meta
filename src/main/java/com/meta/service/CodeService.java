@@ -7,7 +7,10 @@ import com.meta.dto.TbCodeDto;
 import com.meta.dto.TbCodeGroupDto;
 import com.meta.mapper.TbCodeGroupMapper;
 import com.meta.mapper.TbCodeMapper;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +40,6 @@ public class CodeService {
      *@ NAME     : 코드기본 목록 조회
      */
     public List<TbCodeDto> getListData(TbCodeDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
         return tbCodeMapper.getListData(inputDto);
     }
 
@@ -46,7 +48,6 @@ public class CodeService {
      *@ NAME     : 공통코드상세 combo 조회
      */
     public List<TbCodeDto> getCodeAllData(TbCodeDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
         return tbCodeMapper.getAllData(inputDto);
     }
 
@@ -56,13 +57,7 @@ public class CodeService {
      *@ NAME     : 코드기본 상세 조회
      */
     public TbCodeDto getData(TbCodeDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-
-        TbCodeDto outputDto = new TbCodeDto();
-        outputDto =  tbCodeMapper.getData(inputDto);
-
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return tbCodeMapper.getData(inputDto);
     }
 
     /**
@@ -70,12 +65,11 @@ public class CodeService {
      *@ NAME     : 코드기본 등록
      */
     public ApiResponse<Void> insertData(TbCodeDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVo(inputDto));
         try {
             TbCodeGroupDto tbCodeGroupDtoIn = new TbCodeGroupDto();
             tbCodeGroupDtoIn.setGrpCd(inputDto.getGrpCd());
             TbCodeGroupDto tbCodeGroupDtoOut = tbCodeGroupMapper.getData(tbCodeGroupDtoIn);
+
             if (tbCodeGroupDtoOut == null) {
                 return new ApiResponse<Void>(false, "그룹코드가 없습니다. =" + inputDto.getGrpCd());
             }
@@ -102,9 +96,7 @@ public class CodeService {
      *@ NAME     : 코드기본 변경
      */
     public ApiResponse<Void> updateData(TbCodeDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
         try {
-            log.debug(BizUtils.logInfo("SELECT", inputDto.getCd()));
             TbCodeDto outputDto = tbCodeMapper.getData(inputDto);
 
             if (outputDto == null) {
@@ -115,7 +107,6 @@ public class CodeService {
                 return new ApiResponse<Void>(false, "수정 오류");
             }
 
-            log.debug(BizUtils.logVoKey(outputDto));
             return new ApiResponse<Void>(true, "수정 성공");
 
         } catch (Exception e) {
@@ -128,8 +119,6 @@ public class CodeService {
      * @ NAME : 상세코드 엑셀업로드
      */
     public List<TbCodeDto> parseExcelPreview(MultipartFile file) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-
         List<TbCodeDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
@@ -155,8 +144,6 @@ public class CodeService {
 
             result.add(dto);
         }
-
-        log.debug(BizUtils.logInfo("END"));
         return result;
     }
 
@@ -170,8 +157,6 @@ public class CodeService {
     }
 
     public int saveUploadedExcel(List<TbCodeDto> list) {
-        log.debug(BizUtils.logInfo("START"));
-
         int count = 0;
         for (TbCodeDto dto : list) {
             if(StringUtils.equals(dto.getStat(), "1")) {
@@ -180,8 +165,6 @@ public class CodeService {
                 count++;
             }
         }
-
-        log.debug(BizUtils.logInfo("END", String.valueOf(count)));
         return count;
     }
  

@@ -97,8 +97,6 @@ public class TermDictionaryService {
 
         TbTermDictionaryDto tbTermDictionaryDto = tbTermDictionaryMapper.getData(inputDto);
         if (tbTermDictionaryDto != null) {
-            log.debug(BizUtils.logVoKey(tbTermDictionaryDto));
-            log.debug(BizUtils.logInfo("END"));
             return tbTermDictionaryDto;
         }
 
@@ -117,7 +115,6 @@ public class TermDictionaryService {
         outputDto.setTrmExpln(prettyPrintKeywords(keywords));
         outputDto.setStat("0");
 
-        log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
 
@@ -189,10 +186,7 @@ public class TermDictionaryService {
 
 
     public List<TbTermDictionaryDto> uploadTermExcelOnly(MultipartFile file) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-
         List<TbTermDictionaryDto> result = new ArrayList<>();
-
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
 
@@ -209,14 +203,10 @@ public class TermDictionaryService {
 
             result.add(dto);
         }
-
-        log.debug(BizUtils.logInfo("END"));
         return result;
     }
 
     public List<TbTermDictionaryDto> parseExcelPreview(MultipartFile file) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-
         List<TbTermDictionaryDto> result = new ArrayList<>();
 
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
@@ -241,14 +231,10 @@ public class TermDictionaryService {
 
             result.add(dto);
         }
-
-        log.debug(BizUtils.logInfo("END"));
         return result;
     }
 
     public List<TbTermDictionaryDto> parseTermReload(List<TbTermDictionaryDto> inputList) {
-        log.debug(BizUtils.logInfo("START"));
-
         List<TbTermDictionaryDto> result = new ArrayList<>();
         for (TbTermDictionaryDto dto : inputList) {
 
@@ -260,8 +246,6 @@ public class TermDictionaryService {
                 result.add(outDto);
             }
         }
-
-        log.debug(BizUtils.logInfo("END"));
         return result;
     }
 

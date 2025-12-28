@@ -34,17 +34,13 @@ public class ApproveService {
      * @ NAME     : 목록 조회
      */
     public List<ApproveDto> getListData(ApproveDto inputDto)  {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-        List<ApproveDto> outputDto = approveMapper.getListData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return approveMapper.getListData(inputDto);
     }
     /**
      * @ ID   : prcsAprvDsctn
      * @ NAME     : 상태변경처리
      */
     public ApproveDto prcsAprvDsctn(ApproveDto inputDto)  {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         ApproveDto outputDto = new ApproveDto();
         switch (inputDto.getSe()) {
         case "1":
@@ -90,7 +86,6 @@ public class ApproveService {
         default:
             break;
         }
-        log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
 

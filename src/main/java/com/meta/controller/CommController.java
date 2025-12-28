@@ -31,8 +31,6 @@ public class CommController {
     @PostMapping("/getCommCodeSearch")
     @ResponseBody
     public List<CommCodeDto> getCommCodeSearch(@RequestBody CommCodeDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVoKey(inputDto));
         return commService.getCommCodeSearch(inputDto);
     }
 }

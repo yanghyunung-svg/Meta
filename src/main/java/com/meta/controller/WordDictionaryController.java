@@ -34,7 +34,6 @@ public class WordDictionaryController {
     @PostMapping("/getWordListData")
     @ResponseBody
     public List<TbWordDictionaryDto> getWordListData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
         return wordDictionaryService.getListData(inputDto);
     }
 
@@ -45,7 +44,6 @@ public class WordDictionaryController {
     @PostMapping("/getWordData")
     @ResponseBody
     public TbWordDictionaryDto getWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
         if (StringUtil.notNullNorEmpty(inputDto.getWordNm())) {
             return wordDictionaryService.getDataByName(inputDto);
         }
@@ -61,10 +59,7 @@ public class WordDictionaryController {
     @PostMapping("/insertWordData")
     @ResponseBody
     public ApiResponse<Void> insertWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        ApiResponse<Void> outputDto = wordDictionaryService.insertData(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
-        return outputDto;
+        return wordDictionaryService.insertData(inputDto);
     }
 
     /**
@@ -74,10 +69,7 @@ public class WordDictionaryController {
     @PostMapping("/updateWordData")
     @ResponseBody
     public ApiResponse<Void> updateWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        ApiResponse<Void> outputDto = wordDictionaryService.updateData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return wordDictionaryService.updateData(inputDto);
     }
     /**
      * @ ID : uploadWordExcelPreview

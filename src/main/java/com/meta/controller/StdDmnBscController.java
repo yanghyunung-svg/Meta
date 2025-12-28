@@ -33,7 +33,6 @@ public class StdDmnBscController {
     @PostMapping("/getDmnListData")
     @ResponseBody
     public List<TbStdDmnBscDto> getDmnListData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
         return stdDmnBscService.getListData(inputDto);
     }
     /**
@@ -53,7 +52,6 @@ public class StdDmnBscController {
     @PostMapping("/getDmnData")
     @ResponseBody
     public TbStdDmnBscDto getDmnData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
         return stdDmnBscService.getData(inputDto);
     }
 
@@ -64,10 +62,7 @@ public class StdDmnBscController {
     @PostMapping("/insertDmnData")
     @ResponseBody
     public ApiResponse<Void> insertDmnData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        ApiResponse<Void> outputDto = stdDmnBscService.insertData(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
-        return outputDto;
+        return stdDmnBscService.insertData(inputDto);
     }
 
     /**
@@ -77,10 +72,7 @@ public class StdDmnBscController {
     @PostMapping("/updateDmnData")
     @ResponseBody
     public ApiResponse<Void> updateDmnData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVo(inputDto)));
-        ApiResponse<Void> outputDto = stdDmnBscService.updateData(inputDto);
-        log.debug(BizUtils.logInfo("END", BizUtils.logVo(outputDto)));
-        return outputDto;
+        return stdDmnBscService.updateData(inputDto);
     }
 
     /**

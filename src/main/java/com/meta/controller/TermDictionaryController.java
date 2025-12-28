@@ -36,10 +36,7 @@ public class TermDictionaryController {
     @PostMapping("/getTermListData")
     @ResponseBody
     public List<TbTermDictionaryDto> getTermListData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-        List<TbTermDictionaryDto> outputDto = termDictionaryService.getListData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return termDictionaryService.getListData(inputDto);
     }
 
     /**
@@ -49,10 +46,7 @@ public class TermDictionaryController {
     @PostMapping("/getTermData")
     @ResponseBody
     public TbTermDictionaryDto getTermData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-        TbTermDictionaryDto outputDto = termDictionaryService.getData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return termDictionaryService.getData(inputDto);
     }
 
     /**
@@ -62,10 +56,7 @@ public class TermDictionaryController {
     @PostMapping("/insertTermData")
     @ResponseBody
     public ApiResponse<Void> insertTermData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-        ApiResponse<Void> outputDto = termDictionaryService.insertData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return termDictionaryService.insertData(inputDto);
     }
 
     /**
@@ -75,10 +66,7 @@ public class TermDictionaryController {
     @PostMapping("/updateTermData")
     @ResponseBody
     public ApiResponse<Void> updateTermData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-        ApiResponse<Void> outputDto = termDictionaryService.updateData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return termDictionaryService.updateData(inputDto);
     }
 
     /**
@@ -88,15 +76,11 @@ public class TermDictionaryController {
     @PostMapping("/getTermSplitData")
     @ResponseBody
     public TbTermDictionaryDto getTermSplitData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-        TbTermDictionaryDto outputDto = termDictionaryService.getTermSplitData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return termDictionaryService.getTermSplitData(inputDto);
     }
 
     @PostMapping("/uploadTermExcelOnly")
     public ResponseEntity<Map<String, Object>> uploadTermExcelOnly(@RequestParam("file") MultipartFile file) {
-        log.debug(BizUtils.logInfo("START"));
         Map<String, Object> res = new HashMap<>();
         try {
             List<TbTermDictionaryDto> list = termDictionaryService.uploadTermExcelOnly(file);
@@ -107,13 +91,10 @@ public class TermDictionaryController {
             res.put("success", false);
             res.put("message", e.getMessage());
             return ResponseEntity.ok(res);
-        } finally {
-            log.debug(BizUtils.logInfo("END"));
         }
     }
     @PostMapping("/uploadTermExcelPreview")
     public ResponseEntity<Map<String, Object>> uploadTermExcelPreview(@RequestParam("file") MultipartFile file) {
-        log.debug(BizUtils.logInfo("START"));
         Map<String, Object> res = new HashMap<>();
         try {
             List<TbTermDictionaryDto> list = termDictionaryService.parseExcelPreview(file);
@@ -124,14 +105,11 @@ public class TermDictionaryController {
             res.put("success", false);
             res.put("message", e.getMessage());
             return ResponseEntity.ok(res);
-        } finally {
-            log.debug(BizUtils.logInfo("END"));
         }
     }
 
     @PostMapping("/parseTermReload")
     public ResponseEntity<Map<String, Object>> parseTermReload(@RequestBody List<TbTermDictionaryDto> inputList) {
-        log.debug(BizUtils.logInfo("START"));
         Map<String, Object> res = new HashMap<>();
         try {
             List<TbTermDictionaryDto> list = termDictionaryService.parseTermReload(inputList);
@@ -142,26 +120,20 @@ public class TermDictionaryController {
             res.put("success", false);
             res.put("message", e.getMessage());
             return ResponseEntity.ok(res);
-        } finally {
-            log.debug(BizUtils.logInfo("END"));
         }
     }
 
     @PostMapping("/uploadTermExcelSave")
     public ResponseEntity<Map<String, Object>> uploadTermExcelSave(@RequestBody List<TbTermDictionaryDto> list, HttpServletRequest request) {
-        log.debug(BizUtils.logInfo("START"));
-
         Map<String, Object> res = new HashMap<>();
         try {
             int count = termDictionaryService.uploadTermExcelSave(list);
             res.put("success", true);
             res.put("count", count);
-            log.debug(BizUtils.logInfo("END", "success"));
             return ResponseEntity.ok(res);
         } catch (Exception e) {
             res.put("success", false);
             res.put("message", e.getMessage());
-            log.debug(BizUtils.logInfo("END", "fail"));
             return ResponseEntity.ok(res);
         }
     }

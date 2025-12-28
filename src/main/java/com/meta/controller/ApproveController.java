@@ -31,13 +31,9 @@ public class ApproveController {
     @PostMapping("/getAplyDsctnList")
     @ResponseBody
     public List<ApproveDto> getAplyDsctnList(@RequestBody ApproveDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
         String userId = (String) request.getSession().getAttribute("userId");
         inputDto.setStat("0");
-        log.debug(BizUtils.logInfo("userId", userId));
-        List<ApproveDto> outputDto =  approveService.getListData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return approveService.getListData(inputDto);
     }
 
     /**
@@ -47,12 +43,12 @@ public class ApproveController {
     @PostMapping("/getAprvDsctnList")
     @ResponseBody
     public List<ApproveDto> getAprvDsctnList(@RequestBody ApproveDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
+
         String userId = (String) request.getSession().getAttribute("userId");
         log.debug(BizUtils.logInfo("userId", userId));
-        List<ApproveDto> outputDto =  approveService.getListData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+
+
+        return  approveService.getListData(inputDto);
     }
     /**
      * @ ID : prcsAprvDsctn
@@ -61,13 +57,8 @@ public class ApproveController {
     @PostMapping("/prcsAprvDsctn")
     @ResponseBody
     public ApproveDto prcsAprvDsctn(@RequestBody ApproveDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-
         String userId = (String) request.getSession().getAttribute("userId");
-        log.debug(BizUtils.logInfo("userId", userId));
-        ApproveDto outputDto =  approveService.prcsAprvDsctn(inputDto);
-        log.debug(BizUtils.logInfo("END"));
-        return outputDto;
+        return  approveService.prcsAprvDsctn(inputDto);
     }
 
 }

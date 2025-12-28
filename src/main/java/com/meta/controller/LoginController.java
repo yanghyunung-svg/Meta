@@ -4,6 +4,7 @@ import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbLoginLogDto;
 import com.meta.dto.TbUserInfoDto;
+import com.meta.service.CommService;
 import com.meta.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
@@ -33,8 +34,6 @@ public class LoginController {
     @PostMapping("/getLogin")
     @ResponseBody
     public ApiResponse<TbUserInfoDto>  getLogin(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-
         inputDto.setIpAddr(BizUtils.getClientIp(request));
         inputDto.setUserAgent(request.getHeader("User-Agent"));
 
@@ -42,8 +41,6 @@ public class LoginController {
         if (!outputDto.isSuccess()) {
             return outputDto;
         }
-
-        log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
 
@@ -55,8 +52,6 @@ public class LoginController {
     @PostMapping("/getLoginLogList")
     @ResponseBody
     public List<TbLoginLogDto> getLoginLogList(@RequestBody TbLoginLogDto inputDto, HttpServletRequest request) throws Exception {
-        log.debug(BizUtils.logInfo("START"));
-        log.debug(BizUtils.logVoKey(inputDto));
         return loginService.getLoginLogList(inputDto);
     }
 
