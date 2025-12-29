@@ -24,8 +24,11 @@ function loadHeader() {
 function bindHeaderEvents() {
     const termSearch = document.querySelector('.topbar-left .termSearch');
     const logoutBtn = document.querySelector('.topbar-right .logout');
+
     const userNm = localStorage.getItem('userNm');
     const userId = localStorage.getItem('userId');
+    const role = localStorage.getItem('role');
+
     const userInfo = document.querySelector('.topbar-right .userInfo');
     const headerUserNm = document.getElementById('headerUserNm');
 

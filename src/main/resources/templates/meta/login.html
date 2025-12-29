@@ -58,7 +58,6 @@
                 localStorage.setItem('userId', result.data.userId);
                 localStorage.setItem('userNm', result.data.userNm);
                 localStorage.setItem('role', result.data.role);
-                localStorage.setItem('menuId', 'menu-term');
                 window.location.href = '/meta/termSearch';
             } else {
                 alert("Login 실패: " + result.message);

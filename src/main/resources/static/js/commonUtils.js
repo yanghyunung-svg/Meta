@@ -475,6 +475,7 @@ function getDefaultDates() {
 
 function addUserAuditFields(data) {
     const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem('role');
     return {
         ...data,
         updId: userId,

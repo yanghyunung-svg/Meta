@@ -145,7 +145,7 @@ public class TemplateController {
                         "사용자명",
                         "이메일",
                         "전화번호",
-                        "권한",
+                        "USER",
                         "1"
                 }
         );

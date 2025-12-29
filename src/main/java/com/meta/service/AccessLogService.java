@@ -8,13 +8,13 @@ import java.util.UUID;
 
 @Service
 public class AccessLogService {
-
     public void logRequest(HttpServletRequest request) {
-//        if (request.getRequestURI().startsWith("/common")) {
-//            return;
-//        }
+        if (request.getRequestURI().startsWith("/common")) {
+            return;
+        }
 
         String userId = (String) request.getSession().getAttribute("userId");
+        String role = (String) request.getSession().getAttribute("role");
         String traceId = UUID.randomUUID().toString();
         String query = request.getQueryString();
         request.getSession().setAttribute("traceId", traceId);
@@ -23,6 +23,7 @@ public class AccessLogService {
                         + " | " + request.getMethod()
                 + " | " + request.getRequestURI()
                 + " | user=" + userId + " "
+                + " | role=" + role + " "
                 + " | query=" + (query != null ? "?" + query : "")
                    );
     }
@@ -34,9 +35,9 @@ public class AccessLogService {
             Exception ex
     ) {
 
-//        if (request.getRequestURI().startsWith("/common")) {
-//            return;
-//        }
+        if (request.getRequestURI().startsWith("/common")) {
+            return;
+        }
 
         String userId = (String) request.getSession().getAttribute("userId");
         String traceId = (String) request.getSession().getAttribute("traceId");

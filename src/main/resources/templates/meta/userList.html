@@ -34,12 +34,6 @@
                     </svg>
                     등록
                 </button>
-                <button id="btnRegEblc" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <polyline points="4,12 9,17 20,6" fill="none" stroke="currentColor"/>
-                    </svg>
-                    일괄등록
-                </button>
                 <button id="btnInit" type="button" class="btn">
                     <svg viewBox="0 0 24 24" width="15" height="15">
                         <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
@@ -209,12 +203,6 @@
     document.getElementById('btnExcel').addEventListener('click', () => {
         downloadTableToExcel('mainTable', '사용자목록');
     });
-
-    document.getElementById('btnRegEblc').addEventListener('click', () => {
-            window.location.href = '/meta/userRegEblc';
-    });
-
-
 
 </script>
 <script src="/js/commonCombo.js"></script>
