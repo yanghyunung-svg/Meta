@@ -152,6 +152,28 @@ public class TemplateController {
     }
 
 
+    /**
+     * @ ID : downloadTermSearchExcelTemplate
+     * @ NAME : 표쥰용어검색 UPLOAD Template
+     */
+    @GetMapping("/downloadTermSearchExcelTemplate")
+    public void downloadTermSearchExcelTemplate(HttpServletResponse response) throws Exception {
+        downloadExcelTemplate(
+                response,
+                "표준용어검색",
+                "표준용어검색_업로드_템플릿.xlsx",
+                new String[]{"번호","용어명","영문명","Snake","Pascal","Camel","상태"},
+                new String[]{
+                        "1",
+                        "용어명",
+                        "영문명",
+                        "Snake",
+                        "Pascal",
+                        "Camel",
+                        "0"
+                }
+        );
+    }
 
     private void downloadExcelTemplate(
             HttpServletResponse response,

@@ -8,7 +8,10 @@ import com.meta.dto.TbWordDictionaryDto;
 import com.meta.dto.WordMappingDto;
 import com.meta.mapper.TbTermDictionaryMapper;
 import com.meta.mapper.TbWordDictionaryMapper;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,28 +98,41 @@ public class TermDictionaryService {
      */
     public TbTermDictionaryDto getTermSplitData(TbTermDictionaryDto inputDto)  {
 
+        // 1. 용어사전
         TbTermDictionaryDto tbTermDictionaryDto = tbTermDictionaryMapper.getData(inputDto);
         if (tbTermDictionaryDto != null) {
+            tbTermDictionaryDto.setSnake(BizUtils.snakeToLower(tbTermDictionaryDto.getEngNm()));
+            tbTermDictionaryDto.setCamel(BizUtils.snakeToCamel(tbTermDictionaryDto.getEngNm()));
+            tbTermDictionaryDto.setPascal(BizUtils.snakeToPascal(tbTermDictionaryDto.getEngNm()));
+            tbTermDictionaryDto.setStat("표준용어");
             return tbTermDictionaryDto;
         }
 
         TbTermDictionaryDto outputDto = new TbTermDictionaryDto();
         String inText = inputDto.getTrmNm().replace(" ", "");
+        log.debug(BizUtils.logInfo("inText", inText));
 
-        // 1. 단어 테이블에 있는 단어로 자동 분리
+        // 2. 단어 테이블에 있는 단어로 자동 분리
         List<WordMappingDto> keywords = extractKeywords(inText);
 
-        // 2. DB 조회 및 Snake Case 변환 실행
+        // 3. DB 조회 및 Snake Case 변환 실행
         String outTxt = translateToSnakeCase(keywords);
 
         outputDto.setTrmNm(inText);
         outputDto.setEngNm(outTxt);
+
+        outputDto.setSnake(BizUtils.snakeToLower(outTxt));
+        outputDto.setCamel(BizUtils.snakeToCamel(outTxt));
+        outputDto.setPascal(BizUtils.snakeToPascal(outTxt));
+
         outputDto.setDmnNm("");
         outputDto.setTrmExpln(prettyPrintKeywords(keywords));
         outputDto.setStat("0");
 
+        log.debug(BizUtils.logInfo("outTxt", outTxt + "|" + outputDto.getSnake() + "|" + outputDto.getPascal() + "|" + outputDto.getCamel()));
         return outputDto;
     }
+
 
     public List<WordMappingDto> extractKeywords(String compoundWord) {
         List<WordMappingDto> keywords = new ArrayList<>();
@@ -154,6 +170,7 @@ public class TermDictionaryService {
         for (int i = 0; i < keywords.size(); i++) {
             WordMappingDto dto = keywords.get(i);
             String englishWord = dto.getEngNm();
+
             if (englishWord != null && !englishWord.isEmpty()) {
                 sb.append(englishWord.toUpperCase());
             } else {
@@ -197,9 +214,11 @@ public class TermDictionaryService {
             TbTermDictionaryDto dto = new TbTermDictionaryDto();
 
             dto.setTrmNm(BizUtils.getCell(row, 1));
-            dto.setEngNm(BizUtils.getCell(row, 2));
-            dto.setTrmExpln(BizUtils.getCell(row, 4));
-            dto.setStat(BizUtils.getCell(row, 5));
+            dto.setEngNm("");
+            dto.setSnake("");
+            dto.setPascal("");
+            dto.setCamel("");
+            dto.setStat("");
 
             result.add(dto);
         }

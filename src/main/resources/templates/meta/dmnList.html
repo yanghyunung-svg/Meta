@@ -51,8 +51,8 @@
                 <tr>
                     <th>도메인명</th>
                     <td><input type="text" id="dmnNm" name="dmnNm" class="form-input" ></td>
-                    <th>영문명</th>
-                    <td><input type="text" id="dmnEngNm" name="dmnEngNm" class="form-input" ></td>
+                    <th>도메인분류명</th>
+                    <td><input type="text" id="dmnClsfNm" name="dmnClsfNm" class="form-input" ></td>
                     <th>상태</th>
                     <td>
                         <select id="stat" name="stat" class="form-select">
@@ -66,12 +66,13 @@
 
         <div id="pageInfoContainer" class="page-header"></div>
 
+<!--        <div  class="listContainer">-->
         <table class="data-table" id="mainTable">
             <thead>
             <tr>
                 <th class="col-no">번호</th>
-                <th width="150px">도메인명</th>
                 <th width="150px">도메인분류명</th>
+                <th width="150px">도메인명</th>
                 <th width="150px">도메인영문명</th>
                 <th width="250px">도메인속성</th>
                 <th width="50px" style="text-align: center;">상태</th>
@@ -79,9 +80,10 @@
             </thead>
             <tbody></tbody>
         </table>
+<!--        </div>-->
+    </div><!-- /container -->
 
     </div><!-- /mainContainer -->
-</div><!-- /container -->
 
 <!-- <div id="footbarContainer"></div> -->
 <script>
@@ -126,8 +128,8 @@
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr class="row-click" data-id="${item.dmnNm}">
                     <td style="text-align: center;"> ${start + index + 1} </td>
-                    <td style="text-align: left;">${item.dmnNm}</td>
                     <td style="text-align: left;">${item.dmnClsfNm}</td>
+                    <td style="text-align: left;">${item.dmnNm}</td>
                     <td style="text-align: left;">${item.dmnEngNm}</td>
                     <td style="text-align: left;">${item.dmnAtrb}</td>
                     <td style="text-align: center;">${item.sttsNm}</td>

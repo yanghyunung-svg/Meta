@@ -66,30 +66,6 @@ public class BizUtils {
         return sb.toString();
     }
 
-    // 현재날짜 시간
-    public static String getDateTime(int i)  {
-        LocalDateTime now = LocalDateTime.now();
-        String str = "";
-        switch(i) {
-            case 1:
-                str = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                break;
-            case 2:
-                str = now.format(DateTimeFormatter.ofPattern("HHmmss"));
-                break;
-            case 3:
-                str = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-                break;
-            case 4:
-                str = now.format(DateTimeFormatter.ofPattern("MMddHHmmss"));
-                break;
-            default:
-                break;
-        }
-        return str;
-    }
-
-
     public static String logInfo() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         StackTraceElement caller = stackTrace[2]; 
@@ -148,7 +124,28 @@ public class BizUtils {
         return ip;
     }
 
-
+    // 현재날짜 시간
+    public static String getDateTime(int i)  {
+        LocalDateTime now = LocalDateTime.now();
+        String str = "";
+        switch(i) {
+            case 1:
+                str = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                break;
+            case 2:
+                str = now.format(DateTimeFormatter.ofPattern("HHmmss"));
+                break;
+            case 3:
+                str = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+                break;
+            case 4:
+                str = now.format(DateTimeFormatter.ofPattern("MMddHHmmss"));
+                break;
+            default:
+                break;
+        }
+        return str;
+    }
 
     public static  String getCell(Row row, int cellIndex) {
 
@@ -186,4 +183,40 @@ public class BizUtils {
             return null; // 또는 기본값 0
         }
     }
+
+    public static String snakeToLower(String str) {
+        if (str == null) return null;
+        return str
+                .trim()
+                .replaceAll("\\s+", "_")
+                .replaceAll("_+", "_")
+                .toLowerCase();
+    }
+    public static String snakeToCamel(String str) {
+        if (str == null) return null;
+
+        String snake = snakeToLower(str);
+        StringBuilder sb = new StringBuilder();
+        boolean upper = false;
+
+        for (char c : snake.toCharArray()) {
+            if (c == '_') {
+                upper = true;
+            } else {
+                sb.append(upper ? Character.toUpperCase(c) : c);
+                upper = false;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String snakeToPascal(String str) {
+        if (str == null) return null;
+
+        String camel = snakeToCamel(str);
+        return camel.isEmpty()
+                ? camel
+                : Character.toUpperCase(camel.charAt(0)) + camel.substring(1);
+    }
+
 }

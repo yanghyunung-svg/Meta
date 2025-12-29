@@ -90,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');
 
 
-    // 조회결과
     const container = document.getElementById("pageInfoContainer");
     if (!container) return;
 
@@ -110,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // 조회결과
     window.renderTable = function(page)  {
         if (!Array.isArray(dataAll) || dataAll.length === 0) {
             tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';

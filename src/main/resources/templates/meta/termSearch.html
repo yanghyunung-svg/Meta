@@ -12,7 +12,7 @@
 <body>
 
 <div class="container">
-<div id="topbarContainer"></div>
+    <div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainContainer" id="mainContainer">
         <div class="form-header">
@@ -31,18 +31,20 @@
         <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx,.xls">
 
         <table id="mainTable" class="data-table" style="margin-top:10px; ">
-        <thead>
-        <tr>
-            <th class="col-no">번호</th>
-            <th style="text-align: left;">용어명</th>
-            <th style="text-align: left;">영문명</th>
-            <th style="text-align: left;">설명</th>
-            <th style="text-align: left;">상태</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-    <div class="divider-h"></div>
+            <thead>
+            <tr>
+                <th class="col-no">번호</th>
+                <th style="text-align: left;">용어명</th>
+                <th style="text-align: left;">영문명</th>
+                <th style="text-align: left;">Snake</th>
+                <th style="text-align: left;">Pascal</th>
+                <th style="text-align: left;">Camel</th>
+                <th style="text-align: left;">상태</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="divider-h"></div>
     </div>
 
 </div>
@@ -71,7 +73,7 @@
     });
 
     document.getElementById("btnTemplate").addEventListener("click", () => {
-        window.location.href = "/meta/downloadTermExcelTemplate";
+        window.location.href = "/meta/downloadTermSearchExcelTemplate";
     });
 
 
@@ -133,8 +135,9 @@
             const mappedData = result.data.map(row => ({
                 trmNm: row.trmNm || row.trm_nm || row["용어명"] || "",
                 engNm: row.engNm || row.eng_nm || row["영문명"] || "",
-                dmnNm: row.dmnNm || row.dmn_nm || row["도메인명"] || "",
-                trmExpln: row.trmExpln || row.trm_expln || row["설명"] || "",
+                snake: row.snake || row.snake || row["Snake"] || "",
+                pascal: row.pascal || row.pascal || row["Pascal"] || "",
+                camel: row.camel || row.camel || row["Camel"] || "",
                 stat: row.stat || row.stat || row["상태"] || ""
             }));
 
@@ -160,9 +163,12 @@
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td class="col-no">${index + 1}</td>
-                <td style="text-align: left;" class="form-input no-enter" contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
+                <td style="text-align: left;" class="form-input no-enter"
+                    contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
                 <td style="text-align: left;">${row.engNm}</td>
-                <td style="text-align: left;">${row.trmExpln}</td>
+                <td style="text-align: left;">${row.snake}</td>
+                <td style="text-align: left;">${row.pascal}</td>
+                <td style="text-align: left;">${row.camel}</td>
                 <td style="text-align: left;">${row.stat}</td>
             `;
             tbody.appendChild(tr);
@@ -191,7 +197,9 @@
             rows.push({
                 trmNm: '',
                 engNm: '',
-                trmExpln: '',
+                snake : '',
+                pascal : '',
+                camel : '',
                 stat: ''
             });
         }
@@ -202,7 +210,9 @@
         const newEmptyRow = {
             trmNm: '',
             engNm: '',
-            trmExpln: '',
+            snake : '',
+            pascal : '',
+            camel : '',
             stat: ''
         };
 

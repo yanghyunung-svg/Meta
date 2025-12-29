@@ -95,13 +95,13 @@
         <if test="dmnNm != null and dmnNm != ''">
             AND A.DMN_NM LIKE CONCAT('%', #{dmnNm}, '%')
         </if>
-        <if test="dmnEngNm != null and dmnEngNm != ''">
-            AND A.DMN_ENG_NM LIKE CONCAT('%', #{dmnEngNm}, '%')
+        <if test="dmnClsfNm != null and dmnClsfNm != ''">
+            AND A.DMN_CLSF_NM LIKE CONCAT('%', #{dmnClsfNm}, '%')
         </if>
         <if test="sttsCd != null and sttsCd != ''">
             AND A.STTS_CD = #{sttsCd}
         </if>
-        ORDER BY A.DMN_NM
+        ORDER BY A.DMN_CLSF_NM, A.DMN_NM
     </select>
 
 

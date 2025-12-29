@@ -54,10 +54,26 @@
     }
 
 })();
-
 function toggleMenu(titleEl) {
-    const menu = titleEl.nextElementSibling;
-    if (!menu) return;
+    const currentMenu = titleEl.nextElementSibling;
+    if (!currentMenu || !currentMenu.classList.contains('sidebar-menu')) return;
 
-    menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
+    const isOpen = currentMenu.classList.contains('open');
+
+    // 전체 닫기
+    document.querySelectorAll('.sidebar-menu').forEach(menu => {
+        menu.classList.remove('open');
+        menu.style.maxHeight = null;
+    });
+
+    document.querySelectorAll('.sidebar-title').forEach(title => {
+        title.classList.remove('active');
+    });
+
+    // 현재 메뉴 열기
+    if (!isOpen) {
+        currentMenu.classList.add('open');
+        currentMenu.style.maxHeight = currentMenu.scrollHeight + 'px';
+        titleEl.classList.add('active');
+    }
 }

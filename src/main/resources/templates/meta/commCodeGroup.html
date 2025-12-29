@@ -87,8 +87,6 @@
         let dataAll = [];
         let currentPage = 1;
 
-<!--        const table = document.getElementById("mainTable");-->
-<!--        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');-->
         window.tableBody = document.getElementById("mainTable").querySelector("tbody");
 
         // 페이지 탑바 container에 include
@@ -99,6 +97,12 @@
         .then(res => res.text())
         .then(html => {
             container.innerHTML = html;
+
+            const pageSelect = document.querySelector('.pageSelect');
+            if (pageSelect) {
+                pageSelect.classList.add('hidden');
+            }
+
             const pageSizeSelect = document.getElementById("pageSize");
             if (!pageSizeSelect) return;
             pageSizeSelect.addEventListener("change", () => {
@@ -109,6 +113,7 @@
                 updatePageInfo(dataAll, currentPage, PAGE_SIZE);
             });
         });
+
 
         /** 테이블 렌더링 **/
         window.renderTable = function(page)  {

@@ -78,7 +78,6 @@
         const btnReg = document.getElementById("btnReg");
         btnReg.disabled = true;
 
-<!--        window.tableBody = document.getElementById("mainTable").querySelector('.data-table tbody');-->
         window.tableBody = document.getElementById("mainTable").querySelector("tbody");
 
 
@@ -90,6 +89,11 @@
         .then(res => res.text())
         .then(html => {
             container.innerHTML = html;
+
+            const pageSelect = document.querySelector('.pageSelect');
+            if (pageSelect) {
+                pageSelect.classList.add('hidden');
+            }
             const pageSizeSelect = document.getElementById("pageSize");
             if (!pageSizeSelect) return;
 
