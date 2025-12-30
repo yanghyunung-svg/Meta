@@ -2,7 +2,6 @@ package com.meta.controller;
 
 import ch.qos.logback.core.util.StringUtil;
 import com.common.utils.ApiResponse;
-import com.common.utils.BizUtils;
 import com.meta.dto.TbWordDictionaryDto;
 import com.meta.service.WordDictionaryService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,24 +52,15 @@ public class WordDictionaryController {
     }
 
     /**
-     * @ ID : insertWordData
-     * @ NAME : 단어사전 등록
+     * @ ID : manageWordData
+     * @ NAME : 단어사전 관리
      */
-    @PostMapping("/insertWordData")
+    @PostMapping("/manageWordData")
     @ResponseBody
-    public ApiResponse<Void> insertWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return wordDictionaryService.insertData(inputDto);
+    public ApiResponse<Void> manageWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
+        return wordDictionaryService.manageData(inputDto);
     }
 
-    /**
-     * @ ID : updateWordData
-     * @ NAME : 단어사전 변경
-     */
-    @PostMapping("/updateWordData")
-    @ResponseBody
-    public ApiResponse<Void> updateWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return wordDictionaryService.updateData(inputDto);
-    }
     /**
      * @ ID : uploadWordExcelPreview
      * @ NAME : 표준단어 엑셀업로드

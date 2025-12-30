@@ -5,7 +5,10 @@ import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbCodeGroupDto;
 import com.meta.mapper.TbCodeGroupMapper;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,50 +48,47 @@ public class CodeGroupService {
     }
 
     /**
-     * method   : insertData
-     * desc     : 코드그룹기본 등록
+     * method   : manageData
+     * desc     : 단어사전 관리
      */
-    public ApiResponse<Void> insertData(TbCodeGroupDto inputDto)  {
+    public ApiResponse<Void> manageData(TbCodeGroupDto inputDto)  {
+        log.debug(BizUtils.logInfo("START"));
+        log.debug(BizUtils.logVoKey(inputDto));
+        TbCodeGroupDto outputDto = tbCodeGroupMapper.getLockData(inputDto);
+
         try {
-            TbCodeGroupDto outputDto = tbCodeGroupMapper.getData(inputDto);
-
-            if (outputDto != null) {
-                return new ApiResponse<Void>(false, "기등록된 데이타가 있습니다. =" + outputDto.getGrpNm());
+            switch (inputDto.getFunc()) {
+                case "I":
+                    if (outputDto != null) {
+                        return new ApiResponse<Void>(false, "기등록된 데이타가 있습니다.");
+                    }
+                    if (tbCodeGroupMapper.insertData(inputDto) == 0) {
+                        return new ApiResponse<Void>(false, "등록 오류");
+                    }
+                    break;
+                case "U":
+                    if (outputDto == null) {
+                        return new ApiResponse<Void>(false, "데이타가 없습니다");
+                    }
+                    if (tbCodeGroupMapper.updateData(inputDto) == 0) {
+                        return new ApiResponse<Void>(false, "수정 오류");
+                    }
+                    break;
+                case "D":
+                    if (outputDto == null) {
+                        return new ApiResponse<Void>(false, "데이타가 없습니다");
+                    }
+                    if (tbCodeGroupMapper.deleteData(inputDto) == 0) {
+                        return new ApiResponse<Void>(false, "삭제 오류");
+                    }
+                    break;
+                default:
+                    break;
             }
-
-            if (tbCodeGroupMapper.insertData(inputDto) == 0) {
-                return new ApiResponse<Void>(false, "등록 오류");
-            }
-
-            return new ApiResponse<Void>(true, "등록 성공");
-
+            log.debug(BizUtils.logInfo("END"));
+            return new ApiResponse<Void>(true, "처리성공");
         } catch (Exception e) {
-            return new ApiResponse<Void>(false, "등록 처리 중 오류가 발생했습니다.");
-        }
-    }
-
-
-    /**
-     * method   : updateData
-     * desc     : 코드그룹기본 변경
-     */
-    public ApiResponse<Void> updateData(TbCodeGroupDto inputDto)  {
-        try {
-            TbCodeGroupDto outputDto = tbCodeGroupMapper.getData(inputDto);
-
-            if (outputDto == null) {
-                return new ApiResponse<Void>(false, "수정할 데이타가 없습니다 =" + outputDto.getGrpNm());
-            }
-
-            if (tbCodeGroupMapper.updateData(inputDto) == 0) {
-                return new ApiResponse<Void>(false, "수정 오류");
-            }
-
-            log.debug(BizUtils.logVoKey(outputDto));
-            return new ApiResponse<Void>(true, "수정 성공");
-
-        } catch (Exception e) {
-            return new ApiResponse<Void>(false, "수정 처리 중 오류가 발생했습니다.");
+            return new ApiResponse<Void>(false, "처리 중 오류가 발생했습니다.");
         }
     }
     /**

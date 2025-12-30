@@ -1,11 +1,9 @@
 package com.meta.controller;
 
 import com.common.utils.ApiResponse;
-import com.common.utils.BizUtils;
 import com.meta.dto.TbCodeDto;
 import com.meta.service.CodeService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,25 +46,14 @@ public class CodeController {
     }
 
     /**
-     * @ ID : insertCodeData
-     * @ NAME : 코드 등록
+     * @ ID : manageCodeDetlData
+     * @ NAME : 코드 관리
      */
-    @PostMapping("/insertCodeData")
+    @PostMapping("/manageCodeDetlData")
     @ResponseBody
-    public ApiResponse<Void> insertCodeData(@RequestBody TbCodeDto inputDto, HttpServletRequest request) throws Exception {
-        return codeService.insertData(inputDto);
+    public ApiResponse<Void> manageCodeDetlData(@RequestBody TbCodeDto inputDto, HttpServletRequest request) throws Exception {
+        return codeService.manageData(inputDto);
     }
-    /**
-     * @ ID : updateCodeData
-     * @ NAME : 코드 변경
-     */
-    @PostMapping("/updateCodeData")
-    @ResponseBody
-    public ApiResponse<Void> updateCodeData(@RequestBody TbCodeDto inputDto, HttpServletRequest session) throws Exception {
-        return codeService.updateData(inputDto);
-    }
-
-
     /**
      * @ ID : getCodeAllData
      * @ NAME : 코드 콤보 조회
@@ -76,7 +63,6 @@ public class CodeController {
         List<TbCodeDto> outputDto = codeService.getCodeAllData(inputDto);
         return ResponseEntity.ok(outputDto);
     }
-
 
     /**
      * @ ID : uploadCodeExcelPreview

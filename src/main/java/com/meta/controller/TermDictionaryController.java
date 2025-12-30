@@ -49,23 +49,13 @@ public class TermDictionaryController {
     }
 
     /**
-     * @ ID : insertTermData
-     * @ NAME : 용어사전 등록
+     * @ ID : manageData
+     * @ NAME : 용어사전 관리
      */
-    @PostMapping("/insertTermData")
+    @PostMapping("/manageTermData")
     @ResponseBody
-    public ApiResponse<Void> insertTermData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return termDictionaryService.insertData(inputDto);
-    }
-
-    /**
-     * @ ID : updateTermData
-     * @ NAME : 용어사전 변경
-     */
-    @PostMapping("/updateTermData")
-    @ResponseBody
-    public ApiResponse<Void> updateTermData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return termDictionaryService.updateData(inputDto);
+    public ApiResponse<Void> manageData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
+        return termDictionaryService.manageData(inputDto);
     }
 
     /**

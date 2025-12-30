@@ -20,5 +20,6 @@ public interface TbTermDictionaryMapper {
     public List<TbTermDictionaryDto> getListData(TbTermDictionaryDto tbTermDictionaryDto);
     public int insertData(TbTermDictionaryDto tbTermDictionaryDto);
     public int updateData(TbTermDictionaryDto tbTermDictionaryDto);
+    public int deleteData(TbTermDictionaryDto tbTermDictionaryDto);
     public int countCode(TbTermDictionaryDto tbTermDictionaryDto);
 }

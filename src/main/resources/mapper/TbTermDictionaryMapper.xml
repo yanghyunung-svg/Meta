@@ -64,6 +64,11 @@
         WHERE TRM_NM = #{trmNm}
     </update>
 
+    <update id="deleteData" parameterType="com.meta.dto.TbTermDictionaryDto">
+        DELETE FROM tb_term_dictionary
+        WHERE TRM_NM = #{trmNm}
+    </update>
+
     <select id="getLockData" parameterType="com.meta.dto.TbTermDictionaryDto" resultType="com.meta.dto.TbTermDictionaryDto">
         SELECT TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM

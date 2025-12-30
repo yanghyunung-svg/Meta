@@ -13,9 +13,7 @@
 <div class="container">
 <div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
-
-    <div class="mainContainer" id="mainContainer">
-        <div class="form-header">
+        <div class="mainHeadContainer">
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 공통코드 통합검색 </h2>
 
@@ -38,7 +36,7 @@
             </div>
         </div>
 
-        <div class="divider-h"></div>
+    <div class="mainBodyContainer">
         <form id="mainForm">
             <table class="search-table">
                 <tr>
@@ -54,7 +52,6 @@
             </table>
         </form>
         <div class="divider-h"></div>
-
         <div id="pageInfoContainer" class="page-header"></div>
 
         <table class="data-table" id="mainTable">
@@ -73,10 +70,10 @@
             <tbody></tbody>
         </table>
 
-    </div><!-- /mainContainer -->
-</div><!-- /container -->
+    </div>
+</div>
 
-<!-- <div id="footbarContainer"></div> -->
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 

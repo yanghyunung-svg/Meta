@@ -1,7 +1,6 @@
 package com.meta.controller;
 
 import com.common.utils.ApiResponse;
-import com.common.utils.BizUtils;
 import com.meta.dto.TbCodeGroupDto;
 import com.meta.service.CodeGroupService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,25 +46,14 @@ public class CodeGroupController {
     }
 
     /**
-     * @ ID : insertCodeGroupData
-     * @ NAME : 코드그룹 등록
+     * @ ID : managerCodeGroupData
+     * @ NAME : 코드그룹 관리
      */
-    @PostMapping("/insertCodeGroupData")
+    @PostMapping("/managerCodeGroupData")
     @ResponseBody
-    public ApiResponse<Void> insertCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
-        return codeGroupService.insertData(inputDto);
+    public ApiResponse<Void> managerCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
+        return codeGroupService.manageData(inputDto);
     }
-    /**
-     * @ ID : updateCodeGroupData
-     * @ NAME : 코드그룹 변경
-     */
-    @PostMapping("/updateCodeGroupData")
-    @ResponseBody
-    public ApiResponse<Void> updateCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
-        return codeGroupService.updateData(inputDto);
-    }
-
-
     /**
      * @ ID : uploadCodeExcelPreview
      * @ NAME : 코드그룹 엑셀업로드

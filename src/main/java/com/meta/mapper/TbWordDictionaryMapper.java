@@ -18,12 +18,11 @@ import java.util.List;
 public interface TbWordDictionaryMapper {
     public TbWordDictionaryDto getData(TbWordDictionaryDto tbWordDictionaryDto);
     public TbWordDictionaryDto getDataByName(TbWordDictionaryDto tbWordDictionaryDto);
-    public List<TbWordDictionaryDto> getListData(TbWordDictionaryDto tbWordDictionaryDto);
+    public TbWordDictionaryDto getLockData(TbWordDictionaryDto tbWordDictionaryDto);
     public int insertData(TbWordDictionaryDto tbWordDictionaryDto);
     public int updateData(TbWordDictionaryDto tbWordDictionaryDto);
-    public TbWordDictionaryDto getLockData(TbWordDictionaryDto tbWordDictionaryDto);
-//    public int deleteData(TbWordDictionaryDto tbWordDictionaryDto);
-
+    public int deleteData(TbWordDictionaryDto tbWordDictionaryDto);
+    public List<TbWordDictionaryDto> getListData(TbWordDictionaryDto tbWordDictionaryDto);
     public List<WordMappingDto> getAllData();
     public int countCode(TbWordDictionaryDto tbWordDictionaryDto);
 }

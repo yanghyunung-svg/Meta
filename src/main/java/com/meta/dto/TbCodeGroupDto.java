@@ -27,5 +27,5 @@ public class TbCodeGroupDto {
     private String     crtId;                           // 생성자ID VARCHAR(50)
     private String     updDttm;                         // 변경일시 DATETIME
     private String     updId;                           // 변경자ID VARCHAR(50)
-    private int         exist;      // 0: 사용 가능, 1: 중복
+    private String     func;
 }

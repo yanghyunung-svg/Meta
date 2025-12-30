@@ -13,8 +13,8 @@
 <div class="container">
 <div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
-    <div class="mainContainer" id="mainContainer">
-        <div class="form-header">
+
+        <div class="mainHeadContainer">
             <h2 style="margin:0;"> ✅ 그룹코드 일괄등록</h2>
             <div class="button-group">
                 <button id="btnDownload" type="button" class="btn">템플릿</button>
@@ -22,10 +22,9 @@
                 <button id="btnUploadSave" type="button" class="btn" disabled>업로드 저장</button>
             </div>
         </div>
-        <div class="divider-h"></div>
-        <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx,.xls">
-
-        <table id="uploadPreviewTable" class="data-table" style="margin-top:10px; ">
+    <div class="mainBodyContainer">
+        <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx">
+        <table id="uploadPreviewTable" class="data-table">
             <thead>
             <tr>
                 <th class="col-no">번호</th>
@@ -37,11 +36,10 @@
             </thead>
             <tbody></tbody>
         </table>
-        <div class="divider-h"></div>
     </div>
 
 </div>
-<!-- <div id="footbarContainer"></div> -->
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 

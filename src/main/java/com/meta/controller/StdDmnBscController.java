@@ -1,7 +1,6 @@
 package com.meta.controller;
 
 import com.common.utils.ApiResponse;
-import com.common.utils.BizUtils;
 import com.meta.dto.TbStdDmnBscDto;
 import com.meta.service.StdDmnBscService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,23 +55,13 @@ public class StdDmnBscController {
     }
 
     /**
-     * @ ID : insertDmnData
-     * @ NAME : 표준도메인 등록
+     * @ ID : manageDmnData
+     * @ NAME : 표준도메인 관리
      */
-    @PostMapping("/insertDmnData")
+    @PostMapping("/manageDmnData")
     @ResponseBody
-    public ApiResponse<Void> insertDmnData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        return stdDmnBscService.insertData(inputDto);
-    }
-
-    /**
-     * @ ID : updateDmnData
-     * @ NAME : 표준도메인 변경
-     */
-    @PostMapping("/updateDmnData")
-    @ResponseBody
-    public ApiResponse<Void> updateDmnData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        return stdDmnBscService.updateData(inputDto);
+    public ApiResponse<Void> manageDmnData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
+        return stdDmnBscService.manageData(inputDto);
     }
 
     /**

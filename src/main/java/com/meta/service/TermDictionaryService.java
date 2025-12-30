@@ -52,43 +52,46 @@ public class TermDictionaryService {
     }
 
     /**
-     * method   : insertData
-     * desc     : 용어사전 등록
+     * method   : manageData
+     * desc     : 용어사전 관리
      */
-    public ApiResponse<Void> insertData(TbTermDictionaryDto inputDto)  {
-        try {
-            TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getData(inputDto);
-            if (outputDto != null) {
-                return new ApiResponse<Void>(false, "기등록된 데이타가 있습니다." + outputDto.getEngNm());
-            }
-            if (tbTermDictionaryMapper.insertData(inputDto) == 0) {
-                return new ApiResponse<Void>(false, "등록 오류");
-            }
-            log.debug(com.common.utils.BizUtils.logInfo("END"));
-            return new ApiResponse<Void>(true, "등록 성공");
-        } catch (Exception e) {
-            return new ApiResponse<Void>(false, "등록 처리 중 오류가 발생했습니다.");
-        }
-    }
+    public ApiResponse<Void> manageData(TbTermDictionaryDto inputDto)  {
+        log.debug(BizUtils.logInfo());
+        log.debug(BizUtils.logVoKey(inputDto));
+        TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getLockData(inputDto);
 
-    /**
-     * method   : updateData
-     * desc     : 용어사전 변경
-     */
-    public ApiResponse<Void> updateData(TbTermDictionaryDto inputDto)  {
-        log.debug(com.common.utils.BizUtils.logInfo("START"));
         try {
-            TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getData(inputDto);
-            if (outputDto == null) {
-                return new ApiResponse<Void>(false, "수정할 데이타가 없습니다");
+            switch (inputDto.getFunc()) {
+                case "I":
+                    if (outputDto != null) {
+                        return new ApiResponse<Void>(false, "기등록된 데이타가 있습니다." + outputDto.getEngNm());
+                    }
+                    if (tbTermDictionaryMapper.insertData(inputDto) == 0) {
+                        return new ApiResponse<Void>(false, "등록 오류");
+                    }
+                    break;
+                case "U":
+                    if (outputDto == null) {
+                        return new ApiResponse<Void>(false, "데이타가 없습니다");
+                    }
+                    if (tbTermDictionaryMapper.updateData(inputDto) == 0) {
+                        return new ApiResponse<Void>(false, "수정 오류");
+                    }
+                    break;
+                case "D":
+                    if (outputDto == null) {
+                        return new ApiResponse<Void>(false, "데이타가 없습니다");
+                    }
+                    if (tbTermDictionaryMapper.deleteData(inputDto) == 0) {
+                        return new ApiResponse<Void>(false, "삭제 오류");
+                    }
+                    break;
+                default:
+                    break;
             }
-            if (tbTermDictionaryMapper.updateData(inputDto) == 0) {
-                return new ApiResponse<Void>(false, "수정 오류");
-            }
-            log.debug(BizUtils.logInfo("END"));
-            return new ApiResponse<Void>(true, "수정 성공");
+            return new ApiResponse<Void>(true, "처리성공");
         } catch (Exception e) {
-            return new ApiResponse<Void>(false, "수정 처리 중 오류가 발생했습니다.");
+            return new ApiResponse<Void>(false, "처리 중 오류가 발생했습니다.");
         }
     }
 
