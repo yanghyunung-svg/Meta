@@ -154,8 +154,12 @@ ul { list-style: none; padding:0; margin:0; }
 .data-table thead { background-color: var(--table-thead-bg-color); color: var(--table-thead-text-color); }
 .data-table thead th {
     height: 28px; padding: 0 6px; line-height: 28px;
-    text-align: center; vertical-align: middle; font-weight: 600;
-    background-color: var(--table-thead-bg-color); border: 1px solid var(--table-thead-border-color); box-sizing: border-box; }
+    text-align: center; vertical-align: middle; font-weight: 600; box-sizing: border-box;
+  /*  background-color: var(--table-thead-bg-color); border: 1px solid var(--table-thead-border-color); */
+    background-color: #ddd; color:black; border: 1px solid black;
+    }
+
+
 
 .data-table tbody { background-color:white; color:black; }
 .data-table tbody tr { height:12px; }
@@ -212,7 +216,8 @@ ul { list-style: none; padding:0; margin:0; }
 
 #uploadPreviewTable { table-layout:fixed; width:100%; }
 #codeGroupFrame { width:100%; height:calc(100% - 40px); border:none; }
-#pageTopBar { display: flex; align-items: center; justify-content: space-between; height: 25px; padding: 0 10px; background-color: #f5f7fa; border-bottom: 1px solid #dcdcdc; box-sizing: border-box;}
+#pageTopBar { display: flex; align-items: center; justify-content: space-between; height: 30px; padding: 0 10px;
+    background-color: #fff; border-bottom: 1px solid #dcdcdc; box-sizing: border-box;}
 #pageInfo { font-size: 12px; color: #333; line-height: 25px; }
 
 .pagination button { width:30px; height:25px; display:inline-flex; justify-content:center; align-items:center; padding:0; margin:0 2px; border:1px solid #ccc; background:#ffffff; border-radius:4px; cursor:pointer; font-size:12px; }
