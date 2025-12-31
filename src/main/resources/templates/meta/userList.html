@@ -21,6 +21,13 @@
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
+                <button id="btnInit" type="button" class="btn">
+                    <svg viewBox="0 0 24 24" width="15" height="15">
+                        <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
+                        <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
+                    </svg>
+                    초기화
+                </button>
                 <button id="btnSearch" type="button" class="btn">
                     <svg viewBox="0 0 24 24" width="15" height="15">
                         <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor"/>
@@ -33,13 +40,6 @@
                         <polyline points="4,12 9,17 20,6" fill="none" stroke="currentColor"/>
                     </svg>
                     등록
-                </button>
-                <button id="btnInit" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
-                        <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
-                    </svg>
-                    초기화
                 </button>
                 <button id="btnExcel" type="button" class="btn">Excel 저장</button>
             </div>
@@ -132,7 +132,7 @@
                     <td class="align-left"">${item.userNm}</td>
                     <td class="align-left">${item.email}</td>
                     <td class="align-left">${item.phone}</td>
-                    <td class="align-center">${item.role === '2' ? 'USER' : item.role === '1' ? 'ADMIN' : '-'} </td>
+                    <td class="align-center">${item.role === '2' ? 'USER' : item.role === '1' ? 'ADMIN': item.role === '0' ? 'SUPER' : '-'} </td>
                     <td>${getStatLabel(item.stat)}</td>
                 </tr>
             `).join('');
@@ -157,14 +157,6 @@
             };
             window.updateRowDataFlexible(data, 'userId', refreshMap);
         }
-
-
-        // Enter Key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('btnSearch').click();
-            }
-        });
 
         /** 초기화 **/
         document.getElementById('btnInit').addEventListener('click', () => {
@@ -206,6 +198,7 @@
     });
 
 </script>
+<script src="/js/functionKey.js"></script>
 <script src="/js/commonCombo.js"></script>
 </body>
 </html>

@@ -20,6 +20,13 @@
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
+                <button id="btnInit" type="button" class="btn">
+                    <svg viewBox="0 0 24 24" width="15" height="15">
+                        <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
+                        <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
+                    </svg>
+                    초기화
+                </button>
                 <button type="button" class="btn" id="btnSearch">
                     <svg viewBox="0 0 24 24" width="15" height="15">
                         <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor"/>
@@ -169,7 +176,14 @@
             });
         });
     });
+
+    /** 초기화 **/
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        initScreen();
+    });
 </script>
+<script src="/js/functionKey.js"></script>
 <script src="/js/commonCombo.js"></script>
 </body>
 </html>

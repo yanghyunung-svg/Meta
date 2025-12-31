@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TemplateController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    /* templateDown */
+    @GetMapping("/templateDown")
+    public String templateDownPage() { return "meta/templateDown"; }
 
     /**
      * @ ID : downloadTermExcelTemplate

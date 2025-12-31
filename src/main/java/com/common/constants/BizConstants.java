@@ -1,10 +1,12 @@
 package com.common.constants;
 
+import java.util.regex.Pattern;
+
 /**
  * @file : AppConstants
  * @desc : Constants 
  */
-public class AppConstants {
+public class BizConstants {
 
     public static final class EXCN_RSLT_CD {    // 실행결과
         public static final Short NOR = 0;     // 실행결과정상
@@ -18,5 +20,7 @@ public class AppConstants {
         public static final String LCK = "L";     // LOCK SELECT
         public static final String ALL = "A";     // ALL SELECT
     }
+    public static final Pattern KOREAN_PATTERN =
+            Pattern.compile("[ㄱ-ㅎㅏ-ㅣ가-힣]");
 
 }

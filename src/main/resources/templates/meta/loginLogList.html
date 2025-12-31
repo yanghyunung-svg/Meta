@@ -20,19 +20,19 @@
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
-                <button id="btnSearch" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor"/>
-                        <line x1="16" y1="16" x2="22" y2="22" stroke="currentColor"/>
-                    </svg>
-                    조회
-                </button>
                 <button id="btnInit" type="button" class="btn">
                     <svg viewBox="0 0 24 24" width="15" height="15">
                         <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
                         <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
                     </svg>
                     초기화
+                </button>
+                <button id="btnSearch" type="button" class="btn">
+                    <svg viewBox="0 0 24 24" width="15" height="15">
+                        <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor"/>
+                        <line x1="16" y1="16" x2="22" y2="22" stroke="currentColor"/>
+                    </svg>
+                    조회
                 </button>
             </div>
         </div>
@@ -201,8 +201,8 @@
             openWindowWithJSON(sendData, "/meta/userSearch", 800, 500);
         });
     });
-
-
 </script>
+
+<script src="/js/functionKey.js"></script>
 </body>
 </html>

@@ -17,6 +17,13 @@
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 공통코드 조회</h2>
             <div class="button-group">
+                <button id="btnInit" type="button" class="btn">
+                    <svg viewBox="0 0 24 24" width="15" height="15">
+                        <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
+                        <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
+                    </svg>
+                    초기화
+                </button>
                 <button id="btnSearch" type="button" class="btn">
                     <svg viewBox="0 0 24 24" width="15" height="15">
                         <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor"/>
@@ -29,13 +36,6 @@
                         <polyline points="4,12 9,17 20,6" fill="none" stroke="currentColor"/>
                     </svg>
                     등록
-                </button>
-                <button id="btnInit" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
-                        <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
-                    </svg>
-                    초기화
                 </button>
                 <button id="btnExcel" type="button" class="btn">Excel 저장</button>
             </div>
@@ -155,30 +155,7 @@
                     openWindowWithJSON(sendData, "/meta/codeGroupMng", 800, 600);
                 });
             });
-
-            window.refreshParentRow = function(data) {
-                const refreshMap = {
-                    grpNm: 'td:nth-child(3)',
-                    rmk: 'td:nth-child(4)',
-                    stat: 'td:nth-child(5)'
-                };
-                window.updateRowDataFlexible(data, 'grpCd', refreshMap);
-            }
         }
-
-
-        // Enter Key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('btnSearch').click();
-            }
-        });
-
-        /** 초기화 **/
-        document.getElementById('btnInit').addEventListener('click', () => {
-            document.getElementById('mainForm').reset();
-            initScreen();
-        });
 
         /** 검색 **/
         document.getElementById('btnSearch').addEventListener('click', () => {
@@ -203,17 +180,35 @@
         });
     });
 
+    window.refreshParentRow = function(data) {
+        const refreshMap = {
+            grpNm: 'td:nth-child(3)',
+            rmk: 'td:nth-child(4)',
+            stat: 'td:nth-child(5)'
+        };
+        document.getElementById("btnSearch").click();
+<!--        window.updateRowDataFlexible(data, 'grpCd', refreshMap);-->
+    }
+
     /** 등록 **/
     document.getElementById('btnReg').addEventListener('click', () => {
         const sendData = {mode: "I"};
         openWindowWithJSON(sendData, "/meta/codeGroupMng", 800, 600);
     });
 
+    /** 초기화 **/
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        initScreen();
+    });
+
+    /** 엑셀저장 **/
     document.getElementById('btnExcel').addEventListener('click', () => {
         downloadTableToExcel('mainTable', '공통코드목록');
     });
 
 </script>
+    <script src="/js/functionKey.js"></script>
 <script src="/js/commonCombo.js"></script>
 </body>
 </html>

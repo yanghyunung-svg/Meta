@@ -5,7 +5,7 @@
         const adminMenus = document.querySelectorAll('.ADMIN');
         if (!adminMenus || adminMenus.length === 0) return;
         adminMenus.forEach(el => {
-            el.style.display = (role === "1") ? "block" : "none";
+            el.style.display = (role === "2") ? "none" : "block";
         });
     }
 

@@ -49,9 +49,9 @@ public class CodeGroupController {
      * @ ID : managerCodeGroupData
      * @ NAME : 코드그룹 관리
      */
-    @PostMapping("/managerCodeGroupData")
+    @PostMapping("/manageCodeGroupData")
     @ResponseBody
-    public ApiResponse<Void> managerCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
+    public ApiResponse<Void> manageCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
         return codeGroupService.manageData(inputDto);
     }
     /**

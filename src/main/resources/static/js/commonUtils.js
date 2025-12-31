@@ -564,6 +564,7 @@ window.updateRowDataFlexible = function(data, idKey, updateMap) {
                     let newValue = data[dataField];
                     if (dataField === 'role') {
                         newValue =
+                            newValue === '0' ? 'SUPER' :
                             newValue === '1' ? 'ADMIN' :
                             newValue === '2' ? 'USER' : newValue;
                     }

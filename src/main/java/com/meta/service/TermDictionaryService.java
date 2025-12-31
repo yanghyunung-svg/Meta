@@ -1,6 +1,7 @@
 package com.meta.service;
 
 import ch.qos.logback.core.util.StringUtil;
+import com.common.constants.BizConstants;
 import com.common.utils.ApiResponse;
 import com.common.utils.BizUtils;
 import com.meta.dto.TbTermDictionaryDto;
@@ -132,7 +133,11 @@ public class TermDictionaryService {
         outputDto.setTrmExpln(prettyPrintKeywords(keywords));
         outputDto.setStat("0");
 
-        log.debug(BizUtils.logInfo("outTxt", outTxt + "|" + outputDto.getSnake() + "|" + outputDto.getPascal() + "|" + outputDto.getCamel()));
+        if (BizConstants.KOREAN_PATTERN.matcher(outTxt).find()) {
+            outputDto.setStat("단어미등록");
+        }
+
+        log.debug(BizUtils.logInfo("outTxt", outTxt + "|" + outputDto.getTrmExpln()));
         return outputDto;
     }
 
