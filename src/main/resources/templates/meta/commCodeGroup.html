@@ -17,25 +17,14 @@
             <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 공통코드 조회</h2>
             <div class="button-group">
-                <button id="btnInit" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
-                        <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
-                    </svg>
-                    초기화
+                <button id="btnInit" type="button" class="btn">초기화
                 </button>
                 <button id="btnSearch" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor"/>
-                        <line x1="16" y1="16" x2="22" y2="22" stroke="currentColor"/>
-                    </svg>
                     조회
                 </button>
-                <button id="btnReg" type="button" class="btn">
-                    <svg viewBox="0 0 24 24" width="15" height="15">
-                        <polyline points="4,12 9,17 20,6" fill="none" stroke="currentColor"/>
-                    </svg>
-                    등록
+                <button id="btnReg" type="button" class="btn">등록
+                </button>
+                <button id="btnRegEblc" type="button" class="btn">일괄등록
                 </button>
                 <button id="btnExcel" type="button" class="btn">Excel 저장</button>
             </div>
@@ -58,9 +47,9 @@
                 </tr>
             </table>
         </form>
-        <!--        <div class="divider-h"></div>-->
+
         <div id="pageInfoContainer" class="page-header"></div>
-        <!--        <div class="divider-h"></div>-->
+
 
         <table class="data-table" id="mainTable">
             <thead>
@@ -140,9 +129,7 @@
             document.querySelectorAll(".row-click").forEach(tr => {
                 tr.addEventListener("click", () => {
                     const grpCd = tr.getAttribute("data-grpCd");
-                    const grpNm = tr.getAttribute("data-grpNm");
-
-                    localStorage.setItem('grpCd', grpCd);
+                    const grpNm = tr.getAttribute("data-grpNm");localStorage.setItem('grpCd', grpCd);
                     localStorage.setItem('grpNm', grpNm);
                 });
             });
@@ -201,6 +188,11 @@
         document.getElementById('mainForm').reset();
         initScreen();
     });
+    /**  일괄등록 **/
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = "/meta/codeGroupRegEblc";
+    });
+
 
     /** 엑셀저장 **/
     document.getElementById('btnExcel').addEventListener('click', () => {

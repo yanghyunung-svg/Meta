@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
@@ -12,39 +13,15 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 표준용어</h2>
         <div class="button-group">
-            <button id="btnReg" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <polyline points="4,12 9,17 20,6" fill="none" stroke="currentColor"/>
-                </svg>
-                등록
+            <button id="btnReg" type="button" class="btn">등록
             </button>
-            <button id="btnChange" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <path d="M5 3h14v18H5z" fill="none" stroke="currentColor"/>
-                    <path d="M9 3v6h6V3" stroke="currentColor"/>
-                </svg>
-                변경
+            <button id="btnChange" type="button" class="btn">변경
             </button>
-            <button id="btnDelete" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <path d="M5 3h14v18H5z" fill="none" stroke="currentColor"/>
-                    <path d="M9 3v6h6V3" stroke="currentColor"/>
-                </svg>
-                삭제
+            <button id="btnDelete" type="button" class="btn">삭제
             </button>
-            <button id="btnInit" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
-                    <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
-                </svg>
-                초기화
+            <button id="btnInit" type="button" class="btn">초기화
             </button>
-            <button id="btnClose" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <line x1="4" y1="4" x2="20" y2="20" stroke="currentColor"/>
-                    <line x1="20" y1="4" x2="4" y2="20" stroke="currentColor"/>
-                </svg>
-                닫기
+            <button id="btnClose" type="button" class="btn">닫기
             </button>
         </div>
     </div>
@@ -65,10 +42,9 @@
             </tr>
             <tr>
                 <th>도메인명</th>
-                <td>
-                    <select id="dmnNm" name="dmnNm" class="form-input">
-                        <option value="" selected>선택</option>
-                    </select>
+                <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" id="dmnNm" name="dmnNm" class="form-input">
+<!--                    <button id="btnPopup" type="button">🔍</button>-->
                 </td>
             </tr>
             <tr>
@@ -106,15 +82,13 @@
     </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        loadCodeCombo('STAT', 'stat');
+
         const role = localStorage.getItem('role');
 
         if (!document.forms.mainForm) return;
 
         const dmnNm = document.forms.mainForm.dmnNm;
-        if (!dmnNm || !dmnNm.value) {
-            loadDomainCombo();
-        }
+
 
         const mainForm = document.getElementById("mainForm");
         const btnReg = document.getElementById("btnReg");
@@ -123,6 +97,7 @@
         const btnInit = document.getElementById("btnInit");
         const btnClose = document.getElementById("btnClose");
         const btnCheck = document.getElementById("btnCheck");
+        const btnPopup = document.getElementById("btnPopup");
 
         btnReg.disabled = true;
         btnChange.disabled = true;
@@ -146,22 +121,12 @@
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ trmNm: trmNmIn  })
-                        });
-
-                        const data = await res.json();
-
-                        fillForm(mainForm, data);
+                        });    const data = await res.json();    fillForm(mainForm, data);
                         document.getElementById("trmNm").readOnly = true;
                         btnInit.disabled = true;
-                        originalData = data;
-
-                        console.log('role=', role);
-
-                        if (btnDelete) {
+                        originalData = data;    if (btnDelete) {
                             btnDelete.disabled = (role !== '0');
-                        }
-
-                    } catch (err) {
+                        }} catch (err) {
                         msgEvents("상세 데이터 조회 중 오류가 발생했습니다.");
                     }
                 })();
@@ -203,7 +168,7 @@
              const ok = validateRequired([
                 { value: data.engNm.trim(),  message: '영문명은 필수 입력 항목입니다.', element: mainForm.engNm },
                 { value: data.trmExpln,  message: '설명은 필수 입력 항목입니다.', element: mainForm.trmExpln },
-                { value: data.dmnNm,  message: '도메인명은 필수 입력 항목입니다.', element: mainForm.dmnNm },
+<!--                { value: data.dmnNm,  message: '도메인명은 필수 입력 항목입니다.', element: mainForm.dmnNm },-->
                 { value: data.stat.trim(),  message: '상태코드는 필수 입력 항목입니다.', element: mainForm.stat }
             ]);
 
@@ -314,7 +279,7 @@
                 { value: data.trmNm.trim(), message: '용어명은 필수 입력 항목입니다.', element: mainForm.trmNm },
                 { value: data.engNm.trim(),  message: '영문명은 필수 입력 항목입니다.', element: mainForm.engNm },
                 { value: data.trmExpln,  message: '설명은 필수 입력 항목입니다.', element: mainForm.trmExpln },
-                { value: data.dmnNm,  message: '도메인명은 필수 입력 항목입니다.', element: mainForm.dmnNm },
+<!--                { value: data.dmnNm,  message: '도메인명은 필수 입력 항목입니다.', element: mainForm.dmnNm },-->
                 { value: data.stat.trim(),  message: '상태코드는 필수 입력 항목입니다.', element: mainForm.stat }
             ]);
 
@@ -369,43 +334,14 @@
         // 닫기
         btnClose.addEventListener("click", () => window.close() );
 
+        btnPopup.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const sendData = {dmnNm: document.getElementById("dmnNm").value};
+            openWindowWithJSON(sendData, "/meta/dmnSearch", 800, 800);
+        });
+
     });
 
-
-    function loadDomainCombo() {
-        fetch('/meta/getDmnComboData', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            populateDomainCombo(data);
-        })
-        .catch(error => {
-            console.error("도메인 데이터 로드 실패:", error);
-        });
-    }
-
-    function populateDomainCombo(dataArray) {
-        const selectElement = document.getElementById('dmnNm');
-        while (selectElement.options.length > 1) {
-            selectElement.remove(1);
-        }
-        dataArray.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.dmnNm;
-            option.text = item.dmnClsfNm + ' (' + item.dmnNm + ')';
-            selectElement.appendChild(option);
-        });
-    }
 </script>
-<script src="/js/commonCombo.js"></script>
 </body>
 </html>

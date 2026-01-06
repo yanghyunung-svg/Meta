@@ -40,6 +40,8 @@ public class MetaController {
     public String dmnMngPage() { return "meta/dmnMng"; }
     @GetMapping("/dmnRegEblc")
     public String dmnRegEblcPage() { return "meta/dmnRegEblc"; }
+    @GetMapping("/dmnSearch")
+    public String dmnSearchPage() { return "meta/dmnSearch"; }
 
     /* 공통코드 */
     @GetMapping("/commCodeList")

@@ -672,3 +672,19 @@ function renderPagination(dataAll, currentPage, page_size) {
         return btn;
     }
 }
+
+
+function showLoading(message) {
+  const overlay = document.getElementById("loadingOverlay");
+  if (message) {
+    overlay.querySelector(".loading-text").innerText = message;
+  }
+  overlay.style.display = "flex";
+  document.body.classList.add("loading");
+}
+
+function hideLoading() {
+  const overlay = document.getElementById("loadingOverlay");
+  overlay.style.display = "none";
+  document.body.classList.remove("loading");
+}

@@ -17,6 +17,8 @@
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM tb_word_dictionary
         WHERE WORD_NM = #{wordNm}
+        AND   STAT = '1'
+        LIMIT 1
     </select>
 
    <!--tb_word_dictionary INSERT-->

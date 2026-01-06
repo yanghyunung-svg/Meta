@@ -31,9 +31,9 @@
                 </tr>
             </table>
         </form>
-        <!--        <div class="divider-h"></div>-->
+
         <div id="pageInfoContainer" class="page-header"></div>
-        <!--        <div class="divider-h"></div>-->
+
 
         <table class="data-table" id="mainTable">
             <thead>
@@ -101,16 +101,12 @@
             document.querySelectorAll(".row-click").forEach(tr => {
                 tr.addEventListener("dblclick", () => {
                     const grpCd = tr.dataset.grpcd;
-                    const grpNm = tr.dataset.grpnm;
-
-                    // 부모창으로 값 전달
+                    const grpNm = tr.dataset.grpnm;// 부모창으로 값 전달
                     if (window.opener && !window.opener.closed && typeof window.opener.receiveCode === 'function') {
                         window.opener.receiveCode(grpCd, grpNm);
                         const sendData = JSON.parse(sessionStorage.getItem('codeGroupsendData') || "{}");
                         localStorage.setItem('grpCd', grpCd);
-                    }
-
-                    // 팝업 닫기
+                    }// 팝업 닫기
                     window.close();
                 });
             });

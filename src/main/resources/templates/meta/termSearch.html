@@ -21,8 +21,10 @@
                 <button id="btnInit" type="button" class="btn">초기화</button>
                 <button id="btnVal" type="button" class="btn">단어검색</button>
                 <button id="btnAddRow" type="button" class="btn">행추가</button>
-                <button id="btnUpload" type="button" class="btn">Excel 업로드</button>
-                <button id="btnExcelDownload" type="button" class="btn">Excel 저장</button>
+                <button id="btnTemplate" type="button" class="btn">템플릿</button>
+                <button id="btnUpload" type="button" class="btn">엑셀업로드</button>
+                <button id="btnExcelDownload" type="button" class="btn">엑셀저장</button>
+                <button id="btnReg" type="button" class="btn">단어등록</button>
             </div>
         </div>
     <div class="mainBodyContainer">
@@ -45,6 +47,12 @@
     </div>
 </div>
 
+
+<!-- 로딩 오버레이 -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="hourglass"></div>
+    <div class="loading-text">처리 중입니다...</div>
+</div>
 
 <script>
 
@@ -83,6 +91,7 @@
         formData.append("file", file);
 
         try {
+            showLoading("Excel Load ...");
             const res = await fetch("/meta/uploadTermExcelOnly", {
                 method: "POST",
                 body: formData
@@ -100,13 +109,15 @@
 
         } catch (error) {
             alert("업로드 중 오류가 발생했습니다.");
+        } finally {
+            hideLoading();
         }
     });
 
     document.getElementById('btnVal').addEventListener('click', async () => {
         if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
             btnExcelDownload.disabled = false;
-            alert("업로드된 데이터가 없습니다.");
+            alert("데이터가 없습니다.");
             return;
         }
 
@@ -229,17 +240,48 @@
             e.preventDefault();
         }
     });
+    document.getElementById("btnTemplate").addEventListener("click", () => {
+        window.location.href = "/meta/downloadTermSearchExcelTemplate";
+    });
 
     document.getElementById('btnExcelDownload').addEventListener('click', () => {
         downloadTableToExcel('mainTable', '표준용어신청목록');
     });
 
-function focusLastInput() {
-    const inputs = document.querySelectorAll('.data-table input, .data-table select, .data-table textarea');
-    if (inputs.length === 0) return;
-    inputs[inputs.length].focus();
-}
 
+    /** 등록 **/
+    document.getElementById('btnReg').addEventListener('click', () => {
+        const sendData = { mode: "I"};
+        openWindowWithJSON(sendData, "/meta/wordMng", 800, 700);
+    });
+
+    function focusLastInput() {
+        const inputs = document.querySelectorAll('.data-table input, .data-table select, .data-table textarea');
+        if (inputs.length === 0) return;
+        inputs[inputs.length].focus();
+    }
+
+    document.addEventListener('keydown', (e) => {
+        switch (e.key) {
+        case 'F1':
+            e.preventDefault();
+            document.getElementById('btnInit').click();
+            break;
+
+        case 'F2':
+            e.preventDefault();
+            document.getElementById('btnVal').click();
+            break;
+
+        case 'F3':
+            e.preventDefault();
+            document.getElementById('btnAddRow').click();
+            break;
+
+        default:
+            break;
+        }
+    });
 
 </script>
 </body>

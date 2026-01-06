@@ -77,3 +77,24 @@ function toggleMenu(titleEl) {
         titleEl.classList.add('active');
     }
 }
+document.getElementById('sidebarContainer').addEventListener('click', (e) => {
+    const btn = e.target.closest('.menu-link');
+    if (!btn) return;
+
+    const url = btn.dataset.url;
+    if (url) location.href = url;
+});
+
+(function setActiveMenu() {
+    const path = location.pathname;
+    document.querySelectorAll('.menu-link').forEach(btn => {
+        if (btn.dataset.url === path) {
+            btn.classList.add('active');
+
+            // 상위 메뉴 자동 오픈
+            const menu = btn.closest('.sidebar-menu');
+            if (menu) menu.style.display = 'block';
+        }
+    });
+})();
+

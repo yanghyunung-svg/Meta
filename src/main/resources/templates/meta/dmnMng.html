@@ -12,39 +12,15 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 표준도메인</h2>
         <div class="button-group">
-            <button id="btnReg" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <polyline points="4,12 9,17 20,6" fill="none" stroke="currentColor"/>
-                </svg>
-                등록
+            <button id="btnReg" type="button" class="btn">등록
             </button>
-            <button id="btnChange" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <path d="M5 3h14v18H5z" fill="none" stroke="currentColor"/>
-                    <path d="M9 3v6h6V3" stroke="currentColor"/>
-                </svg>
-                변경
+            <button id="btnChange" type="button" class="btn">변경
             </button>
-            <button id="btnDelete" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <path d="M5 3h14v18H5z" fill="none" stroke="currentColor"/>
-                    <path d="M9 3v6h6V3" stroke="currentColor"/>
-                </svg>
-                삭제
+            <button id="btnDelete" type="button" class="btn">삭제
             </button>
-            <button id="btnInit" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <path d="M4 12a8 8 0 1 0 2.3-5.7" fill="none" stroke="currentColor"/>
-                    <polyline points="4,4 4,9 9,9" fill="none" stroke="currentColor"/>
-                </svg>
-                초기화
+            <button id="btnInit" type="button" class="btn">초기화
             </button>
-            <button id="btnClose" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <line x1="4" y1="4" x2="20" y2="20" stroke="currentColor"/>
-                    <line x1="20" y1="4" x2="4" y2="20" stroke="currentColor"/>
-                </svg>
-                닫기
+            <button id="btnClose" type="button" class="btn">닫기
             </button>
         </div>
     </div>
@@ -59,7 +35,7 @@
                     </td>
                 </tr>
                 </table>
-                <!-- <!--        <div class="divider-h"></div>-->-->
+
                 <table class="popup-table">
                 <tr>
                     <th>도메인분류명 <span style="color:red">*</span></th>
@@ -85,7 +61,7 @@
                     </td>
                 </tr>
                 </table>
-                <!-- <!--        <div class="divider-h"></div>-->-->
+
 
                 <table class="popup-table">
                 <tr>
@@ -101,7 +77,7 @@
                         <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
                 </tr>
                 </table>
-                <!-- <!--        <div class="divider-h"></div>-->-->
+
 
                 <div class="msgInfo"> <span id="msgInfo"></span>   </div>
             </form>
@@ -139,20 +115,12 @@
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ dmnNm: dmnNmIn  })
-                        });
-
-                        const data = await res.json();
-
-                        fillForm(mainForm, data);
+                        });    const data = await res.json();    fillForm(mainForm, data);
                         document.getElementById("dmnNm").readOnly = true;
                         btnInit.disabled = true;
-                        originalData = data;
-
-                        if (btnDelete) {
+                        originalData = data;    if (btnDelete) {
                             btnDelete.disabled = (role !== '0');
-                        }
-
-                    } catch (err) {
+                        }} catch (err) {
                         msgEvents("상세 데이터 조회 중 오류가 발생했습니다.");
                     }
                 })();

@@ -23,7 +23,7 @@ function loadHeader() {
 
 function bindHeaderEvents() {
     const termSearch = document.querySelector('.topbar-left .termSearch');
-//    const logoutBtn = document.querySelector('.topbar-right .logout');
+    const logoutBtn = document.querySelector('.topbar-right .logout');
 
     const userNm = localStorage.getItem('userNm');
     const userId = localStorage.getItem('userId');
@@ -42,12 +42,12 @@ function bindHeaderEvents() {
         });
     }
 
-//    if (logoutBtn) {
-//        logoutBtn.addEventListener('click', () => {
-//            localStorage.clear();
-//            location.href = '/meta/login';
-//        });
-//    }
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            location.href = '/meta/login';
+        });
+    }
 
     if (userInfo && userId) {
         userInfo.addEventListener('click', () => {
@@ -98,6 +98,7 @@ function initScreen() {
     const old = document.querySelector(".pagination");
     if (old) old.remove();
 }
+
 let popupWin = null;
 
 function openWindowWithJSON(sendData, url, width, height) {

@@ -13,24 +13,14 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 사용자정보 상세</h2>
         <div class="button-group">
-            <button id="btnSave" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <path d="M5 3h14v18H5z" fill="none" stroke="currentColor"/>
-                    <path d="M9 3v6h6V3" stroke="currentColor"/>
-                </svg>
-                저장
+            <button id="btnSave" type="button" class="btn">저장
             </button>
-            <button id="btnClose" type="button" class="btn">
-                <svg viewBox="0 0 24 24" width="15" height="15">
-                    <line x1="4" y1="4" x2="20" y2="20" stroke="currentColor"/>
-                    <line x1="20" y1="4" x2="4" y2="20" stroke="currentColor"/>
-                </svg>
-                닫기
+            <button id="btnClose" type="button" class="btn">닫기
             </button>
         </div>
     </div>
 
-    <!--        <div class="divider-h"></div>-->
+
     <form id="mainForm">
         <table class="popup-table">
             <tr>
@@ -38,7 +28,7 @@
                 <td><input type="text" id="userId" name="userId" class="form-input" required></td>
             </tr>
         </table>
-        <!--        <div class="divider-h"></div>-->
+
         <table class="popup-table">
             <tr>
                 <th>사용자이름 <span style="color:red">*</span></th>
@@ -74,7 +64,7 @@
                 </td>
             </tr>
         </table>
-        <!--        <div class="divider-h"></div>-->
+
         <table class="popup-table">
             <tr>
                 <th>최초등록</th>
@@ -89,7 +79,7 @@
                     <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
             </tr>
         </table>
-        <!--        <div class="divider-h"></div>-->
+
     </form>
 
 <br>
@@ -105,7 +95,7 @@
                     </svg> 저장</button>
             </div>
         </div>
-        <!--        <div class="divider-h"></div>-->
+
         <table class="popup-table">
             <tr>
                 <th>현재 비밀번호</th>
@@ -120,7 +110,7 @@
                 <td><input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required></td>
             </tr>
         </table>
-        <!--        <div class="divider-h"></div>-->
+
     </form>
 </div>
 
@@ -255,43 +245,47 @@
              }
          };
 
-
-
         // 부모창(리스트)에서 데이터 수신
-        window.addEventListener("message", (event) => {
+        window.addEventListener("message", async (event) => {
             if (event.origin !== window.location.origin) return;
+            if (!event.data || typeof event.data !== "object") return;
+
             const { userId, mode } = event.data;
+            if (!userId) return;
 
-            if (userId) {
-                (async () => {
-                    try {
-                        const res = await fetch('/meta/getUserData', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId })
-                        });
+            try {
+                const res = await fetch("/meta/getUserData", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userId })
+                });
 
-                        const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(`HTTP Error: ${res.status}`);
+                }
 
-                        // 1. 폼 채우기
-                        fillForm(mainForm, data);
+                const data = await res.json();
 
-                        // 2. 수정 모드 처리
-                        document.getElementById("userId").readOnly = true;
-                        document.getElementById("userId").classList.add("readonly-style"); // 시각적 처리
+                // 1. 폼 데이터 바인딩
+                fillForm(mainForm, data);
 
-                        // 3. 변경 감지 기준점 설정 (폼에 채워진 값 기준으로 다시 추출)
-                        originalData = formToJson(mainForm);
+                // 2. 수정 모드 처리
+                const userIdEl = document.getElementById("userId");
+                userIdEl.readOnly = true;
+                userIdEl.classList.add("readonly-style");
 
-                        btnSave.disabled = true; // 초기 상태는 비활성
+                // 3. 변경 감지 기준 데이터 설정
+                originalData = formToJson(mainForm);
 
-                    } catch (err) {
-                        console.error("Fetch Error:", err);
-                        alert("데이터 로드 중 오류가 발생했습니다.");
-                    }
-                })();
+                // 4. 초기 저장 버튼 비활성
+                btnSave.disabled = true;
+
+            } catch (err) {
+                console.error("User Data Load Error:", err);
+                alert("데이터 로드 중 오류가 발생했습니다.");
             }
         });
+
 
         document.getElementById("btnClose").addEventListener("click", () => window.close());
 
