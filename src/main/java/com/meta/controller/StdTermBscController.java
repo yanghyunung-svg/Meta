@@ -1,9 +1,9 @@
 package com.meta.controller;
 
 import com.meta.common.response.ApiResponse;
-import com.meta.dto.TbTermDictionaryDto;
-import com.meta.mapper.TbTermDictionaryMapper;
-import com.meta.service.TermDictionaryService;
+import com.meta.dto.TbStdTermBscDto;
+import com.meta.mapper.TbStdTermBscMapper;
+import com.meta.service.StdTermBscService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -21,12 +21,12 @@ import java.util.Map;
 @Data
 @Controller
 @RequestMapping("/meta")
-public class TermDictionaryController {
+public class StdTermBscController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    private TermDictionaryService termDictionaryService;
+    private StdTermBscService stdTermBscService;
     @Autowired
-    private TbTermDictionaryMapper tbTermDictionaryMapper;
+    private TbStdTermBscMapper termMapper;
 
     /**
      * @ ID : getTermListData
@@ -34,8 +34,8 @@ public class TermDictionaryController {
      */
     @PostMapping("/getTermListData")
     @ResponseBody
-    public List<TbTermDictionaryDto> getTermListData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return termDictionaryService.getListData(inputDto);
+    public List<TbStdTermBscDto> getTermListData(@RequestBody TbStdTermBscDto inputDto, HttpServletRequest request) throws Exception {
+        return stdTermBscService.getListData(inputDto);
     }
 
     /**
@@ -44,8 +44,8 @@ public class TermDictionaryController {
      */
     @PostMapping("/getTermData")
     @ResponseBody
-    public TbTermDictionaryDto getTermData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return termDictionaryService.getData(inputDto);
+    public TbStdTermBscDto getTermData(@RequestBody TbStdTermBscDto inputDto, HttpServletRequest request) throws Exception {
+        return stdTermBscService.getData(inputDto);
     }
 
     /**
@@ -54,8 +54,8 @@ public class TermDictionaryController {
      */
     @PostMapping("/manageTermData")
     @ResponseBody
-    public  ApiResponse<Void> manageData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        termDictionaryService.manageData(inputDto);
+    public  ApiResponse<Void> manageData(@RequestBody TbStdTermBscDto inputDto, HttpServletRequest request) throws Exception {
+        stdTermBscService.manageData(inputDto);
         return ApiResponse.success(null);
     }
 
@@ -65,15 +65,15 @@ public class TermDictionaryController {
      */
     @PostMapping("/getTermSplitData")
     @ResponseBody
-    public TbTermDictionaryDto getTermSplitData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return termDictionaryService.getTermSplitData(inputDto);
+    public TbStdTermBscDto getTermSplitData(@RequestBody TbStdTermBscDto inputDto, HttpServletRequest request) throws Exception {
+        return stdTermBscService.getTermSplitData(inputDto);
     }
 
     @PostMapping("/uploadTermExcelOnly")
     public ResponseEntity<Map<String, Object>> uploadTermExcelOnly(@RequestParam("file") MultipartFile file) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbTermDictionaryDto> list = termDictionaryService.uploadTermExcelOnly(file);
+            List<TbStdTermBscDto> list = stdTermBscService.uploadTermExcelOnly(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -87,7 +87,7 @@ public class TermDictionaryController {
     public ResponseEntity<Map<String, Object>> uploadTermExcelPreview(@RequestParam("file") MultipartFile file) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbTermDictionaryDto> list = termDictionaryService.parseExcelPreview(file);
+            List<TbStdTermBscDto> list = stdTermBscService.parseExcelPreview(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -99,10 +99,10 @@ public class TermDictionaryController {
     }
 
     @PostMapping("/parseTermReload")
-    public ResponseEntity<Map<String, Object>> parseTermReload(@RequestBody List<TbTermDictionaryDto> inputList) {
+    public ResponseEntity<Map<String, Object>> parseTermReload(@RequestBody List<TbStdTermBscDto> inputList) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbTermDictionaryDto> list = termDictionaryService.parseTermReload(inputList);
+            List<TbStdTermBscDto> list = stdTermBscService.parseTermReload(inputList);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -115,10 +115,10 @@ public class TermDictionaryController {
 
 
     @PostMapping("/uploadTermExcelSave")
-    public ResponseEntity<Map<String, Object>> uploadTermExcelSave(@RequestBody List<TbTermDictionaryDto> list, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> uploadTermExcelSave(@RequestBody List<TbStdTermBscDto> list, HttpServletRequest request) {
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = termDictionaryService.uploadTermExcelSave(list);
+            int count = stdTermBscService.uploadTermExcelSave(list);
             res.put("success", true);
             res.put("count", count);
             return ResponseEntity.ok(res);

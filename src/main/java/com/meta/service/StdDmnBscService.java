@@ -30,7 +30,7 @@ public class StdDmnBscService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private TbStdDmnBscMapper tbStdDmnBscMapper; 
+    private TbStdDmnBscMapper dmnMapper; 
 
 
     /**
@@ -38,7 +38,7 @@ public class StdDmnBscService {
      * desc     : 표준도메인 목록 조회
      */
     public List<TbStdDmnBscDto> getListData(TbStdDmnBscDto inputDto)  {
-        return tbStdDmnBscMapper.getListData(inputDto);
+        return dmnMapper.getListData(inputDto);
     }
 
     /**
@@ -46,7 +46,7 @@ public class StdDmnBscService {
      * desc     : 표준도메인 상세 조회
      */
     public List<TbStdDmnBscDto> getDmnComboData()  {
-        return tbStdDmnBscMapper.getDmnComboData();
+        return dmnMapper.getDmnComboData();
     }
 
     /**
@@ -55,7 +55,7 @@ public class StdDmnBscService {
      */
     public TbStdDmnBscDto getData(TbStdDmnBscDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
-        return tbStdDmnBscMapper.getData(inputDto);
+        return dmnMapper.getData(inputDto);
     }
 
     /**
@@ -65,14 +65,14 @@ public class StdDmnBscService {
     public void manageData(TbStdDmnBscDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
         log.debug(BizUtils.logVoKey(inputDto));
-        TbStdDmnBscDto outputDto = tbStdDmnBscMapper.getLockData(inputDto); 
+        TbStdDmnBscDto outputDto = dmnMapper.getLockData(inputDto); 
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
                 if (outputDto != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
-                if (tbStdDmnBscMapper.insertData(inputDto) == 0) {
+                if (dmnMapper.insertData(inputDto) == 0) {
                     throw new BizException(ResponseCode.INSERT_FAILED);
                 }
                 break;
@@ -80,7 +80,7 @@ public class StdDmnBscService {
                 if (outputDto == null) {
                     throw new BizException(ResponseCode.DATA_NOT_FOUND);
                 }
-                if (tbStdDmnBscMapper.updateData(inputDto) == 0) {
+                if (dmnMapper.updateData(inputDto) == 0) {
                     throw new BizException(ResponseCode.UPDATE_FAILED);
                 }
                 break;
@@ -88,7 +88,7 @@ public class StdDmnBscService {
                 if (outputDto == null) {
                     throw new BizException(ResponseCode.DATA_NOT_FOUND);
                 }
-                if (tbStdDmnBscMapper.deleteData(inputDto) == 0) {
+                if (dmnMapper.deleteData(inputDto) == 0) {
                     throw new BizException(ResponseCode.DELETE_FAILED);
                 }
                 break;
@@ -135,7 +135,7 @@ public class StdDmnBscService {
         if (dto.getDmnEngNm() == null || dto.getDmnEngNm().isEmpty()) return "도메인영문명 누락";
         if (dto.getDmnAtrb() == null || dto.getDmnAtrb().isEmpty()) return "도메인속성 누락";
         // DB 중복 체크
-        int exists = tbStdDmnBscMapper.countCode(dto);
+        int exists = dmnMapper.countCode(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return null;  // 정상
     }
@@ -145,7 +145,7 @@ public class StdDmnBscService {
         for (TbStdDmnBscDto dto : list) {
             if(StringUtils.equals(dto.getSttsCd(), "0")) {
                 dto.setUpdId(dto.getCrtId());
-                tbStdDmnBscMapper.insertData(dto);
+                dmnMapper.insertData(dto);
                 count++;
             }
         }

@@ -5,8 +5,8 @@ import com.meta.common.constants.BizConstants;
 import com.meta.common.constants.ResponseCode;
 import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
-import com.meta.dto.TbWordDictionaryDto;
-import com.meta.mapper.TbWordDictionaryMapper;
+import com.meta.dto.TbStdWordBscDto;
+import com.meta.mapper.TbStdWordBscMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -22,55 +22,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
- *@ ID       : WordDictionaryService
+ *@ ID       : StdWordBscService
  *@ NAME     : 단어사전 Service
  */
 @Service
-public class WordDictionaryService {
+public class StdWordBscService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private TbWordDictionaryMapper tbWordDictionaryMapper;
+    private TbStdWordBscMapper wordMapper;
 
 
     /**
      * method   : getListData
      * desc     : 단어사전 목록 조회
      */
-    public List<TbWordDictionaryDto> getListData(TbWordDictionaryDto inputDto)  {
-        return tbWordDictionaryMapper.getListData(inputDto);
+    public List<TbStdWordBscDto> getListData(TbStdWordBscDto inputDto)  {
+        return wordMapper.getListData(inputDto);
     }
 
     /**
      * method   : getData
      * desc     : 단어사전 상세 조회
      */
-    public TbWordDictionaryDto getData(TbWordDictionaryDto inputDto)  {
-        return tbWordDictionaryMapper.getData(inputDto);
+    public TbStdWordBscDto getData(TbStdWordBscDto inputDto)  {
+        return wordMapper.getData(inputDto);
     }
     /**
      * method   : getDataByName
      * desc     : 단어사전 단어명 상세 조회
      */
-    public TbWordDictionaryDto getDataByName(TbWordDictionaryDto inputDto)  {
-        return tbWordDictionaryMapper.getDataByName(inputDto);
+    public TbStdWordBscDto getDataByName(TbStdWordBscDto inputDto)  {
+        return wordMapper.getDataByName(inputDto);
     }
 
     /**
      * method   : manageData
      * desc     : 단어사전 관리
      */
-    public void manageData(TbWordDictionaryDto inputDto)  {
+    public void manageData(TbStdWordBscDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
         log.debug(BizUtils.logVoKey(inputDto));
-        TbWordDictionaryDto outputDto = tbWordDictionaryMapper.getLockData(inputDto);
+        TbStdWordBscDto outputDto = wordMapper.getLockData(inputDto);
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
                 if (outputDto != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
-                if (tbWordDictionaryMapper.insertData(inputDto) == 0) {
+                if (wordMapper.insertData(inputDto) == 0) {
                     throw new BizException(ResponseCode.INSERT_FAILED);
                 }
                 break;
@@ -78,7 +78,7 @@ public class WordDictionaryService {
                 if (outputDto == null) {
                     throw new BizException(ResponseCode.DATA_NOT_FOUND);
                 }
-                if (tbWordDictionaryMapper.updateData(inputDto) == 0) {
+                if (wordMapper.updateData(inputDto) == 0) {
                     throw new BizException(ResponseCode.UPDATE_FAILED);
                 }
                 break;
@@ -86,7 +86,7 @@ public class WordDictionaryService {
                 if (outputDto == null) {
                     throw new BizException(ResponseCode.DATA_NOT_FOUND);
                 }
-                if (tbWordDictionaryMapper.deleteData(inputDto) == 0) {
+                if (wordMapper.deleteData(inputDto) == 0) {
                     throw new BizException(ResponseCode.DELETE_FAILED);
                 }
                 break;
@@ -100,9 +100,9 @@ public class WordDictionaryService {
      * @ ID : parseExcelPreview
      * @ NAME : 표준단어 엑셀업로드
      */
-    public List<TbWordDictionaryDto> parseExcelPreview(MultipartFile file) throws Exception {
+    public List<TbStdWordBscDto> parseExcelPreview(MultipartFile file) throws Exception {
 
-        List<TbWordDictionaryDto> result = new ArrayList<>();
+        List<TbStdWordBscDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
 
@@ -110,7 +110,7 @@ public class WordDictionaryService {
             Row row = sheet.getRow(i);
             if (row == null) continue;
 
-            TbWordDictionaryDto dto = new TbWordDictionaryDto();
+            TbStdWordBscDto dto = new TbStdWordBscDto();
 
             dto.setWordNm       (BizUtils.getCell(row, 1));
             dto.setEngAbbrNm    (BizUtils.getCell(row, 2));
@@ -128,13 +128,13 @@ public class WordDictionaryService {
         return result;
     }
 
-    private String validateRow(TbWordDictionaryDto dto) {
+    private String validateRow(TbStdWordBscDto dto) {
         if (dto.getWordNm() == null || dto.getWordNm().isEmpty()) return "단어명 누락";
         if (dto.getEngAbbrNm() == null || dto.getEngAbbrNm().isEmpty()) return "영문약어명 누락";
         if (dto.getEngNm() == null || dto.getEngNm().isEmpty()) return "영문명 누락";
         if (dto.getExpln() == null || dto.getExpln().isEmpty()) return "설명 누락";
         // DB 중복 체크
-        int exists = tbWordDictionaryMapper.countCode(dto);
+        int exists = wordMapper.countCode(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return "0";  // 정상
     }
@@ -143,12 +143,12 @@ public class WordDictionaryService {
      * @ ID : saveUploadedExcel
      * @ NAME : 표준단어 엑셀업로드 저장
      */
-    public int saveUploadedExcel(List<TbWordDictionaryDto> list) {
+    public int saveUploadedExcel(List<TbStdWordBscDto> list) {
         int count = 0;
-        for (TbWordDictionaryDto dto : list) {
+        for (TbStdWordBscDto dto : list) {
             if(StringUtils.equals(dto.getStat(), "0")) {
                 dto.setUpdId(dto.getCrtId());
-                tbWordDictionaryMapper.insertData(dto);
+                wordMapper.insertData(dto);
                 count++;
             }
         }

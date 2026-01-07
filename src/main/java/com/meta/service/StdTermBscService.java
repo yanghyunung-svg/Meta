@@ -5,11 +5,11 @@ import com.meta.common.constants.BizConstants;
 import com.meta.common.constants.ResponseCode;
 import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
-import com.meta.dto.TbTermDictionaryDto;
-import com.meta.dto.TbWordDictionaryDto;
+import com.meta.dto.TbStdTermBscDto;
+import com.meta.dto.TbStdWordBscDto;
 import com.meta.dto.WordMappingDto;
-import com.meta.mapper.TbTermDictionaryMapper;
-import com.meta.mapper.TbWordDictionaryMapper;
+import com.meta.mapper.TbStdTermBscMapper;
+import com.meta.mapper.TbStdWordBscMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -25,49 +25,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
- *@ ID       : TermDictionaryService
+ *@ ID       : StdTermBscService
  *@ NAME     : 용어사전 Service
  */
 @Service
-public class TermDictionaryService {
+public class StdTermBscService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private TbTermDictionaryMapper tbTermDictionaryMapper;
+    private TbStdTermBscMapper termMapper;
     @Autowired
-    private TbWordDictionaryMapper tbWordDictionaryMapper;
+    private TbStdWordBscMapper wordMapper;
 
     /**
      * method   : getListData
      * desc     : 용어사전 목록 조회
      */
-    public List<TbTermDictionaryDto> getListData(TbTermDictionaryDto inputDto)  {
-        return tbTermDictionaryMapper.getListData(inputDto);
+    public List<TbStdTermBscDto> getListData(TbStdTermBscDto inputDto)  {
+        return termMapper.getListData(inputDto);
     }
 
     /**
      * method   : getData
      * desc     : 용어사전 상세 조회
      */
-    public TbTermDictionaryDto getData(TbTermDictionaryDto inputDto)  {
-        return tbTermDictionaryMapper.getData(inputDto);
+    public TbStdTermBscDto getData(TbStdTermBscDto inputDto)  {
+        return termMapper.getData(inputDto);
     }
 
     /**
      * method   : manageData
      * desc     : 용어사전 관리
      */
-    public void manageData(TbTermDictionaryDto inputDto)  {
+    public void manageData(TbStdTermBscDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
         log.debug(BizUtils.logVoKey(inputDto));
-        TbTermDictionaryDto outputDto = tbTermDictionaryMapper.getLockData(inputDto);
+        TbStdTermBscDto outputDto = termMapper.getLockData(inputDto);
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
                 if (outputDto != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
-                if (tbTermDictionaryMapper.insertData(inputDto) == 0) {
+                if (termMapper.insertData(inputDto) == 0) {
                     throw new BizException(ResponseCode.INSERT_FAILED);
                 }
                 break;
@@ -75,7 +75,7 @@ public class TermDictionaryService {
                 if (outputDto == null) {
                     throw new BizException(ResponseCode.DATA_NOT_FOUND);
                 }
-                if (tbTermDictionaryMapper.updateData(inputDto) == 0) {
+                if (termMapper.updateData(inputDto) == 0) {
                     throw new BizException(ResponseCode.UPDATE_FAILED);
                 }
                 break;
@@ -83,7 +83,7 @@ public class TermDictionaryService {
                 if (outputDto == null) {
                     throw new BizException(ResponseCode.DATA_NOT_FOUND);
                 }
-                if (tbTermDictionaryMapper.deleteData(inputDto) == 0) {
+                if (termMapper.deleteData(inputDto) == 0) {
                     throw new BizException(ResponseCode.DELETE_FAILED);
                 }
                 break;
@@ -97,19 +97,19 @@ public class TermDictionaryService {
      * method   : getTermSplitData
      * desc     : 용어사전 단어목록 조회
      */
-    public TbTermDictionaryDto getTermSplitData(TbTermDictionaryDto inputDto)  {
+    public TbStdTermBscDto getTermSplitData(TbStdTermBscDto inputDto)  {
 
         // 1. 용어사전
-        TbTermDictionaryDto tbTermDictionaryDto = tbTermDictionaryMapper.getData(inputDto);
-        if (tbTermDictionaryDto != null) {
-            tbTermDictionaryDto.setSnake(BizUtils.snakeToLower(tbTermDictionaryDto.getEngNm()));
-            tbTermDictionaryDto.setCamel(BizUtils.snakeToCamel(tbTermDictionaryDto.getEngNm()));
-            tbTermDictionaryDto.setPascal(BizUtils.snakeToPascal(tbTermDictionaryDto.getEngNm()));
-            tbTermDictionaryDto.setStat("표준용어");
-            return tbTermDictionaryDto;
+        TbStdTermBscDto tbStdTermBscDto = termMapper.getData(inputDto);
+        if (tbStdTermBscDto != null) {
+            tbStdTermBscDto.setSnake(BizUtils.snakeToLower(tbStdTermBscDto.getEngNm()));
+            tbStdTermBscDto.setCamel(BizUtils.snakeToCamel(tbStdTermBscDto.getEngNm()));
+            tbStdTermBscDto.setPascal(BizUtils.snakeToPascal(tbStdTermBscDto.getEngNm()));
+            tbStdTermBscDto.setStat("표준용어");
+            return tbStdTermBscDto;
         }
 
-        TbTermDictionaryDto outputDto = new TbTermDictionaryDto();
+        TbStdTermBscDto outputDto = new TbStdTermBscDto();
         String inText = inputDto.getTrmNm().replace(" ", "");
         log.debug(BizUtils.logInfo("inText", inText));
 
@@ -189,9 +189,9 @@ public class TermDictionaryService {
     }
 
     private String getWordDta(String wordNm)  {
-        TbWordDictionaryDto wordDto = new TbWordDictionaryDto();
+        TbStdWordBscDto wordDto = new TbStdWordBscDto();
         wordDto.setWordNm(wordNm);
-        wordDto = tbWordDictionaryMapper.getDataByName(wordDto);
+        wordDto = wordMapper.getDataByName(wordDto);
         return wordDto == null  ?  "" :  wordDto.getEngAbbrNm();
     }
 
@@ -207,8 +207,8 @@ public class TermDictionaryService {
     }
 
 
-    public List<TbTermDictionaryDto> uploadTermExcelOnly(MultipartFile file) throws Exception {
-        List<TbTermDictionaryDto> result = new ArrayList<>();
+    public List<TbStdTermBscDto> uploadTermExcelOnly(MultipartFile file) throws Exception {
+        List<TbStdTermBscDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
 
@@ -216,7 +216,7 @@ public class TermDictionaryService {
             Row row = sheet.getRow(i);
             if (row == null) continue;
 
-            TbTermDictionaryDto dto = new TbTermDictionaryDto();
+            TbStdTermBscDto dto = new TbStdTermBscDto();
 
             dto.setTrmNm(BizUtils.getCell(row, 1));
             dto.setEngNm("");
@@ -230,8 +230,8 @@ public class TermDictionaryService {
         return result;
     }
 
-    public List<TbTermDictionaryDto> parseExcelPreview(MultipartFile file) throws Exception {
-        List<TbTermDictionaryDto> result = new ArrayList<>();
+    public List<TbStdTermBscDto> parseExcelPreview(MultipartFile file) throws Exception {
+        List<TbStdTermBscDto> result = new ArrayList<>();
 
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
@@ -240,7 +240,7 @@ public class TermDictionaryService {
             Row row = sheet.getRow(i);
             if (row == null) continue;
 
-            TbTermDictionaryDto dto = new TbTermDictionaryDto();
+            TbStdTermBscDto dto = new TbStdTermBscDto();
 
             dto.setTrmNm(BizUtils.getCell(row, 1));
             dto.setEngNm(BizUtils.getCell(row, 2));
@@ -258,12 +258,12 @@ public class TermDictionaryService {
         return result;
     }
 
-    public List<TbTermDictionaryDto> parseTermReload(List<TbTermDictionaryDto> inputList) {
-        List<TbTermDictionaryDto> result = new ArrayList<>();
-        for (TbTermDictionaryDto dto : inputList) {
+    public List<TbStdTermBscDto> parseTermReload(List<TbStdTermBscDto> inputList) {
+        List<TbStdTermBscDto> result = new ArrayList<>();
+        for (TbStdTermBscDto dto : inputList) {
 
             if (StringUtil.notNullNorEmpty(dto.getTrmNm())) {
-                TbTermDictionaryDto outDto = getTermSplitData(dto);
+                TbStdTermBscDto outDto = getTermSplitData(dto);
                 if (StringUtil.isNullOrEmpty(outDto.getDmnNm())) {
                     outDto.setDmnNm("-");
                 }
@@ -274,23 +274,23 @@ public class TermDictionaryService {
     }
 
 
-    private String validateRow(TbTermDictionaryDto dto) {
+    private String validateRow(TbStdTermBscDto dto) {
         if (dto.getTrmNm() == null || dto.getTrmNm().isEmpty()) return "용어명 누락";
         if (dto.getEngNm() == null || dto.getEngNm().isEmpty()) return "영문명 누락";
         // DB 중복 체크
-        int exists = tbTermDictionaryMapper.countCode(dto);
+        int exists = termMapper.countCode(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return null;  // 정상
     }
 
-    public int uploadTermExcelSave(List<TbTermDictionaryDto> list)  {
+    public int uploadTermExcelSave(List<TbStdTermBscDto> list)  {
         int count = 0;
-        for (TbTermDictionaryDto dto : list) {
+        for (TbStdTermBscDto dto : list) {
             if (StringUtils.equals(dto.getStat(), "0")) {
-                int exists = tbTermDictionaryMapper.countCode(dto);
+                int exists = termMapper.countCode(dto);
                 if (exists == 0) {
                     dto.setUpdId(dto.getCrtId());
-                    tbTermDictionaryMapper.insertData(dto);
+                    termMapper.insertData(dto);
                     count++;
                 }
             }

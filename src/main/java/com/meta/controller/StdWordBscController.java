@@ -2,8 +2,8 @@ package com.meta.controller;
 
 import ch.qos.logback.core.util.StringUtil;
 import com.meta.common.response.ApiResponse;
-import com.meta.dto.TbWordDictionaryDto;
-import com.meta.service.WordDictionaryService;
+import com.meta.dto.TbStdWordBscDto;
+import com.meta.service.StdWordBscService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -21,10 +21,10 @@ import java.util.Map;
 @Data
 @Controller
 @RequestMapping("/meta")
-public class WordDictionaryController {
+public class StdWordBscController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    private WordDictionaryService wordDictionaryService;
+    private StdWordBscService stdWordBscService;
 
     /**
      * @ ID : getWordListData
@@ -32,8 +32,8 @@ public class WordDictionaryController {
      */
     @PostMapping("/getWordListData")
     @ResponseBody
-    public List<TbWordDictionaryDto> getWordListData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return wordDictionaryService.getListData(inputDto);
+    public List<TbStdWordBscDto> getWordListData(@RequestBody TbStdWordBscDto inputDto, HttpServletRequest request) throws Exception {
+        return stdWordBscService.getListData(inputDto);
     }
 
     /**
@@ -42,12 +42,12 @@ public class WordDictionaryController {
      */
     @PostMapping("/getWordData")
     @ResponseBody
-    public TbWordDictionaryDto getWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
+    public TbStdWordBscDto getWordData(@RequestBody TbStdWordBscDto inputDto, HttpServletRequest request) throws Exception {
         if (StringUtil.notNullNorEmpty(inputDto.getWordNm())) {
-            return wordDictionaryService.getDataByName(inputDto);
+            return stdWordBscService.getDataByName(inputDto);
         }
         else  {
-            return wordDictionaryService.getData(inputDto);
+            return stdWordBscService.getData(inputDto);
         }
     }
 
@@ -57,8 +57,8 @@ public class WordDictionaryController {
      */
     @PostMapping("/manageWordData")
     @ResponseBody
-    public ApiResponse<Void> manageWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        wordDictionaryService.manageData(inputDto);
+    public ApiResponse<Void> manageWordData(@RequestBody TbStdWordBscDto inputDto, HttpServletRequest request) throws Exception {
+        stdWordBscService.manageData(inputDto);
         return ApiResponse.success(null);
     }
 
@@ -70,7 +70,7 @@ public class WordDictionaryController {
     public ResponseEntity<Map<String, Object>> uploadwordExcelPreview(@RequestParam("file") MultipartFile file) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbWordDictionaryDto> list = wordDictionaryService.parseExcelPreview(file);
+            List<TbStdWordBscDto> list = stdWordBscService.parseExcelPreview(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -86,10 +86,10 @@ public class WordDictionaryController {
      * @ NAME : 표준단어 엑셀업로드 저장
      */
     @PostMapping("/uploadWordExcelSave")
-    public ResponseEntity<Map<String, Object>> uploadwordExcelSave(@RequestBody List<TbWordDictionaryDto> list) {
+    public ResponseEntity<Map<String, Object>> uploadwordExcelSave(@RequestBody List<TbStdWordBscDto> list) {
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = wordDictionaryService.saveUploadedExcel(list);
+            int count = stdWordBscService.saveUploadedExcel(list);
             res.put("success", true);
             res.put("count", count);
             return ResponseEntity.ok(res);

@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 
 /**
  * @author     : somnus21
- * @file       : TbWordDictionaryDto.java
+ * @file       : TbStdWordBscDto.java
  * @version    : 1.0.0
  * @createDate : 2025-11-20 오전 11:00:52
  * @updateDate : 2025-11-20 오전 11:00:52
@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TbWordDictionaryDto {  
+public class TbStdWordBscDto {  
     private Long       id;                              // ID INT
     private String     wordNm;                          // 단어명 VARCHAR(100)
     private String     engAbbrNm;                       // 영문약어명 VARCHAR(100)

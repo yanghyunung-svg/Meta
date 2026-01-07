@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * @author     : somnus21
- * @file       : TbTermDictionaryDto.java
+ * @file       : DashBoardDto.java
  * @version    : 1.0.0
  * @createDate : 2025-11-20 오전 10:59:53
  * @updateDate : 2025-11-20 오전 10:59:53

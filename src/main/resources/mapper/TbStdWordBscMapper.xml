@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.meta.mapper.TbWordDictionaryMapper">
+<mapper namespace="com.meta.mapper.TbStdWordBscMapper">
 
    <!--tb_word_dictionary SELECT-->
-   <select id="getData" parameterType="com.meta.dto.TbWordDictionaryDto" resultType="com.meta.dto.TbWordDictionaryDto">
+   <select id="getData" parameterType="com.meta.dto.TbStdWordBscDto" resultType="com.meta.dto.TbStdWordBscDto">
       SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
@@ -11,7 +11,7 @@
        WHERE ID = #{id}
   </select>
     <!--tb_word_dictionary SELECT-->
-    <select id="getDataByName" parameterType="com.meta.dto.TbWordDictionaryDto" resultType="com.meta.dto.TbWordDictionaryDto">
+    <select id="getDataByName" parameterType="com.meta.dto.TbStdWordBscDto" resultType="com.meta.dto.TbStdWordBscDto">
         SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
@@ -22,7 +22,7 @@
     </select>
 
    <!--tb_word_dictionary INSERT-->
-   <insert id="insertData" parameterType="com.meta.dto.TbWordDictionaryDto">
+   <insert id="insertData" parameterType="com.meta.dto.TbStdWordBscDto">
      INSERT INTO tb_word_dictionary (
             WORD_NM
           , ENG_ABBR_NM
@@ -44,7 +44,7 @@
   </insert>
 
    <!--tb_word_dictionary UPDATE-->
-   <update id="updateData" parameterType="com.meta.dto.TbWordDictionaryDto">
+   <update id="updateData" parameterType="com.meta.dto.TbStdWordBscDto">
      UPDATE tb_word_dictionary
         SET
             UPD_ID = #{updId}
@@ -64,14 +64,14 @@
    </update>
 
    <!--tb_word_dictionary DELETE-->
-   <delete id="deleteData" parameterType="com.meta.dto.TbWordDictionaryDto">
+   <delete id="deleteData" parameterType="com.meta.dto.TbStdWordBscDto">
      DELETE
        FROM tb_word_dictionary
       WHERE ID = #{id}
    </delete>
 
    <!--tb_word_dictionary RECORD LOCK SELECT-->
-   <select id="getLockData" parameterType="com.meta.dto.TbWordDictionaryDto" resultType="com.meta.dto.TbWordDictionaryDto">
+   <select id="getLockData" parameterType="com.meta.dto.TbStdWordBscDto" resultType="com.meta.dto.TbStdWordBscDto">
        SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
@@ -81,7 +81,7 @@
   </select>
 
     <!--tb_word_dictionary RECORD LOCK SELECT-->
-    <select id="getListData" parameterType="com.meta.dto.TbWordDictionaryDto" resultType="com.meta.dto.TbWordDictionaryDto">
+    <select id="getListData" parameterType="com.meta.dto.TbStdWordBscDto" resultType="com.meta.dto.TbStdWordBscDto">
         SELECT A.ID , A.WORD_NM , A.ENG_ABBR_NM , A.ENG_NM,  A.EXPLN , B.CD_NM STAT,  A.CRT_ID,  A.UPD_ID
         , date_format(A.CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(A.UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM

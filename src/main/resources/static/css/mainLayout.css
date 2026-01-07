@@ -10,42 +10,23 @@
 
  --bg-color:#fff;
  --main-bg-color:#fff;
- --main-text-color:##474747;
+ --main-text-color:#474747;
  --main-border-color:#474747;
  --main-over-color:#f0f0f0;
  --main-over-text-color:#474747;
-
  --btn-bg-color:#f0f0f0;
  --btn-text-color:#000000;
  --btn-over-color:#474747;
  --btn-over-text-color:#f0f0f0;
  --btn-border-color:#333;
-
  --table-thead-bg-color:#474747;
  --table-thead-text-color:#f0f0f0;
  --table-thead-border-color:#f0f0f0;
-
  --table-bg-color:#474747;
  --table-text-color:#f0f0f0;
-
  --search-table-border-color:#ddd;
-
  --tr-bg-color:#f0f0f0;
  --tr-text-color:#000000;
-
- --accent:#00aaff;
- --hover:#00ffcc;
- --section-bg:#111111;
- --shadow:rgba(0,0,0,0.6);
-
- --main-color:#5c9ad3;
- --main-color-over:#89b6df;
- --header-bg:#d7e2eb;
- --navbar-bg:#b8cfe4;
- --navbar-focus-color:#2d475d;
- --side-bg:#d7e2eb;
- --text-active-color:#358cdc;
- --bx-#1565c0:#5c9ad3
  }
 
 body, html { font-family:
@@ -65,7 +46,7 @@ table { width:100%; border-collapse:collapse; }
 th, td { border:1px solid #ccc; padding:8px; text-align:left; }
 th { background-color:#fff; }
 
-input[readonly],textarea[readonly],select[readonly] { background-color:#f0f0f0; color:black; border:1px solid #ccc; }
+input[readonly],textarea[readonly],select[readonly] { background-color:#f0f0f0; color:var(--bg-black); border:1px solid #ccc; }
 textarea.form-input { padding:10px; border:1px solid #ddd; border-radius:4px; resize:vertical; box-sizing:border-box; width:100%; }
 
 .hidden { display:none !important; }
@@ -80,11 +61,15 @@ textarea.form-input { padding:10px; border:1px solid #ddd; border-radius:4px; re
      display:flex; justify-content:space-between; align-items:center; padding:0 20px; z-index:1000;
  }
 
+
 .topbar-logo {
      position:fixed; top:5px; left:5px; width:180px; height:40px;
-     background-color:var(--bg-white); color:var(--bg-cobalt-blue);
+     background-color:var(--bg-white); color:#1565C0;
      border:1px solid var(--main-border-color); border-radius:1px;
      display:flex; justify-content:space-between; align-items:center; padding:0 20px; z-index:1000;
+     font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
+     font-weight: 700;
+     text-transform: uppercase;
  }
 
 .footbarContainer {
@@ -156,24 +141,21 @@ ul { list-style: none; padding:0; margin:0; }
             width:100%; height:24px; line-height:24px; padding:0 8px;
             box-sizing:border-box; font-size:12px; border:1px solid #ddd; border-radius:2px; }
 
-.data-table { width:100%; font-size:12px; border:1px solid #1565c0; border-collapse: collapse; }
+.data-table { width:100%; font-size:12px; border:1px solid var(--table-thead-bg-color); border-collapse: collapse; }
 .data-table thead { background-color: var(--table-thead-bg-color); color: var(--table-thead-text-color); }
 .data-table thead th {
     height: 28px; padding: 0 6px; line-height: 28px;
-    text-align: center; vertical-align: middle; font-weight: 600; box-sizing: border-box;
-  /*  background-color: var(--table-thead-bg-color); border: 1px solid var(--table-thead-border-color); */
-    background-color: #ddd; color:black; border: 1px solid black;
+    text-align: center; vertical-align: middle; font-weight: 500; box-sizing: border-box;
+    background-color: #474747 ; color: #ddd; border: 1px solid #ccc;
     }
 
-
-
-.data-table tbody { background-color:white; color:black; }
+.data-table tbody { background-color:white; color:var(--bg-black); }
 .data-table tbody tr { height:12px; }
 .data-table tbody tr:nth-child(even) { background-color:#eeeeee; }
 .data-table tbody tr:hover td { border-top:2px solid #1565c0; border-bottom:2px solid #1565c0; cursor:pointer; }
 .data-table tbody tr:hover td:first-child { border-left:1px solid #1565c0; }
 .data-table tbody tr:hover td:last-child { border-right:1px solid #1565c0; }
-.data-table tbody td { text-align:center; line-height:15px; border:1px solid var(--table-text-color); border-bottom:1px solid var(--table-text-color); padding:5px; }
+.data-table tbody td { text-align:center; line-height:15px; border:1px solid #ccc; border-bottom:1px solid #ccc; padding:5px; }
 
 .data-table td.align-left,.data-table th.align-left { text-align:left; }
 .data-table td.align-center,.data-table th.align-center { text-align:center; }

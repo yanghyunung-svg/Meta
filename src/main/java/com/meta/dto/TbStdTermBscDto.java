@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 
 /**
  * @author     : somnus21
- * @file       : TbTermDictionaryDto.java
+ * @file       : TbStdTermBscDto.java
  * @version    : 1.0.0
  * @createDate : 2025-11-20 오전 10:59:53
  * @updateDate : 2025-11-20 오전 10:59:53
@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TbTermDictionaryDto {
+public class TbStdTermBscDto {
     private String     trmNm;                           // 용어명 VARCHAR(100)
     private String     engNm;                           // 영문명 VARCHAR(100)
     private String     trmExpln;                        // 용어설명 TEXT

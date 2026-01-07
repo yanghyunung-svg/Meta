@@ -19,11 +19,11 @@ public class ApproveService {
     @Autowired
     private ApproveMapper approveMapper;
     @Autowired
-    private TbWordDictionaryMapper tbWordDictionaryMapper;
+    private TbStdWordBscMapper wordMapper;
     @Autowired
-    private TbTermDictionaryMapper tbTermDictionaryMapper;
+    private TbStdTermBscMapper termMapper;
     @Autowired
-    private TbStdDmnBscMapper tbStdDmnBscMapper;
+    private TbStdDmnBscMapper dmnMapper;
     @Autowired
     private TbCodeGroupMapper tbCodeGroupMapper;
 
@@ -43,33 +43,33 @@ public class ApproveService {
         ApproveDto outputDto = new ApproveDto();
         switch (inputDto.getSe()) {
         case "1":
-            TbTermDictionaryDto termIn = new TbTermDictionaryDto();
+            TbStdTermBscDto termIn = new TbStdTermBscDto();
             termIn.setTrmNm(inputDto.getKorNm());
-            TbTermDictionaryDto termOut = tbTermDictionaryMapper.getLockData(termIn);
+            TbStdTermBscDto termOut = termMapper.getLockData(termIn);
             if (termOut != null) {
                 termOut.setStat(inputDto.getStat());
                 termOut.setUpdId(inputDto.getUserId());
-                tbTermDictionaryMapper.updateData(termOut);
+                termMapper.updateData(termOut);
             }
             break;
         case "2":
-            TbWordDictionaryDto wordIn = new TbWordDictionaryDto();
+            TbStdWordBscDto wordIn = new TbStdWordBscDto();
             wordIn.setId(inputDto.getId());
-            TbWordDictionaryDto wordOut = tbWordDictionaryMapper.getLockData(wordIn);
+            TbStdWordBscDto wordOut = wordMapper.getLockData(wordIn);
             if (wordOut != null) {
                 wordOut.setStat(inputDto.getStat());
                 wordOut.setUpdId(inputDto.getUserId());
-                tbWordDictionaryMapper.updateData(wordOut);
+                wordMapper.updateData(wordOut);
             }
             break;
         case "3":
             TbStdDmnBscDto dmnIn = new TbStdDmnBscDto();
             dmnIn.setDmnNm(inputDto.getKorNm());
-            TbStdDmnBscDto dmnOut = tbStdDmnBscMapper.getLockData(dmnIn);
+            TbStdDmnBscDto dmnOut = dmnMapper.getLockData(dmnIn);
             if (dmnOut != null) {
                 dmnOut.setSttsCd(inputDto.getStat());
                 dmnOut.setUpdId(inputDto.getUserId());
-                tbStdDmnBscMapper.updateData(dmnOut);
+                dmnMapper.updateData(dmnOut);
             }
             break;
         case "4":
