@@ -585,13 +585,13 @@ window.updateRowDataFlexible = function(data, idKey, updateMap) {
     }
 }
 
-function getStatLabel(stat) {
+function getSttsCdLabel(stat) {
     const map = {
         '0': '신청',
         '1': '사용',
         '9': '미사용'
     };
-    return map[stat] ?? stat;
+    return map[stat] ?? sttsCd;
 }
 
 

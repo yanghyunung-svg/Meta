@@ -24,6 +24,6 @@ public class CommCodeDto {
   private String     grpNm;                             // 그룹코드명 VARCHAR(50)
   private String     cd;                                // 상세코드 VARCHAR(50)
   private String     cdNm;                              // 상세코드명 VARCHAR(200)
-  private String     stat;                              // 상태코드 VARCHAR(1)
+  private String     sttsCd;                              // 상태코드 VARCHAR(1)
   private String     rmk;                               // 비고 VARCHAR(500)
 }

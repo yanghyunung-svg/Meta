@@ -7,7 +7,7 @@
    <select id="getData" parameterType="com.meta.dto.TbCodeGroupDto" resultType="com.meta.dto.TbCodeGroupDto">
       SELECT GRP_CD
         , GRP_NM
-        , STAT
+        , STTS_CD
         , ORD
         , RMK
         , CRT_ID, UPD_ID
@@ -22,7 +22,7 @@
      INSERT INTO tb_code_group (
             GRP_CD
           , GRP_NM
-          , STAT
+          , STTS_CD
           , ORD
           , RMK
           , CRT_ID
@@ -31,7 +31,7 @@
      VALUES (
             #{grpCd}
           , #{grpNm}
-          , #{stat}
+          , #{sttsCd}
           , 0
           , #{rmk}
           , #{crtId}
@@ -43,7 +43,7 @@
    <update id="updateData" parameterType="com.meta.dto.TbCodeGroupDto">
      UPDATE tb_code_group
         SET GRP_NM = #{grpNm}
-          , STAT = #{stat}
+          , STTS_CD = #{sttsCd}
           , RMK = #{rmk}
           , UPD_ID = #{updId}
       WHERE GRP_CD = #{grpCd}
@@ -60,7 +60,7 @@
    <select id="getLockData" parameterType="com.meta.dto.TbCodeGroupDto" resultType="com.meta.dto.TbCodeGroupDto">
       SELECT GRP_CD
            , GRP_NM
-           , STAT
+           , STTS_CD
            , ORD
            , RMK
        , CRT_ID, UPD_ID
@@ -76,7 +76,7 @@
     <select id="getListData" parameterType="com.meta.dto.TbCodeGroupDto" resultType="com.meta.dto.TbCodeGroupDto">
         SELECT GRP_CD
         , GRP_NM
-        , STAT
+        , STTS_CD
         , ORD
         , RMK
         , CRT_ID, UPD_ID
@@ -90,8 +90,8 @@
         <if test="grpNm != null and grpNm != ''">
             AND GRP_NM LIKE CONCAT('%', #{grpNm}, '%')
         </if>
-        <if test="stat != null and stat != ''">
-            AND STAT = #{stat}
+        <if test="sttsCd != null and sttsCd != ''">
+            AND STTS_CD = #{sttsCd}
         </if>
         ORDER BY GRP_CD, GRP_NM
 

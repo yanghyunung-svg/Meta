@@ -47,7 +47,7 @@ public class ApproveService {
             termIn.setTrmNm(inputDto.getKorNm());
             TbStdTermBscDto termOut = termMapper.getLockData(termIn);
             if (termOut != null) {
-                termOut.setStat(inputDto.getStat());
+                termOut.setSttsCd(inputDto.getSttsCd());
                 termOut.setUpdId(inputDto.getUserId());
                 termMapper.updateData(termOut);
             }
@@ -57,7 +57,7 @@ public class ApproveService {
             wordIn.setId(inputDto.getId());
             TbStdWordBscDto wordOut = wordMapper.getLockData(wordIn);
             if (wordOut != null) {
-                wordOut.setStat(inputDto.getStat());
+                wordOut.setSttsCd(inputDto.getSttsCd());
                 wordOut.setUpdId(inputDto.getUserId());
                 wordMapper.updateData(wordOut);
             }
@@ -67,7 +67,7 @@ public class ApproveService {
             dmnIn.setDmnNm(inputDto.getKorNm());
             TbStdDmnBscDto dmnOut = dmnMapper.getLockData(dmnIn);
             if (dmnOut != null) {
-                dmnOut.setSttsCd(inputDto.getStat());
+                dmnOut.setSttsCd(inputDto.getSttsCd());
                 dmnOut.setUpdId(inputDto.getUserId());
                 dmnMapper.updateData(dmnOut);
             }
@@ -77,7 +77,7 @@ public class ApproveService {
             codeIn.setGrpCd(inputDto.getKorNm());
             TbCodeGroupDto codeOut = tbCodeGroupMapper.getLockData(codeIn);
             if (codeOut != null) {
-                codeOut.setStat(inputDto.getStat());
+                codeOut.setSttsCd(inputDto.getSttsCd());
                 codeOut.setUpdId(inputDto.getUserId());
                 tbCodeGroupMapper.updateData(codeOut);
             }

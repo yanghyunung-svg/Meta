@@ -32,7 +32,7 @@ public class ApproveController {
     @ResponseBody
     public List<ApproveDto> getAplyDsctnList(@RequestBody ApproveDto inputDto, HttpServletRequest request) throws Exception {
         String userId = (String) request.getSession().getAttribute("userId");
-        inputDto.setStat("0");
+        inputDto.setSttsCd("0");
         return approveService.getListData(inputDto);
     }
 

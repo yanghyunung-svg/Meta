@@ -86,7 +86,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         loadCodeCombo('APRV_CD', 'se');
-        loadCodeCombo('STAT', 'stat');
+        loadCodeCombo('STTS_CD', 'stat');
 
         console.log(window.pathname);
 
@@ -138,7 +138,7 @@
                     <td style="text-align: left;">${item.engNm}</td>
                     <td style="text-align: left;">${truncateText(item.rmk, 70)}</td>
                     <td style="text-align: center;">${item.crtId}</td>
-                    <td>${getStatLabel(item.stat)}</td>
+                    <td>${getSttsCdLabel(item.stat)}</td>
                     <td style="text-align: center;">${item.crtDttm}</td>
                 </tr>
             `).join('');

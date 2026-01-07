@@ -116,12 +116,12 @@ public class StdWordBscService {
             dto.setEngAbbrNm    (BizUtils.getCell(row, 2));
             dto.setEngNm        (BizUtils.getCell(row, 3));
             dto.setExpln        (BizUtils.getCell(row, 4));
-            dto.setStat         (BizUtils.getCell(row, 5));
+            dto.setSttsCd         (BizUtils.getCell(row, 5));
             dto.setCrtId        (BizUtils.getCell(row, 6));
 
             // 검증 로직
             String error = validateRow(dto);
-            if (StringUtil.notNullNorEmpty(error))  dto.setStat(error);
+            if (StringUtil.notNullNorEmpty(error))  dto.setSttsCd(error);
 
             result.add(dto);
         }
@@ -146,7 +146,7 @@ public class StdWordBscService {
     public int saveUploadedExcel(List<TbStdWordBscDto> list) {
         int count = 0;
         for (TbStdWordBscDto dto : list) {
-            if(StringUtils.equals(dto.getStat(), "0")) {
+            if(StringUtils.equals(dto.getSttsCd(), "0")) {
                 dto.setUpdId(dto.getCrtId());
                 wordMapper.insertData(dto);
                 count++;

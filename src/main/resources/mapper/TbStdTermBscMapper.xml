@@ -3,11 +3,11 @@
 <mapper namespace="com.meta.mapper.TbStdTermBscMapper">
 
     <select id="getListData" parameterType="com.meta.dto.TbStdTermBscDto" resultType="com.meta.dto.TbStdTermBscDto">
-        SELECT  TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT
+        SELECT  TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STTS_CD
         , CRT_ID, UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM tb_term_dictionary
+        FROM tb_std_term_bsc
         WHERE 1=1
             <if test="trmNm != null and trmNm != ''">
                 AND TRM_NM LIKE CONCAT('%', #{trmNm}, '%')
@@ -15,28 +15,28 @@
             <if test="engNm != null and engNm != ''">
                 AND ENG_NM LIKE CONCAT('%', #{engNm}, '%')
             </if>
-            <if test="stat != null and stat != ''">
-                AND STAT = #{stat}
+            <if test="STTS_CD != null and STTS_CD != ''">
+                AND STTS_CD = #{STTS_CD}
             </if>
         ORDER BY TRM_NM, ENG_NM
     </select>
 
     <select id="getData" parameterType="com.meta.dto.TbStdTermBscDto" resultType="com.meta.dto.TbStdTermBscDto">
-        SELECT  TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
+        SELECT  TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STTS_CD , CRT_ID, UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM tb_term_dictionary
+        FROM tb_std_term_bsc
         WHERE TRM_NM = #{trmNm}
     </select>
 
     <insert id="insertData" parameterType="com.meta.dto.TbStdTermBscDto">
-        INSERT INTO tb_term_dictionary
+        INSERT INTO tb_std_term_bsc
         (
             TRM_NM,
             ENG_NM,
             TRM_EXPLN,
             DMN_NM,
-            STAT,
+            STTS_CD,
             CRT_ID,
             UPD_ID
         )
@@ -46,41 +46,41 @@
             #{engNm},
             #{trmExpln},
             #{dmnNm},
-            #{stat},
+            #{STTS_CD},
             #{crtId},
             #{updId}
         )
     </insert>
 
-    <!--tb_term_dictionary UPDATE-->
+    <!--tb_std_term_bsc UPDATE-->
     <update id="updateData" parameterType="com.meta.dto.TbStdTermBscDto">
-        UPDATE tb_term_dictionary
+        UPDATE tb_std_term_bsc
         SET TRM_NM = #{trmNm}
           , ENG_NM = #{engNm}
           , TRM_EXPLN = #{trmExpln}
           , DMN_NM = #{dmnNm}
-          , STAT = #{stat}
+          , STTS_CD = #{STTS_CD}
           , UPD_ID = #{updId}
         WHERE TRM_NM = #{trmNm}
     </update>
 
     <update id="deleteData" parameterType="com.meta.dto.TbStdTermBscDto">
-        DELETE FROM tb_term_dictionary
+        DELETE FROM tb_std_term_bsc
         WHERE TRM_NM = #{trmNm}
     </update>
 
     <select id="getLockData" parameterType="com.meta.dto.TbStdTermBscDto" resultType="com.meta.dto.TbStdTermBscDto">
-        SELECT TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STAT , CRT_ID, UPD_ID
+        SELECT TRM_NM , ENG_NM , TRM_EXPLN , DMN_NM, STTS_CD , CRT_ID, UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM tb_term_dictionary
+        FROM tb_std_term_bsc
         WHERE TRM_NM = #{trmNm}
           FOR UPDATE
     </select>
 
     <select id="countCode" parameterType="com.meta.dto.TbStdTermBscDto" resultType="int">
         SELECT COUNT(*)
-        FROM tb_term_dictionary
+        FROM tb_std_term_bsc
         WHERE TRM_NM = #{trmNm}
     </select>
 

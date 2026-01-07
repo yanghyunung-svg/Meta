@@ -3,7 +3,7 @@
 <mapper namespace="com.meta.mapper.TbUserInfoMapper">
 
     <select id="getListData" parameterType="com.meta.dto.TbUserInfoDto" resultType="com.meta.dto.TbUserInfoDto">
-        SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, STAT, CRT_ID, UPD_ID
+        SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, STTS_CD, CRT_ID, UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM tb_user_info
@@ -14,15 +14,15 @@
         <if test="userNm != null and userNm != ''">
             AND USER_NM LIKE CONCAT('%', #{userNm}, '%')
         </if>
-        <if test="stat != null and stat != ''">
-            AND STAT = #{stat}
+        <if test="sttsCd != null and sttsCd != ''">
+            AND STTS_CD = #{sttsCd}
         </if>
         ORDER BY USER_ID, USER_NM
     </select>
 
    <!--tb_user_info SELECT-->
    <select id="getData" parameterType="com.meta.dto.TbUserInfoDto" resultType="com.meta.dto.TbUserInfoDto">
-      SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, STAT, CRT_ID, UPD_ID
+      SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, STTS_CD, CRT_ID, UPD_ID
             , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
             , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM tb_user_info
@@ -31,8 +31,8 @@
 
    <!--tb_user_info INSERT-->
    <insert id="insertData" parameterType="com.meta.dto.TbUserInfoDto">
-     INSERT INTO tb_user_info ( USER_ID, USER_NM, PASSWORD,  EMAIL, PHONE,  ROLE, STAT, CRT_ID, UPD_ID )
-       VALUES (#{userId}, #{userNm}, #{password}, #{email}, #{phone}, #{role}, #{stat}, #{crtId}, #{updId} )
+     INSERT INTO tb_user_info ( USER_ID, USER_NM, PASSWORD,  EMAIL, PHONE,  ROLE, STTS_CD, CRT_ID, UPD_ID )
+       VALUES (#{userId}, #{userNm}, #{password}, #{email}, #{phone}, #{role}, #{sttsCd}, #{crtId}, #{updId} )
   </insert>
 
    <!--tb_user_info UPDATE-->
@@ -55,8 +55,8 @@
        <if test="role != null and role != ''">
             ,ROLE = #{role}
        </if>
-       <if test="stat != null and stat != ''">
-            ,STAT = #{stat}
+       <if test="sttsCd != null and sttsCd != ''">
+            ,STTS_CD = #{sttsCd}
        </if>
       WHERE USER_ID = #{userId}
    </update>
@@ -70,7 +70,7 @@
 
    <!--tb_user_info RECORD LOCK SELECT-->
    <select id="getLockData" parameterType="com.meta.dto.TbUserInfoDto" resultType="com.meta.dto.TbUserInfoDto">
-      SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, STAT, CRT_ID, UPD_ID
+      SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, STTS_CD, CRT_ID, UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM tb_user_info

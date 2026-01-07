@@ -10,7 +10,7 @@
        , B.GRP_NM
        , A.CD
        , A.CD_NM
-       , A.STAT
+       , A.STTS_CD
        , A.ORD
        , A.RMK
        , A.CRT_ID
@@ -30,7 +30,7 @@
             GRP_CD
           , CD
           , CD_NM
-          , STAT
+          , STTS_CD
           , ORD
           , RMK
           , CRT_ID
@@ -40,7 +40,7 @@
             #{grpCd}
           , #{cd}
           , #{cdNm}
-          , #{stat}
+          , #{sttsCd}
           , #{ord}
           , #{rmk}
           , #{crtId}
@@ -53,7 +53,7 @@
      UPDATE tb_code
         SET CD = #{cd}
           , CD_NM = #{cdNm}
-          , STAT = #{stat}
+          , STTS_CD = #{sttsCd}
           , ORD = #{ord}
           , RMK = #{rmk}
           , UPD_ID = #{updId}
@@ -74,7 +74,7 @@
       SELECT GRP_CD
            , CD
            , CD_NM
-           , STAT
+           , STTS_CD
            , ORD
            , RMK
        , CRT_ID, UPD_ID
@@ -93,7 +93,7 @@
         , B.GRP_NM
         , A.CD
         , A.CD_NM
-        , A.STAT
+        , A.STTS_CD
         , A.ORD
         , A.RMK
         , A.CRT_ID
@@ -113,8 +113,8 @@
         <if test="cdNm != null and cdNm != ''">
             AND A.CD_NM LIKE CONCAT('%', #{cdNm}, '%')
         </if>
-        <if test="stat != null and stat != ''">
-            AND A.STAT = #{stat}
+        <if test="sttsCd != null and sttsCd != ''">
+            AND A.STTS_CD = #{sttsCd}
         </if>
         ORDER BY A.GRP_CD, A.ORD, A.CD
     </select>
@@ -123,7 +123,7 @@
         SELECT CD, CD_NM
         FROM tb_code
         WHERE GRP_CD = #{grpCd}
-        AND   STAT = '1'
+        AND   STTS_CD = '1'
         ORDER BY GRP_CD, ORD, CD
     </select>
 

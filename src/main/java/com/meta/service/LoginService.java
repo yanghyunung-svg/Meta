@@ -68,13 +68,13 @@ public class LoginService {
         }
 
         // 상태코드 검증
-        if (StringUtils.equals(outputDto.getStat(), "0")) {
+        if (StringUtils.equals(outputDto.getSttsCd(), "0")) {
             tbLoginLogDto.setFailReason((ResponseCode.USER_NO_USED.getMessage()));
             commService.insertLoginLog(tbLoginLogDto);
             throw new BizException(ResponseCode.USER_NO_USED);
         }
 
-        if (StringUtils.equals(outputDto.getStat(), "9")) {
+        if (StringUtils.equals(outputDto.getSttsCd(), "9")) {
             tbLoginLogDto.setFailReason((ResponseCode.USER_NO_USED.getMessage()));
             commService.insertLoginLog(tbLoginLogDto);
             throw new BizException(ResponseCode.USER_NO_USED);

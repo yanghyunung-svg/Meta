@@ -23,7 +23,7 @@ public class TbStdWordBscDto {
     private String     engAbbrNm;                       // 영문약어명 VARCHAR(100)
     private String     engNm;                           // 영문명 VARCHAR(100)
     private String     expln;                           // 설명 TEXT
-    private String     stat;                            // 상태
+    private String     sttsCd;                            // 상태
     private String     crtDttm;                         // 생성일시 DATETIME
     private String     crtId;                           // 생성자ID VARCHAR(50)
     private String     updDttm;                         // 변경일시 DATETIME

@@ -8,7 +8,7 @@
             , Z.KOR_NM
             , Z.ENG_NM
             , Z.RMK
-            , Z.STAT
+            , Z.STTS_CD
             , Z.CRT_ID
             , date_format(Z.CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
             , B.CD_NM AS SE_NM
@@ -18,13 +18,13 @@
             , TRM_NM  AS KOR_NM
             , ENG_NM  AS ENG_NM
             , TRM_EXPLN AS RMK
-            , STAT
+            , STTS_CD
             , CRT_ID
             , CRT_DTTM
             FROM tb_term_dictionary
             WHERE 1=1
-            <if test="stat != null and stat != ''">
-                AND STAT = #{stat}
+            <if test="sttsCd != null and sttsCd != ''">
+                AND STTS_CD = #{sttsCd}
             </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
@@ -37,13 +37,13 @@
             , WORD_NM  AS KOR_NM
             , ENG_ABBR_NM  AS ENG_NM
             , EXPLN AS RMK
-            , STAT
+            , STTS_CD
             , CRT_ID
             , CRT_DTTM
             FROM tb_word_dictionary
             WHERE 1=1
-            <if test="stat != null and stat != ''">
-                AND STAT = #{stat}
+            <if test="sttsCd != null and sttsCd != ''">
+                AND STTS_CD = #{sttsCd}
             </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
@@ -55,13 +55,13 @@
             , DMN_NM  AS KOR_NM
             , DMN_ENG_NM  AS ENG_NM
             , DMN_CLSF_NM AS RMK
-            , STTS_CD AS STAT
+            , STTS_CD AS STTS_CD
             , CRT_ID
             , CRT_DTTM
             FROM TB_STD_DMN_BSC
             WHERE 1=1
-            <if test="stat != null and stat != ''">
-                AND STTS_CD = #{stat}
+            <if test="sttsCd != null and sttsCd != ''">
+                AND STTS_CD = #{sttsCd}
             </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
@@ -73,13 +73,13 @@
             , GRP_CD  AS KOR_NM
             , GRP_NM  AS ENG_NM
             , RMK AS RMK
-            , STAT
+            , STTS_CD
             , CRT_ID
             , CRT_DTTM
             FROM tb_code_group
             WHERE 1=1
-            <if test="stat != null and stat != ''">
-                AND STAT = #{stat}
+            <if test="sttsCd != null and sttsCd != ''">
+                AND STTS_CD = #{sttsCd}
             </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}
@@ -91,13 +91,13 @@
             , GRP_CD  AS KOR_NM
             , CD  AS ENG_NM
             , CD_NM AS RMK
-            , STAT
+            , STTS_CD
             , CRT_ID
             , CRT_DTTM
             FROM tb_code
             WHERE 1=1
-            <if test="stat != null and stat != ''">
-                AND STAT = #{stat}
+            <if test="sttsCd != null and sttsCd != ''">
+                AND STTS_CD = #{sttsCd}
             </if>
             <if test="userId != null and userId != ''">
                 AND CRT_ID = #{userId}

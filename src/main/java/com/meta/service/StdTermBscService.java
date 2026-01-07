@@ -105,7 +105,7 @@ public class StdTermBscService {
             tbStdTermBscDto.setSnake(BizUtils.snakeToLower(tbStdTermBscDto.getEngNm()));
             tbStdTermBscDto.setCamel(BizUtils.snakeToCamel(tbStdTermBscDto.getEngNm()));
             tbStdTermBscDto.setPascal(BizUtils.snakeToPascal(tbStdTermBscDto.getEngNm()));
-            tbStdTermBscDto.setStat("표준용어");
+            tbStdTermBscDto.setSttsCd("표준용어");
             return tbStdTermBscDto;
         }
 
@@ -128,10 +128,10 @@ public class StdTermBscService {
 
         outputDto.setDmnNm("");
         outputDto.setTrmExpln(prettyPrintKeywords(keywords));
-        outputDto.setStat("0");
+        outputDto.setSttsCd("0");
 
         if (BizConstants.KOREAN_PATTERN.matcher(outTxt).find()) {
-            outputDto.setStat("단어미등록");
+            outputDto.setSttsCd("단어미등록");
         }
 
         log.debug(BizUtils.logInfo("outTxt", outTxt + "|" + outputDto.getTrmExpln()));
@@ -223,7 +223,7 @@ public class StdTermBscService {
             dto.setSnake("");
             dto.setPascal("");
             dto.setCamel("");
-            dto.setStat("");
+            dto.setSttsCd("");
 
             result.add(dto);
         }
@@ -246,12 +246,12 @@ public class StdTermBscService {
             dto.setEngNm(BizUtils.getCell(row, 2));
             dto.setDmnNm(BizUtils.getCell(row, 3));
             dto.setTrmExpln(BizUtils.getCell(row, 4));
-            dto.setStat(BizUtils.getCell(row, 5));
+            dto.setSttsCd(BizUtils.getCell(row, 5));
             dto.setCrtId(BizUtils.getCell(row, 6));
 
             // 검증 로직
             String error = validateRow(dto);
-            if (StringUtil.notNullNorEmpty(error))  dto.setStat(error);
+            if (StringUtil.notNullNorEmpty(error))  dto.setSttsCd(error);
 
             result.add(dto);
         }
@@ -286,7 +286,7 @@ public class StdTermBscService {
     public int uploadTermExcelSave(List<TbStdTermBscDto> list)  {
         int count = 0;
         for (TbStdTermBscDto dto : list) {
-            if (StringUtils.equals(dto.getStat(), "0")) {
+            if (StringUtils.equals(dto.getSttsCd(), "0")) {
                 int exists = termMapper.countCode(dto);
                 if (exists == 0) {
                     dto.setUpdId(dto.getCrtId());

@@ -18,7 +18,7 @@ public class ApproveDto {
     private String     korNm;                           // 한글명
     private String     engNm;                           // 영문명
     private String     rmk;                           // 설명
-    private String     stat;                            // 상태 0=등록 1=사용 9=미사용
+    private String     sttsCd;                            // 상태 0=등록 1=사용 9=미사용
     private String     crtDttm;                         // 생성일시 DATETIME
     private String     crtId;                           // 생성자ID
     private String     userId;                          // 등록자ID

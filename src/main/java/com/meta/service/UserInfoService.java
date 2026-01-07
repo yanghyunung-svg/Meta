@@ -160,11 +160,11 @@ public class UserInfoService {
             dto.setEmail    (BizUtils.getCell(row, 3));
             dto.setPhone    (BizUtils.getCell(row, 4));
             dto.setRole     (BizUtils.getCell(row, 5));
-            dto.setStat     ("0");
+            dto.setSttsCd     ("0");
 
             // 검증 로직
             String error = validateRow(dto);
-            if (StringUtil.notNullNorEmpty(error))  dto.setStat(error);
+            if (StringUtil.notNullNorEmpty(error))  dto.setSttsCd(error);
 
             result.add(dto);
         }
@@ -191,9 +191,9 @@ public class UserInfoService {
 
         int count = 0;
         for (TbUserInfoDto dto : list) {
-            if(StringUtils.equals(dto.getStat(), "0")) {
+            if(StringUtils.equals(dto.getSttsCd(), "0")) {
                 dto.setUpdId(dto.getCrtId());
-                dto.setStat("1");
+                dto.setSttsCd("1");
                 dto.setPassword(encodedPassword);
                 tbUserInfoMapper.insertData(dto);
                 count++;

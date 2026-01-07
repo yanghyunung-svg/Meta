@@ -2,33 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.meta.mapper.TbStdWordBscMapper">
 
-   <!--tb_word_dictionary SELECT-->
+   <!--tb_std_word_bsc SELECT-->
    <select id="getData" parameterType="com.meta.dto.TbStdWordBscDto" resultType="com.meta.dto.TbStdWordBscDto">
-      SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
+      SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STTS_CD,  CRT_ID,  UPD_ID
        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM tb_word_dictionary
+        FROM tb_std_word_bsc
        WHERE ID = #{id}
   </select>
-    <!--tb_word_dictionary SELECT-->
+    <!--tb_std_word_bsc SELECT-->
     <select id="getDataByName" parameterType="com.meta.dto.TbStdWordBscDto" resultType="com.meta.dto.TbStdWordBscDto">
-        SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
+        SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STTS_CD,  CRT_ID,  UPD_ID
         , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM tb_word_dictionary
+        FROM tb_std_word_bsc
         WHERE WORD_NM = #{wordNm}
-        AND   STAT = '1'
+        AND   STTS_CD = '1'
         LIMIT 1
     </select>
 
-   <!--tb_word_dictionary INSERT-->
+   <!--tb_std_word_bsc INSERT-->
    <insert id="insertData" parameterType="com.meta.dto.TbStdWordBscDto">
-     INSERT INTO tb_word_dictionary (
+     INSERT INTO tb_std_word_bsc (
             WORD_NM
           , ENG_ABBR_NM
           , ENG_NM
           , EXPLN
-          , STAT
+          , STTS_CD
           , CRT_ID
           , UPD_ID
      )
@@ -37,15 +37,15 @@
            , #{engAbbrNm}
            , #{engNm}
            , #{expln}
-           , #{stat}
+           , #{sttsCd}
            , #{crtId}
           , #{updId}
      ) 
   </insert>
 
-   <!--tb_word_dictionary UPDATE-->
+   <!--tb_std_word_bsc UPDATE-->
    <update id="updateData" parameterType="com.meta.dto.TbStdWordBscDto">
-     UPDATE tb_word_dictionary
+     UPDATE tb_std_word_bsc
         SET
             UPD_ID = #{updId}
            <if test="engAbbrNm != null and engAbbrNm != ''">
@@ -57,38 +57,38 @@
            <if test="expln != null and expln != ''">
                , EXPLN = #{expln}
            </if>
-           <if test="stat != null and stat != ''">
-               , STAT = #{stat}
+           <if test="STTS_CD != null and STTS_CD != ''">
+               , STTS_CD = #{sttsCd}
            </if>
       WHERE ID = #{id}
    </update>
 
-   <!--tb_word_dictionary DELETE-->
+   <!--tb_std_word_bsc DELETE-->
    <delete id="deleteData" parameterType="com.meta.dto.TbStdWordBscDto">
      DELETE
-       FROM tb_word_dictionary
+       FROM tb_std_word_bsc
       WHERE ID = #{id}
    </delete>
 
-   <!--tb_word_dictionary RECORD LOCK SELECT-->
+   <!--tb_std_word_bsc RECORD LOCK SELECT-->
    <select id="getLockData" parameterType="com.meta.dto.TbStdWordBscDto" resultType="com.meta.dto.TbStdWordBscDto">
-       SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STAT,  CRT_ID,  UPD_ID
+       SELECT ID , WORD_NM , ENG_ABBR_NM , ENG_NM,  EXPLN , STTS_CD,  CRT_ID,  UPD_ID
        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM tb_word_dictionary
+        FROM tb_std_word_bsc
        WHERE ID = #{id}
          FOR UPDATE
   </select>
 
-    <!--tb_word_dictionary RECORD LOCK SELECT-->
+    <!--tb_std_word_bsc RECORD LOCK SELECT-->
     <select id="getListData" parameterType="com.meta.dto.TbStdWordBscDto" resultType="com.meta.dto.TbStdWordBscDto">
-        SELECT A.ID , A.WORD_NM , A.ENG_ABBR_NM , A.ENG_NM,  A.EXPLN , B.CD_NM STAT,  A.CRT_ID,  A.UPD_ID
+        SELECT A.ID , A.WORD_NM , A.ENG_ABBR_NM , A.ENG_NM,  A.EXPLN , B.CD_NM STTS_CD,  A.CRT_ID,  A.UPD_ID
         , date_format(A.CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
         , date_format(A.UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM tb_word_dictionary A
+        FROM tb_std_word_bsc A
         LEFT JOIN tb_code B
-        ON B.GRP_CD = 'STAT'
-        AND B.CD = A.STAT
+        ON B.GRP_CD = 'STTS_CD'
+        AND B.CD = A.STTS_CD
         WHERE 1=1
             <if test="wordNm != null and wordNm != ''">
                 AND A.WORD_NM LIKE CONCAT('%', #{wordNm}, '%')
@@ -96,24 +96,24 @@
             <if test="engAbbrNm != null and engAbbrNm != ''">
                 AND A.ENG_ABBR_NM LIKE CONCAT('%', #{engAbbrNm}, '%')
             </if>
-            <if test="stat != null and stat != ''">
-                AND A.STAT = #{stat}
+            <if test="STTS_CD != null and STTS_CD != ''">
+                AND A.STTS_CD = #{sttsCd}
             </if>
         ORDER BY A.WORD_NM, A.ENG_NM
     </select>
 
 
-    <!--tb_word_dictionary SELECT-->
+    <!--tb_std_word_bsc SELECT-->
     <select id="getAllData" resultType="com.meta.dto.WordMappingDto">
         SELECT WORD_NM AS KOR_NM , ENG_ABBR_NM AS ENG_NM
-        FROM tb_word_dictionary
+        FROM tb_std_word_bsc
         WHERE  1=1
     </select>
 
 
     <select id="countCode" parameterType="com.meta.dto.WordMappingDto" resultType="int">
         SELECT COUNT(*)
-        FROM tb_word_dictionary
+        FROM tb_std_word_bsc
         WHERE WORD_NM = #{wordNm}
     </select>
 </mapper>

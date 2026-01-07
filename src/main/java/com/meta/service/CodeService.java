@@ -121,12 +121,12 @@ public class CodeService {
             dto.setCdNm     (BizUtils.getCell(row, 4));
             dto.setOrd      (BizUtils.parseInt(BizUtils.getCell(row, 5)));
             dto.setRmk      (BizUtils.getCell(row, 6));
-            dto.setStat     (BizUtils.getCell(row, 7));
+            dto.setSttsCd     (BizUtils.getCell(row, 7));
             dto.setCrtId    (BizUtils.getCell(row, 8));
 
             // 검증 로직
             String error = validateRow(dto);
-            if (StringUtil.notNullNorEmpty(error))  dto.setStat(error);
+            if (StringUtil.notNullNorEmpty(error))  dto.setSttsCd(error);
 
             result.add(dto);
         }
@@ -145,7 +145,7 @@ public class CodeService {
     public int saveUploadedExcel(List<TbCodeDto> list) {
         int count = 0;
         for (TbCodeDto dto : list) {
-            if(StringUtils.equals(dto.getStat(), "1")) {
+            if(StringUtils.equals(dto.getSttsCd(), "1")) {
                 dto.setUpdId(dto.getCrtId());
                 tbCodeMapper.insertData(dto);
                 count++;

@@ -6,12 +6,12 @@
         SELECT Z.SE , X.CD_NM AS SE_NM
             , Z.GRP_CD , Z.GRP_NM
             , Z.CD , Z.CD_NM
-            , Z.RMK , Z.STAT
+            , Z.RMK , Z.STTS_CD
         FROM (
             SELECT  '4'  AS SE
             , GRP_CD , GRP_NM
             , '' AS CD  , '' AS CD_NM
-            , RMK , STAT
+            , RMK , STTS_CD
             FROM tb_code_group
             WHERE 1=1
         <choose>
@@ -32,7 +32,7 @@
             SELECT  '5'  AS SE
             , C.GRP_CD , D.GRP_NM
             , C.CD , C.CD_NM
-            , C.RMK , C.STAT
+            , C.RMK , C.STTS_CD
             FROM tb_code C
             LEFT JOIN tb_code_group  D
             ON   C.GRP_CD = D.GRP_CD

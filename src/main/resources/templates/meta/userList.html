@@ -76,7 +76,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        loadCodeCombo('STAT', 'stat');
+        loadCodeCombo('STTS_CD', 'stat');
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
@@ -122,7 +122,7 @@
                     <td class="align-left">${item.email}</td>
                     <td class="align-left">${item.phone}</td>
                     <td class="align-center">${item.role === '2' ? 'USER' : item.role === '1' ? 'ADMIN': item.role === '0' ? 'SUPER' : '-'} </td>
-                    <td>${getStatLabel(item.stat)}</td>
+                    <td>${getSttsCdLabel(item.stat)}</td>
                 </tr>
             `).join('');
 
