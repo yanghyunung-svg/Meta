@@ -1,6 +1,6 @@
 package com.meta.controller;
 
-import com.common.utils.ApiResponse;
+import com.meta.common.response.ApiResponse;
 import com.meta.dto.TbCodeGroupDto;
 import com.meta.service.CodeGroupService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,7 +52,8 @@ public class CodeGroupController {
     @PostMapping("/manageCodeGroupData")
     @ResponseBody
     public ApiResponse<Void> manageCodeGroupData(@RequestBody TbCodeGroupDto inputDto, HttpServletRequest request) throws Exception {
-        return codeGroupService.manageData(inputDto);
+        codeGroupService.manageData(inputDto);
+        return ApiResponse.success(null);
     }
     /**
      * @ ID : uploadCodeExcelPreview

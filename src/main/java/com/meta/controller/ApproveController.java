@@ -1,6 +1,6 @@
 package com.meta.controller;
 
-import com.common.utils.BizUtils;
+import com.meta.common.util.BizUtils;
 import com.meta.dto.ApproveDto;
 import com.meta.service.ApproveService;
 import jakarta.servlet.http.HttpServletRequest;

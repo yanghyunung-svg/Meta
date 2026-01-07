@@ -45,7 +45,6 @@ function downloadTableToExcel(tableId, fileName = 'excel_download') {
     URL.revokeObjectURL(url);
 }
 
-
 /** YYYYMMDD */
 function getTodayExcel() {
     const d = new Date();

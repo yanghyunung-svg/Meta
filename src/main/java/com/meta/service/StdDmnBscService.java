@@ -1,8 +1,10 @@
 package com.meta.service;
 
 import ch.qos.logback.core.util.StringUtil;
-import com.common.utils.ApiResponse;
-import com.common.utils.BizUtils;
+import com.meta.common.constants.BizConstants;
+import com.meta.common.constants.ResponseCode;
+import com.meta.common.exception.BizException;
+import com.meta.common.util.BizUtils;
 import com.meta.dto.TbStdDmnBscDto;
 import com.meta.mapper.TbStdDmnBscMapper;
 import org.apache.poi.ss.usermodel.Row;
@@ -60,45 +62,40 @@ public class StdDmnBscService {
      * method   : manageData
      * desc     : 표준도메인 관리
      */
-    public ApiResponse<Void> manageData(TbStdDmnBscDto inputDto)  {
+    public void manageData(TbStdDmnBscDto inputDto)  {
         log.debug(BizUtils.logInfo("START"));
         log.debug(BizUtils.logVoKey(inputDto));
-        TbStdDmnBscDto outputDto = tbStdDmnBscMapper.getLockData(inputDto);
+        TbStdDmnBscDto outputDto = tbStdDmnBscMapper.getLockData(inputDto); 
 
-        try {
-            switch (inputDto.getFunc()) {
-                case "I":
-                    if (outputDto != null) {
-                        return new ApiResponse<Void>(false, "기등록된 데이타가 있습니다.");
-                    }
-                    if (tbStdDmnBscMapper.insertData(inputDto) == 0) {
-                        return new ApiResponse<Void>(false, "등록 오류");
-                    }
-                    break;
-                case "U":
-                    if (outputDto == null) {
-                        return new ApiResponse<Void>(false, "데이타가 없습니다");
-                    }
-                    if (tbStdDmnBscMapper.updateData(inputDto) == 0) {
-                        return new ApiResponse<Void>(false, "수정 오류");
-                    }
-                    break;
-                case "D":
-                    if (outputDto == null) {
-                        return new ApiResponse<Void>(false, "데이타가 없습니다");
-                    }
-                    if (tbStdDmnBscMapper.deleteData(inputDto) == 0) {
-                        return new ApiResponse<Void>(false, "삭제 오류");
-                    }
-                    break;
-                default:
-                    break;
-            }
-            log.debug(BizUtils.logInfo("END"));
-            return new ApiResponse<Void>(true, "처리성공");
-        } catch (Exception e) {
-            return new ApiResponse<Void>(false, "처리 중 오류가 발생했습니다.");
+        switch (inputDto.getFunc()) {
+            case BizConstants.FUNC_SE.INS:
+                if (outputDto != null) {
+                    throw new BizException(ResponseCode.DUPLICATE_DATA);
+                }
+                if (tbStdDmnBscMapper.insertData(inputDto) == 0) {
+                    throw new BizException(ResponseCode.INSERT_FAILED);
+                }
+                break;
+            case BizConstants.FUNC_SE.UPD:
+                if (outputDto == null) {
+                    throw new BizException(ResponseCode.DATA_NOT_FOUND);
+                }
+                if (tbStdDmnBscMapper.updateData(inputDto) == 0) {
+                    throw new BizException(ResponseCode.UPDATE_FAILED);
+                }
+                break;
+            case BizConstants.FUNC_SE.DEL:
+                if (outputDto == null) {
+                    throw new BizException(ResponseCode.DATA_NOT_FOUND);
+                }
+                if (tbStdDmnBscMapper.deleteData(inputDto) == 0) {
+                    throw new BizException(ResponseCode.DELETE_FAILED);
+                }
+                break;
+            default:
+                throw new BizException(ResponseCode.VALIDATION_FAILED);
         }
+        log.debug(BizUtils.logInfo("END")); 
     }
 
     /**

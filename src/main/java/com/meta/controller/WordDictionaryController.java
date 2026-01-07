@@ -1,7 +1,7 @@
 package com.meta.controller;
 
 import ch.qos.logback.core.util.StringUtil;
-import com.common.utils.ApiResponse;
+import com.meta.common.response.ApiResponse;
 import com.meta.dto.TbWordDictionaryDto;
 import com.meta.service.WordDictionaryService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,7 +58,8 @@ public class WordDictionaryController {
     @PostMapping("/manageWordData")
     @ResponseBody
     public ApiResponse<Void> manageWordData(@RequestBody TbWordDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return wordDictionaryService.manageData(inputDto);
+        wordDictionaryService.manageData(inputDto);
+        return ApiResponse.success(null);
     }
 
     /**

@@ -8,8 +8,10 @@
             break;
 
         case 'F2':
+        case 'Enter':
             e.preventDefault();
-            document.getElementById('btnSearch').click();
+            const btnSearch = document.getElementById("btnSearch");
+            if(btnSearch) document.getElementById('btnSearch').click();
             break;
 
         case 'F3':

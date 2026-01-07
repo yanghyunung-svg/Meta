@@ -1,9 +1,7 @@
 package com.meta.controller;
 
-import com.common.utils.ApiResponse;
-import com.common.utils.BizUtils;
-import com.meta.dto.TbLoginLogDto;
-import com.meta.dto.TbUserInfoDto;
+import com.meta.common.constants.BizConstants;
+import com.meta.common.response.ApiResponse;
 import com.meta.dto.TbUserInfoDto;
 import com.meta.service.UserInfoService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,18 +53,10 @@ public class UserInfoController {
     @PostMapping("/insertUserData")
     @ResponseBody
     public ApiResponse<Void> insertUserData(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
-        return userInfoService.insertData(inputDto);
+        inputDto.setFunc(BizConstants.FUNC_SE.INS);
+        userInfoService.manageData(inputDto);
+        return ApiResponse.success(null);
     }
-    /**
-     * @ ID : changePassword
-     * @ NAME : 비밀번호 변경
-     */
-    @PostMapping("/changePassword")
-    @ResponseBody
-    public ApiResponse<Void> changePassword(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
-        return userInfoService.changePassword(inputDto);
-    }
-
     /**
      * @ ID : updateUserData
      * @ NAME : 사용자정보 변경
@@ -74,8 +64,22 @@ public class UserInfoController {
     @PostMapping("/updateUserData")
     @ResponseBody
     public ApiResponse<Void> updateUserData(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
-        return userInfoService.updateData(inputDto);
+        inputDto.setFunc(BizConstants.FUNC_SE.UPD);
+        userInfoService.manageData(inputDto);
+        return ApiResponse.success(null);
     }
+
+    /**
+     * @ ID : changePassword
+     * @ NAME : 비밀번호 변경
+     */
+    @PostMapping("/changePassword")
+    @ResponseBody
+    public ApiResponse<Void> changePassword(@RequestBody TbUserInfoDto inputDto, HttpServletRequest request) throws Exception {
+        userInfoService.changePassword(inputDto);
+        return ApiResponse.success(null);
+    }
+
 
 
     /**

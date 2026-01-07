@@ -1,6 +1,6 @@
 package com.meta.controller;
 
-import com.common.utils.ApiResponse;
+import com.meta.common.response.ApiResponse;
 import com.meta.dto.TbTermDictionaryDto;
 import com.meta.mapper.TbTermDictionaryMapper;
 import com.meta.service.TermDictionaryService;
@@ -54,8 +54,9 @@ public class TermDictionaryController {
      */
     @PostMapping("/manageTermData")
     @ResponseBody
-    public ApiResponse<Void> manageData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
-        return termDictionaryService.manageData(inputDto);
+    public  ApiResponse<Void> manageData(@RequestBody TbTermDictionaryDto inputDto, HttpServletRequest request) throws Exception {
+        termDictionaryService.manageData(inputDto);
+        return ApiResponse.success(null);
     }
 
     /**

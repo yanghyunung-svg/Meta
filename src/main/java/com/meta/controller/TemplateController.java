@@ -19,6 +19,22 @@ public class TemplateController {
     @GetMapping("/templateDown")
     public String templateDownPage() { return "meta/templateDown"; }
 
+
+    /**
+     * @ ID : downloadTermSearchExcelTemplate
+     * @ NAME : 표쥰용어검색 UPLOAD Template
+     */
+    @GetMapping("/downloadTermSearchExcelTemplate")
+    public void downloadTermSearchExcelTemplate(HttpServletResponse response) throws Exception {
+        downloadExcelTemplate(
+                response,
+                "표준용어검색",
+                "표준용어검색_업로드_템플릿.xlsx",
+                new String[]{"번호","용어명","영문명","Snake","Pascal","Camel","상태"},
+                new String[]{"1","용어명","영문명","Snake","Pascal","Camel","0"}
+        );
+    }
+
     /**
      * @ ID : downloadTermExcelTemplate
      * @ NAME : 표쥰용어 UPLOAD Template
@@ -30,14 +46,7 @@ public class TemplateController {
                 "표준용어",
                 "표준용어_업로드_템플릿.xlsx",
                 new String[]{"번호","용어명","영문명","도메인명","설명","상태"},
-                new String[]{
-                        "1",
-                        "감면등록일자",
-                        "RDCT_APLY_YMD",
-                        "연월일C8",
-                        "매겨야 할 부담 따위를 덜어 주거나 면제해 줄 것을 알려 요청한 날짜",
-                        "0"
-                }
+                new String[]{"1","감면등록일자","RDCT_APLY_YMD","연월일C8","매겨야 할 부담 따위를 덜어 주거나 면제해 줄 것을 알려 요청한 날짜","0"}
         );
     }
 
@@ -52,14 +61,7 @@ public class TemplateController {
                 "표준단어",
                 "표준단어_업로드_템플릿.xlsx",
                 new String[] { "번호","단어명", "영문약어명 ", "영문명", "설명", "상태"},
-                new String[] {
-                        "1",
-                        "객체",
-                        "OBJT",
-                        "Object",
-                        "客體. 의사나 행위가 미치는 대상 또는 모두 포함한 개념",
-                        "0"
-                }
+                new String[] {"1","객체","OBJT","Object","客體. 의사나 행위가 미치는 대상 또는 모두 포함한 개념","0"}
         );
     }
     /**
@@ -73,14 +75,7 @@ public class TemplateController {
                 "표준도메인",
                 "표준도메인_업로드_템플릿.xlsx",
                 new String[] { "번호","도메인명", "도메인분류명", "도메인영문명", "도메인속성", "상태"},
-                new String[] {
-                        "1",
-                        "가격N10",
-                        "가격",
-                        "PRC",
-                        "N10",
-                        "0"
-                }
+                new String[] {"1","가격N10","가격","PRC","N10","0"}
         );
     }
 
@@ -95,13 +90,7 @@ public class TemplateController {
             "그룹코드",
             "그룹코드_업로드_템플릿.xlsx",
             new String[] { "번호", "공통코드", "공통코드명",  "비고", "상태" },
-            new String[] {
-                    "1",
-                    "SYS",
-                    "시스템",
-                    "-",
-                    "1"
-            }
+            new String[] {"1","SYS","시스템","-","1"}
         );
     }
 
@@ -117,16 +106,7 @@ public class TemplateController {
                 "상세코드",
                 "상세코드_업로드_템플릿.xlsx",
                 new String[] { "번호", "공통코드", "공통코드명", "상세코드", "상세코드명", "정렬순서", "비고", "상태" },
-                new String[] {
-                        "1",
-                        "SYS",
-                        "시스템",
-                        "ROLE",
-                        "권한코드",
-                        "1",
-                        ".",
-                        "1"
-                }
+                new String[] {"1","SYS","시스템","ROLE","권한코드","1","-","1"}
         );
     }
 
@@ -142,39 +122,7 @@ public class TemplateController {
                 "사용자정보",
                 "사용자정보_업로드_템플릿.xlsx",
                 new String[] { "번호", "사용자ID", "사용자명",  "이메일", "전화번호", "권한", "상태" },
-                new String[] {
-                        "1",
-                        "사용자ID",
-                        "사용자명",
-                        "이메일",
-                        "전화번호",
-                        "USER",
-                        "1"
-                }
-        );
-    }
-
-
-    /**
-     * @ ID : downloadTermSearchExcelTemplate
-     * @ NAME : 표쥰용어검색 UPLOAD Template
-     */
-    @GetMapping("/downloadTermSearchExcelTemplate")
-    public void downloadTermSearchExcelTemplate(HttpServletResponse response) throws Exception {
-        downloadExcelTemplate(
-                response,
-                "표준용어검색",
-                "표준용어검색_업로드_템플릿.xlsx",
-                new String[]{"번호","용어명","영문명","Snake","Pascal","Camel","상태"},
-                new String[]{
-                        "1",
-                        "용어명",
-                        "영문명",
-                        "Snake",
-                        "Pascal",
-                        "Camel",
-                        "0"
-                }
+                new String[] {"1","사용자ID","사용자명","이메일","전화번호","USER","1"}
         );
     }
 

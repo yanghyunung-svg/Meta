@@ -1,8 +1,8 @@
 package com.meta.controller;
 
-import com.common.utils.BizUtils;
 import com.meta.dto.CommCodeDto;
 import com.meta.service.CommService;
+import com.meta.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -23,6 +23,8 @@ public class CommController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private CommService commService;
+    @Autowired
+    private LoginService loginService;
  
     /**
      * @ ID : getCommCodeSearch
@@ -33,4 +35,6 @@ public class CommController {
     public List<CommCodeDto> getCommCodeSearch(@RequestBody CommCodeDto inputDto, HttpServletRequest request) throws Exception {
         return commService.getCommCodeSearch(inputDto);
     }
+
+
 }

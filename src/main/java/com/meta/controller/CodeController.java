@@ -1,6 +1,6 @@
 package com.meta.controller;
 
-import com.common.utils.ApiResponse;
+import com.meta.common.response.ApiResponse;
 import com.meta.dto.TbCodeDto;
 import com.meta.service.CodeService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,7 +52,8 @@ public class CodeController {
     @PostMapping("/manageCodeDetlData")
     @ResponseBody
     public ApiResponse<Void> manageCodeDetlData(@RequestBody TbCodeDto inputDto, HttpServletRequest request) throws Exception {
-        return codeService.manageData(inputDto);
+        codeService.manageData(inputDto);
+        return ApiResponse.success(null);
     }
     /**
      * @ ID : getCodeAllData

@@ -1,6 +1,5 @@
 package com.meta.service;
 
-import com.common.utils.BizUtils;
 import com.meta.dto.CommCodeDto;
 import com.meta.dto.TbLoginLogDto;
 import com.meta.mapper.CommCodeMapper;
@@ -43,6 +42,8 @@ public class CommService {
     public void insertLoginLog(TbLoginLogDto inputDto) {
         tbLoginLogMapper.insertData(inputDto);
     }
+
+
 
 }
 

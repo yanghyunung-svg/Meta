@@ -1,14 +1,29 @@
 <div class="topbarContainer" id="topbarContainer">
-    <div class="topbar-left">
+    <div class="topbar-logo">
         <div class="termSearch" style="padding:2px;"> <h2> Meta System </h2> </div>
     </div>
-
-    <div class="topbar-right">
-        <div class="userInfo" style="cursor:pointer;"> <span id="headerUserNm" style="margin-right: 10px;"></span></div>
-        <div class="logout" style="cursor:pointer;"><span id="logout">Logout </span></div>
-    </div>
-
 </div>
 
+<div class="footbarContainer" id="footbarContainer">
+    <div class="userInfo" style="cursor:pointer;"> <span id="headerUserNm" style="margin-right: 10px;"></span></div>
+    <div class="logout" style="cursor:pointer;"><span id="logout">Logout </span></div>
+</div>
+
+
+<!-- 공통 Alert Modal -->
+<div id="commonModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalTitle">알림</h3>
+        </div>
+        <div class="modal-body">
+            <p id="modalMessage"></p>
+        </div>
+        <div class="modal-footer">
+            <button id="modalOkBtn" type="button" class="btn">확인</button>
+        </div>
+    </div>
+</div>
 
 

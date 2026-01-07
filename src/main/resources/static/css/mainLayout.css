@@ -80,26 +80,26 @@ textarea.form-input { padding:10px; border:1px solid #ddd; border-radius:4px; re
      display:flex; justify-content:space-between; align-items:center; padding:0 20px; z-index:1000;
  }
 
-.topbar-left {
+.topbar-logo {
      position:fixed; top:5px; left:5px; width:180px; height:40px;
      background-color:var(--bg-white); color:var(--bg-cobalt-blue);
      border:1px solid var(--main-border-color); border-radius:1px;
      display:flex; justify-content:space-between; align-items:center; padding:0 20px; z-index:1000;
  }
 
-.topbar-right {
-     position:fixed; top: 900px; left:190px;  width:calc(100% - 195px); height:40px;
+.footbarContainer {
+     position:fixed; top: 900px; left:5px;  width:calc(100% -  10px); height:40px;
+     display:flex; justify-content:flex-end; align-items:center; gap: 12px;  padding:0 10px; z-index:1000;
      background-color:var(--bg-white); color:var(--bg-black);
      border:1px solid var(--main-border-color); border-radius:1px;
-     display:flex; justify-content:flex-end; align-items:center; gap: 12px;  padding:0 10px; z-index:1000;
  }
 
-.topbar-right .userInfo {font-size:12px; }
-.topbar-right .logout {font-size:12px; }
-.topbar-right .input-view { font-weight:bold; font-size:12px; background-color:var(--bg-color); }
+.footbarContainer .userInfo {font-size:12px; }
+.footbarContainer .logout {font-size:12px; }
+.footbarContainer .input-view { font-weight:bold; font-size:12px; background-color:var(--bg-color); }
 
 .sidebarContainer {
-     position:fixed; top:50px; left:5px; width:180px; height:890px;
+     position:fixed; top:50px; left:5px; width:180px; height:845px;
      background-color:var(--bg-white); color:var(--bg-black);
      border:1px solid var(--main-border-color); border-radius:1px;
      overflow-y:auto; transition:width 0.25s ease; z-index:999; font-size:14px;
@@ -118,11 +118,7 @@ textarea.form-input { padding:10px; border:1px solid #ddd; border-radius:4px; re
     background-color:var(--main-bg-color); color:var(--main-text-color); border: 1px solid var(--main-border-color); border-radius:1px;
     padding:10px; overflow-y:auto; background-color:white; transition:margin-left 0.25s ease, width 0.25s ease;
  }
-.footbarContainer {
-    position:absolute; top:1050px; left:5px; width:calc(100% - 10px); height:10px;
-    background-color:magenta; color:var(--main-text-color); display:flex; justify-content:space-between; align-items:center;
-    padding:0 20px; z-index:1000;
-}
+
 
 .searchHeadContainer {
     display:flex;

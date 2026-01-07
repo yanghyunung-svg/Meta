@@ -1,8 +1,10 @@
 package com.meta.service;
 
 import ch.qos.logback.core.util.StringUtil;
-import com.common.utils.ApiResponse;
-import com.common.utils.BizUtils;
+import com.meta.common.constants.BizConstants;
+import com.meta.common.constants.ResponseCode;
+import com.meta.common.exception.BizException;
+import com.meta.common.util.BizUtils;
 import com.meta.dto.TbUserInfoDto;
 import com.meta.mapper.TbLoginLogMapper;
 import com.meta.mapper.TbUserInfoMapper;
@@ -51,105 +53,88 @@ public class UserInfoService {
         return tbUserInfoMapper.getData(inputDto);
     }
     /**
-     * method   : insertData
-     * desc     : 사용자정보 등록
+     * method   : manageData
+     * desc     : 사용자정보 관리
      */
-    public ApiResponse<Void> insertData(TbUserInfoDto inputDto)  {
-        try {
-            TbUserInfoDto outputDto = tbUserInfoMapper.getData(inputDto);
+    public void manageData(TbUserInfoDto inputDto) {
+        log.debug(BizUtils.logInfo("START"));
+        log.debug(BizUtils.logVoKey(inputDto));
+        TbUserInfoDto outputDto = tbUserInfoMapper.getLockData(inputDto);
 
-            if (outputDto != null) {
-                return new ApiResponse<Void>(false, "기등록된 데이타가 있습니다." + outputDto.getUserNm());
-            }
+        switch (inputDto.getFunc()) {
+            case BizConstants.FUNC_SE.INS:
+                if (outputDto != null) {
+                    throw new BizException(ResponseCode.DUPLICATE_DATA);
+                }
 
-            if(!StringUtil.isNullOrEmpty(inputDto.getPassword())) {
-                String rawPassword = inputDto.getPassword();
-                String encodedPassword = encoder.encode(rawPassword);
-                inputDto.setPassword(encodedPassword);
-            }
+                if(!StringUtil.isNullOrEmpty(inputDto.getPassword())) {
+                    String rawPassword = inputDto.getPassword();
+                    String encodedPassword = encoder.encode(rawPassword);
+                    inputDto.setPassword(encodedPassword);
+                }
 
-            if (tbUserInfoMapper.insertData(inputDto) == 0) {
-                return new ApiResponse<Void>(false, "등록 오류");
-            }
-
-            return new ApiResponse<Void>(true, "등록 성공");
-
-        } catch (Exception e) {
-            log.debug(BizUtils.logInfo("Exception"));
-            return new ApiResponse<Void>(false, "등록 처리 중 오류가 발생했습니다.");
+                if (tbUserInfoMapper.insertData(inputDto) == 0) {
+                    throw new BizException(ResponseCode.INSERT_FAILED);
+                }
+                break;
+            case BizConstants.FUNC_SE.UPD:
+                if (outputDto == null) {
+                    throw new BizException(ResponseCode.DATA_NOT_FOUND);
+                }
+                if(!StringUtil.isNullOrEmpty(inputDto.getPassword())) {
+                    String rawPassword = inputDto.getPassword();
+                    String encodedPassword = encoder.encode(rawPassword);
+                    inputDto.setPassword(encodedPassword);
+                }
+                if (tbUserInfoMapper.updateData(inputDto) == 0) {
+                    throw new BizException(ResponseCode.UPDATE_FAILED);
+                }
+                break;
+            case BizConstants.FUNC_SE.DEL:
+                if (outputDto == null) {
+                    throw new BizException(ResponseCode.DATA_NOT_FOUND);
+                }
+                if (tbUserInfoMapper.deleteData(inputDto) == 0) {
+                    throw new BizException(ResponseCode.DELETE_FAILED);
+                }
+                break;
+            default:
+                throw new BizException(ResponseCode.VALIDATION_FAILED);
         }
+        log.debug(BizUtils.logInfo("END"));
     }
-
-
-    /**
-     * method   : updateData
-     * desc     : 사용자정보 변경
-     */
-    public ApiResponse<Void> updateData(TbUserInfoDto inputDto)  {
-        try {
-            TbUserInfoDto outputDto = tbUserInfoMapper.getLockData(inputDto);
-
-            if (outputDto == null) {
-                return new ApiResponse<Void>(false, "수정할 자료가 없습니다." );
-            }
-
-            if(!StringUtil.isNullOrEmpty(inputDto.getPassword())) {
-                String rawPassword = inputDto.getPassword();
-                String encodedPassword = encoder.encode(rawPassword);
-                inputDto.setPassword(encodedPassword);
-            }
-
-            if (tbUserInfoMapper.updateData(inputDto) == 0) {
-                return new ApiResponse<Void>(false, "수정 오류");
-            }
-
-            log.debug(BizUtils.logInfo("END"));
-            return new ApiResponse<Void>(true, "수정 성공");
-
-        } catch (Exception e) {
-            log.debug(BizUtils.logInfo("Exception"));
-            return new ApiResponse<Void>(false, "수정 처리 중 오류가 발생했습니다.");
-        }
-    }
-
-
     /**
      * method   : changePassword
      * desc     : 비밀번호 변경
      */
-    public ApiResponse<Void> changePassword(TbUserInfoDto inputDto)  {
-        try {
-            TbUserInfoDto outputDto = tbUserInfoMapper.getLockData(inputDto);
+    public void changePassword(TbUserInfoDto inputDto)  {
+        log.debug(BizUtils.logInfo("START"));
 
-            if (outputDto == null) {
-                return new ApiResponse<Void>(false, "수정할 자료가 없습니다." );
-            }
+        TbUserInfoDto outputDto = tbUserInfoMapper.getLockData(inputDto);
 
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String rawPassword = inputDto.getCurrentPassword();
-            String dbPw = outputDto.getPassword();
-            // 비밀번호 검증
-            if (!encoder.matches(rawPassword, dbPw)) {
-                return new ApiResponse<Void>(false, "비밀번호 오류");
-            }
-
-            if(!StringUtil.isNullOrEmpty(inputDto.getNewPassword())) {
-                String newPassword = inputDto.getNewPassword();
-                String encodedPassword = encoder.encode(newPassword);
-                inputDto.setPassword(encodedPassword);
-            }
-
-            if (tbUserInfoMapper.updateData(inputDto) == 0) {
-                return new ApiResponse<Void>(false, "비밀번호 수정 오류");
-            }
-
-            log.debug(BizUtils.logInfo("END"));
-            return new ApiResponse<Void>(true, "비밀번호 수정 성공");
-
-        } catch (Exception e) {
-            log.debug(BizUtils.logInfo("Exception"));
-            return new ApiResponse<Void>(false, "수정 처리 중 오류가 발생했습니다.");
+        if (outputDto == null) {
+            throw new BizException(ResponseCode.DATA_NOT_FOUND);
         }
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String rawPassword = inputDto.getCurrentPassword();
+        String dbPw = outputDto.getPassword();
+        // 비밀번호 검증
+        if (!encoder.matches(rawPassword, dbPw)) {
+            throw new BizException(ResponseCode.PASSWORD_FAILED);
+        }
+
+        if(!StringUtil.isNullOrEmpty(inputDto.getNewPassword())) {
+            String newPassword = inputDto.getNewPassword();
+            String encodedPassword = encoder.encode(newPassword);
+            inputDto.setPassword(encodedPassword);
+        }
+
+        if (tbUserInfoMapper.updateData(inputDto) == 0) {
+            throw new BizException(ResponseCode.UPDATE_FAILED);
+        }
+
+        log.debug(BizUtils.logInfo("END"));
     }
   
 

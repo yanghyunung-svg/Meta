@@ -1,6 +1,6 @@
 package com.meta.controller;
 
-import com.common.utils.ApiResponse;
+import com.meta.common.response.ApiResponse;
 import com.meta.dto.TbStdDmnBscDto;
 import com.meta.service.StdDmnBscService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,7 +61,8 @@ public class StdDmnBscController {
     @PostMapping("/manageDmnData")
     @ResponseBody
     public ApiResponse<Void> manageDmnData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        return stdDmnBscService.manageData(inputDto);
+        stdDmnBscService.manageData(inputDto);
+        return ApiResponse.success(null);
     }
 
     /**

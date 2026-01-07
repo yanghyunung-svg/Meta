@@ -18,17 +18,16 @@
             <input type="password" id="password" placeholder="PASSWORD 입력" class="form-input">
         </div>
         <div type="button" class="btn-wrap">
-            <button id="btnReg" type="button" class="btn">LOG IN</button>
+            <button id="btnLogin" type="button" class="btn">LOG IN</button>
         </div>
     </main>
 </div>
 <script>
 
     document.addEventListener('DOMContentLoaded', () => {
-
         localStorage.clear();
 
-        const btn = document.getElementById('btnReg');
+        const btn = document.getElementById('btnLogin');
 
         // Enter Key 로그인
         document.addEventListener('keydown', (e) => {
@@ -55,8 +54,17 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
-            if (!response.ok) throw new Error("서버 오류 발생");
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("HTTP ERROR:", response.status, text);
+                alert("HTTP ERROR:" + response.status + text);
+                return;
+            }
+
             const result = await response.json();
+            console.log("result=", result);
+
             if (result.success) {
                 localStorage.setItem('userId', result.data.userId);
                 localStorage.setItem('userNm', result.data.userNm);

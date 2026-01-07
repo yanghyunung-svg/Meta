@@ -1,20 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadHeader();
     loadSidebar();
-//    loadFooter();
+    loadFooter();
 });
 
 function loadHeader() {
-    const container = document.getElementById("topbarContainer");
-    if (!container) return;
-    if (container.dataset.loaded === "true") return;
+    const topbarContainer = document.getElementById("topbarContainer");
+    if (!topbarContainer) return;
+    if (topbarContainer.dataset.loaded === "true") return;
 
-    if (container.innerHTML === "") {
+    if (topbarContainer.innerHTML === "") {
         fetch("/common/header.html")
             .then(res => res.text())
             .then(html => {
-                container.innerHTML = html;
-                container.dataset.loaded = "true";
+                topbarContainer.innerHTML = html;
+                topbarContainer.dataset.loaded = "true";
                 bindHeaderEvents();
             })
             .catch(err => console.error("Header load error:", err));
@@ -22,20 +22,19 @@ function loadHeader() {
 }
 
 function bindHeaderEvents() {
-    const termSearch = document.querySelector('.topbar-left .termSearch');
-    const logoutBtn = document.querySelector('.topbar-right .logout');
-
     const userNm = localStorage.getItem('userNm');
     const userId = localStorage.getItem('userId');
     const role = localStorage.getItem('role');
 
-    const userInfo = document.querySelector('.topbar-right .userInfo');
+    const logoutBtn = document.querySelector('.footbarContainer .logout');
+    const userInfo = document.querySelector('.footbarContainer .userInfo');
     const headerUserNm = document.getElementById('headerUserNm');
 
     if (headerUserNm && userNm && userId) {
         headerUserNm.innerText = `${userNm} (${userId})`;
     }
 
+    const termSearch = document.querySelector('.topbar-logo .termSearch');
     if (termSearch) {
         termSearch.addEventListener('click', () => {
             location.href = '/meta/termSearch';
@@ -60,32 +59,32 @@ function bindHeaderEvents() {
 
 /* Sidebar 불러오기  */
 function loadSidebar(menuId = null) {
-    const container = document.getElementById("sidebarContainer");
-    if (!container) return;
-    if (container.dataset.loaded === "true") return;
+    const sidebarContainer = document.getElementById("sidebarContainer");
+    if (!sidebarContainer) return;
+    if (sidebarContainer.dataset.loaded === "true") return;
 
-    if (container.innerHTML === "") {
+    if (sidebarContainer.innerHTML === "") {
         fetch("/common/sidebar.html")
             .then(res => res.text())
             .then(html => {
-                container.innerHTML = html;
-                container.dataset.loaded = "true";
+                sidebarContainer.innerHTML = html;
+                sidebarContainer.dataset.loaded = "true";
             })
             .catch(err => console.error("Sidebar load error:", err));
     }
 }
 
 function loadFooter() {
-    const container = document.getElementById("footbarContainer");
-    if (!container) return;
-    if (container.dataset.loaded === "true") return;
+    const footbarContainer = document.getElementById("footbarContainer");
+    if (!footbarContainer) return;
+    if (footbarContainer.dataset.loaded === "true") return;
 
-    if (container.innerHTML === "") {
+    if (footbarContainer.innerHTML === "") {
         fetch("/common/footer.html")
             .then(res => res.text())
             .then(html => {
-                container.innerHTML = html;
-                container.dataset.loaded = "true";
+                footbarContainer.innerHTML = html;
+                footbarContainer.dataset.loaded = "true";
             })
             .catch(err => console.error("footer load error:", err));
     }
