@@ -24,7 +24,8 @@ public enum ResponseCode {
     DELETE_FAILED("DB03", "삭제 중 오류가 발생했습니다."),
 
     // SYSTEM
-    SERVER_ERROR("E500", "처리 중 오류가 발생했습니다.");
+    SERVER_ERROR("E500", "처리 중 오류가 발생했습니다."),
+    FILE_SIZE_EXCEEDED("E413", "업로드 파일 크기가 허용된 용량을 초과했습니다..");
 
     private final String code;
     private final String message;

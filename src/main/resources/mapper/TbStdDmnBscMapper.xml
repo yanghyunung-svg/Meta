@@ -47,7 +47,6 @@
           , DMN_ENG_NM = #{dmnEngNm}
           , DMN_ATRB = #{dmnAtrb}
           , STTS_CD = #{sttsCd}
-          , UPD_DTTM = #{updDttm}
           , UPD_ID = #{updId}
       WHERE DMN_NM = #{dmnNm}
    </update>

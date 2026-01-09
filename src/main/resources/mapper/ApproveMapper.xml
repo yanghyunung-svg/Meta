@@ -21,7 +21,7 @@
             , STTS_CD
             , CRT_ID
             , CRT_DTTM
-            FROM tb_term_dictionary
+            FROM tb_std_term_bsc
             WHERE 1=1
             <if test="sttsCd != null and sttsCd != ''">
                 AND STTS_CD = #{sttsCd}
@@ -40,7 +40,7 @@
             , STTS_CD
             , CRT_ID
             , CRT_DTTM
-            FROM tb_word_dictionary
+            FROM tb_std_word_bsc
             WHERE 1=1
             <if test="sttsCd != null and sttsCd != ''">
                 AND STTS_CD = #{sttsCd}
@@ -55,10 +55,10 @@
             , DMN_NM  AS KOR_NM
             , DMN_ENG_NM  AS ENG_NM
             , DMN_CLSF_NM AS RMK
-            , STTS_CD AS STTS_CD
+            , STTS_CD
             , CRT_ID
             , CRT_DTTM
-            FROM TB_STD_DMN_BSC
+            FROM tb_std_dmn_bsc
             WHERE 1=1
             <if test="sttsCd != null and sttsCd != ''">
                 AND STTS_CD = #{sttsCd}

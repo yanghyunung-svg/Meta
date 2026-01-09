@@ -56,14 +56,14 @@ public class CodeGroupController {
         return ApiResponse.success(null);
     }
     /**
-     * @ ID : uploadCodeExcelPreview
+     * @ ID : uploadCodePreview
      * @ NAME : 코드그룹 엑셀업로드
      */
-    @PostMapping("/uploadCodeGroupExcelPreview")
-    public ResponseEntity<Map<String, Object>> uploadCodeGroupExcelPreview(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/uploadCodeGroupPreview")
+    public ResponseEntity<Map<String, Object>> uploadCodeGroupPreview(@RequestParam("file") MultipartFile file) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbCodeGroupDto> list = codeGroupService.parseExcelPreview(file);
+            List<TbCodeGroupDto> list = codeGroupService.parsePreview(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -82,7 +82,7 @@ public class CodeGroupController {
     public ResponseEntity<Map<String, Object>> uploadCodeGroupExcelSave(@RequestBody List<TbCodeGroupDto> list) {
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = codeGroupService.saveUploadedExcel(list);
+            int count = codeGroupService.saveUploaded(list);
             res.put("success", true);
             res.put("count", count);
             return ResponseEntity.ok(res);

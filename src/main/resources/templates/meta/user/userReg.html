@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/commonUtils.js" defer></script>
+</head>
+<body>
+
+<div class="popupContainer" id="popupContainer">
+    <div class="popup-header">
+        <h2 class="popup-title"> ✅ 사용자정보 등록</h2>
+        <div class="button-group">
+            <button id="btnSave" type="button" class="btn">저장
+            </button>
+            <button id="btnInit" type="button" class="btn">초기화
+            </button>
+            <button id="btnClose" type="button" class="btn">닫기
+            </button>
+        </div>
+    </div>
+
+
+        <form id="mainForm">
+            <table class="popup-table">
+            <tr>
+                <th>사용자ID <span style="color:red">*</span></th>
+                <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" id="userId" name="userId" class="form-input" required>
+                    <button id="btnCheck" type="button" class="btn-chk">중복검증</button>
+                </td>
+            </tr>
+            </table>
+
+            <table class="popup-table">
+            <tr>
+                <th>사용자이름 <span style="color:red">*</span></th>
+                <td colspan="2"><input type="text" id="userNm" name="userNm" class="form-input" required></td>
+            </tr>
+            <tr>
+                <th>비밀번호</th>
+                <td><input type="password" id="password" name="password" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>비밀번호 확인</th>
+                <td><input type="password" id="confirmPassword" name="confirmPassword" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>이메일</th>
+                <td colspan="2"><input type="text" id="email" name="email" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>전화번호</th>
+                <td colspan="2"><input type="text" id="phone" name="phone" class="form-input"></td>
+            </tr>
+            <tr>
+                <th>권한</th>
+                <td colspan="2">
+                    <select id="role" name="role" class="form-input">
+                        <option value="">선택</option>
+                        <option value="0">SUPER</option>
+                        <option value="1">ADMIN</option>
+                        <option value="2">USER</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>상태</th>
+                <td colspan="2">
+                    <select id="sttsCd" name="sttsCd" class="form-input">
+                        <option value="0">신청</option>
+                        <option value="1">사용</option>
+                        <option value="9">미사용</option>
+                    </select>
+                </td>
+            </tr>
+            </table>
+            <table class="popup-table">
+            <tr>
+                <th>최초등록</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="crtId" name="crtId" class="form-input" readonly>
+                    <input type="text" id="crtDttm" name="crtDttm" class="form-input" readonly>   </td>
+            </tr>
+            <tr>
+                <th>최종변경</th>
+                <td style="display:flex; gap:5px;">
+                    <input type="text" id="updId" name="updId" class="form-input" readonly>
+                    <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
+            </tr>
+        </table>
+    </form>
+
+    </div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const mainForm = document.getElementById("mainForm");
+        const btnSave = document.getElementById("btnSave");
+        const btnInit = document.getElementById("btnInit");
+        const btnClose = document.getElementById("btnClose");
+        const btnCheck = document.getElementById("btnCheck");
+
+        btnSave.disabled = true;
+        btnCheck.disabled = true;
+
+        document.getElementById("userId").addEventListener("input", () => {
+            btnCheck.disabled = false;
+        });
+
+
+       btnCheck.addEventListener('click', async () => {
+            const inData = formToJson(mainForm);
+
+            if (!inData.userId || !inData.userId.trim()) {
+                alert("사용자ID를 입력하세요.");
+                mainForm.userId.focus();
+                return;
+            }
+
+            const res = await fetch('/meta/getUserData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(inData)
+            });
+
+            btnCheck.disabled = true;
+
+            const textData = await res.text();
+            if (!textData) {
+                alert("등록 가능합니다");
+                mainForm.reset();
+                document.getElementById("userId").value = inData.userId;
+                mainForm.userNm.focus();
+                btnSave.disabled = false;
+                btnCheck.disabled = true;
+            } else {
+                alert("이미 등록되어 있습니다");
+                const outData = JSON.parse(textData);
+                fillForm(mainForm, outData);
+                btnSave.disabled = true;
+            }
+        });
+
+
+        // 저장 버튼
+        btnSave.addEventListener("click", async () => {
+
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
+
+            if (!data.userId.trim()) {
+                alert("사용자ID를 입력하세요.");
+                mainForm.userId.focus();
+                return;
+            }
+            if (!data.userNm.trim()) {
+                alert("사용자명을 입력하세요.");
+                mainForm.userNm.focus();
+                return;
+            }
+            if (!data.password.trim()) {
+                alert("비밀번호를 입력하세요.");
+                mainForm.password.focus();
+                return;
+            }
+
+            if (data.password.trim() !== data.confirmPassword.trim()) {
+                alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+                return;
+            }
+
+            try {
+                let url =  "/meta/insertUserData" ;
+
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    alert("저장되었습니다.");
+                    document.getElementById('mainForm').reset();
+                } else {
+                    alert("오류: " + result.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("요청 중 오류가 발생했습니다.");
+            }
+        });
+
+
+        /* 초기화 */
+        btnInit.addEventListener('click', () => {
+            mainForm.reset();
+            btnSave.disabled = true;
+            btnCheck.disabled = false;
+        });
+
+        btnClose.addEventListener("click", () => {
+            if (confirm("닫으시겠습니까?")) window.close();
+        });
+
+        /* Enter Key */
+        document.getElementById("userId").addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                btnCheck.click();
+            }
+        });
+
+
+    });
+</script>
+</body>
+</html>

@@ -55,6 +55,8 @@ public class CodeController {
         codeService.manageData(inputDto);
         return ApiResponse.success(null);
     }
+
+
     /**
      * @ ID : getCodeAllData
      * @ NAME : 코드 콤보 조회
@@ -66,14 +68,14 @@ public class CodeController {
     }
 
     /**
-     * @ ID : uploadCodeExcelPreview
+     * @ ID : uploadCodePreview
      * @ NAME : 상세코드 엑셀업로드
      */
-    @PostMapping("/uploadCodeExcelPreview")
-    public ResponseEntity<Map<String, Object>> uploadCodeExcelPreview(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/uploadCodePreview")
+    public ResponseEntity<Map<String, Object>> uploadCodePreview(@RequestParam("file") MultipartFile file) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbCodeDto> list = codeService.parseExcelPreview(file);
+            List<TbCodeDto> list = codeService.parsePreview(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -92,7 +94,7 @@ public class CodeController {
     public ResponseEntity<Map<String, Object>> uploadCodeExcelSave(@RequestBody List<TbCodeDto> list) {
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = codeService.saveUploadedExcel(list);
+            int count = codeService.saveUploaded(list);
             res.put("success", true);
             res.put("count", count);
             return ResponseEntity.ok(res);

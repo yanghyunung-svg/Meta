@@ -57,7 +57,7 @@
            <if test="expln != null and expln != ''">
                , EXPLN = #{expln}
            </if>
-           <if test="STTS_CD != null and STTS_CD != ''">
+           <if test="sttsCd != null and sttsCd != ''">
                , STTS_CD = #{sttsCd}
            </if>
       WHERE ID = #{id}
@@ -96,7 +96,7 @@
             <if test="engAbbrNm != null and engAbbrNm != ''">
                 AND A.ENG_ABBR_NM LIKE CONCAT('%', #{engAbbrNm}, '%')
             </if>
-            <if test="STTS_CD != null and STTS_CD != ''">
+            <if test="sttsCd != null and sttsCd != ''">
                 AND A.STTS_CD = #{sttsCd}
             </if>
         ORDER BY A.WORD_NM, A.ENG_NM

@@ -69,7 +69,7 @@
                 localStorage.setItem('userId', result.data.userId);
                 localStorage.setItem('userNm', result.data.userNm);
                 localStorage.setItem('role', result.data.role);
-                window.location.href = '/meta/termSearch';
+                window.location.href = '/meta/term/termSearch';
             } else {
                 alert("Login 실패: " + result.message);
             }

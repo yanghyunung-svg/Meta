@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/commonUtils.js" defer></script>
+</head>
+<body>
+
+<div class="popupContainer" id="popupContainer">
+    <div class="popup-header">
+        <h2 class="popup-title"> ✅ 휴일정보 관리</h2>
+        <div class="button-group">
+            <button id="btnReg" type="button" class="btn">등록
+            </button>
+            <button id="btnChange" type="button" class="btn">변경
+            </button>
+            <button id="btnDelete" type="button" class="btn">삭제
+            </button>
+            <button id="btnInit" type="button" class="btn">초기화
+            </button>
+            <button id="btnClose" type="button" class="btn">닫기
+            </button>
+        </div>
+    </div>
+<!--    <div class="divider-t"></div>-->
+            <form id="mainForm">
+                <table class="popup-table">
+                <tr>
+                    <th>기준일자 <span style="color:red">*</span></th>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="date" id="crtrYmd" name="crtrYmd" class="form-input">
+                        <button id="btnCheck" type="button" class="btn">중복검증</button>
+                    </td>
+                </tr>
+                </table>
+
+                <table class="popup-table">
+                <tr>
+                    <th>요일구분 <span style="color:red">*</span></th>
+                    <td>
+                        <select id="dowSeCd" name="dowSeCd" class="form-input">
+                            <option value="">선택</option>
+                            <option value="01">일요일</option>
+                            <option value="02">월요일</option>
+                            <option value="03">화요일</option>
+                            <option value="04">수요일</option>
+                            <option value="05">목요일</option>
+                            <option value="06">금요일</option>
+                            <option value="07">토요일</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>휴일명</th>
+                    <td><input type="text" id="hldyNm" name="hldyNm" class="form-input" > </td>
+                </tr>
+                <tr>
+                    <th>휴일구분</th>
+                    <td>
+                        <select id="hldySeCd" name="hldySeCd" class="form-input">
+                            <option value="">선택</option>
+                            <option value="00">영업일</option>
+                            <option value="01">공휴일</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>비고</th>
+                    <td > <textarea id="rmk" name="rmk" class="form-input" rows="10" ></textarea> </td>
+                </tr>
+                </table>
+                <table class="popup-table">
+                <tr>
+                    <th>최초등록</th>
+                    <td style="display:flex; gap:5px;">
+                        <input type="text" id="crtId" name="crtId" class="form-input" readonly>
+                        <input type="text" id="crtDttm" name="crtDttm" class="form-input" readonly>   </td>
+                </tr>
+                <tr>
+                    <th>최종변경</th>
+                    <td style="display:flex; gap:5px;">
+                        <input type="text" id="updId" name="updId" class="form-input" readonly>
+                        <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
+                </tr>
+                </table>
+
+
+                <div class="msgInfo"> <span id="msgInfo"></span>   </div>
+            </form>
+    </div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const mainForm = document.getElementById("mainForm");
+        const btnReg = document.getElementById("btnReg");
+        const btnChange = document.getElementById("btnChange");
+        const btnDelete = document.getElementById("btnDelete");
+        const btnInit = document.getElementById("btnInit");
+        const btnClose = document.getElementById("btnClose");
+        const btnCheck = document.getElementById("btnCheck");
+        const role = localStorage.getItem('role');
+
+        btnReg.disabled = true;
+        btnChange.disabled = true;
+        btnDelete.disabled = true;
+        btnCheck.disabled = true;
+
+        let mode = "";
+        let originalData = {};
+
+        // 부모창에서 데이터 받기
+        window.addEventListener("message", (event) => {
+            if (event.origin !== window.location.origin) return;
+            mode = event.data.mode;
+            const crtrYmdIn  = event.data.crtrYmd;
+
+            if (mode === "S" && crtrYmdIn ) {
+                btnInit.disabled = true;
+                (async () => {
+                    try {
+                        const res = await fetch('/meta/getHldyData', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ crtrYmd: crtrYmdIn  })
+                        });
+                        const data = await res.json();
+                        fillForm(mainForm, data);
+                        document.getElementById("crtrYmd").readOnly = true;
+                        mainForm.crtrYmd.value = getFormatDate(data.crtrYmd);
+
+                        btnInit.disabled = true;
+                        originalData = data;
+                        if (btnDelete) {
+                            btnDelete.disabled = (role !== '0');
+                        }
+                    } catch (err) {
+                        msgEvents("상세 데이터 조회 중 오류가 발생했습니다.");
+                    }
+                })();
+
+                btnChange.disabled = true;
+            }
+        });
+
+        // 현재 값이 수정되었는지 체크
+        const checkChanged = () => {
+            const current = formToJson(mainForm);
+            const changed = Object.keys(current).some(
+                key => current[key] !== originalData[key]
+            );
+            if (mode === "S" ) {
+                btnChange.disabled = !changed;
+                btnDelete.disabled = true;
+            }
+        };
+
+        // 입력값 변경 감지 (입력/선택 모두 반응)
+        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
+            el.addEventListener("input", checkChanged);
+            el.addEventListener("change", checkChanged);
+        });
+
+        document.getElementById("crtrYmd").addEventListener("input", () => {
+            btnReg.disabled = true;
+            btnChange.disabled = true;
+            btnCheck.disabled = false;
+        });
+
+        // 중복검증
+       btnCheck.addEventListener('click', async () => {
+            let data = formToJson(mainForm);
+            if (!data.crtrYmd.trim()) {
+                msgEvents("기준일자을 입력하세요.");
+                mainForm.crtrYmd.focus();
+                return;
+            }
+            data.crtrYmd = data.crtrYmd.replace(/-/g, "");
+
+            const res = await fetch('/meta/getHldyData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            btnCheck.disabled = true;
+            btnChange.disabled = true;
+            const textData = await res.text();
+            if (!textData) {
+                mainForm.reset();
+                mainForm.crtrYmd.value = data.crtrYmd;
+                mainForm.dowSeCd.focus();
+                btnReg.disabled = false;
+                msgEvents( "등록 가능합니다");
+            } else {
+                const data = JSON.parse(textData);
+                fillForm(mainForm, data);
+                mainForm.crtrYmd.value = getFormatDate(data.crtrYmd);
+                btnReg.disabled = true;
+                msgEvents( "이미 등록되어 있습니다");
+            }
+        });
+
+        // 변경 버튼
+        btnChange.addEventListener("click", async () => {
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
+            data.func = "U";
+            const ok = validateRequired([
+                { value: data.crtrYmd.trim(), message: ' 필수 입력 항목 (기준일자) ', element: mainForm.crtrYmd },
+                { value: data.dowSeCd.trim(),  message: '필수 입력 항목 (요일)', element: mainForm.dowSeCd },
+<!--                { value: data.hldyNm.trim(),  message: '필수 입력 항목 (휴일명)', element: mainForm.hldyNm },-->
+                { value: data.hldySeCd.trim(),  message: '필수 입력 항목 (휴일구분)', element: mainForm.hldySeCd }
+            ]);
+            if (!ok) return;
+            data.crtrYmd = data.crtrYmd.replace(/-/g, "");
+            manageProcess(data);
+        });
+
+        // 저장 버튼
+        btnReg.addEventListener("click", async () => {
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
+            data.crtrYmd = data.crtrYmd.replace(/-/g, "");
+            data.func = "I";
+            const ok = validateRequired([
+                { value: data.crtrYmd.trim(), message: ' 필수 입력 항목 (기준일자) ', element: mainForm.crtrYmd },
+                { value: data.dowSeCd.trim(),  message: '필수 입력 항목 (요일)', element: mainForm.dowSeCd },
+<!--                { value: data.hldyNm.trim(),  message: '필수 입력 항목 (휴일명)', element: mainForm.hldyNm },-->
+                { value: data.hldySeCd.trim(),  message: '필수 입력 항목 (휴일구분)', element: mainForm.hldySeCd }
+            ]);
+            if (!ok) return;
+            manageProcess(data);
+        });
+        // 삭제 버튼
+        btnDelete.addEventListener("click", async () => {
+            if (!confirm("삭제하시겠습니까?")) return;
+            let data = formToJson(mainForm);
+            data.func = "D";
+            manageProcess(data);
+        });
+
+        // 초기화
+        btnInit.addEventListener('click', () => {
+            mainForm.reset();
+            btnReg.disabled = true;
+            btnChange.disabled = true;
+            btnDelete.disabled = true;
+            btnCheck.disabled = true;
+            msgEvents("");
+            document.getElementById("crtrYmd").focus();
+        });
+        // Enter Key
+        document.getElementById("crtrYmd").addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                btnCheck.click();
+            }
+        });
+
+        // 닫기
+        btnClose.addEventListener("click", () => window.close() );
+
+    });
+
+    async function manageProcess(data) {
+        try {
+            const res = await fetch("/meta/manageHldyData", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+            if (result.success) {
+                msgEvents("처리 되었습니다.");
+                if (window.opener && typeof window.opener.refreshParentRow === 'function') {
+                    window.opener.refreshParentRow(data);
+                }
+                window.close();
+            } else {
+                msgEvents("오류: " + result.message);
+            }
+
+        } catch (err) {
+            msgEvents("처리중 오류가 발생했습니다.");
+        }
+    }
+</script>
+</body>
+</html>

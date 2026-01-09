@@ -37,7 +37,7 @@ function bindHeaderEvents() {
     const termSearch = document.querySelector('.topbar-logo .termSearch');
     if (termSearch) {
         termSearch.addEventListener('click', () => {
-            location.href = '/meta/termSearch';
+            location.href = '/meta/term/termSearch';
         });
     }
 

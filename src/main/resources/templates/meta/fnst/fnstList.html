@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+    <script src="/js/excelUtils.js" defer></script>
+
+</head>
+<body>
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+    <div class="mainHeadContainer">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;"> ✅ 금융기관코드 조회</h2>
+
+            <!-- 오른쪽 버튼 그룹 -->
+            <div class="button-group">
+                <button id="btnInit" type="button" class="btn">초기화
+                </button>
+                <button id="btnSearch" type="button" class="btn">조회
+                </button>
+                <button id="btnReg" type="button" class="btn">등록
+                </button>
+                <button id="btnRegEblc" type="button" class="btn">일괄등록
+                </button>
+                <button id="btnExcel" type="button" class="btn">Excel 저장</button>
+            </div>
+        </div>
+
+        <div class="mainBodyContainer">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>금융기관명</th>
+                    <td><input type="text" id="fnstNm" name="fnstNm" class="form-input" > </td>
+                    <th>대표금융기관코드</th>
+                    <td><input type="text" id="rprsFnstCd" name="rprsFnstCd" class="form-input" > </td>
+                </tr>
+            </table>
+        </form>
+
+
+        <div id="pageInfoContainer" class="page-header"></div>
+
+
+        <table class="data-table" id="mainTable">
+            <thead>
+            <tr>
+                <th style="width:60px">번호</th>
+                <th style="width:120px">기관코드</th>
+                <th style="width:120px">대표코드</th>
+                <th style="width:200px">기관명</th>
+                <th style="width:200px">영문명</th>
+                <th style="width:150px">SWIFT코드</th>
+                <th style="width:120px">적용일자</th>
+                <th style="width:100px">상태</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+   </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+        let dataAll = [];
+        let currentPage = 1;
+
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+        const container = document.getElementById("pageInfoContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                const pageSizeSelect = document.getElementById("pageSize");
+                if (!pageSizeSelect) return;
+
+                pageSizeSelect.addEventListener("change", () => {
+                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    currentPage = 1;
+                    renderTable(currentPage);
+                    renderPagination(dataAll, currentPage, PAGE_SIZE);
+                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+                });
+            });
+
+        /** 테이블 렌더링 **/
+        window.renderTable = function(page)  {
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                return;
+            }
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map((item, index) => `
+                <tr class="row-click" data-id="${item.fnstCd}">
+                    <td> ${start + index + 1} </td>
+                    <td style="text-align: center;">${item.fnstCd}</td>
+                    <td style="text-align: center;">${item.rprsFnstCd}</td>
+                    <td style="text-align: left;">${item.fnstNm}</td>
+                    <td style="text-align: left;">${item.fnstEngNm}</td>
+                    <td style="text-align: left;">${item.swiftCd}</td>
+                    <td style="text-align: center;">${ getFormatDate(item.aplcnYmd) }</td>
+                    <td style="text-align: center;">  ${['신청','사용','','','','','','','','미사용'][item.sttsCd * 1]}
+                    </td>
+                </tr>
+            `).join('');
+
+            /** 상세 클릭  **/
+            tableBody.addEventListener("dblclick", e => {
+                const tr = e.target.closest(".row-click");
+                if (!tr) return;
+                const sendData = { mode: "S", fnstCd: tr.dataset.id };
+                openWindowWithJSON(sendData, "/meta/fnst/fnstMng", 800, 580);
+            });
+        }
+
+        window.refreshParentRow = function(data) {
+            const refreshMap = {
+                rprsFnstCd: 'td:nth-child(3)',
+                fnstNm:     'td:nth-child(4)',
+                fnstEngNm:  'td:nth-child(5)',
+                swiftCd:    'td:nth-child(6)',
+                aplcnYmd:   'td:nth-child(7)',
+                sttsCd:     'td:nth-child(8)'
+            };
+            window.updateRowDataFlexible(data, 'fnstCd', refreshMap);
+        }
+
+        /** 검색 **/
+        document.getElementById('btnSearch').addEventListener('click', () => {
+
+            initScreen();
+            const data = formToJson(document.getElementById('mainForm'));
+            const rprsFnstCd = document.getElementById('rprsFnstCd');
+
+<!--           if (!rprsFnstCd.value || !rprsFnstCd.value.trim()) {-->
+<!--                alert("조회년월을 입력하세요.");-->
+<!--                inqYear.focus();-->
+<!--                return;-->
+<!--            }-->
+
+            fetch('/meta/getFnstListData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            })
+            .catch(err => {
+                alert("에러 발생: " + err);
+            });
+        });
+    });
+
+    /** 초기화 **/
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        initScreen();
+    });
+
+    /** 등록 **/
+    document.getElementById('btnReg').addEventListener('click', () => {
+        const sendData = { mode: "I"};
+        openWindowWithJSON(sendData, "/meta/fnst/fnstMng", 800, 580);
+    });
+    /**  일괄등록 **/
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = "/meta/fnst/fnstRegEblc";
+    });
+
+    document.getElementById('btnExcel').addEventListener('click', () => {
+        downloadTableToExcel('mainTable', '금융기관코드 목록');
+    });
+
+</script>
+<script src="/js/functionKey.js"></script>
+</body>
+</html>

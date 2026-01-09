@@ -140,10 +140,10 @@ public class UserInfoService {
 
 
     /**
-     * @ ID : parseExcelPreview
+     * @ ID : parsePreview
      * @ NAME : 사용자정보 엑셀업로드
      */
-    public List<TbUserInfoDto> parseExcelPreview(MultipartFile file) throws Exception {
+    public List<TbUserInfoDto> parsePreview(MultipartFile file) throws Exception {
 
         List<TbUserInfoDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
@@ -185,7 +185,7 @@ public class UserInfoService {
         return null;  // 정상
     }
 
-    public int saveUploadedExcel(List<TbUserInfoDto> list) {
+    public int saveUploaded(List<TbUserInfoDto> list) {
         String rawPassword = "1";
         String encodedPassword = encoder.encode(rawPassword);
 

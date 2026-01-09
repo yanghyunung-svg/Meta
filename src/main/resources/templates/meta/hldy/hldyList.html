@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+    <script src="/js/excelUtils.js" defer></script>
+
+</head>
+<body>
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+    <div class="mainHeadContainer">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;"> ✅ 휴일정보 조회</h2>
+
+            <!-- 오른쪽 버튼 그룹 -->
+            <div class="button-group">
+                <button id="btnInit" type="button" class="btn">초기화
+                </button>
+                <button id="btnSearch" type="button" class="btn">조회
+                </button>
+                <button id="btnReg" type="button" class="btn">등록
+                </button>
+                <button id="btnRegEblc" type="button" class="btn">일괄등록
+                </button>
+                <button id="btnExcel" type="button" class="btn">Excel 저장</button>
+            </div>
+        </div>
+
+        <div class="mainBodyContainer">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>조회년도</th>
+                    <td style="display:flex; align-items:center; gap:4px;" >
+                        <input type="number"
+                               id="inqYear"
+                               name="inqYear"
+                               class="form-input"
+                               min="1900"
+                               max="2099"
+                               step="1">
+                    </td>
+
+
+                    <th>조회월</th>
+                    <td>
+                        <select id="inqMonth" name="inqMonth" class="form-select">
+                            <option value="" selected>전체</option>
+                            <option value="01">01월</option>
+                            <option value="02">02월</option>
+                            <option value="03">03월</option>
+                            <option value="04">04월</option>
+                            <option value="05">05월</option>
+                            <option value="06">06월</option>
+                            <option value="07">07월</option>
+                            <option value="08">08월</option>
+                            <option value="09">09월</option>
+                            <option value="10">10월</option>
+                            <option value="11">11월</option>
+                            <option value="12">12월</option>
+
+                        </select>
+                    </td>
+                    <th>휴일구분</th>
+                    <td>
+                        <select id="hldySeCd" name="hldySeCd" class="form-select">
+                            <option value="">전체</option>
+                            <option value="00">영업일</option>
+                            <option value="01" selected>공휴일</option>
+                        </select>
+                    </td>
+                    <td width="50%"> </td>
+
+                </tr>
+            </table>
+        </form>
+
+
+        <div id="pageInfoContainer" class="page-header"></div>
+
+
+        <table class="data-table" id="mainTable">
+            <thead>
+            <tr>
+                <th class="col-no">번호</th>
+                <th width="100px">기준일자</th>
+                <th width="100px">요일</th>
+                <th width="250px">휴일명</th>
+                <th width="100px">휴일구분</th>
+                <th width="400px">비고</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+   </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+        let dataAll = [];
+        let currentPage = 1;
+
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // 01~12
+
+        document.getElementById('inqYear').value = `${year}`;
+        document.getElementById('inqMonth').value = `${month}`;
+
+        // 페이지 탑바 container에 include
+        const container = document.getElementById("pageInfoContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                const pageSizeSelect = document.getElementById("pageSize");
+                if (!pageSizeSelect) return;
+
+                pageSizeSelect.addEventListener("change", () => {
+                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    currentPage = 1;
+                    renderTable(currentPage);
+                    renderPagination(dataAll, currentPage, PAGE_SIZE);
+                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+                });
+            });
+
+        /** 테이블 렌더링 **/
+        window.renderTable = function(page)  {
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                return;
+            }
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map((item, index) => `
+                <tr class="row-click" data-id="${item.crtrYmd}">
+                    <td> ${start + index + 1} </td>
+                    <td style="text-align: center;">${item.crtrYmdFmt}</td>
+                    <td style="text-align: center;">
+                         ${['','일요일','월요일','화요일','수요일','목요일','금요일','토요일'][item.dowSeCd * 1]}
+                    </td>
+                    <td style="text-align: center;">${item.hldyNm}</td>
+                    <td style="text-align: center;">
+                         ${['영업일','공휴일'][item.hldySeCd * 1]}
+                    </td>
+                    <td style="text-align: left;">${truncateText(item.rmk, 100)}</td>
+                </tr>
+            `).join('');
+
+            /** 상세 클릭  **/
+            tableBody.addEventListener("dblclick", e => {
+                const tr = e.target.closest(".row-click");
+                if (!tr) return;
+                const sendData = { mode: "S", crtrYmd: tr.dataset.id };
+                openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
+            });
+        }
+
+        window.refreshParentRow = function(data) {
+            const refreshMap = {
+                dowSeCd: 'td:nth-child(3)',
+                hldyNm: 'td:nth-child(4)',
+                hldySeCd: 'td:nth-child(5)',
+                rmk:     'td:nth-child(6)'
+            };
+            window.updateRowDataFlexible(data, 'crtrYmd', refreshMap);
+        }
+
+        /** 검색 **/
+        document.getElementById('btnSearch').addEventListener('click', () => {
+
+            initScreen();
+            const data = formToJson(document.getElementById('mainForm'));
+            const inqYear = document.getElementById('inqYear');
+
+           if (!inqYear.value || !inqYear.value.trim()) {
+                alert("조회년월을 입력하세요.");
+                inqYear.focus();
+                return;
+            }
+
+            data.crtrYmd =  document.getElementById('inqYear').value  + document.getElementById('inqMonth').value
+
+            fetch('/meta/getHldyListData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            })
+            .catch(err => {
+                alert("에러 발생: " + err);
+            });
+        });
+    });
+
+    /** 초기화 **/
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        initScreen();
+    });
+
+    /** 등록 **/
+    document.getElementById('btnReg').addEventListener('click', () => {
+        const sendData = { mode: "I"};
+        openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
+    });
+    /**  일괄등록 **/
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = "/meta/hldy/hldyRegEblc";
+    });
+
+    document.getElementById('btnExcel').addEventListener('click', () => {
+        downloadTableToExcel('mainTable', '휴일목록');
+    });
+
+</script>
+<script src="/js/functionKey.js"></script>
+</body>
+</html>

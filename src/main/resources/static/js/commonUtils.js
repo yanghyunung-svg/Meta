@@ -284,10 +284,8 @@ const common = {
      */
     getYearMonthToShortString : () => {
         const today = new Date();
-
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0'); // 0-based → +1
-
         return`${year}-${month}`;
     },
     /**
@@ -296,13 +294,11 @@ const common = {
      */
     getTodayToFullString : () => {
         const now = new Date();
-
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-
         return `${year}-${month}-${day} ${hours}:${minutes}`;
     },
 
@@ -400,28 +396,39 @@ const common = {
 
 /**
  * 필수값 검증
- * @param {Array} rules - 검증 규칙 목록
- * @returns {boolean} true = 통과, false = 실패
+ * @param {Array} rules - [{ value, message, element }]
+ * @returns {boolean}
  */
-function validateRequired(rules) {
+function validateRequired(rules = []) {
     for (const rule of rules) {
-        const { value, message, element, type = 'alert' } = rule;
-        if (value === undefined || value === null || value === '') {
-            if (type === 'alert') {
-                msgEvents(message);
-                if (element) {
-                    element.focus();
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+        let { value, message, element } = rule;
+
+        // 값 정규화 (null, undefined, number 대응)
+        if (value === null || value === undefined) {
+            value = "";
+        }
+
+        // 문자열인 경우 trim
+        if (typeof value === "string") {
+            value = value.trim();
+        }
+
+        // 값이 없는 경우
+        if (value === "") {
+            alert(message);
+
+            // 포커스 이동
+            if (element && typeof element.focus === "function") {
+                element.focus();
             }
-            if (type === 'error') {
-                showError(message);
-            }
+
             return false;
         }
     }
+
     return true;
 }
+
 
 
 // 폼 전체 값을 JSON 객체로 만들기
@@ -459,6 +466,13 @@ function getToday() {
     return `${yyyy}-${mm}-${dd}`;
 }
 
+function getTodayMonth() {
+    const t = new Date();
+    const yyyy = t.getFullYear();
+    const mm = String(t.getMonth() + 1).padStart(2, '0');
+    return `${yyyy}${mm}`;
+}
+
 // 오늘 / 7일 전 날짜 구하기
 function getDefaultDates() {
     const today = new Date();
@@ -471,6 +485,13 @@ function getDefaultDates() {
         start: formatDate(before7),
         end: formatDate(today)
     };
+}
+function getFormatDate(date) {
+    const result =
+        date.substring(0,4) + "-" +
+        date.substring(4,6) + "-" +
+        date.substring(6,8);
+    return result;
 }
 
 function addUserAuditFields(data) {
@@ -585,13 +606,13 @@ window.updateRowDataFlexible = function(data, idKey, updateMap) {
     }
 }
 
-function getSttsCdLabel(stat) {
+function getSttsCdLabel(sttsCd) {
     const map = {
         '0': '신청',
         '1': '사용',
         '9': '미사용'
     };
-    return map[stat] ?? sttsCd;
+    return map[sttsCd] ?? sttsCd;
 }
 
 

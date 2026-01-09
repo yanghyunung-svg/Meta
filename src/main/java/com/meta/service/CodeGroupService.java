@@ -88,10 +88,10 @@ public class CodeGroupService {
       
     }
     /**
-     * @ ID : parseExcelPreview
+     * @ ID : parsePreview
      * @ NAME : 코드그룹 엑셀업로드
      */
-    public List<TbCodeGroupDto> parseExcelPreview(MultipartFile file) throws Exception {
+    public List<TbCodeGroupDto> parsePreview(MultipartFile file) throws Exception {
         List<TbCodeGroupDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
@@ -129,7 +129,7 @@ public class CodeGroupService {
         return null;  // 정상
     }
 
-    public int saveUploadedExcel(List<TbCodeGroupDto> list) {
+    public int saveUploaded(List<TbCodeGroupDto> list) {
         int count = 0;
         for (TbCodeGroupDto dto : list) {
             if(StringUtils.equals(dto.getSttsCd(), "1")) {

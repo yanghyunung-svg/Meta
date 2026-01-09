@@ -6,7 +6,6 @@ import com.meta.common.response.ApiResponse;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbLoginLogDto;
 import com.meta.dto.TbUserInfoDto;
-import com.meta.service.CommService;
 import com.meta.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -28,15 +26,7 @@ import java.util.Map;
 public class LoginController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    private CommService commService;
-    @Autowired
     private LoginService loginService;
-
-    /* LOGIN */
-    @GetMapping("/login")
-    public String login(Model model) { return "meta/login"; }
-    @GetMapping("/loginLogList")
-    public String loginLogListPage() {  return "meta/loginLogList";  }
 
     /**
      * @ ID : getLogin

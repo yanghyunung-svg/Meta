@@ -15,8 +15,8 @@
             <if test="engNm != null and engNm != ''">
                 AND ENG_NM LIKE CONCAT('%', #{engNm}, '%')
             </if>
-            <if test="STTS_CD != null and STTS_CD != ''">
-                AND STTS_CD = #{STTS_CD}
+            <if test="sttsCd != null and sttsCd != ''">
+                AND STTS_CD = #{sttsCd}
             </if>
         ORDER BY TRM_NM, ENG_NM
     </select>
@@ -46,7 +46,7 @@
             #{engNm},
             #{trmExpln},
             #{dmnNm},
-            #{STTS_CD},
+            #{sttsCd},
             #{crtId},
             #{updId}
         )
@@ -59,7 +59,7 @@
           , ENG_NM = #{engNm}
           , TRM_EXPLN = #{trmExpln}
           , DMN_NM = #{dmnNm}
-          , STTS_CD = #{STTS_CD}
+          , STTS_CD = #{sttsCd}
           , UPD_ID = #{updId}
         WHERE TRM_NM = #{trmNm}
     </update>

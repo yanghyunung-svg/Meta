@@ -83,14 +83,14 @@ public class UserInfoController {
 
 
     /**
-     * @ ID : uploadCodeExcelPreview
+     * @ ID : uploadCodePreview
      * @ NAME : 사용자정보 엑셀업로드
      */
-    @PostMapping("/uploadUserExcelPreview")
-    public ResponseEntity<Map<String, Object>> uploadUserExcelPreview(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/uploadUserPreview")
+    public ResponseEntity<Map<String, Object>> uploadUserPreview(@RequestParam("file") MultipartFile file) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbUserInfoDto> list = userInfoService.parseExcelPreview(file);
+            List<TbUserInfoDto> list = userInfoService.parsePreview(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -109,7 +109,7 @@ public class UserInfoController {
     public ResponseEntity<Map<String, Object>> uploadUserExcelSave(@RequestBody List<TbUserInfoDto> list) {
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = userInfoService.saveUploadedExcel(list);
+            int count = userInfoService.saveUploaded(list);
             res.put("success", true);
             res.put("count", count);
             return ResponseEntity.ok(res);

@@ -22,7 +22,7 @@ public class TbStdTermBscDto {
     private String     engNm;                           // 영문명 VARCHAR(100)
     private String     trmExpln;                        // 용어설명 TEXT
     private String     dmnNm;                           // 도메인명 VARCHAR(100)
-    private String     sttsCd;                            // 상태 0=등록 1=사용 9=미사용
+    private String     sttsCd;                          // 상태 0=등록 1=사용 9=미사용
     private String     crtDttm;                         // 생성일시 DATETIME
     private String     crtId;                           // 생성자ID VARCHAR(50)
     private String     updDttm;                         // 변경일시 DATETIME

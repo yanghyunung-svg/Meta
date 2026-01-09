@@ -101,10 +101,10 @@ public class CodeService {
     }
 
     /**
-     * @ ID : parseExcelPreview
+     * @ ID : parsePreview
      * @ NAME : 상세코드 엑셀업로드
      */
-    public List<TbCodeDto> parseExcelPreview(MultipartFile file) throws Exception {
+    public List<TbCodeDto> parsePreview(MultipartFile file) throws Exception {
         List<TbCodeDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
@@ -142,7 +142,7 @@ public class CodeService {
         return null;  // 정상
     }
 
-    public int saveUploadedExcel(List<TbCodeDto> list) {
+    public int saveUploaded(List<TbCodeDto> list) {
         int count = 0;
         for (TbCodeDto dto : list) {
             if(StringUtils.equals(dto.getSttsCd(), "1")) {
