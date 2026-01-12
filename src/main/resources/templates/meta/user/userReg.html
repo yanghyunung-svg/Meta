@@ -7,21 +7,19 @@
     <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
-
-<div class="popupContainer" id="popupContainer">
-    <div class="popup-header">
-        <h2 class="popup-title"> ✅ 사용자정보 등록</h2>
-        <div class="button-group">
-            <button id="btnSave" type="button" class="btn">저장
-            </button>
-            <button id="btnInit" type="button" class="btn">초기화
-            </button>
-            <button id="btnClose" type="button" class="btn">닫기
-            </button>
+    <div class="popupContainer" id="popupContainer">
+        <div class="popup-header">
+            <h2 class="popup-title"> ✅ 사용자정보 등록</h2>
+            <div class="button-group">
+                <button id="btnSave" type="button" class="btn">저장
+                </button>
+                <button id="btnInit" type="button" class="btn">초기화
+                </button>
+                <button id="btnClose" type="button" class="btn">닫기
+                </button>
+            </div>
         </div>
-    </div>
-
-
+        
         <form id="mainForm">
             <table class="popup-table">
             <tr>
@@ -32,11 +30,10 @@
                 </td>
             </tr>
             </table>
-
             <table class="popup-table">
             <tr>
                 <th>사용자이름 <span style="color:red">*</span></th>
-                <td colspan="2"><input type="text" id="userNm" name="userNm" class="form-input" required></td>
+                <td><input type="text" id="userNm" name="userNm" class="form-input" required></td>
             </tr>
             <tr>
                 <th>비밀번호</th>
@@ -48,29 +45,28 @@
             </tr>
             <tr>
                 <th>이메일</th>
-                <td colspan="2"><input type="text" id="email" name="email" class="form-input"></td>
+                <td><input type="text" id="email" name="email" class="form-input"></td>
             </tr>
             <tr>
                 <th>전화번호</th>
-                <td colspan="2"><input type="text" id="phone" name="phone" class="form-input"></td>
+                <td><input type="text" id="phone" name="phone" class="form-input"></td>
             </tr>
             <tr>
                 <th>권한</th>
-                <td colspan="2">
+                <td>
                     <select id="role" name="role" class="form-input">
-                        <option value="">선택</option>
                         <option value="0">SUPER</option>
                         <option value="1">ADMIN</option>
-                        <option value="2">USER</option>
+                        <option value="2" selected>USER</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <th>상태</th>
-                <td colspan="2">
+                <td>
                     <select id="sttsCd" name="sttsCd" class="form-input">
                         <option value="0">신청</option>
-                        <option value="1">사용</option>
+                        <option value="1" selected>사용</option>
                         <option value="9">미사용</option>
                     </select>
                 </td>
@@ -91,7 +87,6 @@
             </tr>
         </table>
     </form>
-
     </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -108,7 +103,6 @@
         document.getElementById("userId").addEventListener("input", () => {
             btnCheck.disabled = false;
         });
-
 
        btnCheck.addEventListener('click', async () => {
             const inData = formToJson(mainForm);
@@ -147,8 +141,15 @@
         // 저장 버튼
         btnSave.addEventListener("click", async () => {
 
+            const localStorageUserId = localStorage.getItem("userId");
+
             let data = formToJson(mainForm);
             data = addUserAuditFields(data);
+
+            if (!localStorageUserId || !localStorageUserId.trim()) {
+                data.crtId = mainForm.userId.value;
+                data.updId = mainForm.userId.value;
+            }
 
             if (!data.userId.trim()) {
                 alert("사용자ID를 입력하세요.");
@@ -185,6 +186,7 @@
                 if (result.success) {
                     alert("저장되었습니다.");
                     document.getElementById('mainForm').reset();
+                    window.close();
                 } else {
                     alert("오류: " + result.message);
                 }
@@ -204,7 +206,8 @@
         });
 
         btnClose.addEventListener("click", () => {
-            if (confirm("닫으시겠습니까?")) window.close();
+<!--            if (confirm("닫으시겠습니까?")) -->
+            window.close();
         });
 
         /* Enter Key */

@@ -50,7 +50,7 @@ function bindHeaderEvents() {
 
     if (userInfo && userId) {
         userInfo.addEventListener('click', () => {
-            openWindowWithJSON( { mode: "S", userId },  "/meta/userChg", 800, 700 );
+            openWindowWithJSON( { mode: "S", userId },  "/meta/user/userChg", 800, 700 );
         });
     }
 

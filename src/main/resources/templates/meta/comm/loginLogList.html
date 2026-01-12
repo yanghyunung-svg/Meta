@@ -115,7 +115,6 @@
         /** 테이블 렌더링 **/
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
             }
 
@@ -154,7 +153,7 @@
             const formData = formToJson(document.getElementById('mainForm'));
             // 날짜 검증
             if (formData.startDate && formData.endDate && formData.startDate > formData.endDate) {
-                alert("조회 시작일이 종료일보다 클 수 없습니다.");
+                document.getElementById("pageInfo").innerText = `조회 시작일이 종료일보다 클 수 없습니다.`;
                 return;
             }
 
@@ -166,6 +165,10 @@
             .then(res => res.json())
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
+                if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                    document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
+                    return
+                }
                 currentPage = 1;
                 renderTable(currentPage);
                 renderPagination(dataAll, currentPage, PAGE_SIZE);

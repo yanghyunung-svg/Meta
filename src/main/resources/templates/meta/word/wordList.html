@@ -102,7 +102,6 @@
         /** 테이블 렌더링 **/
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
                 return;
             }
             const start = (page - 1) * PAGE_SIZE;
@@ -154,6 +153,10 @@
             .then(res => res.json())
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
+                if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                    document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
+                    return
+                }
                 currentPage = 1;
                 renderTable(currentPage);
                 renderPagination(dataAll, currentPage, PAGE_SIZE);

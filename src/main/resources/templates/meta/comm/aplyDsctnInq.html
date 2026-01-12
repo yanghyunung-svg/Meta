@@ -153,7 +153,7 @@
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
                 if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                    document.getElementById("pageInfo").innerText = `검색 결과가 없습니다.`;
+                    document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
                     return
                 }
                 currentPage = 1;

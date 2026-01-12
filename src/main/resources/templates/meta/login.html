@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <title>Meta System Login</title>
     <link rel="stylesheet" href="/css/login.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
 <div class="login-container">
@@ -22,19 +24,39 @@
         </div>
     </main>
 </div>
+
+<input type="hidden" id="userNm" name="userNm">
+
 <script>
 
     document.addEventListener('DOMContentLoaded', () => {
         localStorage.clear();
 
-        const btn = document.getElementById('btnLogin');
-
-        // Enter Key 로그인
+        // Function Key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
+            const sendData = {};
+            switch (e.key) {
+            case 'F1':
+                e.preventDefault();
+                openWindowWithJSON(sendData, "/meta/popup/userSearch", 800, 500);
+                break;
+            case 'F2':
+            case 'Enter':
+                e.preventDefault();
                 login();
+                break;
+
+            case 'F3':
+                e.preventDefault();
+                openWindowWithJSON(sendData, "/meta/user/userReg", 800, 600);
+                break;
+
+            default:
+                break;
             }
         });
+
+        const btn = document.getElementById('btnLogin');
         btn.addEventListener('click', login);
     });
 
