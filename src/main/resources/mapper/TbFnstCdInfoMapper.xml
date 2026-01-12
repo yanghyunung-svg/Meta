@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.meta.mapper.TbFnstCdInfoMapper">
+    <!--TB_FNST_CD_INFO SELECT-->
+    <select id="getListData" parameterType="com.meta.dto.TbFnstCdInfoDto" resultType="com.meta.dto.TbFnstCdInfoDto">
+        SELECT FNST_CD
+        , RPRS_FNST_CD
+        , SWIFT_CD
+        , FNST_NM
+        , FNST_ENG_NM
+        , APLCN_YMD
+        , STTS_CD
+        , CRT_ID , UPD_ID
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_FNST_CD_INFO
+        WHERE 1=1
+        <if test="fnstCd != null and fnstCd != ''">
+            AND FNST_CD = #{fnstCd}
+        </if>
+        <if test="rprsFnstCd != null and rprsFnstCd != ''">
+            AND RPRS_FNST_CD LIKE CONCAT('%', #{rprsFnstCd}, '%')
+        </if>
+        <if test="fnstNm != null and fnstNm != ''">
+            AND FNST_NM LIKE CONCAT('%', #{fnstNm}, '%')
+        </if>
+        <if test="sttsCd != null and sttsCd != ''">
+            AND STTS_CD = #{sttsCd}
+        </if>
+        ORDER BY FNST_CD, RPRS_FNST_CD
+    </select>
+
+
+    <!--TB_FNST_CD_INFO SELECT-->
+   <select id="getData" parameterType="com.meta.dto.TbFnstCdInfoDto" resultType="com.meta.dto.TbFnstCdInfoDto">
+      SELECT FNST_CD
+           , RPRS_FNST_CD
+           , SWIFT_CD
+           , FNST_NM
+           , FNST_ENG_NM
+           , APLCN_YMD
+           , STTS_CD
+           , CRT_ID, UPD_ID
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_FNST_CD_INFO
+       WHERE FNST_CD = #{fnstCd}
+  </select>
+
+   <!--TB_FNST_CD_INFO INSERT-->
+   <insert id="insertData" parameterType="com.meta.dto.TbFnstCdInfoDto">
+     INSERT INTO TB_FNST_CD_INFO (
+            FNST_CD
+          , RPRS_FNST_CD
+          , SWIFT_CD
+          , FNST_NM
+          , FNST_ENG_NM
+          , APLCN_YMD
+          , STTS_CD
+          , CRT_ID
+          , UPD_ID
+     )
+     VALUES (
+            #{fnstCd}
+          , #{rprsFnstCd}
+          , #{swiftCd}
+          , #{fnstNm}
+          , #{fnstEngNm}
+          , #{aplcnYmd}
+          , #{sttsCd}
+          , #{crtDttm}
+          , #{updDttm}
+     ) 
+  </insert>
+
+   <!--TB_FNST_CD_INFO UPDATE-->
+   <update id="updateData" parameterType="com.meta.dto.TbFnstCdInfoDto">
+     UPDATE TB_FNST_CD_INFO
+        SET RPRS_FNST_CD = #{rprsFnstCd}
+          , SWIFT_CD = #{swiftCd}
+          , FNST_NM = #{fnstNm}
+          , FNST_ENG_NM = #{fnstEngNm}
+          , APLCN_YMD = #{aplcnYmd}
+          , STTS_CD = #{sttsCd}
+          , UPD_ID = #{updId}
+      WHERE FNST_CD = #{fnstCd}
+   </update>
+
+   <!--TB_FNST_CD_INFO DELETE-->
+   <delete id="deleteData" parameterType="com.meta.dto.TbFnstCdInfoDto">
+     DELETE
+       FROM TB_FNST_CD_INFO
+      WHERE FNST_CD = #{fnstCd}
+   </delete>
+
+   <!--TB_FNST_CD_INFO RECORD LOCK SELECT-->
+   <select id="getLockData" parameterType="com.meta.dto.TbFnstCdInfoDto" resultType="com.meta.dto.TbFnstCdInfoDto">
+      SELECT FNST_CD
+           , RPRS_FNST_CD
+           , SWIFT_CD
+           , FNST_NM
+           , FNST_ENG_NM
+           , APLCN_YMD
+           , STTS_CD
+           , CRT_ID, UPD_ID
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_FNST_CD_INFO
+       WHERE FNST_CD = #{fnstCd}
+         FOR UPDATE
+  </select>
+
+    <select id="countCode" parameterType="com.meta.dto.TbFnstCdInfoDto" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_FNST_CD_INFO
+        WHERE FNST_CD = #{fnstCd}
+    </select>
+</mapper>
