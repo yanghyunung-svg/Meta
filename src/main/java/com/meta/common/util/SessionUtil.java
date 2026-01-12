@@ -22,14 +22,14 @@ public class SessionUtil {
     }
 
     public static void logout(HttpSession session) {
-        if (session != null) {
+        if (session  != null) {
             session.invalidate();
         }
     }
 
     public static boolean isLoggedIn(HttpSession session) {
-        return session != null &&
-                session.getAttribute(LOGIN_USER_ID) != null;
+        return session  != null &&
+                session.getAttribute(LOGIN_USER_ID)  != null;
     }
 
     public static String getUserId(HttpSession session) {

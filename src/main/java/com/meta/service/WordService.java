@@ -6,7 +6,7 @@ import com.meta.common.constants.ResponseCode;
 import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbStdWordBscDto;
-import com.meta.mapper.TbStdWordBscMapper;
+import com.meta.mapper.dbio.TbStdWordBscMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -38,6 +38,7 @@ public class WordService {
      * desc     : 단어사전 목록 조회
      */
     public List<TbStdWordBscDto> getListData(TbStdWordBscDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return wordMapper.getListData(inputDto);
     }
 
@@ -46,6 +47,7 @@ public class WordService {
      * desc     : 단어사전 상세 조회
      */
     public TbStdWordBscDto getData(TbStdWordBscDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return wordMapper.getData(inputDto);
     }
     /**
@@ -53,6 +55,7 @@ public class WordService {
      * desc     : 단어사전 단어명 상세 조회
      */
     public TbStdWordBscDto getDataByName(TbStdWordBscDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return wordMapper.getDataByName(inputDto);
     }
 
@@ -67,7 +70,7 @@ public class WordService {
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
-                if (outputDto != null) {
+                if (outputDto  != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
                 if (wordMapper.insertData(inputDto) == 0) {
@@ -101,6 +104,7 @@ public class WordService {
      * @ NAME : 표준단어 엑셀업로드
      */
     public List<TbStdWordBscDto> parsePreview(MultipartFile file) throws Exception {
+        log.debug(BizUtils.logInfo());
 
         List<TbStdWordBscDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
@@ -134,7 +138,7 @@ public class WordService {
         if (dto.getEngNm() == null || dto.getEngNm().isEmpty()) return "영문명 누락";
         if (dto.getExpln() == null || dto.getExpln().isEmpty()) return "설명 누락";
         // DB 중복 체크
-        int exists = wordMapper.countCode(dto);
+        int exists = wordMapper.countData(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return "0";  // 정상
     }
@@ -144,6 +148,7 @@ public class WordService {
      * @ NAME : 표준단어 엑셀업로드 저장
      */
     public int saveUploaded(List<TbStdWordBscDto> list) {
+        log.debug(BizUtils.logInfo());
         int count = 0;
         for (TbStdWordBscDto dto : list) {
             if(StringUtils.equals(dto.getSttsCd(), "0")) {

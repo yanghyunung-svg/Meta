@@ -6,7 +6,7 @@ import com.meta.common.constants.ResponseCode;
 import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbStdDmnBscDto;
-import com.meta.mapper.TbStdDmnBscMapper;
+import com.meta.mapper.dbio.TbStdDmnBscMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -28,7 +28,6 @@ import java.util.List;
 @Service
 public class DmnService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private TbStdDmnBscMapper dmnMapper;
 
@@ -38,6 +37,7 @@ public class DmnService {
      * desc     : 표준도메인 목록 조회
      */
     public List<TbStdDmnBscDto> getListData(TbStdDmnBscDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return dmnMapper.getListData(inputDto);
     }
 
@@ -46,6 +46,7 @@ public class DmnService {
      * desc     : 표준도메인 상세 조회
      */
     public List<TbStdDmnBscDto> getDmnComboData()  {
+        log.debug(BizUtils.logInfo());
         return dmnMapper.getDmnComboData();
     }
 
@@ -54,7 +55,7 @@ public class DmnService {
      * desc     : 표준도메인 상세 조회
      */
     public TbStdDmnBscDto getData(TbStdDmnBscDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
+        log.debug(BizUtils.logInfo());
         return dmnMapper.getData(inputDto);
     }
 
@@ -69,7 +70,7 @@ public class DmnService {
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
-                if (outputDto != null) {
+                if (outputDto  != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
                 if (dmnMapper.insertData(inputDto) == 0) {
@@ -103,6 +104,7 @@ public class DmnService {
      * @ NAME : 표준도메인 엑셀업로드
      */
     public List<TbStdDmnBscDto> parsePreview(MultipartFile file) throws Exception {
+        log.debug(BizUtils.logInfo());
         List<TbStdDmnBscDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
@@ -135,12 +137,13 @@ public class DmnService {
         if (dto.getDmnEngNm() == null || dto.getDmnEngNm().isEmpty()) return "도메인영문명 누락";
         if (dto.getDmnAtrb() == null || dto.getDmnAtrb().isEmpty()) return "도메인속성 누락";
         // DB 중복 체크
-        int exists = dmnMapper.countCode(dto);
+        int exists = dmnMapper.countData(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return null;  // 정상
     }
 
     public int saveUploaded(List<TbStdDmnBscDto> list) {
+        log.debug(BizUtils.logInfo());
         int count = 0;
         for (TbStdDmnBscDto dto : list) {
             if(StringUtils.equals(dto.getSttsCd(), "0")) {

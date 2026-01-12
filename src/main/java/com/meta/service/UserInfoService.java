@@ -6,8 +6,8 @@ import com.meta.common.constants.ResponseCode;
 import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbUserInfoDto;
-import com.meta.mapper.TbLoginLogMapper;
-import com.meta.mapper.TbUserInfoMapper;
+import com.meta.mapper.dbio.TbLoginLogMapper;
+import com.meta.mapper.dbio.TbUserInfoMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -42,6 +42,7 @@ public class UserInfoService {
      * desc     : 사용자정보 목록 조회
      */
     public List<TbUserInfoDto> getListData(TbUserInfoDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return tbUserInfoMapper.getListData(inputDto);
     }
 
@@ -50,6 +51,7 @@ public class UserInfoService {
      * desc     : 사용자정보 상세 조회
      */
     public TbUserInfoDto getData(TbUserInfoDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return tbUserInfoMapper.getData(inputDto);
     }
     /**
@@ -63,7 +65,7 @@ public class UserInfoService {
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
-                if (outputDto != null) {
+                if (outputDto  != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
 
@@ -144,6 +146,7 @@ public class UserInfoService {
      * @ NAME : 사용자정보 엑셀업로드
      */
     public List<TbUserInfoDto> parsePreview(MultipartFile file) throws Exception {
+        log.debug(BizUtils.logInfo());
 
         List<TbUserInfoDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
@@ -180,12 +183,13 @@ public class UserInfoService {
         if (dto.getRole() == null || dto.getRole().isEmpty()) return "권한 누락";
         
         // DB 중복 체크
-        int exists = tbUserInfoMapper.countCode(dto);
+        int exists = tbUserInfoMapper.countData(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return null;  // 정상
     }
 
     public int saveUploaded(List<TbUserInfoDto> list) {
+        log.debug(BizUtils.logInfo());
         String rawPassword = "1";
         String encodedPassword = encoder.encode(rawPassword);
 

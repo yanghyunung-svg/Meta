@@ -1,4 +1,4 @@
-package com.meta.mapper;
+package com.meta.mapper.dbio;
 
 import com.meta.dto.TbLoginLogDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,5 +17,5 @@ import java.util.List;
 public interface TbLoginLogMapper {
     public TbLoginLogDto getData(TbLoginLogDto tbLoginLogDto);
     public int insertData(TbLoginLogDto tbLoginLogDto);
-    public List<TbLoginLogDto> getLoginLogList(TbLoginLogDto tbLoginLogDto);
+    public List<TbLoginLogDto> getListData(TbLoginLogDto tbLoginLogDto);
 }

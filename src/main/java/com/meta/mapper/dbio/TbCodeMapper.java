@@ -1,4 +1,4 @@
-package com.meta.mapper;
+package com.meta.mapper.dbio;
 
 import com.meta.dto.TbCodeDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,5 +22,5 @@ public interface TbCodeMapper {
     public int deleteData(TbCodeDto tbCodeDto);
     public List<TbCodeDto> getListData(TbCodeDto tbCodeDto);
     public List<TbCodeDto> getAllData(TbCodeDto tbCodeDto);
-    public int countCode(TbCodeDto tbCodeDto);
+    public int countData(TbCodeDto tbCodeDto);
 }

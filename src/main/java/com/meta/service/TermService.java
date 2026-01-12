@@ -8,8 +8,8 @@ import com.meta.common.util.BizUtils;
 import com.meta.dto.TbStdTermBscDto;
 import com.meta.dto.TbStdWordBscDto;
 import com.meta.dto.WordMappingDto;
-import com.meta.mapper.TbStdTermBscMapper;
-import com.meta.mapper.TbStdWordBscMapper;
+import com.meta.mapper.dbio.TbStdTermBscMapper;
+import com.meta.mapper.dbio.TbStdWordBscMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -31,7 +31,6 @@ import java.util.List;
 @Service
 public class TermService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private TbStdTermBscMapper termMapper;
     @Autowired
@@ -42,9 +41,8 @@ public class TermService {
      * desc     : 용어사전 목록 조회
      */
     public List<TbStdTermBscDto> getListData(TbStdTermBscDto inputDto)  {
-        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
+        log.debug(BizUtils.logInfo());
         List<TbStdTermBscDto> outputDto = termMapper.getListData(inputDto);
-        log.debug(BizUtils.logInfo("END"));
         return outputDto;
     }
 
@@ -53,6 +51,7 @@ public class TermService {
      * desc     : 용어사전 상세 조회
      */
     public TbStdTermBscDto getData(TbStdTermBscDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return termMapper.getData(inputDto);
     }
 
@@ -67,7 +66,7 @@ public class TermService {
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
-                if (outputDto != null) {
+                if (outputDto  != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
                 if (termMapper.insertData(inputDto) == 0) {
@@ -101,10 +100,11 @@ public class TermService {
      * desc     : 용어사전 단어목록 조회
      */
     public TbStdTermBscDto getTermSplitData(TbStdTermBscDto inputDto)  {
+        log.debug(BizUtils.logInfo());
 
         // 1. 용어사전
         TbStdTermBscDto tbStdTermBscDto = termMapper.getData(inputDto);
-        if (tbStdTermBscDto != null) {
+        if (tbStdTermBscDto  != null) {
             tbStdTermBscDto.setSnake(BizUtils.snakeToLower(tbStdTermBscDto.getEngNm()));
             tbStdTermBscDto.setCamel(BizUtils.snakeToCamel(tbStdTermBscDto.getEngNm()));
             tbStdTermBscDto.setPascal(BizUtils.snakeToPascal(tbStdTermBscDto.getEngNm()));
@@ -179,7 +179,7 @@ public class TermService {
             WordMappingDto dto = keywords.get(i);
             String englishWord = dto.getEngNm();
 
-            if (englishWord != null && !englishWord.isEmpty()) {
+            if (englishWord  != null && !englishWord.isEmpty()) {
                 sb.append(englishWord.toUpperCase());
             } else {
                 sb.append(dto.getKorNm().toUpperCase());
@@ -203,7 +203,7 @@ public class TermService {
         for (WordMappingDto dto : keywords) {
             sb.append(dto.getKorNm());
             sb.append(" = ");
-            sb.append(dto.getEngNm() != null ? dto.getEngNm() : "");
+            sb.append(dto.getEngNm()  != null ? dto.getEngNm() : "");
             sb.append("\n");
         }
         return sb.toString().trim();
@@ -281,16 +281,17 @@ public class TermService {
         if (dto.getTrmNm() == null || dto.getTrmNm().isEmpty()) return "용어명 누락";
         if (dto.getEngNm() == null || dto.getEngNm().isEmpty()) return "영문명 누락";
         // DB 중복 체크
-        int exists = termMapper.countCode(dto);
+        int exists = termMapper.countData(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return null;  // 정상
     }
 
     public int uploadTermExcelSave(List<TbStdTermBscDto> list)  {
+        log.debug(BizUtils.logInfo());
         int count = 0;
         for (TbStdTermBscDto dto : list) {
             if (StringUtils.equals(dto.getSttsCd(), "0")) {
-                int exists = termMapper.countCode(dto);
+                int exists = termMapper.countData(dto);
                 if (exists == 0) {
                     dto.setUpdId(dto.getCrtId());
                     termMapper.insertData(dto);

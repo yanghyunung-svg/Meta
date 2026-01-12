@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.meta.mapper.ApproveMapper">
+<mapper namespace="com.meta.mapper.meta.ApproveMapper">
     <select id="getListData" parameterType="com.meta.dto.ApproveDto" resultType="com.meta.dto.ApproveDto">
 
         SELECT Z.SE
@@ -23,10 +23,10 @@
             , CRT_DTTM
             FROM tb_std_term_bsc
             WHERE 1=1
-            <if test="sttsCd != null and sttsCd != ''">
+            <if test="sttsCd  != null and sttsCd  != ''">
                 AND STTS_CD = #{sttsCd}
             </if>
-            <if test="userId != null and userId != ''">
+            <if test="userId  != null and userId  != ''">
                 AND CRT_ID = #{userId}
             </if>
 
@@ -42,10 +42,10 @@
             , CRT_DTTM
             FROM tb_std_word_bsc
             WHERE 1=1
-            <if test="sttsCd != null and sttsCd != ''">
+            <if test="sttsCd  != null and sttsCd  != ''">
                 AND STTS_CD = #{sttsCd}
             </if>
-            <if test="userId != null and userId != ''">
+            <if test="userId  != null and userId  != ''">
                 AND CRT_ID = #{userId}
             </if>
 
@@ -60,10 +60,10 @@
             , CRT_DTTM
             FROM tb_std_dmn_bsc
             WHERE 1=1
-            <if test="sttsCd != null and sttsCd != ''">
+            <if test="sttsCd  != null and sttsCd  != ''">
                 AND STTS_CD = #{sttsCd}
             </if>
-            <if test="userId != null and userId != ''">
+            <if test="userId  != null and userId  != ''">
                 AND CRT_ID = #{userId}
             </if>
 
@@ -78,10 +78,10 @@
             , CRT_DTTM
             FROM tb_code_group
             WHERE 1=1
-            <if test="sttsCd != null and sttsCd != ''">
+            <if test="sttsCd  != null and sttsCd  != ''">
                 AND STTS_CD = #{sttsCd}
             </if>
-            <if test="userId != null and userId != ''">
+            <if test="userId  != null and userId  != ''">
                 AND CRT_ID = #{userId}
             </if>
 
@@ -96,10 +96,10 @@
             , CRT_DTTM
             FROM tb_code
             WHERE 1=1
-            <if test="sttsCd != null and sttsCd != ''">
+            <if test="sttsCd  != null and sttsCd  != ''">
                 AND STTS_CD = #{sttsCd}
             </if>
-            <if test="userId != null and userId != ''">
+            <if test="userId  != null and userId  != ''">
                 AND CRT_ID = #{userId}
             </if>
 
@@ -108,7 +108,7 @@
         ON   B.GRP_CD = 'APRV_CD'
         AND  B.CD = Z.SE
         WHERE 1=1
-        <if test="se != null and se != ''">
+        <if test="se  != null and se  != ''">
             AND Z.SE = #{se}
         </if>
 

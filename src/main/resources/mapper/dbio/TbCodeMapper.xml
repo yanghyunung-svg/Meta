@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-  <mapper namespace="com.meta.mapper.TbCodeMapper">
+  <mapper namespace="com.meta.mapper.dbio.TbCodeMapper">
 
    <!--tb_code SELECT-->
    <select id="getData" parameterType="com.meta.dto.TbCodeDto" resultType="com.meta.dto.TbCodeDto">
@@ -104,16 +104,16 @@
         JOIN tb_code_group B
         ON A.GRP_CD = B.GRP_CD
         WHERE  1 = 1
-        <if test="grpCd != null and grpCd != ''">
+        <if test="grpCd  != null and grpCd  != ''">
             AND A.GRP_CD = #{grpCd}
         </if>
-        <if test="cd != null and cd != ''">
-            AND A.CD LIKE CONCAT('%', #{cd}, '%')
+        <if test="cd  != null and cd  != ''">
+            AND A.CD    LIKE CONCAT('%', #{cd}, '%')
         </if>
-        <if test="cdNm != null and cdNm != ''">
-            AND A.CD_NM LIKE CONCAT('%', #{cdNm}, '%')
+        <if test="cdNm  != null and cdNm  != ''">
+            AND A.CD_NM    LIKE CONCAT('%', #{cdNm}, '%')
         </if>
-        <if test="sttsCd != null and sttsCd != ''">
+        <if test="sttsCd  != null and sttsCd  != ''">
             AND A.STTS_CD = #{sttsCd}
         </if>
         ORDER BY A.GRP_CD, A.ORD, A.CD
@@ -127,7 +127,7 @@
         ORDER BY GRP_CD, ORD, CD
     </select>
 
-    <select id="countCode" parameterType="com.meta.dto.TbCodeDto" resultType="int">
+    <select id="countData" parameterType="com.meta.dto.TbCodeDto" resultType="int">
         SELECT COUNT(*)
         FROM TB_CODE
         WHERE GRP_CD = #{grpCd}

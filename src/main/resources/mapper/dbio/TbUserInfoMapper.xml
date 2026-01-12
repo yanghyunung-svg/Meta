@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.meta.mapper.TbUserInfoMapper">
+<mapper namespace="com.meta.mapper.dbio.TbUserInfoMapper">
 
     <select id="getListData" parameterType="com.meta.dto.TbUserInfoDto" resultType="com.meta.dto.TbUserInfoDto">
         SELECT USER_ID, USER_NM, PASSWORD, EMAIL, PHONE, ROLE, STTS_CD, CRT_ID, UPD_ID
@@ -8,13 +8,13 @@
         , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM tb_user_info
         WHERE 1=1
-        <if test="userId != null and userId != ''">
-            AND USER_ID LIKE CONCAT('%', #{userId}, '%')
+        <if test="userId  != null and userId  != ''">
+            AND USER_ID    LIKE CONCAT('%', #{userId}, '%')
         </if>
-        <if test="userNm != null and userNm != ''">
-            AND USER_NM LIKE CONCAT('%', #{userNm}, '%')
+        <if test="userNm  != null and userNm  != ''">
+            AND USER_NM    LIKE CONCAT('%', #{userNm}, '%')
         </if>
-        <if test="sttsCd != null and sttsCd != ''">
+        <if test="sttsCd  != null and sttsCd  != ''">
             AND STTS_CD = #{sttsCd}
         </if>
         ORDER BY USER_ID, USER_NM
@@ -40,22 +40,22 @@
      UPDATE tb_user_info
         SET
             UPD_ID = #{updId}
-       <if test="userNm != null and userNm != ''">
+       <if test="userNm  != null and userNm  != ''">
             ,USER_NM = #{userNm}
        </if>
-       <if test="password != null and password != ''">
+       <if test="password  != null and password  != ''">
             ,PASSWORD = #{password}
        </if>
-       <if test="email != null and email != ''">
+       <if test="email  != null and email  != ''">
             ,EMAIL = #{email}
         </if>
-       <if test="phone != null and phone != ''">
+       <if test="phone  != null and phone  != ''">
             ,PHONE = #{phone}
        </if>
-       <if test="role != null and role != ''">
+       <if test="role  != null and role  != ''">
             ,ROLE = #{role}
        </if>
-       <if test="sttsCd != null and sttsCd != ''">
+       <if test="sttsCd  != null and sttsCd  != ''">
             ,STTS_CD = #{sttsCd}
        </if>
       WHERE USER_ID = #{userId}
@@ -79,7 +79,7 @@
   </select>
 
 
-    <select id="countCode" parameterType="com.meta.dto.TbUserInfoDto" resultType="int">
+    <select id="countData" parameterType="com.meta.dto.TbUserInfoDto" resultType="int">
         SELECT COUNT(*)
         FROM tb_user_info
         WHERE USER_ID = #{userId}

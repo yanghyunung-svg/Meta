@@ -5,8 +5,8 @@ import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbLoginLogDto;
 import com.meta.dto.TbUserInfoDto;
-import com.meta.mapper.TbLoginLogMapper;
-import com.meta.mapper.TbUserInfoMapper;
+import com.meta.mapper.dbio.TbLoginLogMapper;
+import com.meta.mapper.dbio.TbUserInfoMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -41,8 +41,7 @@ public class LoginService {
      * desc     : Login 검증
      */
     public TbUserInfoDto getLogin(TbUserInfoDto inputDto, HttpServletRequest request ) {
-        log.debug(BizUtils.logInfo("START"));
-
+        log.debug(BizUtils.logInfo());
         TbLoginLogDto tbLoginLogDto = new TbLoginLogDto();
         tbLoginLogDto.setUserId(inputDto.getUserId());
         tbLoginLogDto.setIpAddr(inputDto.getIpAddr());
@@ -97,12 +96,12 @@ public class LoginService {
     }
 
     /**
-     * method   : getLoginLogList
+     * method   : getListData
      * desc     : 로그인 로그 조회
      */
-    public List<TbLoginLogDto> getLoginLogList(TbLoginLogDto inputDto)  {
-        log.debug(BizUtils.logInfo("START"));
-        return tbLoginLogMapper.getLoginLogList(inputDto);
+    public List<TbLoginLogDto> getListData(TbLoginLogDto inputDto)  {
+        log.debug(BizUtils.logInfo());
+        return tbLoginLogMapper.getListData(inputDto);
     }
 
 

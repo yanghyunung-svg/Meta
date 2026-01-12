@@ -47,13 +47,18 @@ th, td { border:1px solid #ccc; padding:8px; text-align:left; }
 th { background-color:#fff; }
 
 input[readonly],textarea[readonly],select[readonly] { background-color:#f0f0f0; color:var(--bg-black); border:1px solid #ccc; }
-textarea.form-input { padding:10px; border:1px solid #ddd; border-radius:4px; resize:vertical; box-sizing:border-box; width:100%; }
+
+ .form-input {
+     font-family: inherit;
+     font-size: 12px;
+     font-weight: 500;
+ }
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    cursor: pointer;
+}
 
 .hidden { display:none !important; }
-
-.form-input:required { border-left:3px solid #d9534f; }
-
-
 .container { display:flex; width:900px; height:940px; font-size:12px; background-color:white }
 
 /* Topbar */

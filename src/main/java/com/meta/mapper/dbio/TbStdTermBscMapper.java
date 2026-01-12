@@ -1,4 +1,4 @@
-package com.meta.mapper;
+package com.meta.mapper.dbio;
 
 import com.meta.dto.TbStdTermBscDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,5 +21,5 @@ public interface TbStdTermBscMapper {
     public int insertData(TbStdTermBscDto tbStdTermBscDto);
     public int updateData(TbStdTermBscDto tbStdTermBscDto);
     public int deleteData(TbStdTermBscDto tbStdTermBscDto);
-    public int countCode(TbStdTermBscDto tbStdTermBscDto);
+    public int countData(TbStdTermBscDto tbStdTermBscDto);
 }

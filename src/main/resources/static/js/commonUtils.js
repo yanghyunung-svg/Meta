@@ -86,8 +86,8 @@ const common = {
 
         // 시작이 010 인지 체크 && 11자리인지 체크 && 숫자만 입력받기 체크
         if (
-            "010" !== userMobileNo.substr(0, 3) ||
-            userMobileNo.length !== 11 ||
+            "010"  !== userMobileNo.substr(0, 3) ||
+            userMobileNo.length  !== 11 ||
             !regNum.test(userMobileNo)
         ) {
             return true;
@@ -120,8 +120,8 @@ const common = {
             val === "undefined" ||
             val === null ||
             val === "" ||
-            (val !== null && typeof val === "object" && !Object.keys(val).length) ||
-            (val !== null && Array.isArray(val) && !val.length)
+            (val  !== null && typeof val === "object" && !Object.keys(val).length) ||
+            (val  !== null && Array.isArray(val) && !val.length)
         ) {
             return true;
         } else {
@@ -138,8 +138,8 @@ const common = {
             val === undefined ||
             val === null ||
             val === "" ||
-            (val !== null && typeof val === "object" && !Object.keys(val).length) ||
-            (val !== null && Array.isArray(val) && !val.length)
+            (val  !== null && typeof val === "object" && !Object.keys(val).length) ||
+            (val  !== null && Array.isArray(val) && !val.length)
         ) {
             return false;
         } else {
@@ -202,7 +202,7 @@ const common = {
      * @returns {string} - yyyy-MM-dd hh:mi
      */
     formatDateShortString: (dateString) => {
-        if (common.isEmpty(dateString) || isNaN(dateString) || dateString.length !== 8) return "-";
+        if (common.isEmpty(dateString) || isNaN(dateString) || dateString.length  !== 8) return "-";
         // dateString을 Date 객체로 변환
         return dateString.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
     },
@@ -244,7 +244,7 @@ const common = {
      * @returns {string} - hh:mi:ss
      */
     formatTimeString: (timeString) => {
-        if (common.isEmpty(timeString) || isNaN(timeString) || timeString.length !== 6) return "-";
+        if (common.isEmpty(timeString) || isNaN(timeString) || timeString.length  !== 6) return "-";
         // timeString Date 객체로 변환
         return timeString.replace(/(\d{2})(\d{2})(\d{2})/, '$1:$2:$3');
     },
@@ -359,7 +359,7 @@ const common = {
      * @returns {string}
      */
     formatDateTime: (ymd, hr) => {
-        if (typeof ymd !== 'string' || ymd.length !== 8) return 'YYYY-MM-DD HH:MM';
+        if (typeof ymd  !== 'string' || ymd.length  !== 8) return 'YYYY-MM-DD HH:MM';
 
         const yyyy = ymd.substring(0, 4);
         const mm = ymd.substring(4, 6);
@@ -444,12 +444,12 @@ function fillForm(form, data) {
     });
 }
 
-function truncateText(text, maxLength = 100) {
-    if (text.length > maxLength) {
-        return text.slice(0, maxLength) + '...';
-    }
-    return text;
+function truncateText(text = '', maxLength = 100) {
+    return text.length > maxLength
+        ? text.substring(0, maxLength) + '...'
+        : text;
 }
+
 
 function formatDate(date) {
     const yyyy = date.getFullYear();

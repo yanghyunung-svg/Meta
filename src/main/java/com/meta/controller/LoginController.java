@@ -47,7 +47,7 @@ public class LoginController {
         }
 
         HttpSession session = request.getSession(true);
-        if (session != null) {
+        if (session  != null) {
             int interval = session.getMaxInactiveInterval();
             String userId = (String) session.getAttribute("userId");
             String role = (String) session.getAttribute("role");
@@ -62,13 +62,13 @@ public class LoginController {
 
 
     /**
-     * @ ID : getLoginLogList
+     * @ ID : getListData
      * @ NAME : 로그인 로그 조회
      */
-    @PostMapping("/getLoginLogList")
+    @PostMapping("/getListData")
     @ResponseBody
-    public List<TbLoginLogDto> getLoginLogList(@RequestBody TbLoginLogDto inputDto, HttpServletRequest request) throws Exception {
-        return loginService.getLoginLogList(inputDto);
+    public List<TbLoginLogDto> getListData(@RequestBody TbLoginLogDto inputDto, HttpServletRequest request) throws Exception {
+        return loginService.getListData(inputDto);
     }
 
     @GetMapping("/remaining-time")

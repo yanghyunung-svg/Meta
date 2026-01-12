@@ -147,13 +147,12 @@
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr class="row-click" data-id="${item.crtrYmd}">
                     <td> ${start + index + 1} </td>
-                    <td style="text-align: center;">${item.crtrYmdFmt}</td>
+                    <td style="text-align: center;">${  getFormatDate(item.crtrYmd) }</td>
                     <td style="text-align: center;">
                          ${['','일요일','월요일','화요일','수요일','목요일','금요일','토요일'][item.dowSeCd * 1]}
                     </td>
                     <td style="text-align: center;">${item.hldyNm}</td>
-                    <td style="text-align: center;">
-                         ${['영업일','공휴일'][item.hldySeCd * 1]}
+                    <td style="text-align: center;">${['영업일','공휴일'][item.hldySeCd * 1]}
                     </td>
                     <td style="text-align: left;">${truncateText(item.rmk, 100)}</td>
                 </tr>

@@ -3,7 +3,7 @@ package com.meta.controller;
 import com.meta.common.response.ApiResponse;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbStdTermBscDto;
-import com.meta.mapper.TbStdTermBscMapper;
+import com.meta.mapper.dbio.TbStdTermBscMapper;
 import com.meta.service.TermService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;

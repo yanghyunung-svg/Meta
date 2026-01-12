@@ -1,4 +1,4 @@
-package com.meta.mapper;
+package com.meta.mapper.meta;
 
 import com.meta.dto.ApproveDto;
 import org.apache.ibatis.annotations.Mapper;

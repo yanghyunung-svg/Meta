@@ -1,4 +1,4 @@
-package com.meta.mapper;
+package com.meta.mapper.dbio;
 
 import com.meta.dto.TbStdDmnBscDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,7 +20,7 @@ public interface TbStdDmnBscMapper {
     public int insertData(TbStdDmnBscDto tbStdDmnBscDto);
     public int updateData(TbStdDmnBscDto tbStdDmnBscDto);
     public int deleteData(TbStdDmnBscDto tbStdDmnBscDto);
-    public int countCode(TbStdDmnBscDto tbStdDmnBscDto);
+    public int countData(TbStdDmnBscDto tbStdDmnBscDto);
     public List<TbStdDmnBscDto> getListData(TbStdDmnBscDto tbStdDmnBscDto);
     public List<TbStdDmnBscDto> getDmnComboData();
 }

@@ -1,38 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-  <mapper namespace="com.meta.mapper.TbFnstCdInfoMapper">
-    <!--TB_FNST_CD_INFO SELECT-->
-    <select id="getListData" parameterType="com.meta.dto.TbFnstCdInfoDto" resultType="com.meta.dto.TbFnstCdInfoDto">
-        SELECT FNST_CD
-        , RPRS_FNST_CD
-        , SWIFT_CD
-        , FNST_NM
-        , FNST_ENG_NM
-        , APLCN_YMD
-        , STTS_CD
-        , CRT_ID , UPD_ID
-        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
-        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        FROM TB_FNST_CD_INFO
-        WHERE 1=1
-        <if test="fnstCd != null and fnstCd != ''">
-            AND FNST_CD = #{fnstCd}
-        </if>
-        <if test="rprsFnstCd != null and rprsFnstCd != ''">
-            AND RPRS_FNST_CD LIKE CONCAT('%', #{rprsFnstCd}, '%')
-        </if>
-        <if test="fnstNm != null and fnstNm != ''">
-            AND FNST_NM LIKE CONCAT('%', #{fnstNm}, '%')
-        </if>
-        <if test="sttsCd != null and sttsCd != ''">
-            AND STTS_CD = #{sttsCd}
-        </if>
-        ORDER BY FNST_CD, RPRS_FNST_CD
-    </select>
+  <mapper namespace="com.meta.mapper.dbio.TbFnstCdInfoMapper">
 
-
-    <!--TB_FNST_CD_INFO SELECT-->
+   <!--TB_FNST_CD_INFO SELECT-->
    <select id="getData" parameterType="com.meta.dto.TbFnstCdInfoDto" resultType="com.meta.dto.TbFnstCdInfoDto">
       SELECT FNST_CD
            , RPRS_FNST_CD
@@ -41,9 +12,10 @@
            , FNST_ENG_NM
            , APLCN_YMD
            , STTS_CD
-           , CRT_ID, UPD_ID
-           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
-           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+           , CRT_ID
+           , date_format(CRT_DTTM,   '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , UPD_ID
+           , date_format(UPD_DTTM,   '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM TB_FNST_CD_INFO
        WHERE FNST_CD = #{fnstCd}
   </select>
@@ -69,8 +41,8 @@
           , #{fnstEngNm}
           , #{aplcnYmd}
           , #{sttsCd}
-          , #{crtDttm}
-          , #{updDttm}
+          , #{crtId}
+          , #{updId}
      ) 
   </insert>
 
@@ -103,17 +75,57 @@
            , FNST_ENG_NM
            , APLCN_YMD
            , STTS_CD
-           , CRT_ID, UPD_ID
-           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
-           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+           , CRT_ID
+           , date_format(CRT_DTTM,   '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , UPD_ID
+           , date_format(UPD_DTTM,   '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM TB_FNST_CD_INFO
        WHERE FNST_CD = #{fnstCd}
          FOR UPDATE
   </select>
 
-    <select id="countCode" parameterType="com.meta.dto.TbFnstCdInfoDto" resultType="int">
-        SELECT COUNT(*)
+   <select id="countData" parameterType="com.meta.dto.TbFnstCdInfoDto" resultType="int">
+      SELECT COUNT(*)
         FROM TB_FNST_CD_INFO
-        WHERE FNST_CD = #{fnstCd}
-    </select>
+       WHERE FNST_CD = #{fnstCd}
+  </select>
+
+   <!--TB_FNST_CD_INFO SELECT LIST-->
+   <select id="getListData" parameterType="com.meta.dto.TbFnstCdInfoDto" resultType="com.meta.dto.TbFnstCdInfoDto">
+      SELECT FNST_CD
+           , RPRS_FNST_CD
+           , SWIFT_CD
+           , FNST_NM
+           , FNST_ENG_NM
+           , APLCN_YMD
+           , STTS_CD
+           , CRT_ID
+           , date_format(CRT_DTTM,   '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , UPD_ID
+           , date_format(UPD_DTTM,   '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_FNST_CD_INFO
+       WHERE 1=1
+       <if test="fnstCd!= null and fnstCd!= ''">
+         AND FNST_CD = #{fnstCd}
+       </if>
+       <if test="rprsFnstCd!= null and rprsFnstCd!= ''">
+         AND RPRS_FNST_CD = #{rprsFnstCd}
+       </if>
+       <if test="swiftCd!= null and swiftCd!= ''">
+         AND SWIFT_CD = #{swiftCd}
+       </if>
+       <if test="fnstNm!= null and fnstNm!= ''">
+         AND FNST_NM LIKE CONCAT('%',#{fnstNm} , '%')
+       </if>
+       <if test="fnstEngNm!= null and fnstEngNm!= ''">
+         AND FNST_ENG_NM LIKE CONCAT('%',#{fnstEngNm} , '%')
+       </if>
+       <if test="aplcnYmd!= null and aplcnYmd!= ''">
+         AND APLCN_YMD = #{aplcnYmd}
+       </if>
+       <if test="sttsCd!= null and sttsCd!= ''">
+         AND STTS_CD = #{sttsCd}
+       </if>
+  </select>
+
 </mapper>

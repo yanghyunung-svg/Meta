@@ -6,7 +6,7 @@ import com.meta.common.constants.ResponseCode;
 import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbCodeGroupDto;
-import com.meta.mapper.TbCodeGroupMapper;
+import com.meta.mapper.dbio.TbCodeGroupMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -36,6 +36,7 @@ public class CodeGroupService {
      * desc     : 코드그룹기본 목록 조회
      */
     public List<TbCodeGroupDto> getListData(TbCodeGroupDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return tbCodeGroupMapper.getListData(inputDto);
     }
 
@@ -44,6 +45,7 @@ public class CodeGroupService {
      * desc     : 코드그룹기본 상세 조회
      */
     public TbCodeGroupDto getData(TbCodeGroupDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return tbCodeGroupMapper.getData(inputDto);
     }
 
@@ -58,7 +60,7 @@ public class CodeGroupService {
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
-                if (outputDto != null) {
+                if (outputDto  != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
                 if (tbCodeGroupMapper.insertData(inputDto) == 0) {
@@ -92,6 +94,7 @@ public class CodeGroupService {
      * @ NAME : 코드그룹 엑셀업로드
      */
     public List<TbCodeGroupDto> parsePreview(MultipartFile file) throws Exception {
+        log.debug(BizUtils.logInfo());
         List<TbCodeGroupDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
@@ -124,12 +127,13 @@ public class CodeGroupService {
         if (dto.getGrpCd() == null || dto.getGrpCd().isEmpty()) return "공통코드 누락";
         if (dto.getGrpNm() == null || dto.getGrpNm().isEmpty()) return "공통코드명 누락";
         // DB 중복 체크
-        int exists = tbCodeGroupMapper.countCode(dto);
+        int exists = tbCodeGroupMapper.countData(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return null;  // 정상
     }
 
     public int saveUploaded(List<TbCodeGroupDto> list) {
+        log.debug(BizUtils.logInfo());
         int count = 0;
         for (TbCodeGroupDto dto : list) {
             if(StringUtils.equals(dto.getSttsCd(), "1")) {

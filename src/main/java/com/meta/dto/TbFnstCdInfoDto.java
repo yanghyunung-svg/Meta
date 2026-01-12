@@ -9,16 +9,15 @@ import lombok.AllArgsConstructor;
  * @author     : somnus21
  * @file       : TbFnstCdInfoDto.java
  * @version    : 1.0.0
- * @createDate : 2026-01-09 오전 9:29:54
- * @updateDate : 2026-01-09 오전 9:29:54
+ * @createDate : 2026-01-12 오후 2:45:59
+ * @updateDate : 2026-01-12 오후 2:45:59
  * @desc       : 금융기관코드정보 TB_FNST_CD_INFO
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TbFnstCdInfoDto {
-    private String     func;
+public class TbFnstCdInfoDto {  
     private String     fnstCd;                          // 금융기관코드 VARCHAR(3)
     private String     rprsFnstCd;                      // 대표금융기관코드 VARCHAR(3)
     private String     swiftCd;                         // SWIFT코드 VARCHAR(11)
@@ -30,4 +29,5 @@ public class TbFnstCdInfoDto {
     private String     crtDttm;                         // 등록일시 DATETIME
     private String     updId;                           // 수정자ID VARCHAR(30)
     private String     updDttm;                         // 수정일시 DATETIME
+    private String     func;
 }

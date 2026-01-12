@@ -27,7 +27,7 @@ public class SessionController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        if (session != null) {
+        if (session  != null) {
             session.invalidate();
         }
         return "redirect:/login";

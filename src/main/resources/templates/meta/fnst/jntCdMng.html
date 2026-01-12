@@ -135,7 +135,7 @@
 
         // 부모창에서 데이터 받기
         window.addEventListener("message", (event) => {
-            if (event.origin !== window.location.origin) return;
+            if (event.origin  !== window.location.origin) return;
             mode = event.data.mode;
             const jntCdIn  = event.data.jntCd;
 
@@ -154,7 +154,7 @@
 
                         btnInit.disabled = true;
                         originalData = data;    if (btnDelete) {
-                            btnDelete.disabled = (role !== '0');
+                            btnDelete.disabled = (role  !== '0');
                         }} catch (err) {
                         msgEvents("상세 데이터 조회 중 오류가 발생했습니다.");
                     }
@@ -168,7 +168,7 @@
         const checkChanged = () => {
             const current = formToJson(mainForm);
             const changed = Object.keys(current).some(
-                key => current[key] !== originalData[key]
+                key => current[key]  !== originalData[key]
             );
             if (mode === "S" ) {
                 btnChange.disabled = !changed;

@@ -6,8 +6,9 @@ import com.meta.common.constants.ResponseCode;
 import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbCodeDto;
-import com.meta.mapper.TbCodeGroupMapper;
-import com.meta.mapper.TbCodeMapper;
+import com.meta.mapper.dbio.TbCodeGroupMapper;
+import com.meta.mapper.dbio.TbCodeMapper;
+import com.meta.mapper.meta.CodeMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -29,9 +30,10 @@ import java.util.List;
 @Service
 public class CodeService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private TbCodeMapper tbCodeMapper;
+    @Autowired
+    private CodeMapper codeMapper;
     @Autowired
     private TbCodeGroupMapper tbCodeGroupMapper;
 
@@ -41,15 +43,17 @@ public class CodeService {
      *@ NAME : 상세코드 목록 조회
      */
     public List<TbCodeDto> getListData(TbCodeDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return tbCodeMapper.getListData(inputDto);
     }
 
     /**
-     *@ ID    : getAllData
-     *@ NAME  : 상세코드 combo 조회
+     *@ ID    : getCodeAllData
+     *@ NAME  : 상세코드 그룹 조회
      */
     public List<TbCodeDto> getCodeAllData(TbCodeDto inputDto)  {
-        return tbCodeMapper.getAllData(inputDto);
+        log.debug(BizUtils.logInfo());
+        return codeMapper.getGrpData(inputDto);
     }
 
     /**
@@ -57,6 +61,7 @@ public class CodeService {
      *@ NAME     : 상세코드 조회
      */
     public TbCodeDto getData(TbCodeDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return tbCodeMapper.getData(inputDto);
     }
 
@@ -71,7 +76,7 @@ public class CodeService {
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
-                if (outputDto != null) {
+                if (outputDto  != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
                 if (tbCodeMapper.insertData(inputDto) == 0) {
@@ -105,6 +110,7 @@ public class CodeService {
      * @ NAME : 상세코드 엑셀업로드
      */
     public List<TbCodeDto> parsePreview(MultipartFile file) throws Exception {
+        log.debug(BizUtils.logInfo());
         List<TbCodeDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
@@ -137,12 +143,13 @@ public class CodeService {
         if (dto.getGrpCd() == null || dto.getGrpCd().isEmpty()) return "공통코드 누락";
         if (dto.getCd() == null || dto.getCd().isEmpty()) return "상세코드 누락";
         // DB 중복 체크
-        int exists = tbCodeMapper.countCode(dto);
+        int exists = tbCodeMapper.countData(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return null;  // 정상
     }
 
     public int saveUploaded(List<TbCodeDto> list) {
+        log.debug(BizUtils.logInfo());
         int count = 0;
         for (TbCodeDto dto : list) {
             if(StringUtils.equals(dto.getSttsCd(), "1")) {

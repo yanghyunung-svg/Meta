@@ -5,7 +5,7 @@ import com.meta.common.constants.ResponseCode;
 import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbHldyInfDto;
-import com.meta.mapper.TbHldyInfMapper;
+import com.meta.mapper.dbio.TbHldyInfMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -35,8 +35,7 @@ public class HldyService {
      * desc     : 휴일정보기본 목록 조회
      */
     public List<TbHldyInfDto> getListData(TbHldyInfDto inputDto)  {
-
-
+        log.debug(BizUtils.logInfo());
         return tbHldyInfMapper.getListData(inputDto);
     }
 
@@ -58,6 +57,7 @@ public class HldyService {
      * desc     : 휴일정보기본 상세 조회
      */
     public TbHldyInfDto getData(TbHldyInfDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return tbHldyInfMapper.getData(inputDto);
     }
 
@@ -72,7 +72,7 @@ public class HldyService {
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
-                if (outputDto != null) {
+                if (outputDto  != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
                 if (tbHldyInfMapper.insertData(inputDto) == 0) {
@@ -105,6 +105,7 @@ public class HldyService {
      * @ NAME : 휴일정보 엑셀업로드
      */
     public List<TbHldyInfDto> parsePreview(MultipartFile file) throws Exception {
+        log.debug(BizUtils.logInfo());
         List<TbHldyInfDto> result = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
@@ -136,12 +137,13 @@ public class HldyService {
         if (dto.getHldySeCd() == null || dto.getHldySeCd().isEmpty()) return "휴일구분코드 누락";
         if (dto.getDowSeCd() == null || dto.getDowSeCd().isEmpty()) return "요일코드 누락";
         // DB 중복 체크
-        int exists = tbHldyInfMapper.countCode(dto);
+        int exists = tbHldyInfMapper.countData(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return "0";  // 정상
     }
 
     public int saveUploaded(List<TbHldyInfDto> list) {
+        log.debug(BizUtils.logInfo());
         int count = 0;
         for (TbHldyInfDto dto : list) {
             if(StringUtils.equals(dto.getSttsCd(), "0")) {

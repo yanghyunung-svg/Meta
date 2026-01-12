@@ -1,4 +1,4 @@
-package com.meta.mapper;
+package com.meta.mapper.dbio;
 
 import com.meta.dto.TbCodeGroupDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,5 +21,5 @@ public interface TbCodeGroupMapper {
     public int updateData(TbCodeGroupDto tbCodeGroupDto);
     public int deleteData(TbCodeGroupDto tbCodeGroupDto);
     public List<TbCodeGroupDto> getListData(TbCodeGroupDto tbCodeGroupDto);
-    public int countCode(TbCodeGroupDto tbCodeGroupDto);
+    public int countData(TbCodeGroupDto tbCodeGroupDto);
 }

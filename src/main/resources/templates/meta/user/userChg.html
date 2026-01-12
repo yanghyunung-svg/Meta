@@ -133,7 +133,7 @@
                 // null/undefined 값을 빈 문자열과 동일하게 취급하여 오탐 방지
                 const orgVal = originalData[key] == null ? "" : String(originalData[key]);
                 const curVal = current[key] == null ? "" : String(current[key]);
-                return orgVal !== curVal;
+                return orgVal  !== curVal;
             });
             btnSave.disabled = !isDirty;
         };
@@ -205,7 +205,7 @@
              }
 
              // 2. 새 비밀번호 일치 확인
-             if (newPass !== confirmPass) {
+             if (newPass  !== confirmPass) {
                  alert("새 비밀번호 확인이 일치하지 않습니다.");
                  return;
              }
@@ -247,8 +247,8 @@
 
         // 부모창(리스트)에서 데이터 수신
         window.addEventListener("message", async (event) => {
-            if (event.origin !== window.location.origin) return;
-            if (!event.data || typeof event.data !== "object") return;
+            if (event.origin  !== window.location.origin) return;
+            if (!event.data || typeof event.data  !== "object") return;
 
             const { userId, mode } = event.data;
             if (!userId) return;

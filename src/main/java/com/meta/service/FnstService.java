@@ -6,7 +6,7 @@ import com.meta.common.constants.ResponseCode;
 import com.meta.common.exception.BizException;
 import com.meta.common.util.BizUtils;
 import com.meta.dto.TbFnstCdInfoDto;
-import com.meta.mapper.TbFnstCdInfoMapper;
+import com.meta.mapper.dbio.TbFnstCdInfoMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -28,7 +28,6 @@ import java.util.List;
 @Service
 public class FnstService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private TbFnstCdInfoMapper fnstMapper;
 
@@ -36,7 +35,8 @@ public class FnstService {
      * method   : getListData
      * desc     : 금융기관코드 목록 조회
      */
-    public List<TbFnstCdInfoDto> getListData(TbFnstCdInfoDto inputDto)  {
+    public List<TbFnstCdInfoDto> getListData(TbFnstCdInfoDto inputDto) {
+        log.debug(BizUtils.logInfo());
         return fnstMapper.getListData(inputDto);
     }
 
@@ -45,6 +45,7 @@ public class FnstService {
      * desc     : 금융기관코드 상세 조회
      */
     public TbFnstCdInfoDto getData(TbFnstCdInfoDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         return fnstMapper.getData(inputDto);
     }
 
@@ -59,7 +60,7 @@ public class FnstService {
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
-                if (outputDto != null) {
+                if (outputDto  != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
                 if (fnstMapper.insertData(inputDto) == 0) {
@@ -89,6 +90,7 @@ public class FnstService {
     }
 
     public List<TbFnstCdInfoDto> uploadPreview(MultipartFile file) throws Exception {
+        log.debug(BizUtils.logInfo());
         List<TbFnstCdInfoDto> result = new ArrayList<>();
 
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
@@ -126,16 +128,17 @@ public class FnstService {
         if (dto.getAplcnYmd() == null || dto.getAplcnYmd().isEmpty()) return "적용일자 누락";
 
         // DB 중복 체크
-        int exists = fnstMapper.countCode(dto);
+        int exists = fnstMapper.countData(dto);
         if (exists > 0) return "이미 존재하는 코드";
         return null;  // 정상
     }
 
     public int saveUploaded(List<TbFnstCdInfoDto> list)  {
+        log.debug(BizUtils.logInfo());
         int count = 0;
         for (TbFnstCdInfoDto dto : list) {
             if (StringUtils.equals(dto.getSttsCd(), "1")) {
-                int exists = fnstMapper.countCode(dto);
+                int exists = fnstMapper.countData(dto);
                 if (exists == 0) {
                     dto.setUpdId(dto.getCrtId());
                     fnstMapper.insertData(dto);

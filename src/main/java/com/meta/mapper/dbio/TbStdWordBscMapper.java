@@ -1,4 +1,4 @@
-package com.meta.mapper;
+package com.meta.mapper.dbio;
 
 import com.meta.dto.TbStdWordBscDto;
 import com.meta.dto.WordMappingDto;
@@ -24,5 +24,5 @@ public interface TbStdWordBscMapper {
     public int deleteData(TbStdWordBscDto tbStdWordBscDto);
     public List<TbStdWordBscDto> getListData(TbStdWordBscDto tbStdWordBscDto);
     public List<WordMappingDto> getAllData();
-    public int countCode(TbStdWordBscDto tbStdWordBscDto);
+    public int countData(TbStdWordBscDto tbStdWordBscDto);
 }

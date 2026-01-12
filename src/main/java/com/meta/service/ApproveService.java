@@ -1,7 +1,12 @@
 package com.meta.service;
 
+import com.meta.common.util.BizUtils;
 import com.meta.dto.*;
-import com.meta.mapper.*;
+import com.meta.mapper.dbio.TbCodeGroupMapper;
+import com.meta.mapper.dbio.TbStdDmnBscMapper;
+import com.meta.mapper.dbio.TbStdTermBscMapper;
+import com.meta.mapper.dbio.TbStdWordBscMapper;
+import com.meta.mapper.meta.ApproveMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +45,14 @@ public class ApproveService {
      * @ NAME     : 상태변경처리
      */
     public ApproveDto prcsAprvDsctn(ApproveDto inputDto)  {
+        log.debug(BizUtils.logInfo());
         ApproveDto outputDto = new ApproveDto();
         switch (inputDto.getSe()) {
         case "1":
             TbStdTermBscDto termIn = new TbStdTermBscDto();
             termIn.setTrmNm(inputDto.getKorNm());
             TbStdTermBscDto termOut = termMapper.getLockData(termIn);
-            if (termOut != null) {
+            if (termOut  != null) {
                 termOut.setSttsCd(inputDto.getSttsCd());
                 termOut.setUpdId(inputDto.getUserId());
                 termMapper.updateData(termOut);
@@ -56,7 +62,7 @@ public class ApproveService {
             TbStdWordBscDto wordIn = new TbStdWordBscDto();
             wordIn.setId(inputDto.getId());
             TbStdWordBscDto wordOut = wordMapper.getLockData(wordIn);
-            if (wordOut != null) {
+            if (wordOut  != null) {
                 wordOut.setSttsCd(inputDto.getSttsCd());
                 wordOut.setUpdId(inputDto.getUserId());
                 wordMapper.updateData(wordOut);
@@ -66,7 +72,7 @@ public class ApproveService {
             TbStdDmnBscDto dmnIn = new TbStdDmnBscDto();
             dmnIn.setDmnNm(inputDto.getKorNm());
             TbStdDmnBscDto dmnOut = dmnMapper.getLockData(dmnIn);
-            if (dmnOut != null) {
+            if (dmnOut  != null) {
                 dmnOut.setSttsCd(inputDto.getSttsCd());
                 dmnOut.setUpdId(inputDto.getUserId());
                 dmnMapper.updateData(dmnOut);
@@ -76,7 +82,7 @@ public class ApproveService {
             TbCodeGroupDto codeIn = new TbCodeGroupDto();
             codeIn.setGrpCd(inputDto.getKorNm());
             TbCodeGroupDto codeOut = tbCodeGroupMapper.getLockData(codeIn);
-            if (codeOut != null) {
+            if (codeOut  != null) {
                 codeOut.setSttsCd(inputDto.getSttsCd());
                 codeOut.setUpdId(inputDto.getUserId());
                 tbCodeGroupMapper.updateData(codeOut);

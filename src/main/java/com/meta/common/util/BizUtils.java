@@ -54,7 +54,7 @@ public class BizUtils {
             field.setAccessible(true); // private 필드 접근 허용
             try {
                 Object value = field.get(obj);
-                if (value != null) {
+                if (value  != null) {
                     if (field.getName().length() < 30) iSize = 30 - field.getName().length();
                     sb.append(field.getName()).append(" ".repeat(iSize)).append(": [").append(value).append("]\n");
                 }
@@ -73,7 +73,7 @@ public class BizUtils {
         String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1); 
         String methodName = caller.getMethodName(); 
         int lineNumber = caller.getLineNumber();
-        return String.format("[03%d] ✅●●●●● %s.%s", lineNumber, className, methodName);
+        return String.format("✅●●●●● %s.%s [03%d] ", className, methodName, lineNumber);
     }
 
     public static String logInfo(String str) {
@@ -83,7 +83,7 @@ public class BizUtils {
         String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1); 
         String methodName = caller.getMethodName(); 
         int lineNumber = caller.getLineNumber();
-        return String.format("[%03d] ✅●●●●● %s.%s : %s", lineNumber, className, methodName, str);
+        return String.format("✅●●●●● %s.%s [%03d] %s", className, methodName, lineNumber, str);
     }
 
     public static String logInfo(String ke,  String va) {
@@ -93,7 +93,7 @@ public class BizUtils {
         String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1); 
         String methodName = caller.getMethodName(); 
         int lineNumber = caller.getLineNumber();
-        return String.format("[%03d] ✅●●●●● %s.%s : %s = [%s]", lineNumber, className, methodName, ke, va);
+        return String.format("✅●●●●● %s.%s [%03d] %s = [%s]", className, methodName, lineNumber, ke, va);
     }
 
     public static String getClientIp(HttpServletRequest request) {
@@ -108,7 +108,7 @@ public class BizUtils {
 
         for (String header : headerKeys) {
             String ip = request.getHeader(header);
-            if (ip != null && ip.length() > 0 && !"unknown".equalsIgnoreCase(ip)) {
+            if (ip  != null && ip.length() > 0 && !"unknown".equalsIgnoreCase(ip)) {
                 // 다중 프록시 대응
                 return ip.split(",")[0].trim();
             }
