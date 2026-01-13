@@ -5,7 +5,7 @@ async function updateSessionTimer() {
     let sec = data.remaining;
 
     if (sec <= 0) {
-        alert('세션이 만료되었습니다.');
+        myAlert('세션이 만료되었습니다.');
         location.href = '/login?expired=true';
         return;
     }

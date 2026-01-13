@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadHeader();
     loadSidebar();
-    loadFooter();
+//    loadFooter();
 });
 
 function loadHeader() {
@@ -122,7 +122,7 @@ function openWindowWithJSON(sendData, url, width, height) {
     popupWin = window.open(url, 'MetaSystemPopup', features);
 
     if (!popupWin) {
-        alert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
+        myAlert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
         return;
     }
 
@@ -150,5 +150,3 @@ function receiveUser(id, nm) {
     document.getElementById("userId").value = id;
     document.getElementById("userNm").value = nm;
 }
-
-

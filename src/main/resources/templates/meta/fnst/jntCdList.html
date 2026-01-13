@@ -7,7 +7,7 @@
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
-    <script src="/js/excelUtils.js" defer></script>
+
 
 </head>
 <body>
@@ -106,7 +106,7 @@
                 });
             });
 
-        /** 테이블 렌더링 **/
+
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
                 return;
@@ -134,7 +134,7 @@
                 </tr>
             `).join('');
 
-            /** 상세 클릭  **/
+
             tableBody.addEventListener("dblclick", e => {
                 const tr = e.target.closest(".row-click");
                 if (!tr) return;
@@ -161,7 +161,7 @@
             window.updateRowDataFlexible(data, 'jntCd', refreshMap);
         }
 
-        /** 검색 **/
+
         document.getElementById('btnSearch').addEventListener('click', () => {
 
             initScreen();
@@ -197,23 +197,23 @@
                 updatePageInfo(dataAll, currentPage, PAGE_SIZE);
             })
             .catch(err => {
-                alert("에러 발생: " + err);
+                myAlert("에러 발생: " + err);
             });
         });
     });
 
-    /** 초기화 **/
+
     document.getElementById('btnInit').addEventListener('click', () => {
         document.getElementById('mainForm').reset();
         initScreen();
     });
 
-    /** 등록 **/
+
     document.getElementById('btnReg').addEventListener('click', () => {
         const sendData = { mode: "I"};
         openWindowWithJSON(sendData, "/meta/fnst/jntCdMng", 1000, 750);
     });
-    /**  일괄등록 **/
+
     document.getElementById('btnRegEblc').addEventListener('click', () => {
         window.location.href = "/meta/fnst/jntCdRegEblc";
     });

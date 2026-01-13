@@ -89,7 +89,7 @@
                 </table>
 
 
-                <div class="msgInfo"> <span id="msgInfo"></span>   </div>
+                <!--  <div class="msgInfo"> <span id="msgInfo"></span>   </div> -->
             </form>
     </div>
 <script>
@@ -139,7 +139,7 @@
                         originalData = data;    if (btnDelete) {
                             btnDelete.disabled = (role  !== '0');
                         }} catch (err) {
-                        msgEvents("상세 데이터 조회 중 오류가 발생했습니다.");
+                        myAlert("상세 데이터 조회 중 오류가 발생했습니다.");
                     }
                 })();
                 btnChange.disabled = true;
@@ -181,13 +181,13 @@
             let inData = formToJson(mainForm);
 
             if (!inData.grpCd.trim()) {
-                msgEvents("그룹코드를 입력하세요.");
+                myAlert("그룹코드를 입력하세요.");
                 mainForm.grpCd.focus();
                 return;
             }
 
             if (!inData.cd.trim()) {
-                msgEvents("상세코드를 입력하세요.");
+                myAlert("상세코드를 입력하세요.");
                 mainForm.cd.focus();
                 return;
             }
@@ -209,12 +209,12 @@
                 mainForm.cd.value = inData.cd;
                 mainForm.cdNm.focus();
                 btnReg.disabled = false;
-                msgEvents( "등록 가능합니다");
+                myAlert( "등록 가능합니다");
             } else {
                 const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
                 btnReg.disabled = true;
-                msgEvents( "이미 등록되어 있습니다");
+                myAlert( "이미 등록되어 있습니다");
             }
         });
 
@@ -250,7 +250,9 @@
 
         // 삭제 버튼
         btnDelete.addEventListener("click", async () => {
-            if (!confirm("삭제하시겠습니까?")) return;
+
+            const isConfirmed = await myConfirm("정말로 삭제하시겠습니까?");
+            if (!isConfirmed) { return; }
             let data = formToJson(mainForm);
             data.func = "D";
             manageProcess(data);
@@ -263,7 +265,7 @@
             btnChange.disabled = true;
             btnDelete.disabled = true;
             btnCheck.disabled = true;
-            msgEvents("");
+
             document.getElementById("grpCd").focus();
         });
 
@@ -291,17 +293,17 @@
 
             const result = await res.json();
             if (result.success) {
-                msgEvents("처리 되었습니다.");
+                myAlert("처리 되었습니다.");
                 if (window.opener && typeof window.opener.refreshParentRow === 'function') {
                     window.opener.refreshParentRow(data);
                 }
                 window.close();
             } else {
-                msgEvents("오류: " + result.message);
+                myAlert("오류: " + result.message);
             }
 
         } catch (err) {
-            msgEvents("처리중 오류가 발생했습니다.");
+            myAlert("처리중 오류가 발생했습니다.");
         }
     }
 

@@ -7,7 +7,7 @@
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
-    <script src="/js/excelUtils.js" defer></script>
+
 
 </head>
 <body>
@@ -63,7 +63,6 @@
         </table>
     </div>
 </div>
-
 <script>
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -72,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentPage = 1;
 
     window.tableBody = document.getElementById("mainTable").querySelector('tbody');
+
     const container = document.getElementById("pageInfoContainer");
     if (!container) return;
 
@@ -79,16 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(res => res.text())
     .then(html => {
         container.innerHTML = html;
-        const pageSizeSelect = document.getElementById("pageSize");
-        if (!pageSizeSelect) return;
-
-        pageSizeSelect.addEventListener("change", () => {
-            PAGE_SIZE = Number(pageSizeSelect.value);
-            currentPage = 1;
-            renderTable(currentPage);
-            renderPagination(dataAll, currentPage, PAGE_SIZE);
-            updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-        });
     });
 
     // 조회결과
@@ -112,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </tr>
         `).join('');
 
-        /** 상세 클릭  **/
+
         tableBody.addEventListener("dblclick", e => {
             const tr = e.target.closest(".row-click");
             if (!tr) return;
@@ -131,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.updateRowDataFlexible(data, 'trmNm', refreshMap);
     }
 
-    /** 조회 **/
+
     document.getElementById('btnSearch').addEventListener('click', () => {
         initScreen();
 
@@ -146,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             dataAll = Array.isArray(data) ? data : [];
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
+                myAlert("조회 결과가 없습니다.");
                 return
             }
             currentPage = 1;
@@ -155,22 +145,22 @@ document.addEventListener("DOMContentLoaded", () => {
             updatePageInfo(dataAll, currentPage, PAGE_SIZE);
         })
         .catch(err => {
-            alert("에러 발생: " + err);
+            myAlert("에러 발생: " + err);
         });
     });
 
-    /** 초기화 **/
+
     document.getElementById('btnInit').addEventListener('click', () => {
         document.getElementById('mainForm').reset();
         initScreen();
     });
 
-    /** 등록 **/
+
     document.getElementById('btnReg').addEventListener('click', () => {
         const sendData = { mode: "I"};
         openWindowWithJSON(sendData, "/meta/term/termMng", 800, 800);
     });
-    /**  일괄등록 **/
+
     document.getElementById('btnRegEblc').addEventListener('click', () => {
         window.location.href = "/meta/term/termRegEblc";
     });

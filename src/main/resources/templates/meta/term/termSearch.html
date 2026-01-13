@@ -7,7 +7,7 @@
     <script src="/js/sideLayout.js" defer></script>
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
-    <script src="/js/excelUtils.js" defer></script>
+
     <script src="/js/sessionTimer.js"></script>
 </head>
 <body>
@@ -102,7 +102,7 @@
             const result = await res.json();
 
             if (!result.success) {
-                alert("오류: " + result.message);
+                myAlert("오류: " + result.message);
                 return;
             }
 
@@ -110,7 +110,7 @@
             window.uploadPreviewData = result.data;
 
         } catch (error) {
-            alert("업로드 중 오류가 발생했습니다.");
+            myAlert("업로드 중 오류가 발생했습니다.");
         } finally {
             hideLoading();
         }
@@ -119,7 +119,7 @@
     document.getElementById('btnVal').addEventListener('click', async () => {
         if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
             btnExcelDownload.disabled = false;
-            alert("데이터가 없습니다.");
+            myAlert("데이터가 없습니다.");
             return;
         }
 
@@ -133,7 +133,7 @@
             const result = await res.json();
 
             if (!result.success) {
-                alert("오류: " + result.message);
+                myAlert("오류: " + result.message);
                 return;
             }
 
@@ -155,7 +155,7 @@
 
         } catch(err) {
             console.error(err);
-            alert("처리 중 오류 발생");
+            myAlert("처리 중 오류 발생");
         }
     });
 

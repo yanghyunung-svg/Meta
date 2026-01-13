@@ -108,7 +108,7 @@
             const inData = formToJson(mainForm);
 
             if (!inData.userId || !inData.userId.trim()) {
-                alert("사용자ID를 입력하세요.");
+                myAlert("사용자ID를 입력하세요.");
                 mainForm.userId.focus();
                 return;
             }
@@ -123,14 +123,14 @@
 
             const textData = await res.text();
             if (!textData) {
-                alert("등록 가능합니다");
+                myAlert("등록 가능합니다");
                 mainForm.reset();
                 document.getElementById("userId").value = inData.userId;
                 mainForm.userNm.focus();
                 btnSave.disabled = false;
                 btnCheck.disabled = true;
             } else {
-                alert("이미 등록되어 있습니다");
+                myAlert("이미 등록되어 있습니다");
                 const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
                 btnSave.disabled = true;
@@ -152,23 +152,23 @@
             }
 
             if (!data.userId.trim()) {
-                alert("사용자ID를 입력하세요.");
+                myAlert("사용자ID를 입력하세요.");
                 mainForm.userId.focus();
                 return;
             }
             if (!data.userNm.trim()) {
-                alert("사용자명을 입력하세요.");
+                myAlert("사용자명을 입력하세요.");
                 mainForm.userNm.focus();
                 return;
             }
             if (!data.password.trim()) {
-                alert("비밀번호를 입력하세요.");
+                myAlert("비밀번호를 입력하세요.");
                 mainForm.password.focus();
                 return;
             }
 
             if (data.password.trim()  !== data.confirmPassword.trim()) {
-                alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+                myAlert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
                 return;
             }
 
@@ -184,16 +184,16 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    alert("저장되었습니다.");
+                    myAlert("저장되었습니다.");
                     document.getElementById('mainForm').reset();
                     window.close();
                 } else {
-                    alert("오류: " + result.message);
+                    myAlert("오류: " + result.message);
                 }
 
             } catch (err) {
                 console.error(err);
-                alert("요청 중 오류가 발생했습니다.");
+                myAlert("요청 중 오류가 발생했습니다.");
             }
         });
 

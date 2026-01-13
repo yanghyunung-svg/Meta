@@ -12,16 +12,11 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 표준단어 </h2>
         <div class="button-group">
-            <button id="btnReg" type="button" class="btn">등록
-            </button>
-            <button id="btnChange" type="button" class="btn">변경
-            </button>
-            <button id="btnDelete" type="button" class="btn">삭제
-            </button>
-            <button id="btnInit" type="button" class="btn">초기화
-            </button>
-            <button id="btnClose" type="button" class="btn">닫기
-            </button>
+            <button id="btnReg" type="button" class="btn">등록</button>
+            <button id="btnChange" type="button" class="btn">변경</button>
+            <button id="btnDelete" type="button" class="btn">삭제</button>
+            <button id="btnInit" type="button" class="btn">초기화</button>
+            <button id="btnClose" type="button" class="btn">닫기</button>
         </div>
     </div> 
             <form id="mainForm">
@@ -82,7 +77,7 @@
                 </table>
 
 
-                <div class="msgInfo"> <span id="msgInfo"></span>   </div>
+                <!--  <div class="msgInfo"> <span id="msgInfo"></span>   </div> -->
             </form>
     </div>
 <script>
@@ -124,7 +119,7 @@
                         originalData = data;    if (btnDelete) {
                             btnDelete.disabled = (role  !== '0');
                         }} catch (err) {
-                        msgEvents("상세 데이터 조회 중 오류가 발생했습니다.");
+                        myAlert("상세 데이터 조회 중 오류가 발생했습니다.");
                     }
                 })();
 
@@ -160,7 +155,7 @@
        btnCheck.addEventListener('click', async () => {
             let inData = formToJson(mainForm);
             if (!inData.wordNm.trim()) {
-                msgEvents("단어명을 입력하세요.");
+                myAlert("단어명을 입력하세요.");
                 mainForm.wordNm.focus();
                 return;
             }
@@ -177,13 +172,15 @@
                 mainForm.wordNm.value = inData.wordNm;
                 mainForm.engAbbrNm.focus();
                 btnReg.disabled = false;
-                msgEvents( "등록 가능합니다");
+                myAlert( "등록 가능합니다");
             } else {
                 const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
                 btnReg.disabled = true;
-                msgEvents( "이미 등록되어 있습니다");
-                if (!confirm("등록하시겠습니까?")) return;
+
+                const isConfirmed = await myConfirm("등록된 단어가 있습니다 동음이의어로 등록하시겠습니까?");
+                if (!isConfirmed) { return; }
+
                 btnReg.disabled = false;
                 mainForm.reset();
                 mainForm.wordNm.value = inData.wordNm;
@@ -223,7 +220,9 @@
 
         // 삭제 버튼
         btnDelete.addEventListener("click", async () => {
-            if (!confirm("삭제하시겠습니까?")) return;
+
+            const isConfirmed = await myConfirm("정말로 삭제하시겠습니까?");
+            if (!isConfirmed) { return; }
             let data = formToJson(mainForm);
             data.func = "D";
             manageProcess(data);
@@ -236,7 +235,7 @@
             btnChange.disabled = true;
             btnDelete.disabled = true;
             btnCheck.disabled = true;
-            msgEvents("");
+
             document.getElementById("wordNm").focus();
         });
 
@@ -264,17 +263,17 @@
 
             const result = await res.json();
             if (result.success) {
-                msgEvents("처리 되었습니다.");
                 if (window.opener && typeof window.opener.refreshParentRow === 'function') {
                     window.opener.refreshParentRow(data);
                 }
+                myAlert("처리 되었습니다.");
                 window.close();
             } else {
-                msgEvents("오류: " + result.message);
+                myAlert("오류: " + result.message);
             }
 
         } catch (err) {
-            msgEvents("처리중 오류가 발생했습니다.");
+            myAlert("처리중 오류가 발생했습니다.");
         }
     }
 

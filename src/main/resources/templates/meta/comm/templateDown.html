@@ -51,7 +51,7 @@
         document.getElementById('btnExcel').addEventListener('click', () => {
             const name = document.getElementById('name').value.trim();
             if (!name) {
-                alert("종류를 선택하세요");
+                myAlert("종류를 선택하세요");
                 return;
             }
             window.location.href = "/meta/" + name;

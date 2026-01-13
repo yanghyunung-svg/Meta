@@ -93,7 +93,7 @@
         document.getElementById("startDate").value = d.start;
         document.getElementById("endDate").value = d.end;
 
-        // 페이지 탑바 container에 include
+
         const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
@@ -112,7 +112,7 @@
             });
         });
 
-        /** 테이블 렌더링 **/
+
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
                 return;
@@ -136,7 +136,7 @@
             `).join('');
         }
 
-        /** 초기화 **/
+
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
 
@@ -147,7 +147,7 @@
             initScreen();
         });
 
-        /** 검색 **/
+
         document.getElementById('btnSearch').addEventListener('click', () => {
             initScreen();
             const formData = formToJson(document.getElementById('mainForm'));
@@ -166,7 +166,7 @@
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
                 if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                    document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
+                    myAlert("조회 결과가 없습니다.");
                     return
                 }
                 currentPage = 1;
@@ -175,7 +175,7 @@
                 updatePageInfo(dataAll, currentPage, PAGE_SIZE);
             })
             .catch(err => {
-                alert("에러 발생: " + err);
+                myAlert("에러 발생: " + err);
             });
         });
 

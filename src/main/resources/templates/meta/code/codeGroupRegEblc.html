@@ -66,7 +66,7 @@
                 const result = await res.json();
 
                 if (!result.success) {
-                    alert("오류: " + result.message);
+                    myAlert("오류: " + result.message);
                     return;
                 }
 
@@ -76,7 +76,7 @@
                 document.getElementById("btnUploadSave").disabled = false;
 
             } catch (error) {
-                alert("업로드 중 오류가 발생했습니다.");
+                myAlert("업로드 중 오류가 발생했습니다.");
             } finally {
                 hideLoading();
             }
@@ -113,11 +113,12 @@
 
         document.getElementById("btnUploadSave").addEventListener("click", async () => {
             if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
-                alert("업로드된 데이터가 없습니다.");
+                myAlert("업로드된 데이터가 없습니다.");
                 return;
             }
 
-            if (!confirm("검증된 데이터를 저장하시겠습니까?")) return;
+            const isConfirmed = await myConfirm("검증된 데이터를 저장하시겠습니까?");
+            if (!isConfirmed) { return; }
 
             try {
                 showLoading("데이터 저장...");
@@ -130,15 +131,15 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    alert(result.count + "건 저장되었습니다.");
+                    myAlert(result.count + "건 저장되었습니다.");
                     initView();
 
                 } else {
-                    alert("오류: " + result.message);
+                    myAlert("오류: " + result.message);
                 }
 
             } catch(err) {
-                alert("저장 중 오류 발생");
+                myAlert("저장 중 오류 발생");
             } finally {
                 hideLoading();
             }

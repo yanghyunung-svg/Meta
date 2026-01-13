@@ -79,7 +79,7 @@
                 });
             });
 
-        /** 테이블 렌더링 **/
+
         window.renderTable = function(page)  {
             if (!Array.isArray(dataAll) || dataAll.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
@@ -114,7 +114,7 @@
         }
 
 
-        /** 초기화 **/
+
         document.getElementById('btnInit').addEventListener('click', () => {
             document.getElementById('mainForm').reset();
             tableBody.innerHTML = "";
@@ -124,7 +124,7 @@
             if (old) old.remove();
         });
 
-        /** 검색 **/
+
         document.getElementById('btnSearch').addEventListener('click', () => {
             const userId = document.querySelector("#userId").value.trim();
             const userNm = document.querySelector("#userNm").value.trim();
@@ -142,7 +142,7 @@
                 updatePageInfo(dataAll, currentPage, PAGE_SIZE);
             })
             .catch(err => {
-                alert("에러 발생: " + err);
+                myAlert("에러 발생: " + err);
             });
         });
         document.getElementById("btnClose").addEventListener("click", () => {

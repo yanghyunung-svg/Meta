@@ -13,16 +13,11 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 표준용어</h2>
         <div class="button-group">
-            <button id="btnReg" type="button" class="btn">등록
-            </button>
-            <button id="btnChange" type="button" class="btn">변경
-            </button>
-            <button id="btnDelete" type="button" class="btn">삭제
-            </button>
-            <button id="btnInit" type="button" class="btn">초기화
-            </button>
-            <button id="btnClose" type="button" class="btn">닫기
-            </button>
+            <button id="btnReg" type="button" class="btn">등록</button>
+            <button id="btnChange" type="button" class="btn">변경</button>
+            <button id="btnDelete" type="button" class="btn">삭제</button>
+            <button id="btnInit" type="button" class="btn">초기화</button>
+            <button id="btnClose" type="button" class="btn">닫기</button>
         </div>
     </div>
     
@@ -77,7 +72,7 @@
                     <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
             </tr>
         </table>
-        <div class="msgInfo"> <span id="msgInfo"></span>   </div>
+        <!--  <div class="msgInfo"> <span id="msgInfo"></span>   </div> -->
         </form>
     </div>
 <script>
@@ -124,7 +119,7 @@
                         originalData = data;    if (btnDelete) {
                             btnDelete.disabled = (role  !== '0');
                         }} catch (err) {
-                        msgEvents("상세 데이터 조회 중 오류가 발생했습니다.");
+                        myAlert("상세 데이터 조회 중 오류가 발생했습니다.");
                     }
                 })();
 
@@ -158,6 +153,9 @@
 
         // 변경 버튼
         btnChange.addEventListener("click", async () => {
+            const isConfirmed = await myConfirm("정말로 변경하시겠습니까?");
+            if (!isConfirmed) { return; }
+
             let data = formToJson(mainForm);
             data = addUserAuditFields(data);
             data.func = "U";
@@ -168,8 +166,13 @@
 <!--                { value: data.dmnNm,  message: '도메인명은 필수 입력 항목입니다.', element: mainForm.dmnNm },-->
                 { value: data.sttsCd.trim(),  message: '상태코드는 필수 입력 항목입니다.', element: mainForm.sttsCd }
             ]);
-
             if (!ok) return;
+
+            if (window.KOR.test(data.engNm)) {
+                myAlert("영문명에는 한글을 입력할 수 없습니다.");
+                mainForm.engNm.focus();
+                return;
+            }
 
             try {
                 const res = await fetch("/meta/manageTermData", {
@@ -180,25 +183,25 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    msgEvents("변경되었습니다.");
                     if (window.opener && typeof window.opener.refreshParentRow === 'function') {
                         window.opener.refreshParentRow(data);
                     }
                     window.close();
                 } else {
-                    msgEvents("오류: " + result.message);
+                    myAlert("오류: " + result.message);
                 }
 
             } catch (err) {
                 console.error(err);
-                msgEvents("요청 중 오류가 발생했습니다.");
+                myAlert("요청 중 오류가 발생했습니다.");
             }
         });
 
         // 삭제 버튼
         btnDelete.addEventListener("click", async () => {
 
-            if (!confirm("삭제하시겠습니까?")) return;
+            const isConfirmed = await myConfirm("정말로 삭제하시겠습니까?");
+            if (!isConfirmed) { return; }
 
             let data = formToJson(mainForm);
             data.func = "D";
@@ -211,18 +214,17 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    msgEvents("삭제되었습니다.");
                     if (window.opener && typeof window.opener.refreshParentRow === 'function') {
                         window.opener.refreshParentRow(data);
                     }
                     window.close();
                 } else {
-                    msgEvents("오류: " + result.message);
+                    myAlert("오류: " + result.message);
                 }
 
             } catch (err) {
                 console.error(err);
-                msgEvents("요청 중 오류가 발생했습니다.");
+                myAlert("요청 중 오류가 발생했습니다.");
             }
         });
 
@@ -231,7 +233,7 @@
             let inData = formToJson(mainForm);
 
             if (!inData.trmNm.trim()) {
-                msgEvents("용어명을 입력하세요.");
+                myAlert("용어명을 입력하세요.");
                 mainForm.trmNm.focus();
                 return;
             }
@@ -251,16 +253,16 @@
                 mainForm.trmNm.value = inData.trmNm;
                 mainForm.engNm.focus();
                 btnReg.disabled = false;
-                msgEvents( "등록 가능합니다");
+                myAlert( "등록 가능합니다");
             } else {
                 const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
                 if (mainForm.sttsCd.value === '0') {
-                    msgEvents( "등록 가능합니다");
+                    myAlert( "등록 가능합니다");
                     mainForm.engNm.focus();
                 btnReg.disabled = false;
                 } else {
-                    msgEvents("등록된 용어가 있습니다.." );
+                    myAlert("등록된 용어가 있습니다.." );
                     btnReg.disabled = true;
                 }
             }
@@ -283,7 +285,7 @@
             if (!ok) return;
 
             if (window.KOR.test(data.engNm)) {
-                alert("영문명에는 한글을 입력할 수 없습니다.");
+                myAlert("영문명에는 한글을 입력할 수 없습니다.");
                 mainForm.engNm.focus();
                 return;
             }
@@ -298,14 +300,14 @@
 
                 const result = await res.json();
                 if (result.success) {
-                    msgEvents("저장되었습니다.");
+                    myAlert("저장되었습니다.");
                     window.close();
                 } else {
-                    msgEvents("오류: " + result.message);
+                    myAlert("오류: " + result.message);
                 }
 
             } catch (err) {
-                msgEvents("요청 중 오류가 발생했습니다.");
+                myAlert("요청 중 오류가 발생했습니다.");
             }
         });
 
@@ -316,7 +318,7 @@
             btnReg.disabled = true;
             btnChange.disabled = true;
             btnCheck.disabled = true;
-            msgEvents("");
+<!--               -->
             document.getElementById("trmNm").focus();
         });
 

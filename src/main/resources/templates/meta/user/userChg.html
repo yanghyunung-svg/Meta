@@ -153,12 +153,12 @@
             let data = formToJson(mainForm);
 
             if (!data.phone.trim()) {
-                alert("전화번호를 입력하세요.");
+                myAlert("전화번호를 입력하세요.");
                 mainForm.phone.focus();
                 return;
             }
             if (!data.userNm.trim()) {
-                alert("사용자명을 입력하세요.");
+                myAlert("사용자명을 입력하세요.");
                 mainForm.userNm.focus();
                 return;
             }
@@ -176,16 +176,16 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    alert("성공적으로 변경되었습니다.");
+                    myAlert("성공적으로 변경되었습니다.");
                     if (window.opener && typeof window.opener.refreshParentRow === 'function') {
                         window.opener.refreshParentRow(data);
                     }
                     window.close();
                 } else {
-                    alert("변경 실패: " + result.message);
+                    myAlert("변경 실패: " + result.message);
                 }
             } catch (err) {
-                alert("서버 통신 중 오류가 발생했습니다.");
+                myAlert("서버 통신 중 오류가 발생했습니다.");
             }
         });
 
@@ -200,19 +200,19 @@
 
              // 1. 필수 입력 항목 체크
              if (!currentPass || !newPass || !confirmPass) {
-                 alert("모든 비밀번호 항목을 입력해야 합니다.");
+                 myAlert("모든 비밀번호 항목을 입력해야 합니다.");
                  return;
              }
 
              // 2. 새 비밀번호 일치 확인
              if (newPass  !== confirmPass) {
-                 alert("새 비밀번호 확인이 일치하지 않습니다.");
+                 myAlert("새 비밀번호 확인이 일치하지 않습니다.");
                  return;
              }
 
              // 3. (추가 권장) 현재 비밀번호와 새 비밀번호 동일 여부 체크
              if (currentPass === newPass) {
-                 alert("새 비밀번호는 현재 비밀번호와 다르게 설정해야 합니다.");
+                 myAlert("새 비밀번호는 현재 비밀번호와 다르게 설정해야 합니다.");
                  return;
              }
 
@@ -232,14 +232,14 @@
                  const result = await res.json();
 
                  if (result.success) {
-                     alert("비밀번호가 성공적으로 변경되었습니다.");
+                     myAlert("비밀번호가 성공적으로 변경되었습니다.");
                      window.close();
                  } else {
-                     alert(`비밀번호 변경 실패: ${result.message || '알 수 없는 오류'}`);
+                     myAlert(`비밀번호 변경 실패: ${result.message || '알 수 없는 오류'}`);
                  }
              } catch (err) {
                  console.error(err);
-                 alert("서버와 통신 중 문제가 발생했습니다.");
+                 myAlert("서버와 통신 중 문제가 발생했습니다.");
              } finally {
                  btnPwd.disabled = false;
              }
@@ -282,7 +282,7 @@
 
             } catch (err) {
                 console.error("User Data Load Error:", err);
-                alert("데이터 로드 중 오류가 발생했습니다.");
+                myAlert("데이터 로드 중 오류가 발생했습니다.");
             }
         });
 
