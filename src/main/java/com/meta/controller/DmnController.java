@@ -23,7 +23,7 @@ import java.util.Map;
 public class DmnController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    private DmnService stdDmnBscService;
+    private DmnService dmnService;
 
     /**
      * @ ID : getDmnListData
@@ -32,7 +32,7 @@ public class DmnController {
     @PostMapping("/getDmnListData")
     @ResponseBody
     public List<TbStdDmnBscDto> getDmnListData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        return stdDmnBscService.getListData(inputDto);
+        return dmnService.getListData(inputDto);
     }
     /**
      * @ ID : getDmnComboData
@@ -40,7 +40,7 @@ public class DmnController {
      */
     @PostMapping("/getDmnComboData")
     public ResponseEntity<List<TbStdDmnBscDto>> getDmnComboData()  {
-        List<TbStdDmnBscDto> outputDto = stdDmnBscService.getDmnComboData();
+        List<TbStdDmnBscDto> outputDto = dmnService.getDmnComboData();
         return ResponseEntity.ok(outputDto);
     }
 
@@ -51,7 +51,7 @@ public class DmnController {
     @PostMapping("/getDmnData")
     @ResponseBody
     public TbStdDmnBscDto getDmnData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        return stdDmnBscService.getData(inputDto);
+        return dmnService.getData(inputDto);
     }
 
     /**
@@ -61,7 +61,7 @@ public class DmnController {
     @PostMapping("/manageDmnData")
     @ResponseBody
     public ApiResponse<Void> manageDmnData(@RequestBody TbStdDmnBscDto inputDto, HttpServletRequest request) throws Exception {
-        stdDmnBscService.manageData(inputDto);
+        dmnService.manageData(inputDto);
         return ApiResponse.success(null);
     }
 
@@ -73,7 +73,7 @@ public class DmnController {
     public ResponseEntity<Map<String, Object>> uploadDmnPreview(@RequestParam("file") MultipartFile file) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbStdDmnBscDto> list = stdDmnBscService.parsePreview(file);
+            List<TbStdDmnBscDto> list = dmnService.parsePreview(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -92,7 +92,7 @@ public class DmnController {
     public ResponseEntity<Map<String, Object>> uploadDmnExcelSave(@RequestBody List<TbStdDmnBscDto> list) {
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = stdDmnBscService.saveUploaded(list);
+            int count = dmnService.saveUploaded(list);
             res.put("success", true);
             res.put("count", count);
             return ResponseEntity.ok(res);

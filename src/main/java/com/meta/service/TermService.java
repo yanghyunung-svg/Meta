@@ -133,6 +133,7 @@ public class TermService {
         outputDto.setTrmExpln(prettyPrintKeywords(keywords));
         outputDto.setSttsCd("0");
 
+
         if (BizConstants.KOREAN_PATTERN.matcher(outTxt).find()) {
             outputDto.setSttsCd("단어미등록");
         }
@@ -146,32 +147,73 @@ public class TermService {
         List<WordMappingDto> keywords = new ArrayList<>();
         int length = compoundWord.length();
         int currentIndex = 0;
+
         while (currentIndex < length) {
+
+            char ch = compoundWord.charAt(currentIndex);
+
+            /* 1. 영문 + 숫자는 그대로 사용 (연속 묶기) */
+            if (Character.isLetterOrDigit(ch) && ch <= 127) {
+                int start = currentIndex;
+
+                while (currentIndex < length) {
+                    char c = compoundWord.charAt(currentIndex);
+                    if (!(Character.isLetterOrDigit(c) && c <= 127)) {
+                        break;
+                    }
+                    currentIndex++;
+                }
+
+                String token = compoundWord.substring(start, currentIndex);
+
+                WordMappingDto dto = new WordMappingDto();
+                dto.setKorNm(token);
+                dto.setEngNm(token); // 그대로 사용
+                keywords.add(dto);
+                continue;
+            }
+
+            /* 2. 한글 longest match */
             boolean found = false;
             for (int end = length; end > currentIndex; end--) {
+
+                char endChar = compoundWord.charAt(end - 1);
+
+                // 영문/숫자가 섞이면 한글 매핑 대상 제외
+                if (Character.isLetterOrDigit(endChar) && endChar <= 127) {
+                    continue;
+                }
+
                 String inText = compoundWord.substring(currentIndex, end);
                 String outText = this.getWordDta(inText);
-                if(!StringUtil.isNullOrEmpty(outText)) {
+
+                if (!StringUtil.isNullOrEmpty(outText)) {
                     WordMappingDto dto = new WordMappingDto();
                     dto.setKorNm(inText);
                     dto.setEngNm(outText);
                     keywords.add(dto);
+
                     currentIndex = end;
                     found = true;
                     break;
                 }
             }
+
+            /* 3. 한글 매핑 실패 시 단일 문자 */
             if (!found) {
-                String single = compoundWord.substring(currentIndex, currentIndex + 1);
                 WordMappingDto dto = new WordMappingDto();
-                dto.setKorNm(single);
-                dto.setEngNm(""); // 또는 null
+                dto.setKorNm(String.valueOf(ch));
+                dto.setEngNm("");
                 keywords.add(dto);
                 currentIndex++;
             }
         }
+
         return keywords;
     }
+
+
+
 
     private String translateToSnakeCase(List<WordMappingDto> keywords) {
         StringBuilder sb = new StringBuilder();
@@ -202,9 +244,9 @@ public class TermService {
         StringBuilder sb = new StringBuilder();
         for (WordMappingDto dto : keywords) {
             sb.append(dto.getKorNm());
-            sb.append(" = ");
+            sb.append("=");
             sb.append(dto.getEngNm()  != null ? dto.getEngNm() : "");
-            sb.append("\n");
+            sb.append(" |\n");
         }
         return sb.toString().trim();
     }

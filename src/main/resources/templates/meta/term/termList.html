@@ -51,7 +51,7 @@
         <table class="data-table" id="mainTable">
             <thead>
             <tr>
-                <th class="col-no">번호</th>
+                <th class="col-no">No</th>
                 <th width="200px">용어명</th>
                 <th width="250px">영문명</th>
                 <th>용어설명</th>
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const tr = e.target.closest(".row-click");
             if (!tr) return;
             const sendData = { mode: "S", trmNm: tr.dataset.id };
-            openWindowWithJSON(sendData, "/meta/term/termMng", 800, 700);
+            openWindowWithJSON(sendData, "/meta/term/termMng", 800, 800);
         });
     }
 
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /** 등록 **/
     document.getElementById('btnReg').addEventListener('click', () => {
         const sendData = { mode: "I"};
-        openWindowWithJSON(sendData, "/meta/term/termMng", 800, 700);
+        openWindowWithJSON(sendData, "/meta/term/termMng", 800, 800);
     });
     /**  일괄등록 **/
     document.getElementById('btnRegEblc').addEventListener('click', () => {

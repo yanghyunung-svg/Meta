@@ -24,7 +24,7 @@ import java.util.Map;
 public class WordController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    private WordService stdWordBscService;
+    private WordService wordService;
 
     /**
      * @ ID : getWordListData
@@ -33,7 +33,7 @@ public class WordController {
     @PostMapping("/getWordListData")
     @ResponseBody
     public List<TbStdWordBscDto> getWordListData(@RequestBody TbStdWordBscDto inputDto, HttpServletRequest request) throws Exception {
-        return stdWordBscService.getListData(inputDto);
+        return wordService.getListData(inputDto);
     }
 
     /**
@@ -44,10 +44,10 @@ public class WordController {
     @ResponseBody
     public TbStdWordBscDto getWordData(@RequestBody TbStdWordBscDto inputDto, HttpServletRequest request) throws Exception {
         if (StringUtil.notNullNorEmpty(inputDto.getWordNm())) {
-            return stdWordBscService.getDataByName(inputDto);
+            return wordService.getDataByName(inputDto);
         }
         else  {
-            return stdWordBscService.getData(inputDto);
+            return wordService.getData(inputDto);
         }
     }
 
@@ -58,7 +58,7 @@ public class WordController {
     @PostMapping("/manageWordData")
     @ResponseBody
     public ApiResponse<Void> manageWordData(@RequestBody TbStdWordBscDto inputDto, HttpServletRequest request) throws Exception {
-        stdWordBscService.manageData(inputDto);
+        wordService.manageData(inputDto);
         return ApiResponse.success(null);
     }
 
@@ -70,7 +70,7 @@ public class WordController {
     public ResponseEntity<Map<String, Object>> uploadwordPreview(@RequestParam("file") MultipartFile file) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbStdWordBscDto> list = stdWordBscService.parsePreview(file);
+            List<TbStdWordBscDto> list = wordService.parsePreview(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -89,7 +89,7 @@ public class WordController {
     public ResponseEntity<Map<String, Object>> uploadwordExcelSave(@RequestBody List<TbStdWordBscDto> list) {
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = stdWordBscService.saveUploaded(list);
+            int count = wordService.saveUploaded(list);
             res.put("success", true);
             res.put("count", count);
             return ResponseEntity.ok(res);

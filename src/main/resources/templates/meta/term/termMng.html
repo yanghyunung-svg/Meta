@@ -82,13 +82,8 @@
     </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-
         const role = localStorage.getItem('role');
-
         if (!document.forms.mainForm) return;
-
-        const dmnNm = document.forms.mainForm.dmnNm;
-
 
         const mainForm = document.getElementById("mainForm");
         const btnReg = document.getElementById("btnReg");
@@ -98,6 +93,8 @@
         const btnClose = document.getElementById("btnClose");
         const btnCheck = document.getElementById("btnCheck");
         const btnPopup = document.getElementById("btnPopup");
+
+        const dmnNm = document.forms.mainForm.dmnNm;
 
         btnReg.disabled = true;
         btnChange.disabled = true;
@@ -169,7 +166,7 @@
                 { value: data.engNm.trim(),  message: '영문명은 필수 입력 항목입니다.', element: mainForm.engNm },
                 { value: data.trmExpln,  message: '설명은 필수 입력 항목입니다.', element: mainForm.trmExpln },
 <!--                { value: data.dmnNm,  message: '도메인명은 필수 입력 항목입니다.', element: mainForm.dmnNm },-->
-                { value: data.stat.trim(),  message: '상태코드는 필수 입력 항목입니다.', element: mainForm.stat }
+                { value: data.sttsCd.trim(),  message: '상태코드는 필수 입력 항목입니다.', element: mainForm.sttsCd }
             ]);
 
             if (!ok) return;
@@ -239,7 +236,7 @@
                 return;
             }
 
-            const res = await fetch('/meta/getTermSplitData', {
+            const res = await fetch('/meta/getTermData', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(inData)
@@ -258,7 +255,7 @@
             } else {
                 const outData = JSON.parse(textData);
                 fillForm(mainForm, outData);
-                if (mainForm.stat.value === '0') {
+                if (mainForm.sttsCd.value === '0') {
                     msgEvents( "등록 가능합니다");
                     mainForm.engNm.focus();
                 btnReg.disabled = false;
@@ -280,7 +277,7 @@
                 { value: data.engNm.trim(),  message: '영문명은 필수 입력 항목입니다.', element: mainForm.engNm },
                 { value: data.trmExpln,  message: '설명은 필수 입력 항목입니다.', element: mainForm.trmExpln },
 <!--                { value: data.dmnNm,  message: '도메인명은 필수 입력 항목입니다.', element: mainForm.dmnNm },-->
-                { value: data.stat.trim(),  message: '상태코드는 필수 입력 항목입니다.', element: mainForm.stat }
+                { value: data.sttsCd.trim(),  message: '상태코드는 필수 입력 항목입니다.', element: mainForm.sttsCd }
             ]);
 
             if (!ok) return;

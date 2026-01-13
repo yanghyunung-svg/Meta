@@ -25,7 +25,7 @@ import java.util.Map;
 public class TermController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    private TermService stdTermBscService;
+    private TermService termService;
     @Autowired
     private TbStdTermBscMapper termMapper;
 
@@ -37,7 +37,7 @@ public class TermController {
     @ResponseBody
     public List<TbStdTermBscDto> getTermListData(@RequestBody TbStdTermBscDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo(BizUtils.logVoKey(inputDto)));
-        return stdTermBscService.getListData(inputDto);
+        return termService.getListData(inputDto);
     }
 
     /**
@@ -48,7 +48,7 @@ public class TermController {
     @ResponseBody
     public TbStdTermBscDto getTermData(@RequestBody TbStdTermBscDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo());
-        return stdTermBscService.getData(inputDto);
+        return termService.getData(inputDto);
     }
 
     /**
@@ -59,7 +59,7 @@ public class TermController {
     @ResponseBody
     public  ApiResponse<Void> manageData(@RequestBody TbStdTermBscDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo());
-        stdTermBscService.manageData(inputDto);
+        termService.manageData(inputDto);
         return ApiResponse.success(null);
     }
 
@@ -71,7 +71,7 @@ public class TermController {
     @ResponseBody
     public TbStdTermBscDto getTermSplitData(@RequestBody TbStdTermBscDto inputDto, HttpServletRequest request) throws Exception {
         log.debug(BizUtils.logInfo());
-        return stdTermBscService.getTermSplitData(inputDto);
+        return termService.getTermSplitData(inputDto);
     }
 
     @PostMapping("/uploadTermExcelOnly")
@@ -79,7 +79,7 @@ public class TermController {
         log.debug(BizUtils.logInfo());
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbStdTermBscDto> list = stdTermBscService.uploadTermExcelOnly(file);
+            List<TbStdTermBscDto> list = termService.uploadTermExcelOnly(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -94,7 +94,7 @@ public class TermController {
         log.debug(BizUtils.logInfo());
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbStdTermBscDto> list = stdTermBscService.parsePreview(file);
+            List<TbStdTermBscDto> list = termService.parsePreview(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -110,7 +110,7 @@ public class TermController {
         log.debug(BizUtils.logInfo());
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbStdTermBscDto> list = stdTermBscService.parseTermReload(inputList);
+            List<TbStdTermBscDto> list = termService.parseTermReload(inputList);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -127,7 +127,7 @@ public class TermController {
         log.debug(BizUtils.logInfo());
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = stdTermBscService.uploadTermExcelSave(list);
+            int count = termService.uploadTermExcelSave(list);
             res.put("success", true);
             res.put("count", count);
             return ResponseEntity.ok(res);
