@@ -1,0 +1,152 @@
+document.addEventListener('DOMContentLoaded', () => {
+    loadHeader();
+    loadSidebar();
+//    loadFooter();
+});
+
+function loadHeader() {
+    const topbarContainer = document.getElementById("topbarContainer");
+    if (!topbarContainer) return;
+    if (topbarContainer.dataset.loaded === "true") return;
+
+    if (topbarContainer.innerHTML === "") {
+        fetch("/common/header.html")
+            .then(res => res.text())
+            .then(html => {
+                topbarContainer.innerHTML = html;
+                topbarContainer.dataset.loaded = "true";
+                bindHeaderEvents();
+            })
+            .catch(err => console.error("Header load error:", err));
+    }
+}
+
+function bindHeaderEvents() {
+    const userNm = localStorage.getItem('userNm');
+    const userId = localStorage.getItem('userId');
+    const role = localStorage.getItem('role');
+
+    const logoutBtn = document.querySelector('.footbarContainer .logout');
+    const userInfo = document.querySelector('.footbarContainer .userInfo');
+    const headerUserNm = document.getElementById('headerUserNm');
+
+    if (headerUserNm && userNm && userId) {
+        headerUserNm.innerText = `${userNm} (${userId})`;
+    }
+
+    const termSearch = document.querySelector('.topbar-logo .termSearch');
+    if (termSearch) {
+        termSearch.addEventListener('click', () => {
+            location.href = '/meta/term/termSearch';
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            location.href = '/meta/login';
+        });
+    }
+
+    if (userInfo && userId) {
+        userInfo.addEventListener('click', () => {
+            openWindowWithJSON( { mode: "S", userId },  "/meta/user/userChg", 800, 700 );
+        });
+    }
+
+}
+
+
+/* Sidebar 불러오기  */
+function loadSidebar(menuId = null) {
+    const sidebarContainer = document.getElementById("sidebarContainer");
+    if (!sidebarContainer) return;
+    if (sidebarContainer.dataset.loaded === "true") return;
+
+    if (sidebarContainer.innerHTML === "") {
+        fetch("/common/sidebar.html")
+            .then(res => res.text())
+            .then(html => {
+                sidebarContainer.innerHTML = html;
+                sidebarContainer.dataset.loaded = "true";
+            })
+            .catch(err => console.error("Sidebar load error:", err));
+    }
+}
+
+function loadFooter() {
+    const footbarContainer = document.getElementById("footbarContainer");
+    if (!footbarContainer) return;
+    if (footbarContainer.dataset.loaded === "true") return;
+
+    if (footbarContainer.innerHTML === "") {
+        fetch("/common/footer.html")
+            .then(res => res.text())
+            .then(html => {
+                footbarContainer.innerHTML = html;
+                footbarContainer.dataset.loaded = "true";
+            })
+            .catch(err => console.error("footer load error:", err));
+    }
+}
+
+function initScreen() {
+    tableBody.innerHTML = "";
+    document.getElementById('pageInfo').innerText = "";
+    dataAll = [];
+    const old = document.querySelector(".pagination");
+    if (old) old.remove();
+}
+
+let popupWin = null;
+
+function openWindowWithJSON(sendData, url, width, height) {
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    const features = [
+        `width=${width}`,
+        `height=${height}`,
+        `left=${left}`,
+        `top=${top}`,
+        'scrollbars=no',
+        'resizable=yes'
+    ].join(',');
+
+    // 팝업이 이미 열려 있으면 재사용
+    if (popupWin && !popupWin.closed) {
+        popupWin.focus();
+        popupWin.postMessage(sendData, window.location.origin);
+        return;
+    }
+
+    popupWin = window.open(url, 'MetaSystemPopup', features);
+
+    if (!popupWin) {
+        myAlert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
+        return;
+    }
+
+    // load 이벤트 보장
+    const sendsendData = () => {
+        try {
+            popupWin.postMessage(sendData, window.location.origin);
+        } catch (e) {
+            console.error('postMessage failed:', e);
+        }
+    };
+
+    popupWin.addEventListener('load', sendsendData, { once: true });
+
+    // 일부 브라우저 대응 (load 미발생 대비)
+    setTimeout(sendsendData, 500);
+}
+
+function receiveCode(grpCd, grpNm) {
+    document.getElementById("grpCd").value = grpCd;
+    document.getElementById("grpNm").value = grpNm;
+}
+
+function receiveUser(id, nm) {
+    document.getElementById("userId").value = id;
+    document.getElementById("userNm").value = nm;
+}

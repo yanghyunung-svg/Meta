@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+
+</head>
+<body>
+<div class="container">
+<div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+
+        <div class="mainHeadContainer">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;"> ✅ 신청내역 상태 변경</h2>
+
+            <div class="button-group">
+                <button id="btnInit" type="button" class="btn">초기화
+                </button>
+                <button id="btnSearch" type="button" class="btn">
+                    조회
+                </button>
+                <button id="btnApprove" type="button" class="btn">일괄변경
+                </button>
+            </div>
+        </div>
+
+    <div class="mainBodyContainer">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>등록자ID</th>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="text" id="userId" name="userId" class="form-input">
+                        <button id="btnPopup">🔍</button>
+                    </td>
+                    <th>등록자이름</th>
+                    <td><input type="text" id="userNm" name="userNm" class="form-input" readonly></td>
+                    <th>등록구분</th>
+                    <td width="10%">
+                        <select id="se" name="se" class="form-select">
+                            <option value="">전체</option>
+                        </select>
+                    </td>
+                    <th>상태</th>
+                    <td>
+                        <select id="sttsCd" name="sttsCd" class="form-select">
+                            <option value="">전체</option>
+                            <option value="0">신청</option>
+                            <option value="1">사용</option>
+                            <option value="9">미사용</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+
+        <div id="pageInfoContainer" class="page-header"></div>
+
+
+        <table class="data-table" id="mainTable">
+            <thead>
+            <tr>
+                <th class="col-no">No</th>
+                <th style="width: 40px; text-align:center;">
+                    <input type="checkbox" id="checkAll">
+                </th>
+                <th width="100px" style="text-align: center;">등록구분</th>
+                <th width="200px">등록내용</th>
+                <th width="200px">영문명</th>
+                <th>비고</th>
+                <th width="80px" style="text-align: center;">등록자</th>
+                <th style="width: 50px; text-align:center;">상태</th>
+                <th width="150px" style="text-align: center;">등록일자</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('APRV_CD', 'se');
+
+        console.log(window.pathname);
+
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+        let dataAll = [];
+        let currentPage = 1;
+
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+        const btnSearch = document.getElementById('btnSearch');
+<!--        setTimeout(() => {-->
+<!--            btnSearch.click();-->
+<!--        }, 30);-->
+
+
+        const container = document.getElementById("pageInfoContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+        .then(res => res.text())
+        .then(html => {
+            container.innerHTML = html;
+            const pageSizeSelect = document.getElementById("pageSize");
+            if (!pageSizeSelect) return;
+            pageSizeSelect.addEventListener("change", () => {
+                PAGE_SIZE = Number(pageSizeSelect.value);
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE)
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE)
+            });
+        });
+
+
+        window.renderTable = function(page)  {
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                return;
+            }
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map((item, index) => `
+                <tr data-se="${item.se}" data-id="${item.id}" data-nm="${item.korNm}">
+                    <td style="text-align: center;"> ${start + index + 1}</td>
+                    <td style="text-align:center;"> <input type="checkbox" class="row-check"> </td>
+                    <td style="text-align: center;">${item.seNm}</td>
+                    <td style="text-align: left;">${item.korNm}</td>
+                    <td style="text-align: left;">${item.engNm}</td>
+                    <td style="text-align: left;">${truncateText(item.rmk, 70)}</td>
+                    <td style="text-align: center;">${item.crtId}</td>
+                    <td>${getSttsCdLabel(item.sttsCd)}</td>
+                    <td style="text-align: center;">${item.crtDttm}</td>
+                </tr>
+            `).join('');
+        }
+
+
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+            initScreen();
+        });
+
+
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            initScreen();
+
+            const statValue = document.getElementById("sttsCd").value;
+
+            if (!statValue.trim()) {
+                document.getElementById("pageInfo").innerText = `상태코드를 선택하세요.`;
+                statElement.focus();
+                return;
+            }
+
+            const data = formToJson(document.getElementById('mainForm'));
+            document.getElementById("checkAll").checked = false;
+            fetch('/meta/getAprvDsctnList', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
+                if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                    myAlert("조회 결과가 없습니다.");
+                    return
+                }
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE)
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE)
+            })
+            .catch(err => {
+                myAlert("에러 발생: " + err);
+            });
+        });
+
+
+        document.getElementById("btnApprove").addEventListener("click", async () => {
+            const rows = getCheckedRowValues();
+            if (rows.length === 0) {
+                document.getElementById("pageInfo").innerText = `변경할 항목을 선택하세요.`;
+                return;
+            }
+
+            const statElement = document.getElementById("sttsCd");
+            const statValue = statElement.value.trim();
+
+            if (!statValue.trim()) {
+                document.getElementById("pageInfo").innerText = `상태코드를 선택하세요.`;
+                statElement.focus();
+                return;
+            }
+
+            if (!confirm(`${rows.length}건을 변경하시겠습니까?`)) return;
+
+            const results = await Promise.all(
+                rows.map(row => approveOne(row.se, row.id, row.korNm, statValue))
+            );
+
+            const resultsCount = results.length;
+
+            document.getElementById("pageInfo").innerText = `일괄 변경 완료 : ${resultsCount}건.`;
+<!--            myAlert(`일괄 변경 완료\n처리: ${resultsCount}건 `);-->
+
+            document.getElementById("checkAll").checked = false;
+            btnSearch.click();
+        });
+
+        document.addEventListener("change", (e) => {
+            if (e.target.id === "checkAll") {
+                document.querySelectorAll(".row-check").forEach(cb => {
+                    cb.checked = e.target.checked;
+                });
+            }
+        });
+
+        // 변경내역처리
+        async function approveOne(se, id, korNm, stat) {
+            const userId = localStorage.getItem("userId");
+            const response = await fetch("/meta/prcsAprvDsctn", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ se, id, korNm, userId, stat })
+            });
+            if (!response.ok) {
+                console.error(`변경 실패: ${id}`);
+            }
+        }
+
+        document.getElementById('btnPopup').addEventListener('click', () => {
+            const sendData = {};
+            openWindowWithJSON(sendData, "/meta/popup/userSearch", 800, 500);
+        });
+    });
+
+    function getCheckedRowValues() {
+        const list  = [];
+        document.querySelectorAll(".row-check:checked").forEach(cb => {
+            const tr = cb.closest("tr");
+            list.push({
+                korNm: tr.dataset.nm,
+                id: tr.dataset.id,
+                se: tr.dataset.se
+            });
+        });
+        return list;
+    }
+
+    // Enter Key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('btnSearch').click();
+        }
+    });
+
+</script>
+<script src="/js/functionKey.js"></script>
+<script src="/js/commonCombo.js"></script>
+</body>
+</html>

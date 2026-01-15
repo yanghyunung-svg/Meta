@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.meta.mapper.dbio.TbHldyInfMapper">
+
+   <!--TB_HLDY_INF SELECT-->
+   <select id="getData" parameterType="com.meta.dto.TbHldyInfDto" resultType="com.meta.dto.TbHldyInfDto">
+      SELECT CRTR_YMD
+           , HLDY_NM
+           , HLDY_SE_CD
+           , DOW_SE_CD
+           , CRT_ID
+           , date_format(CRT_DTTM,   '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , UPD_ID
+           , date_format(UPD_DTTM,   '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_HLDY_INF
+       WHERE CRTR_YMD = #{crtrYmd}
+  </select>
+
+   <!--TB_HLDY_INF INSERT-->
+   <insert id="insertData" parameterType="com.meta.dto.TbHldyInfDto">
+     INSERT INTO TB_HLDY_INF (
+            CRTR_YMD
+          , HLDY_NM
+          , HLDY_SE_CD
+          , DOW_SE_CD
+          , CRT_ID
+          , UPD_ID
+     )
+     VALUES (
+            #{crtrYmd}
+          , #{hldyNm}
+          , #{hldySeCd}
+          , #{dowSeCd}
+          , #{crtId}
+          , #{updId}
+     ) 
+  </insert>
+
+   <!--TB_HLDY_INF UPDATE-->
+   <update id="updateData" parameterType="com.meta.dto.TbHldyInfDto">
+     UPDATE TB_HLDY_INF
+        SET HLDY_NM = #{hldyNm}
+          , HLDY_SE_CD = #{hldySeCd}
+          , DOW_SE_CD = #{dowSeCd}
+          , UPD_ID = #{updId}
+      WHERE CRTR_YMD = #{crtrYmd}
+   </update>
+
+   <!--TB_HLDY_INF DELETE-->
+   <delete id="deleteData" parameterType="com.meta.dto.TbHldyInfDto">
+     DELETE
+       FROM TB_HLDY_INF
+      WHERE CRTR_YMD = #{crtrYmd}
+   </delete>
+
+   <!--TB_HLDY_INF RECORD LOCK SELECT-->
+   <select id="getLockData" parameterType="com.meta.dto.TbHldyInfDto" resultType="com.meta.dto.TbHldyInfDto">
+      SELECT CRTR_YMD
+           , HLDY_NM
+           , HLDY_SE_CD
+           , DOW_SE_CD
+           , CRT_ID
+           , date_format(CRT_DTTM,   '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , UPD_ID
+           , date_format(UPD_DTTM,   '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_HLDY_INF
+       WHERE CRTR_YMD = #{crtrYmd}
+         FOR UPDATE
+  </select>
+
+   <select id="countData" parameterType="com.meta.dto.TbHldyInfDto" resultType="int">
+      SELECT COUNT(*)
+        FROM TB_HLDY_INF
+       WHERE CRTR_YMD = #{crtrYmd}
+  </select>
+
+   <!--TB_HLDY_INF SELECT LIST-->
+   <select id="getListData" parameterType="com.meta.dto.TbHldyInfDto" resultType="com.meta.dto.TbHldyInfDto">
+      SELECT CRTR_YMD
+           , HLDY_NM
+           , HLDY_SE_CD
+           , DOW_SE_CD
+           , CRT_ID
+           , date_format(CRT_DTTM,   '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , UPD_ID
+           , date_format(UPD_DTTM,   '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_HLDY_INF
+       WHERE 1=1
+       <if test="crtrYmd!= null and crtrYmd!= ''">
+         AND CRTR_YMD LIKE CONCAT('%',#{crtrYmd} , '%')
+       </if>
+       <if test="hldyNm!= null and hldyNm!= ''">
+         AND HLDY_NM LIKE CONCAT('%',#{hldyNm} , '%')
+       </if>
+       <if test="hldySeCd!= null and hldySeCd!= ''">
+         AND HLDY_SE_CD = #{hldySeCd}
+       </if>
+       <if test="dowSeCd!= null and dowSeCd!= ''">
+         AND DOW_SE_CD = #{dowSeCd}
+       </if>
+  </select>
+
+</mapper>

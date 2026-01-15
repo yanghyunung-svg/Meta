@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meta.mapper.meta.ApproveMapper">
+    <select id="getListData" parameterType="com.meta.dto.ApproveDto" resultType="com.meta.dto.ApproveDto">
+
+        SELECT Z.SE
+            , Z.ID
+            , Z.KOR_NM
+            , Z.ENG_NM
+            , Z.RMK
+            , Z.STTS_CD
+            , Z.CRT_ID
+            , date_format(Z.CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+            , B.CD_NM AS SE_NM
+        FROM (
+            SELECT  '1'  AS SE
+            , 0  AS ID
+            , TRM_NM  AS KOR_NM
+            , ENG_NM  AS ENG_NM
+            , TRM_EXPLN AS RMK
+            , STTS_CD
+            , CRT_ID
+            , CRT_DTTM
+            FROM tb_std_term_bsc
+            WHERE 1=1
+            <if test="sttsCd  != null and sttsCd  != ''">
+                AND STTS_CD = #{sttsCd}
+            </if>
+            <if test="userId  != null and userId  != ''">
+                AND CRT_ID = #{userId}
+            </if>
+
+            UNION ALL
+
+            SELECT  '2'  AS SE
+            , ID
+            , WORD_NM  AS KOR_NM
+            , ENG_ABBR_NM  AS ENG_NM
+            , EXPLN AS RMK
+            , STTS_CD
+            , CRT_ID
+            , CRT_DTTM
+            FROM tb_std_word_bsc
+            WHERE 1=1
+            <if test="sttsCd  != null and sttsCd  != ''">
+                AND STTS_CD = #{sttsCd}
+            </if>
+            <if test="userId  != null and userId  != ''">
+                AND CRT_ID = #{userId}
+            </if>
+
+        UNION ALL
+            SELECT  '3'  AS SE
+            , 0  AS ID
+            , DMN_NM  AS KOR_NM
+            , DMN_ENG_NM  AS ENG_NM
+            , DMN_CLSF_NM AS RMK
+            , STTS_CD
+            , CRT_ID
+            , CRT_DTTM
+            FROM tb_std_dmn_bsc
+            WHERE 1=1
+            <if test="sttsCd  != null and sttsCd  != ''">
+                AND STTS_CD = #{sttsCd}
+            </if>
+            <if test="userId  != null and userId  != ''">
+                AND CRT_ID = #{userId}
+            </if>
+
+        UNION ALL
+            SELECT  '4'  AS SE
+            , 0  AS ID
+            , GRP_CD  AS KOR_NM
+            , GRP_NM  AS ENG_NM
+            , RMK AS RMK
+            , STTS_CD
+            , CRT_ID
+            , CRT_DTTM
+            FROM tb_code_group
+            WHERE 1=1
+            <if test="sttsCd  != null and sttsCd  != ''">
+                AND STTS_CD = #{sttsCd}
+            </if>
+            <if test="userId  != null and userId  != ''">
+                AND CRT_ID = #{userId}
+            </if>
+
+         UNION ALL
+            SELECT  '5'  AS SE
+            , 0 AS ID
+            , GRP_CD  AS KOR_NM
+            , CD  AS ENG_NM
+            , CD_NM AS RMK
+            , STTS_CD
+            , CRT_ID
+            , CRT_DTTM
+            FROM tb_code
+            WHERE 1=1
+            <if test="sttsCd  != null and sttsCd  != ''">
+                AND STTS_CD = #{sttsCd}
+            </if>
+            <if test="userId  != null and userId  != ''">
+                AND CRT_ID = #{userId}
+            </if>
+
+        ) Z
+        JOIN tb_code  B
+        ON   B.GRP_CD = 'APRV_CD'
+        AND  B.CD = Z.SE
+        WHERE 1=1
+        <if test="se  != null and se  != ''">
+            AND Z.SE = #{se}
+        </if>
+
+    </select>
+
+
+</mapper>

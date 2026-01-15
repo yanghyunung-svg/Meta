@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.meta.mapper.dbio.TbLoginLogMapper">
+
+   <!--tb_login_log SELECT-->
+   <select id="getData" parameterType="com.meta.dto.TbLoginLogDto" resultType="com.meta.dto.TbLoginLogDto">
+      SELECT LOG_ID
+           , USER_ID
+           , IP_ADDR
+           , USER_AGENT
+           , LOGIN_RESULT
+           , FAIL_REASON
+            , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        FROM tb_login_log
+       WHERE LOG_ID = #{logId}
+  </select>
+
+    <!--tb_login_log LIST SELECT-->
+    <select id="getListData" parameterType="com.meta.dto.TbLoginLogDto" resultType="com.meta.dto.TbLoginLogDto">
+        SELECT LOG_ID
+        , USER_ID
+        , IP_ADDR
+        , USER_AGENT
+        , LOGIN_RESULT
+        , FAIL_REASON
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        FROM tb_login_log
+        WHERE 1=1
+        <if test="userId  != null and userId  != ''">
+            AND USER_ID    LIKE CONCAT('%', #{userId}, '%')
+        </if>
+        <if test="startDate  != null and startDate  != ''">
+            AND DATE(CRT_DTTM) BETWEEN  #{startDate} AND #{endDate}
+        </if>
+        <if test="loginResult  != null and loginResult  != ''">
+            AND LOGIN_RESULT = #{loginResult}
+        </if>
+        ORDER BY LOG_ID DESC
+    </select>
+
+   <!--tb_login_log INSERT-->
+   <insert id="insertData" parameterType="com.meta.dto.TbLoginLogDto">
+     INSERT INTO tb_login_log (
+            USER_ID
+          , IP_ADDR
+          , USER_AGENT
+          , LOGIN_RESULT
+          , FAIL_REASON
+     )
+     VALUES (
+            #{userId}
+          , #{ipAddr}
+          , #{userAgent}
+          , #{loginResult}
+          , #{failReason}
+     ) 
+  </insert>
+
+   <!--tb_login_log UPDATE-->
+   <update id="updateData" parameterType="com.meta.dto.TbLoginLogDto">
+     UPDATE tb_login_log
+        SET USER_ID = #{userId}
+          , IP_ADDR = #{ipAddr}
+          , USER_AGENT = #{userAgent}
+          , LOGIN_RESULT = #{loginResult}
+          , FAIL_REASON = #{failReason}
+          , CRT_DTTM = #{crtDttm}
+          , UPD_ID = #{updId}
+      WHERE LOG_ID = #{logId}
+   </update>
+
+   <!--tb_login_log DELETE-->
+   <delete id="deleteData" parameterType="com.meta.dto.TbLoginLogDto">
+     DELETE
+       FROM tb_login_log
+      WHERE LOG_ID = #{logId}
+   </delete>
+
+</mapper>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+    <script src="/js/commonCombo.js"></script>
+    <script src="/js/functionKey.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+    <div class="mainHeadContainer">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;"> ✅ 전문종류 조회</h2>
+
+            <!-- 오른쪽 버튼 그룹 -->
+            <div class="button-group">
+                <button id="btnInit"    type="button" class="btn">초기화</button>
+                <button id="btnSearch"  type="button" class="btn">조회</button>
+                <button id="btnReg"     type="button" class="btn">등록</button>
+                <button id="btnRegEblc" type="button" class="btn">일괄등록</button>
+                <button id="btnExcel"   type="button" class="btn">Excel 저장</button>
+            </div>
+        </div>
+
+        <div class="mainBodyContainer">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>기관코드</th>
+                    <td>
+                        <select id="instCd" name="instCd" class="form-select">
+                            <option value="">전체</option>
+                        </select>
+                    </td>
+                    <th>업무구분코드</th>
+                    <td>
+                        <select id="taskSeCd" name="taskSeCd" class="form-select">
+                            <option value="">전체</option>
+                        </select>
+                    </td>
+                    <th>거래구분코드</th>
+                    <td><input type="text" id="dlngSeCd" name="dlngSeCd" class="form-input" > </td>
+                    <th>전문명</th>
+                    <td><input type="text" id="telgmNm" name="telgmNm" class="form-input" > </td>
+                </tr>
+            </table>
+        </form>
+
+
+        <div id="pageInfoContainer" class="page-header"></div>
+
+
+        <table class="data-table" id="mainTable">
+            <thead>
+            <tr>
+                <th style="width:50px">No</th>
+                <th style="width:100px">기관코드</th>
+                <th style="width:100px">업무구분코드</th>
+                <th style="width:100px">요청코드</th>
+                <th style="width:100px">응답코드</th>
+                <th style="width:100px">거래구분코드</th>
+                <th style="width:200px">전문명</th>
+                <th style="width:100px">전문길이</th>
+                <th style="width:100px">상태</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+   </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('INST_CD', 'instCd');
+        loadCodeCombo('TASK_SE_CD', 'taskSeCd');
+
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+        let dataAll = [];
+        let currentPage = 1;
+
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+        const container = document.getElementById("pageInfoContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+            });
+
+
+        window.renderTable = function(page)  {
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                return;
+            }
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map((item, index) => `
+                <tr class="row-click"
+                        data-instcd="${item.instCd}"
+                        data-tasksecd="${item.taskSeCd}"
+                        data-telgmkndcd="${item.telgmKndCd}"
+                        data-dlngsecd="${item.dlngSeCd}">
+                    <td style="text-align: center;"> ${start + index + 1} </td>
+                    <td style="text-align: center;">${item.instNm}</td>
+                    <td style="text-align: center;">${item.taskSeNm}</td>
+                    <td style="text-align: center;">${item.telgmKndCd}</td>
+                    <td style="text-align: center;">${item.rspnsTelgmKndCd}</td>
+                    <td style="text-align: center;">${item.dlngSeCd}</td>
+                    <td style="text-align: left;">${item.telgmNm}</td>
+                    <td style="text-align: center;">${item.telgmLen}</td>
+                    <td>${getSttsCdLabel(item.sttsCd)}</td>
+                </tr>
+            `).join('');
+        }
+
+        tableBody.addEventListener("dblclick", e => {
+            const tr = e.target.closest(".row-click");
+            if (!tr) return;
+            const sendData = {
+                mode: "S",
+                instCd: tr.dataset.instcd,
+                taskSeCd: tr.dataset.tasksecd,
+                telgmKndCd: tr.dataset.telgmkndcd,
+                dlngSeCd: tr.dataset.dlngsecd
+            };
+            openWindowWithJSON(sendData, "/meta/telgm/telgmKndMng", 800, 700);
+        });
+
+        window.refreshParentRow = function(data) {
+            const refreshMap = {
+                rspnsTelgmKndCd: 'td:nth-child(5)',
+                telgmNm: 'td:nth-child(7)',
+                telgmLen: 'td:nth-child(8)',
+                sttsCd: 'td:nth-child(9)'
+            };
+            window.updateRowDataFlexible(data, 'dlngSeCd', refreshMap);
+        }
+
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            initScreen();
+            const data = formToJson(document.getElementById('mainForm'));
+
+<!--            const instCd = document.getElementById('instCd'); -->
+<!--           if (!instCd.value || !instCd.value.trim()) {-->
+<!--                myAlert("기관코드를 입력하세요.");-->
+<!--                inqYear.focus();-->
+<!--                return;-->
+<!--            }-->
+
+            fetch('/meta/getTelgmKndListData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
+                if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                    myAlert("조회 결과가 없습니다.");
+                    return
+                }
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            })
+            .catch(err => {
+                myAlert("에러 발생: " + err);
+            });
+        });
+    });
+
+
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        initScreen();
+    });
+
+
+    document.getElementById('btnReg').addEventListener('click', () => {
+        const sendData = { mode: "I"};
+        openWindowWithJSON(sendData, "/meta/telgm/telgmKndMng", 800, 700);
+    });
+
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = "/meta/telgm/telgmKndRegEblc";
+    });
+
+    document.getElementById('btnExcel').addEventListener('click', () => {
+        downloadTableToExcel('mainTable', '전문종류 목록');
+    });
+
+</script>
+</body>
+</html>

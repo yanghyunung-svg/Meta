@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+
+    <script src="/js/sessionTimer.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+
+        <div class="mainHeadContainer">
+            <h2 style="margin:0;"> ✅ 표준용어 단어검색</h2>
+            <div class="button-group">
+                <button id="btnInit" type="button" class="btn">초기화</button>
+                <button id="btnVal" type="button" class="btn">단어검색</button>
+                <button id="btnAddRow" type="button" class="btn">행추가</button>
+                <button id="btnTemplate" type="button" class="btn">템플릿</button>
+                <button id="btnUpload" type="button" class="btn">엑셀업로드</button>
+                <button id="btnExcelDownload" type="button" class="btn">엑셀저장</button>
+                <button id="btnWordReg" type="button" class="btn">단어등록</button>
+                <button id="btnTermReg" type="button" class="btn">용어등록</button>
+            </div>
+        </div>
+    <div class="mainBodyContainer">
+        <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx">
+        <table id="mainTable" class="data-table">
+            <thead>
+            <tr>
+                <th style="width:40px; text-align:center;">No</th>
+                <th style="width:140px; text-align:left;">용어명</th>
+                <th style="width:160px; text-align:left;">영문명</th>
+                <th style="width:140px; text-align:left;">Snake</th>
+                <th style="width:140px; text-align:left;">Pascal</th>
+                <th style="width:140px; text-align:left;">Camel</th>
+                <th style="width:300px; text-align:left;">설명</th>
+                <th style="width:100px; text-align:left;">상태</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- 로딩 오버레이 -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="hourglass"></div>
+    <div class="loading-text">처리 중입니다...</div>
+</div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnExcelDownload = document.getElementById("btnExcelDownload");
+        btnExcelDownload.disabled = true;
+
+        const emptyRows = createEmptyRows(1);
+        window.uploadPreviewData = emptyRows;
+        renderPreviewTable(emptyRows);
+    });
+
+
+    document.getElementById("btnInit").addEventListener("click", () => {
+        document.getElementById("excelFile").value = "";
+        document.getElementById("mainTable").querySelector("tbody").innerHTML = "";
+        window.uploadPreviewData = null;
+        const emptyRows = createEmptyRows(1);
+        window.uploadPreviewData = emptyRows;
+        renderPreviewTable(emptyRows);
+        btnExcelDownload.disabled = true;
+    });
+
+
+    document.getElementById("btnUpload").addEventListener("click", () => {
+        document.getElementById("btnInit").click();
+        document.getElementById("excelFile").click();
+        btnExcelDownload.disabled = true;
+    });
+
+    document.getElementById("excelFile").addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            showLoading("Excel Load ...");
+            const res = await fetch("/meta/uploadTermExcelOnly", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await res.json();
+
+            if (!result.success) {
+                myAlert("오류: " + result.message);
+                return;
+            }
+
+            renderPreviewTable(result.data);
+            window.uploadPreviewData = result.data;
+
+        } catch (error) {
+            myAlert("업로드 중 오류가 발생했습니다.");
+        } finally {
+            hideLoading();
+        }
+    });
+
+    document.getElementById('btnVal').addEventListener('click', async () => {
+        if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
+            btnExcelDownload.disabled = false;
+            myAlert("데이터가 없습니다.");
+            return;
+        }
+
+        try {
+            const res = await fetch("/meta/parseTermReload", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(window.uploadPreviewData)
+            });
+
+            const result = await res.json();
+
+            if (!result.success) {
+                myAlert("오류: " + result.message);
+                return;
+            }
+
+            const mappedData = result.data.map(row => ({
+                trmNm: row.trmNm || row.trm_nm || row["용어명"] || "",
+                engNm: row.engNm || row.eng_nm || row["영문명"] || "",
+                snake: row.snake || row.snake || row["Snake"] || "",
+                pascal: row.pascal || row.pascal || row["Pascal"] || "",
+                camel: row.camel || row.camel || row["Camel"] || "",
+                trmExpln: row.trmExpln || row.trmExpln || row["trmExpln"] || "",
+                sttsCd: row.sttsCd || row.sttsCd || row["상태"] || ""
+            }));
+
+            renderPreviewTable(mappedData);
+            window.uploadPreviewData = mappedData;
+
+            btnExcelDownload.disabled = false;
+
+
+        } catch(err) {
+            console.error(err);
+            myAlert("처리 중 오류 발생");
+        }
+    });
+
+    function renderPreviewTable(rows) {
+        const table = document.getElementById("mainTable");
+        const tbody = table.querySelector("tbody");
+        tbody.innerHTML = "";
+        table.style.display = "table";
+
+        rows.forEach((row, index) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td class="col-no">${index + 1}</td>
+                <td style="text-align: left;" class="form-input no-enter" contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
+                <td style="text-align: left;" class="form-input no-enter" contenteditable="true" data-index="${index}" data-field="trmNm">${row.engNm}</td>
+                <td style="text-align: left;">${row.snake}</td>
+                <td style="text-align: left;">${row.pascal}</td>
+                <td style="text-align: left;">${row.camel}</td>
+                <td style="text-align: left;">${row.trmExpln}</td>
+                <td style="text-align: left;">${row.sttsCd}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        attachEditListeners();
+    }
+
+    function attachEditListeners() {
+        const editableCells = document.querySelectorAll("#mainTable tbody td[contenteditable='true']");
+        editableCells.forEach(cell => {
+            cell.addEventListener('blur', (event) => {
+                const element = event.target;
+                const rowIndex = element.getAttribute('data-index');
+                const fieldName = element.getAttribute('data-field');
+                const newValue = element.textContent.trim();
+                if (window.uploadPreviewData && window.uploadPreviewData[rowIndex]) {
+                    window.uploadPreviewData[rowIndex][fieldName] = newValue;
+                }
+            });
+        });
+    }
+
+    function createEmptyRows(count) {
+        const rows = [];
+        for (let i = 0; i < count; i++) {
+            rows.push({
+                trmNm: '',
+                engNm: '',
+                snake : '',
+                pascal : '',
+                camel : '',
+                trmExpln : '',
+                sttsCd: ''
+            });
+        }
+        return rows;
+    }
+
+    document.getElementById("btnAddRow").addEventListener("click", () => {
+        const newEmptyRow = {
+            trmNm: '',
+            engNm: '',
+            snake : '',
+            pascal : '',
+            camel : '',
+            trmExpln : '',
+            sttsCd: ''
+        };
+
+        // window.uploadPreviewData가 아직 초기화되지 않았다면 빈 배열로 시작
+        if (!window.uploadPreviewData) {
+            window.uploadPreviewData = [];
+        }
+
+        // 데이터 배열에 새로운 행 추가
+        window.uploadPreviewData.push(newEmptyRow);
+        // 업데이트된 데이터를 사용하여 테이블 다시 렌더링
+        renderPreviewTable(window.uploadPreviewData);
+
+        // 렌더링 이후 포커스 이동
+        requestAnimationFrame(() => {
+            const tbody = document.querySelector("#previewTable tbody");
+            const lastRow = tbody?.querySelector("tr:last-child");
+            const firstInput = lastRow?.querySelector('input[name="trmNm"]');
+            firstInput?.focus();
+        });
+    });
+
+    document.getElementById("btnTemplate").addEventListener("click", () => {
+        window.location.href = "/meta/downloadTermSearchExcelTemplate";
+    });
+
+    document.getElementById('btnExcelDownload').addEventListener('click', () => {
+        downloadTableToExcel('mainTable', '표준용어신청목록');
+    });
+
+
+    /** 단어등록 **/
+    document.getElementById('btnWordReg').addEventListener('click', () => {
+        const sendData = { mode: "I"};
+        openWindowWithJSON(sendData, "/meta/word/wordMng", 800, 700);
+    });
+
+    /** 용어등록 **/
+    document.getElementById('btnTermReg').addEventListener('click', () => {
+        const sendData = { mode: "I"};
+        openWindowWithJSON(sendData, "/meta/term/termMng", 800, 700);
+    });
+
+
+     document.addEventListener("keydown", (e) => {
+        const target = e.target;
+
+        /* 1. no-enter 클래스에서 Enter 차단 */
+        if (target.classList?.contains("no-enter") && e.key === "Enter") {
+            e.preventDefault();
+            return;
+        }
+
+        /* 3. 전역 단축키 처리 */
+        switch (e.key) {
+            case "F1":
+                e.preventDefault();
+                document.getElementById("btnInit")?.click();
+                break;
+
+            case "F2":
+                e.preventDefault();
+                document.getElementById("btnVal")?.click();
+                break;
+
+            case "F3":
+                e.preventDefault();
+                document.getElementById("btnAddRow")?.click();
+                break;
+
+            default:
+                break;
+        }
+    });
+
+
+</script>
+</body>
+</html>
+

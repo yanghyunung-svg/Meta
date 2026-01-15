@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+    <script src="/js/functionKey.js"></script>
+
+
+</head>
+<body>
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+    <div class="mainHeadContainer">
+        <h2 style="margin:0;"> ✅ 표준용어 조회</h2>
+        <div class="button-group">
+            <button id="btnInit"    type="button" class="btn">초기화 </button>
+            <button id="btnSearch"  type="button" class="btn">조회 </button>
+            <button id="btnReg"     type="button" class="btn">등록 </button>
+            <button id="btnRegEblc" type="button" class="btn">일괄등록 </button>
+            <button id="btnExcel"   type="button" class="btn">Excel 저장</button>
+        </div>
+    </div>
+
+    <div class="mainBodyContainer">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>용어명</th>
+                    <td><input type="text" id="trmNm" name="trmNm" class="form-input" ></td>
+                    <th>영문명</th>
+                    <td><input type="text" id="engNm" name="engNm" class="form-input" ></td>
+                    <th>상태</th>
+                    <td>
+                        <select id="sttsCd" name="sttsCd" class="form-select">
+                            <option value="">전체</option>
+                            <option value="0">신청</option>
+                            <option value="1">사용</option>
+                            <option value="9">미사용</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+        <div id="pageInfoContainer" class="page-header"></div>
+
+        <table class="data-table" id="mainTable">
+            <thead>
+            <tr>
+                <th class="col-no">No</th>
+                <th width="200px">용어명</th>
+                <th width="250px">영문명</th>
+                <th>용어설명</th>
+                <th width="150px">도메인</th>
+                <th width="50px" style="text-align: center;">상태</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+    let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+    let dataAll = [];
+    let currentPage = 1;
+
+    window.tableBody = document.getElementById("mainTable").querySelector('tbody');
+
+    const container = document.getElementById("pageInfoContainer");
+    if (!container) return;
+
+    fetch('/common/pageSize.html')
+    .then(res => res.text())
+    .then(html => {
+        container.innerHTML = html;
+    });
+
+    // 조회결과
+    window.renderTable = function(page)  {
+        if (!Array.isArray(dataAll) || dataAll.length === 0) {
+            return;
+        }
+
+        const start = (page - 1) * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+        const pageData = dataAll.slice(start, end);
+
+        tableBody.innerHTML = pageData.map((item, index) => `
+            <tr class="row-click" data-id="${item.trmNm}">
+                <td style="text-align: center;"> ${start + index + 1} </td>
+                <td style="text-align: left;">${item.trmNm}</td>
+                <td style="text-align: left;">${item.engNm}</td>
+                <td style="text-align: left;">${truncateText(item.trmExpln, 100)}</td>
+                <td style="text-align: left;">${item.dmnNm}</td>
+                <td>${getSttsCdLabel(item.sttsCd)}</td>
+            </tr>
+        `).join('');
+
+
+        tableBody.addEventListener("dblclick", e => {
+            const tr = e.target.closest(".row-click");
+            if (!tr) return;
+            const sendData = { mode: "S", trmNm: tr.dataset.id };
+            openWindowWithJSON(sendData, "/meta/term/termMng", 800, 800);
+        });
+    }
+
+    window.refreshParentRow = function(data) {
+        const refreshMap = {
+            engNm:      'td:nth-child(3)',  // 영문명
+            trmExpln:   'td:nth-child(4)',  // 용어설명
+            dmnNm:      'td:nth-child(5)',  // 도메인
+            sttsCd:     'td:nth-child(6)'   // 상태
+        };
+        window.updateRowDataFlexible(data, 'trmNm', refreshMap);
+    }
+
+
+    document.getElementById('btnSearch').addEventListener('click', () => {
+        initScreen();
+        const data = formToJson(document.getElementById('mainForm'));
+
+        fetch('/meta/getTermListData', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(data => {
+            dataAll = Array.isArray(data) ? data : [];
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                myAlert("조회 결과가 없습니다.");
+                return
+            }
+            currentPage = 1;
+            renderTable(currentPage);
+            renderPagination(dataAll, currentPage, PAGE_SIZE);
+            updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+        })
+        .catch(err => {
+            myAlert("에러 발생: " + err);
+        });
+    });
+
+
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        initScreen();
+    });
+
+
+    document.getElementById('btnReg').addEventListener('click', () => {
+        const sendData = { mode: "I"};
+        openWindowWithJSON(sendData, "/meta/term/termMng", 800, 800);
+    });
+
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = "/meta/term/termRegEblc";
+    });
+
+    document.getElementById('btnExcel').addEventListener('click', () => {
+        downloadTableToExcel('mainTable', '표준용어목록');
+    });
+
+});
+
+
+</script>
+</body>
+</html>
+
+
+
+

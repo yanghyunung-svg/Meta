@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+</head>
+<body>
+
+<div class="container">
+<div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+
+        <div class="mainHeadContainer">
+            <h2 style="margin:0;"> ✅ 도메인 일괄등록</h2>
+            <div class="button-group">
+                <button id="btnTemplate" type="button" class="btn">템플릿</button>
+                <button id="btnUpload" type="button" class="btn">업로드</button>
+                <button id="btnUploadSave" type="button" class="btn" disabled>저장</button>
+            </div>
+        </div>
+    <div class="mainBodyContainer">
+        <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx">
+
+        <table id="uploadPreviewTable" class="data-table">
+        <thead>
+        <tr>
+            <th class="col-no">No</th>
+            <th style="text-align: left;">도메인명</th>
+            <th style="text-align: left;">도메인분류명 </th>
+            <th style="text-align: left;">영문명</th>
+            <th style="text-align: left;">속성</th>
+            <th style="text-align: center;">상태</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    </div>
+</div>
+
+<!-- 로딩 오버레이 -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="hourglass"></div>
+    <div class="loading-text">처리 중입니다...</div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        document.getElementById("btnUpload").addEventListener("click", () => {
+           initView()
+            document.getElementById("excelFile").click();
+        });
+
+        document.getElementById("excelFile").addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                showLoading("Excel Load ...");
+                const res = await fetch("/meta/uploadDmnPreview", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await res.json();
+
+                if (!result.success) {
+                    myAlert("오류: " + result.message);
+                    return;
+                }
+
+                renderPreviewTable(result.data);
+                window.uploadPreviewData = result.data;  // 저장 버튼에서 사용
+
+                document.getElementById("btnUploadSave").disabled = false;
+
+            } catch (error) {
+                myAlert("업로드 중 오류가 발생했습니다.");
+            } finally {
+                hideLoading();
+            }
+        });
+
+        function renderPreviewTable(rows) {
+            const crtId = localStorage.getItem("userId");
+            const table = document.getElementById("uploadPreviewTable");
+            const tbody = table.querySelector("tbody");
+            tbody.innerHTML = "";
+            table.style.display = "table";
+
+            rows.forEach(row => {
+                row.crtId = crtId || '';
+            });
+
+            rows.forEach((row, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="text-align: center;"> ${index + 1} </td>
+                    <td data-index="${index}" data-field="dmnNm">${row.dmnNm}</td>
+                    <td data-index="${index}" data-field="dmnClsfNm">${row.dmnClsfNm}</td>
+                    <td data-index="${index}" data-field="dmnEngNm">${row.dmnEngNm}</td>
+                    <td data-index="${index}" data-field="dmnAtrb">${row.dmnAtrb}</td>
+                    <td style="text-align: center;">${row.sttsCd}</td>
+                    <td class="hidden">${row.crtId}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            attachEditListeners();
+        }
+
+        document.getElementById("btnUploadSave").addEventListener("click", async () => {
+            if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
+                myAlert("업로드된 데이터가 없습니다.");
+                return;
+            }
+
+            console.log('uploadPreviewData', window.uploadPreviewData);
+
+            const isConfirmed = await myConfirm("검증된 데이터를 저장하시겠습니까?");
+            if (!isConfirmed) { return; }
+
+            try {
+                const res = await fetch("/meta/uploadDmnExcelSave", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(window.uploadPreviewData)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    myAlert(result.count + "건 처리되었습니다.");
+                    initView()
+                } else {
+                    myAlert("오류: " + result.message);
+                }
+
+            } catch(err) {
+                myAlert("저장 중 오류 발생");
+            }
+        });
+
+    });
+
+    document.getElementById("btnTemplate").addEventListener("click", () => {
+        window.location.href = "/meta/downloadDmnExcelTemplate";
+    });
+
+    function initView() {
+        document.getElementById("excelFile").value = "";
+        document.getElementById("uploadPreviewTable").querySelector("tbody").innerHTML = "";
+        window.uploadPreviewData = null;
+        document.getElementById("btnUploadSave").disabled = true;
+    }
+
+    function attachEditListeners() {
+        const editableCells = document.querySelectorAll("#uploadPreviewTable tbody td[contenteditable='true']");
+        editableCells.forEach(cell => {
+            cell.addEventListener('blur', (event) => {
+                const element = event.target;
+                const rowIndex = element.getAttribute('data-index');
+                const fieldName = element.getAttribute('data-field');
+                const newValue = element.textContent.trim();
+                if (window.uploadPreviewData && window.uploadPreviewData[rowIndex]) {
+                    window.uploadPreviewData[rowIndex][fieldName] = newValue;
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>
+

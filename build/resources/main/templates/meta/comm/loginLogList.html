@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+
+</head>
+<body>
+<div class="container">
+<div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+
+        <div class="mainHeadContainer">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;"> ✅ 로그인 정보 조회</h2>
+
+            <!-- 오른쪽 버튼 그룹 -->
+            <div class="button-group">
+                <button id="btnInit" type="button" class="btn">초기화
+                </button>
+                <button id="btnSearch" type="button" class="btn">
+                    조회
+                </button>
+            </div>
+        </div>
+
+    <div class="mainBodyContainer">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>사용자 ID</th>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="text" id="userId" name="userId" class="form-input">
+                        <button id="btnPopup" type="button" class="btn-search">🔍</button>
+                    </td>
+                    <th>사용자이름</th>
+                    <td><input type="text" id="userNm" name="userNm" class="form-input" readonly></td><th>조회일자</th>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="date" id="startDate" name="startDate" class="form-date">
+                        <span>/</span>
+                        <input type="date" id="endDate" name="endDate" class="form-date">
+                    </td>
+                    <th>상태</th>
+                    <td>
+                        <select id="loginResult" name="loginResult" class="form-select">
+                            <option value="">전체</option>
+                            <option value="0">성공</option>
+                            <option value="1">실패</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+
+        <div id="pageInfoContainer" class="page-header"></div>
+
+
+        <table class="data-table" id="mainTable">
+            <thead>
+            <tr>
+                <th class="col-no">No</th>
+                <th style="text-align: center;">사용자ID</th>
+                <th style="text-align: center;">로그인일시</th>
+                <th style="text-align: center;">IP주소</th>
+                <th style="text-align: left;">UserAgent</th>
+                <th style="text-align: center;">상태</th>
+                <th style="text-align: center;">실패사유</th>
+                <th style="text-align: center;">로그ID</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+        let dataAll = [];
+        let currentPage = 1;
+
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+
+        const d = getDefaultDates();
+        document.getElementById("startDate").value = d.start;
+        document.getElementById("endDate").value = d.end;
+
+
+        const container = document.getElementById("pageInfoContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+        .then(res => res.text())
+        .then(html => {
+            container.innerHTML = html;
+            const pageSizeSelect = document.getElementById("pageSize");
+            if (!pageSizeSelect) return;
+            pageSizeSelect.addEventListener("change", () => {
+                PAGE_SIZE = Number(pageSizeSelect.value);
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            });
+        });
+
+
+        window.renderTable = function(page)  {
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                return;
+            }
+
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map((item, index) => `
+                <tr>
+                    <td>${start + index + 1}</td>
+                    <td>${item.userId}</td>
+                    <td>${item.crtDttm}</td>
+                    <td>${item.ipAddr}</td>
+                    <td style="text-align: left;">${item.userAgent}</td>
+                    <td style="text-align: center;"> ${item.loginResult === '0' ? '성공' : item.loginResult === '1' ? '실패'  : ''} </td>
+                    <td>${item.failReason}</td>
+                    <td>${item.logId}</td>
+                </tr>
+            `).join('');
+        }
+
+
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+
+            const d = getDefaultDates();
+            document.getElementById("startDate").value = d.start;
+            document.getElementById("endDate").value = d.end;
+
+            initScreen();
+        });
+
+
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            initScreen();
+            const formData = formToJson(document.getElementById('mainForm'));
+            // 날짜 검증
+            if (formData.startDate && formData.endDate && formData.startDate > formData.endDate) {
+                document.getElementById("pageInfo").innerText = `조회 시작일이 종료일보다 클 수 없습니다.`;
+                return;
+            }
+
+            fetch('/meta/getListData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
+                if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                    myAlert("조회 결과가 없습니다.");
+                    return
+                }
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            })
+            .catch(err => {
+                myAlert("에러 발생: " + err);
+            });
+        });
+
+
+        // Enter Key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btnSearch').click();
+            }
+        });
+
+        document.getElementById('btnPopup').addEventListener('click', () => {
+            const sendData = {};
+            openWindowWithJSON(sendData, "/meta/userSearch", 800, 500);
+        });
+    });
+</script>
+
+<script src="/js/functionKey.js"></script>
+</body>
+</html>

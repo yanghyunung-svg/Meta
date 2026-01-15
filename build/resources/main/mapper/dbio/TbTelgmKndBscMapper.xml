@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.meta.mapper.dbio.TbTelgmKndBscMapper">
+
+   <!--tb_telgm_knd_bsc SELECT-->
+   <select id="getData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbTelgmKndBscDto">
+      SELECT INST_CD
+           , TASK_SE_CD
+           , TELGM_KND_CD
+           , DLNG_SE_CD
+           , TELGM_NM
+           , TELGM_LEN
+           , RSPNS_TELGM_KND_CD
+           , TELGM_EXPLN
+           , STTS_CD
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , CRT_ID
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+           , UPD_ID
+        FROM tb_telgm_knd_bsc
+       WHERE INST_CD = #{instCd}
+         AND TASK_SE_CD = #{taskSeCd}
+         AND TELGM_KND_CD = #{telgmKndCd}
+         AND DLNG_SE_CD = #{dlngSeCd}
+  </select>
+
+   <!--tb_telgm_knd_bsc INSERT-->
+   <insert id="insertData" parameterType="com.meta.dto.TbTelgmKndBscDto">
+     INSERT INTO tb_telgm_knd_bsc (
+            INST_CD
+          , TASK_SE_CD
+          , TELGM_KND_CD
+          , DLNG_SE_CD
+          , TELGM_NM
+          , TELGM_LEN
+          , RSPNS_TELGM_KND_CD
+          , TELGM_EXPLN
+          , STTS_CD
+          , CRT_ID
+          , UPD_ID
+     )
+     VALUES (
+            #{instCd}
+          , #{taskSeCd}
+          , #{telgmKndCd}
+          , #{dlngSeCd}
+          , #{telgmNm}
+          , #{telgmLen}
+          , #{rspnsTelgmKndCd}
+          , #{telgmExpln}
+          , #{sttsCd}
+          , #{crtId}
+          , #{updId}
+     ) 
+  </insert>
+
+   <!--tb_telgm_knd_bsc UPDATE-->
+   <update id="updateData" parameterType="com.meta.dto.TbTelgmKndBscDto">
+     UPDATE tb_telgm_knd_bsc
+        SET TELGM_NM = #{telgmNm}
+          , TELGM_LEN = #{telgmLen}
+          , RSPNS_TELGM_KND_CD = #{rspnsTelgmKndCd}
+          , TELGM_EXPLN = #{telgmExpln}
+          , STTS_CD = #{sttsCd}
+          , UPD_ID = #{updId}
+      WHERE INST_CD = #{instCd}
+        AND TASK_SE_CD = #{taskSeCd}
+        AND TELGM_KND_CD = #{telgmKndCd}
+        AND DLNG_SE_CD = #{dlngSeCd}
+   </update>
+
+   <!--tb_telgm_knd_bsc DELETE-->
+   <delete id="deleteData" parameterType="com.meta.dto.TbTelgmKndBscDto">
+     DELETE
+       FROM tb_telgm_knd_bsc
+      WHERE INST_CD = #{instCd}
+        AND TASK_SE_CD = #{taskSeCd}
+        AND TELGM_KND_CD = #{telgmKndCd}
+        AND DLNG_SE_CD = #{dlngSeCd}
+   </delete>
+
+   <!--tb_telgm_knd_bsc RECORD LOCK SELECT-->
+   <select id="getLockData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbTelgmKndBscDto">
+      SELECT INST_CD
+           , TASK_SE_CD
+           , TELGM_KND_CD
+           , DLNG_SE_CD
+           , TELGM_NM
+           , TELGM_LEN
+           , RSPNS_TELGM_KND_CD
+           , TELGM_EXPLN
+           , STTS_CD
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , CRT_ID
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+           , UPD_ID
+        FROM tb_telgm_knd_bsc
+       WHERE INST_CD = #{instCd}
+         AND TASK_SE_CD = #{taskSeCd}
+         AND TELGM_KND_CD = #{telgmKndCd}
+         AND DLNG_SE_CD = #{dlngSeCd}
+         FOR UPDATE
+  </select>
+
+   <select id="countData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="int">
+      SELECT COUNT(*)
+        FROM tb_telgm_knd_bsc
+       WHERE INST_CD = #{instCd}
+         AND TASK_SE_CD = #{taskSeCd}
+         AND TELGM_KND_CD = #{telgmKndCd}
+         AND DLNG_SE_CD = #{dlngSeCd}
+  </select>
+
+   <!--tb_telgm_knd_bsc SELECT LIST-->
+   <select id="getListData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbTelgmKndBscDto">
+      SELECT INST_CD
+           , TASK_SE_CD
+           , TELGM_KND_CD
+           , DLNG_SE_CD
+           , TELGM_NM
+           , TELGM_LEN
+           , RSPNS_TELGM_KND_CD
+           , TELGM_EXPLN
+           , STTS_CD
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , CRT_ID
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+           , UPD_ID
+        FROM tb_telgm_knd_bsc
+       WHERE 1=1
+       <if test="instCd!= null and instCd!= ''">
+         AND INST_CD = #{instCd}
+       </if>
+       <if test="taskSeCd!= null and taskSeCd!= ''">
+         AND TASK_SE_CD = #{taskSeCd}
+       </if>
+       <if test="telgmKndCd!= null and telgmKndCd!= ''">
+         AND TELGM_KND_CD = #{telgmKndCd}
+       </if>
+       <if test="dlngSeCd!= null and dlngSeCd!= ''">
+         AND DLNG_SE_CD = #{dlngSeCd}
+       </if>
+       <if test="telgmNm!= null and telgmNm!= ''">
+         AND TELGM_NM LIKE CONCAT('%',#{telgmNm} , '%')
+       </if>
+       <if test="telgmLen!= null and telgmLen!= ''">
+         AND TELGM_LEN = #{telgmLen}
+       </if>
+       <if test="rspnsTelgmKndCd!= null and rspnsTelgmKndCd!= ''">
+         AND RSPNS_TELGM_KND_CD = #{rspnsTelgmKndCd}
+       </if>
+       <if test="telgmExpln!= null and telgmExpln!= ''">
+         AND TELGM_EXPLN = #{telgmExpln}
+       </if>
+       <if test="sttsCd!= null and sttsCd!= ''">
+         AND STTS_CD = #{sttsCd}
+       </if>
+  </select>
+
+</mapper>

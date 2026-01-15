@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.meta.mapper.dbio.TbTelgmDtlBscMapper">
+
+   <!--tb_telgm_dtl_bsc SELECT-->
+   <select id="getData" parameterType="com.meta.dto.TbTelgmDtlBscDto" resultType="com.meta.dto.TbTelgmDtlBscDto">
+      SELECT INST_CD
+           , TASK_SE_CD
+           , TELGM_KND_CD
+           , DLNG_SE_CD
+           , ARTCL_SEQ
+           , ARTCL_NM
+           , ARTCL_ENG_NM
+           , ARTCL_ATRB
+           , ARTCL_LEN
+           , ARTCL_BSC_VL
+           , ARTCL_TYPE_CD
+           , ARTCL_DPTH
+           , REPT_FIELD
+           , REPT_FIX_NMTM
+           , STTS_CD
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , CRT_ID
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+           , UPD_ID
+        FROM tb_telgm_dtl_bsc
+       WHERE INST_CD = #{instCd}
+         AND TASK_SE_CD = #{taskSeCd}
+         AND TELGM_KND_CD = #{telgmKndCd}
+         AND DLNG_SE_CD = #{dlngSeCd}
+         AND ARTCL_SEQ = #{artclSeq}
+  </select>
+
+   <!--tb_telgm_dtl_bsc INSERT-->
+   <insert id="insertData" parameterType="com.meta.dto.TbTelgmDtlBscDto">
+     INSERT INTO tb_telgm_dtl_bsc (
+            INST_CD
+          , TASK_SE_CD
+          , TELGM_KND_CD
+          , DLNG_SE_CD
+          , ARTCL_SEQ
+          , ARTCL_NM
+          , ARTCL_ENG_NM
+          , ARTCL_ATRB
+          , ARTCL_LEN
+          , ARTCL_BSC_VL
+          , ARTCL_TYPE_CD
+          , ARTCL_DPTH
+          , REPT_FIELD
+          , REPT_FIX_NMTM
+          , STTS_CD
+          , CRT_ID
+          , UPD_ID
+     )
+     VALUES (
+            #{instCd}
+          , #{taskSeCd}
+          , #{telgmKndCd}
+          , #{dlngSeCd}
+          , #{artclSeq}
+          , #{artclNm}
+          , #{artclEngNm}
+          , #{artclAtrb}
+          , #{artclLen}
+          , #{artclBscVl}
+          , #{artclTypeCd}
+          , #{artclDpth}
+          , #{reptField}
+          , #{reptFixNmtm}
+          , #{sttsCd}
+          , #{crtId}
+          , #{updId}
+     ) 
+  </insert>
+
+   <!--tb_telgm_dtl_bsc UPDATE-->
+   <update id="updateData" parameterType="com.meta.dto.TbTelgmDtlBscDto">
+     UPDATE tb_telgm_dtl_bsc
+        SET ARTCL_NM = #{artclNm}
+          , ARTCL_ENG_NM = #{artclEngNm}
+          , ARTCL_ATRB = #{artclAtrb}
+          , ARTCL_LEN = #{artclLen}
+          , ARTCL_BSC_VL = #{artclBscVl}
+          , ARTCL_TYPE_CD = #{artclTypeCd}
+          , ARTCL_DPTH = #{artclDpth}
+          , REPT_FIELD = #{reptField}
+          , REPT_FIX_NMTM = #{reptFixNmtm}
+          , STTS_CD = #{sttsCd}
+          , UPD_ID = #{updId}
+      WHERE INST_CD = #{instCd}
+        AND TASK_SE_CD = #{taskSeCd}
+        AND TELGM_KND_CD = #{telgmKndCd}
+        AND DLNG_SE_CD = #{dlngSeCd}
+        AND ARTCL_SEQ = #{artclSeq}
+   </update>
+
+   <!--tb_telgm_dtl_bsc DELETE-->
+   <delete id="deleteData" parameterType="com.meta.dto.TbTelgmDtlBscDto">
+     DELETE
+       FROM tb_telgm_dtl_bsc
+      WHERE INST_CD = #{instCd}
+        AND TASK_SE_CD = #{taskSeCd}
+        AND TELGM_KND_CD = #{telgmKndCd}
+        AND DLNG_SE_CD = #{dlngSeCd}
+        AND ARTCL_SEQ = #{artclSeq}
+   </delete>
+
+   <!--tb_telgm_dtl_bsc RECORD LOCK SELECT-->
+   <select id="getLockData" parameterType="com.meta.dto.TbTelgmDtlBscDto" resultType="com.meta.dto.TbTelgmDtlBscDto">
+      SELECT INST_CD
+           , TASK_SE_CD
+           , TELGM_KND_CD
+           , DLNG_SE_CD
+           , ARTCL_SEQ
+           , ARTCL_NM
+           , ARTCL_ENG_NM
+           , ARTCL_ATRB
+           , ARTCL_LEN
+           , ARTCL_BSC_VL
+           , ARTCL_TYPE_CD
+           , ARTCL_DPTH
+           , REPT_FIELD
+           , REPT_FIX_NMTM
+           , STTS_CD
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , CRT_ID
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+           , UPD_ID
+        FROM tb_telgm_dtl_bsc
+       WHERE INST_CD = #{instCd}
+         AND TASK_SE_CD = #{taskSeCd}
+         AND TELGM_KND_CD = #{telgmKndCd}
+         AND DLNG_SE_CD = #{dlngSeCd}
+         AND ARTCL_SEQ = #{artclSeq}
+         FOR UPDATE
+  </select>
+
+   <select id="countData" parameterType="com.meta.dto.TbTelgmDtlBscDto" resultType="int">
+      SELECT COUNT(*)
+        FROM tb_telgm_dtl_bsc
+       WHERE INST_CD = #{instCd}
+         AND TASK_SE_CD = #{taskSeCd}
+         AND TELGM_KND_CD = #{telgmKndCd}
+         AND DLNG_SE_CD = #{dlngSeCd}
+         AND ARTCL_SEQ = #{artclSeq}
+  </select>
+
+   <!--tb_telgm_dtl_bsc SELECT LIST-->
+   <select id="getListData" parameterType="com.meta.dto.TbTelgmDtlBscDto" resultType="com.meta.dto.TbTelgmDtlBscDto">
+      SELECT INST_CD
+           , TASK_SE_CD
+           , TELGM_KND_CD
+           , DLNG_SE_CD
+           , ARTCL_SEQ
+           , ARTCL_NM
+           , ARTCL_ENG_NM
+           , ARTCL_ATRB
+           , ARTCL_LEN
+           , ARTCL_BSC_VL
+           , ARTCL_TYPE_CD
+           , ARTCL_DPTH
+           , REPT_FIELD
+           , REPT_FIX_NMTM
+           , STTS_CD
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , CRT_ID
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+           , UPD_ID
+        FROM tb_telgm_dtl_bsc
+       WHERE 1=1
+       <if test="instCd!= null and instCd!= ''">
+         AND INST_CD = #{instCd}
+       </if>
+       <if test="taskSeCd!= null and taskSeCd!= ''">
+         AND TASK_SE_CD = #{taskSeCd}
+       </if>
+       <if test="telgmKndCd!= null and telgmKndCd!= ''">
+         AND TELGM_KND_CD = #{telgmKndCd}
+       </if>
+       <if test="dlngSeCd!= null and dlngSeCd!= ''">
+         AND DLNG_SE_CD = #{dlngSeCd}
+       </if>
+       <if test="artclSeq!= null and artclSeq!= ''">
+         AND ARTCL_SEQ = #{artclSeq}
+       </if>
+       <if test="artclNm!= null and artclNm!= ''">
+         AND ARTCL_NM LIKE CONCAT('%',#{artclNm} , '%')
+       </if>
+       <if test="artclEngNm!= null and artclEngNm!= ''">
+         AND ARTCL_ENG_NM LIKE CONCAT('%',#{artclEngNm} , '%')
+       </if>
+       <if test="artclAtrb!= null and artclAtrb!= ''">
+         AND ARTCL_ATRB = #{artclAtrb}
+       </if>
+       <if test="artclLen!= null and artclLen!= ''">
+         AND ARTCL_LEN = #{artclLen}
+       </if>
+       <if test="artclBscVl!= null and artclBscVl!= ''">
+         AND ARTCL_BSC_VL = #{artclBscVl}
+       </if>
+       <if test="artclTypeCd!= null and artclTypeCd!= ''">
+         AND ARTCL_TYPE_CD = #{artclTypeCd}
+       </if>
+       <if test="artclDpth!= null and artclDpth!= ''">
+         AND ARTCL_DPTH = #{artclDpth}
+       </if>
+       <if test="reptField!= null and reptField!= ''">
+         AND REPT_FIELD = #{reptField}
+       </if>
+       <if test="reptFixNmtm!= null and reptFixNmtm!= ''">
+         AND REPT_FIX_NMTM LIKE CONCAT('%',#{reptFixNmtm} , '%')
+       </if>
+       <if test="sttsCd!= null and sttsCd!= ''">
+         AND STTS_CD = #{sttsCd}
+       </if>
+  </select>
+
+</mapper>

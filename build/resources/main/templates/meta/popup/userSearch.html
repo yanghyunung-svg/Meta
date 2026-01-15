@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/commonUtils.js" defer></script>
+
+</head>
+<body>
+    <div class="popupContainer" id="popupContainer">
+        <div class="searchHeadContainer">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;"> ✅ 사용자 정보 검색</h2>
+            <div class="button-group">
+                <button id="btnInit" type="button" class="btn">초기화</button>
+                <button id="btnSearch" type="button" class="btn">조회</button>
+                <button id="btnClose" type="button" class="btn">닫기</button>
+            </div>
+        </div>
+
+        <div class="searchBodyContainer">
+            <form id="mainForm">
+                <table class="search-table">
+                    <tr>
+                        <th>사용자ID</th>
+                        <td><input type="text" id="userId" name="userId" class="form-input"></td>
+                        <th>사용자이름</th>
+                        <td><input type="text" id="userNm" name="userNm" class="form-input"></td>
+                    </tr>
+                </table>
+            </form>
+
+            <div id="pageInfoContainer" class="page-header"></div>
+
+            <table class="data-table" id="mainTable">
+                <thead>
+                <tr>
+                    <th width="50px">No</th>
+                    <th>사용자ID</th>
+                    <th>사용자이름</th>
+                    <th>이메일</th>
+                    <th>전화번호</th>
+                    <th style="text-align: center;">권한</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+        let dataAll = [];
+        let currentPage = 1;
+
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+
+        const pageInfoContainer = document.getElementById("pageInfoContainer");
+        if (!pageInfoContainer) return;
+
+        fetch('/common/pageSize.html')
+            .then(res => res.text())
+            .then(html => {
+                pageInfoContainer.innerHTML = html;
+                const pageSizeSelect = document.getElementById("pageSize");
+                if (!pageSizeSelect) return;
+
+                pageSizeSelect.addEventListener("change", () => {
+                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    currentPage = 1;
+                    renderTable(currentPage);
+                    renderPagination(dataAll, currentPage, page_size);
+                    updatePageInfo(dataAll, currentPage, page_size);
+                });
+            });
+
+
+        window.renderTable = function(page)  {
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">검색 결과가 없습니다.</td></tr>';
+                return;
+            }
+
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map((item, index) => `
+                <tr class="row-click" data-id="${item.userId}" data-nm="${item.userNm}">
+                    <td style="text-align: center;"> ${start + index + 1} </td>
+                    <td style="text-align: left;">${item.userId}</td>
+                    <td style="text-align: left;">${item.userNm}</td>
+                    <td style="text-align: left;">${item.email}</td>
+                    <td style="text-align: left;">${item.phone}</td>
+                    <td> ${item.role === '2' ? 'USER' :   item.role === '1' ? 'ADMIN' : '-'} </td>
+                </tr>
+            `).join('');
+
+            /** 상세 클릭 이벤트 **/
+            document.querySelectorAll(".row-click").forEach(tr => {
+                tr.addEventListener("dblclick", () => {
+                    const { id, nm } = tr.dataset;
+                    if (window.opener && !window.opener.closed && typeof window.opener.receiveCode === 'function') {
+                        window.opener.receiveUser(id, nm);
+                    }
+                    window.close();
+                });
+            });
+        }
+
+
+
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+            tableBody.innerHTML = "";
+            dataAll = [];
+            document.getElementById('pageInfo').innerText = "";
+            const old = document.querySelector(".pagination");
+            if (old) old.remove();
+        });
+
+
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            const userId = document.querySelector("#userId").value.trim();
+            const userNm = document.querySelector("#userNm").value.trim();
+            fetch('/meta/getUserListData', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, userNm })
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            })
+            .catch(err => {
+                myAlert("에러 발생: " + err);
+            });
+        });
+        document.getElementById("btnClose").addEventListener("click", () => {
+            window.close();
+        });
+
+        // Enter 키 이벤트
+        document.getElementById('mainForm').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 폼 제출 방지
+                document.getElementById('btnSearch').click();
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

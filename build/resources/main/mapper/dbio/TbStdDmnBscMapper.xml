@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.meta.mapper.dbio.TbStdDmnBscMapper">
+
+   <!--TB_STD_DMN_BSC SELECT-->
+   <select id="getData" parameterType="com.meta.dto.TbStdDmnBscDto" resultType="com.meta.dto.TbStdDmnBscDto">
+      SELECT DMN_NM
+           , DMN_CLSF_NM
+           , DMN_ENG_NM
+           , DMN_ATRB
+           , STTS_CD
+           , CRT_ID
+           , UPD_ID
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_STD_DMN_BSC
+       WHERE DMN_NM = #{dmnNm}
+  </select>
+
+   <!--TB_STD_DMN_BSC INSERT-->
+   <insert id="insertData" parameterType="com.meta.dto.TbStdDmnBscDto">
+     INSERT INTO TB_STD_DMN_BSC (
+            DMN_NM
+          , DMN_CLSF_NM
+          , DMN_ENG_NM
+          , DMN_ATRB
+          , STTS_CD
+          , CRT_ID
+          , UPD_ID
+     )
+     VALUES (
+            #{dmnNm}
+          , #{dmnClsfNm}
+          , #{dmnEngNm}
+          , #{dmnAtrb}
+          , #{sttsCd}
+          , #{crtId}
+          , #{updId}
+     ) 
+  </insert>
+
+   <!--TB_STD_DMN_BSC UPDATE-->
+   <update id="updateData" parameterType="com.meta.dto.TbStdDmnBscDto">
+     UPDATE TB_STD_DMN_BSC
+        SET DMN_CLSF_NM = #{dmnClsfNm}
+          , DMN_ENG_NM = #{dmnEngNm}
+          , DMN_ATRB = #{dmnAtrb}
+          , STTS_CD = #{sttsCd}
+          , UPD_ID = #{updId}
+      WHERE DMN_NM = #{dmnNm}
+   </update>
+
+   <!--TB_STD_DMN_BSC DELETE-->
+   <delete id="deleteData" parameterType="com.meta.dto.TbStdDmnBscDto">
+     DELETE
+       FROM TB_STD_DMN_BSC
+      WHERE DMN_NM = #{dmnNm}
+   </delete>
+
+   <!--TB_STD_DMN_BSC RECORD LOCK SELECT-->
+   <select id="getLockData" parameterType="com.meta.dto.TbStdDmnBscDto" resultType="com.meta.dto.TbStdDmnBscDto">
+      SELECT DMN_NM
+           , DMN_CLSF_NM
+           , DMN_ENG_NM
+           , DMN_ATRB
+           , STTS_CD
+           , CRT_ID
+           , UPD_ID
+           , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+           , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_STD_DMN_BSC
+       WHERE DMN_NM = #{dmnNm}
+         FOR UPDATE
+  </select>
+
+    <!--TB_STD_DMN_BSC getListData-->
+    <select id="getListData" parameterType="com.meta.dto.TbStdDmnBscDto" resultType="com.meta.dto.TbStdDmnBscDto">
+        SELECT A.DMN_NM
+            , A.DMN_CLSF_NM
+            , A.DMN_ENG_NM
+            , A.DMN_ATRB
+            , A.STTS_CD
+            , B.CD_NM STTS_NM
+            , A.CRT_ID
+            , A.UPD_ID
+            , date_format(A.CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+            , date_format(A.UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        FROM TB_STD_DMN_BSC A
+        LEFT JOIN tb_code B
+        ON B.GRP_CD = 'STTS_CD'
+        AND B.CD = A.STTS_CD
+        WHERE 1=1
+        <if test="dmnNm  != null and dmnNm  != ''">
+            AND A.DMN_NM    LIKE CONCAT('%', #{dmnNm}, '%')
+        </if>
+        <if test="dmnClsfNm  != null and dmnClsfNm  != ''">
+            AND A.DMN_CLSF_NM    LIKE CONCAT('%', #{dmnClsfNm}, '%')
+        </if>
+        <if test="sttsCd  != null and sttsCd  != ''">
+            AND A.STTS_CD = #{sttsCd}
+        </if>
+        ORDER BY A.DMN_CLSF_NM, A.DMN_NM
+    </select>
+
+
+    <!--TB_STD_DMN_BSC getListData-->
+    <select id="getDmnComboData" resultType="com.meta.dto.TbStdDmnBscDto">
+        SELECT DMN_NM
+        ,  DMN_CLSF_NM
+        FROM TB_STD_DMN_BSC
+        WHERE STTS_CD =  '1'
+        ORDER BY DMN_NM
+    </select>
+
+
+    <select id="countData" parameterType="com.meta.dto.TbStdDmnBscDto" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_STD_DMN_BSC
+        WHERE DMN_NM = #{dmnNm}
+    </select>
+</mapper>

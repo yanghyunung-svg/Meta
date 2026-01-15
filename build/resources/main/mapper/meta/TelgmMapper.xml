@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="com.meta.mapper.meta.TelgmMapper">
+
+   <!--tb_telgm_knd_bsc SELECT LIST-->
+   <select id="getTelgmKndListData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbTelgmKndBscDto">
+      SELECT A.INST_CD
+           , B.CD_NM AS INST_NM
+           , A.TASK_SE_CD
+           , C.CD_NM AS TASK_SE_NM
+           , A.TELGM_KND_CD
+           , A.DLNG_SE_CD
+           , A.TELGM_NM
+           , A.TELGM_LEN
+           , A.RSPNS_TELGM_KND_CD
+           , A.TELGM_EXPLN
+           , A.STTS_CD
+        FROM tb_telgm_knd_bsc A
+       LEFT JOIN tb_code B
+       ON B.GRP_CD = 'INST_CD'
+       AND B.CD = A.INST_CD
+       LEFT JOIN tb_code C
+       ON C.GRP_CD = 'TASK_SE_CD'
+       AND C.CD = A.TASK_SE_CD
+       WHERE 1=1
+       <if test="instCd!= null and instCd!= ''">
+         AND A.INST_CD = #{instCd}
+       </if>
+       <if test="taskSeCd!= null and taskSeCd!= ''">
+         AND A.TASK_SE_CD = #{taskSeCd}
+       </if>
+       <if test="dlngSeCd!= null and dlngSeCd!= ''">
+         AND A.DLNG_SE_CD = #{dlngSeCd}
+       </if>
+       <if test="telgmNm!= null and telgmNm!= ''">
+         AND A.TELGM_NM LIKE CONCAT('%',#{telgmNm} , '%')
+       </if>
+  </select>
+
+    <!--tb_telgm_knd_bsc SELECT LIST-->
+    <select id="getTelgmDtlListData" parameterType="com.meta.dto.TbTelgmDtlBscDto" resultType="com.meta.dto.TbTelgmDtlBscDto">
+        SELECT INST_CD
+        , TASK_SE_CD
+        , TELGM_KND_CD
+        , DLNG_SE_CD
+        , ARTCL_SEQ
+        , ARTCL_NM
+        , ARTCL_ENG_NM
+        , ARTCL_ATRB
+        , ARTCL_LEN
+        , ARTCL_BSC_VL
+        , ARTCL_TYPE_CD
+        , ARTCL_DPTH
+        , REPT_FIELD
+        , REPT_FIX_NMTM
+        , STTS_CD
+        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+        , CRT_ID
+        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+        , UPD_ID
+        FROM tb_telgm_dtl_bsc
+        WHERE 1=1
+        <if test="instCd!= null and instCd!= ''">
+            AND INST_CD = #{instCd}
+        </if>
+        <if test="taskSeCd!= null and taskSeCd!= ''">
+            AND TASK_SE_CD = #{taskSeCd}
+        </if>
+        <if test="telgmKndCd!= null and telgmKndCd!= ''">
+            AND TELGM_KND_CD = #{telgmKndCd}
+        </if>
+        <if test="dlngSeCd!= null and dlngSeCd!= ''">
+            AND DLNG_SE_CD = #{dlngSeCd}
+        </if>
+    </select>
+
+    <!--전문종류 업무구분코드 combo data-->
+    <select id="getTaskSeCdComboData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbCodeDto">
+        SELECT DISTINCT( A.TASK_SE_CD )  AS CD, B.CD_NM  AS CD_NM
+          FROM tb_telgm_knd_bsc A
+          LEFT JOIN tb_code B
+            ON B.GRP_CD = 'TASK_SE_CD'
+           AND B.CD = A.TASK_SE_CD
+         WHERE A.INST_CD = #{instCd}
+    </select>
+
+    <!--전문종류 전문종별 combo data-->
+    <select id="getTelgmKndCdComboData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbCodeDto">
+        SELECT A.CD AS CD,
+               B.CD_NM AS CD_NM
+        FROM  (
+        SELECT TELGM_KND_CD AS CD
+          FROM tb_telgm_knd_bsc
+         WHERE INST_CD = #{instCd}
+           AND TASK_SE_CD  = #{taskSeCd}
+         UNION
+        SELECT RSPNS_TELGM_KND_CD AS CD
+          FROM tb_telgm_knd_bsc
+         WHERE INST_CD = #{instCd}
+           AND TASK_SE_CD = #{taskSeCd}
+        ) A
+        LEFT JOIN tb_code B
+        ON B.GRP_CD = 'TELGM_KND_CD'
+        AND B.CD = A.CD
+    </select>
+
+    <!--전문종류 거래구분코드 combo data-->
+    <select id="getDlngSeCdComboData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbCodeDto">
+        SELECT DLNG_SE_CD AS CD, TELGM_NM AS CD_NM
+        FROM tb_telgm_knd_bsc
+        WHERE INST_CD = #{instCd}
+        AND TASK_SE_CD = #{taskSeCd}
+        AND TELGM_KND_CD = #{telgmKndCd}
+        UNION
+        SELECT DLNG_SE_CD AS CD, TELGM_NM AS CD_NM
+        FROM tb_telgm_knd_bsc
+        WHERE INST_CD = #{instCd}
+        AND TASK_SE_CD = #{taskSeCd}
+        AND RSPNS_TELGM_KND_CD = #{telgmKndCd}
+    </select>
+
+</mapper>
