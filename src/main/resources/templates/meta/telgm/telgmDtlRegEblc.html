@@ -15,43 +15,54 @@
     <div id="sidebarContainer"></div>
 
         <div class="mainHeadContainer">
-            <h2 style="margin:0;"> ✅ 표준단어 일괄등록</h2>
+            <h2 style="margin:0;"> ✅ 전문상세 일괄등록</h2>
             <div class="button-group">
                 <button id="btnTemplate" type="button" class="btn">템플릿</button>
                 <button id="btnUpload" type="button" class="btn">업로드</button>
                 <button id="btnUploadSave" type="button" class="btn" disabled>저장</button>
             </div>
         </div>
-        <div class="mainBodyContainer">
+    <div class="mainBodyContainer">
         <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx">
 
         <table id="uploadPreviewTable" class="data-table">
-        <thead>
-        <tr>
-            <th class="col-no">No</th>
-            <th style="text-align: left;">단어명</th>
-            <th style="text-align: left;">영문약어명  </th>
-            <th style="text-align: left;">영문명</th>
-            <th style="text-align: left;">설명</th>
-            <th style="text-align: center;">상태</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+            <thead>
+            <tr>
+                <th style="width:50px">No</th>
+                <th style="width:50px">기관코드</th>
+                <th style="width:50px">업무구분코드</th>
+                <th style="width:50px">전문종별코드</th>
+                <th style="width:50px">거래구분코드</th>
+                <th style="width:50px">항목순서</th>
+                <th style="width:200px">항목명</th>
+                <th style="width:100px">항목영문명</th>
+                <th style="width:100px">항목속성</th>
+                <th style="width:100px">항목길이</th>
+                <th style="width:120px">항목기본값</th>
+                <th style="width:100px">항목유형코드</th>
+                <th style="width:100px">항목깊이</th>
+                <th style="width:100px">반복FIELD</th>
+                <th style="width:100px">반복고정횟수</th>
+                <th style="width:100px">상태</th>
+                <th>작성자</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 
-    <!-- 로딩 오버레이 -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="hourglass"></div>
-        <div class="loading-text">처리 중입니다...</div>
-    </div>
+</div>
 
+<!-- 로딩 오버레이 -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="hourglass"></div>
+    <div class="loading-text">처리 중입니다...</div>
+</div>
 
-    <script>
+<script>
     document.addEventListener("DOMContentLoaded", () => {
-
         document.getElementById("btnUpload").addEventListener("click", () => {
-           initView()
+            initView();
             document.getElementById("excelFile").click();
         });
 
@@ -64,8 +75,7 @@
 
             try {
                 showLoading("Excel Load ...");
-
-                const res = await fetch("/meta/uploadWordPreview", {
+                const res = await fetch("/meta/uploadTelgmDtlPreview", {
                     method: "POST",
                     body: formData
                 });
@@ -104,18 +114,32 @@
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td style="text-align: center;"> ${index + 1} </td>
-                    <td data-index="${index}" data-field="wordNm">${row.wordNm}</td>
-                    <td data-index="${index}" data-field="engAbbrNm">${row.engAbbrNm}</td>
-                    <td data-index="${index}" data-field="engNm">${row.engNm}</td>
-                    <td data-index="${index}" data-field="expln">${row.expln}</td>
-                    <td style="text-align: center;">${row.sttsCd}</td>
-                    <td class="hidden">${row.crtId}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="instCd">${row.instCd}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="taskSeCd">${row.taskSeCd}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="telgmKndCd">${row.telgmKndCd}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="dlngSeCd">${row.dlngSeCd}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="artclSeq">${row.artclSeq}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="artclNm">${row.artclNm}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="artclEngNm">${row.artclEngNm}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="artclAtrb">${row.artclAtrb}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="artclLen">${row.artclLen}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="artclBscVl">${row.artclBscVl}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="artclTypeCd">${row.artclTypeCd}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="artclDpth">${row.artclDpth}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="reptField">${row.reptField}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="reptFixNmtm">${row.reptFixNmtm}</td>
+
+
+                    <td style="text-align: left;" data-index="${index}" data-field="phone">${row.sttsCd}</td>
+                    <td style="text-align: left;" data-index="${index}" data-field="phone">${row.crtId}</td>
+
                 `;
                 tbody.appendChild(tr);
             });
 
             attachEditListeners();
         }
+
 
         document.getElementById("btnUploadSave").addEventListener("click", async () => {
             if (!window.uploadPreviewData || window.uploadPreviewData.length === 0){
@@ -128,7 +152,7 @@
 
             try {
                 showLoading("데이터 저장...");
-                const res = await fetch("/meta/uploadWordExcelSave", {
+                const res = await fetch("/meta/saveTelgmDtlUploaded", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(window.uploadPreviewData)
@@ -137,8 +161,9 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    myAlert(result.count + "건 처리되었습니다.");
-                    initView()
+                    myAlert(result.count + "건 저장되었습니다.");
+                    initView();
+
                 } else {
                     myAlert("오류: " + result.message);
                 }
@@ -153,7 +178,7 @@
     });
 
     document.getElementById("btnTemplate").addEventListener("click", () => {
-        window.location.href = "/meta/downloadWordExcelTemplate";
+        window.location.href = "/meta/downloadTelgmDtlExcelTemplate";
     });
 
     function initView() {

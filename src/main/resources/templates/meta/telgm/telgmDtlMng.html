@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/commonUtils.js" defer></script>
+    <script src="/js/commonCombo.js"></script>
+</head>
+<body>
+
+<div class="popupContainer" id="popupContainer">
+    <div class="popup-header">
+        <h2 class="popup-title"> ✅ 전문상세 </h2>
+        <div class="button-group">
+            <button id="btnReg" type="button" class="btn">등록</button>
+            <button id="btnChange" type="button" class="btn">변경</button>
+            <button id="btnDelete" type="button" class="btn">삭제</button>
+            <button id="btnInit" type="button" class="btn">초기화</button>
+            <button id="btnClose" type="button" class="btn">닫기</button>
+        </div>
+    </div>
+<!--    <div class="divider-t"></div>-->
+            <form id="mainForm">
+                <table class="popup-table">
+                    <tr>
+                        <th>기관코드 <span style="color:red">*</span></th>
+                        <td>
+                            <select id="instCd" name="instCd" class="form-input">
+                                <option value="">선택</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>업무구분코드 <span style="color:red">*</span></th>
+                        <td>
+                            <select id="taskSeCd" name="taskSeCd" class="form-input">
+                                <option value="">선택</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>전문종별코드 <span style="color:red">*</span></th>
+                        <td>
+                            <select id="telgmKndCd" name="telgmKndCd" class="form-input">
+                                <!--                            <option value="">선택</option>-->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>거래구분코드 <span style="color:red">*</span></th>
+                        <td> <input type="text" id="dlngSeCd" name="dlngSeCd" class="form-input" required> </td>
+                    </tr>
+                    <tr>
+                        <th>항목순서 <span style="color:red">*</span></th>
+                        <td style="display:flex; align-items:center; gap:4px;">
+                            <input type="text" id="artclSeq" name="artclSeq" class="form-input" required>
+                            <button id="btnCheck" type="button" class="btn">중복검증</button>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="popup-table">
+                    <tr>
+                        <th>항목명</th>
+                        <td><input type="text" id="artclNm" name="artclNm" class="form-input" > </td>
+                    </tr>
+                    <tr>
+                        <th>항목영문명</th>
+                        <td><input type="text" id="artclEngNm" name="artclEngNm" class="form-input" > </td>
+                    </tr>
+                    <tr>
+                        <th>항목속성</th>
+                        <td> <input type="text" id="artclAtrb" name="artclAtrb" class="form-input" required> </td>
+                    </tr>
+                    <tr>
+                        <th>항목길이</th>
+                        <td><input type="text" id="artclLen" name="artclLen" class="form-input" > </td>
+                    </tr>
+                    <tr>
+                        <th>항목기본값</th>
+                        <td><input type="text" id="artclBscVl" name="artclBscVl" class="form-input" > </td>
+                    </tr>
+                    <tr>
+                        <th>항목유형코드</th>
+                        <td>
+                            <select id="artclTypeCd" name="artclTypeCd" class="form-input">
+                                <option value="1" selected>FIELD</option>
+                                <option value="2">ARRAY</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>항목Depth</th>
+                        <td>
+                            <select id="artclDpth" name="artclDpth" class="form-input">
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>반복FIELD</th>
+                        <td><input type="text" id="reptField" name="reptField" class="form-input" > </td>
+                    </tr>
+                    <tr>
+                        <th>반복고정횟수</th>
+                        <td><input type="text" id="reptFixNmtm" name="reptFixNmtm" class="form-input" > </td>
+                    </tr>
+                    <tr>
+                        <th>상태</th>
+                        <td>
+                            <select id="sttsCd" name="sttsCd" class="form-input">
+                                <option value="">선택</option>
+                                <option value="1" SELECTED>사용</option>
+                                <option value="9">미사용</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+
+
+                <table class="popup-table">
+                <tr>
+                    <th>최초등록</th>
+                    <td style="display:flex; gap:5px;">
+                        <input type="text" id="crtId" name="crtId" class="form-input" readonly>
+                        <input type="text" id="crtDttm" name="crtDttm" class="form-input" readonly>   </td>
+                </tr>
+                <tr>
+                    <th>최종변경</th>
+                    <td style="display:flex; gap:5px;">
+                        <input type="text" id="updId" name="updId" class="form-input" readonly>
+                        <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
+                </tr>
+                </table>
+
+
+                <!--  <div class="msgInfo"> <span id="msgInfo"></span>   </div> -->
+            </form>
+    </div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('INST_CD', 'instCd');
+        loadCodeCombo('TASK_SE_CD', 'taskSeCd');
+        loadCodeCombo('TELGM_KND_CD', 'telgmKndCd');
+
+        const mainForm = document.getElementById("mainForm");
+        const btnReg = document.getElementById("btnReg");
+        const btnChange = document.getElementById("btnChange");
+        const btnDelete = document.getElementById("btnDelete");
+        const btnInit = document.getElementById("btnInit");
+        const btnClose = document.getElementById("btnClose");
+        const btnCheck = document.getElementById("btnCheck");
+        const role = localStorage.getItem('role');
+
+        btnReg.disabled = true;
+        btnChange.disabled = true;
+        btnDelete.disabled = true;
+        btnCheck.disabled = true;
+
+        let mode = "";
+        let originalData = {};
+
+        // 부모창에서 데이터 받기
+        window.addEventListener("message", (event) => {
+            if (event.origin  !== window.location.origin) return;
+            mode = event.data.mode;
+
+            const sendData = { instCd: event.data.instCd,
+                               taskSeCd: event.data.taskSeCd,
+                               telgmKndCd: event.data.telgmKndCd,
+                               dlngSeCd: event.data.dlngSeCd,
+                               artclSeq: event.data.artclSeq
+                             };
+            console.log("sendData=>", sendData);
+
+            if (mode === "S" && sendData ) {
+                btnInit.disabled = true;
+                (async () => {
+                    try {
+                        const res = await fetch('/meta/getTelgmDtlData', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify( sendData )
+                        });    const data = await res.json();    fillForm(mainForm, data);
+
+<!--                        document.getElementById("instCd").disabled  = true;-->
+<!--                        document.getElementById("taskSeCd").disabled  = true;-->
+<!--                        document.getElementById("telgmKndCd").disabled = true;-->
+<!--                        document.getElementById("dlngSeCd").disabled = true;-->
+<!--                        document.getElementById("artclSeq").disabled = true;-->
+
+                        btnInit.disabled = true;
+                        originalData = data;
+                        if (btnDelete) {
+                            btnDelete.disabled = (role  !== '0');
+                        }} catch (err) {
+                        myAlert("상세 데이터 조회 중 오류가 발생했습니다.");
+                    }
+                })();
+
+                btnChange.disabled = true;
+            }
+        });
+
+        // 현재 값이 수정되었는지 체크
+        const checkChanged = () => {
+            const current = formToJson(mainForm);
+            const changed = Object.keys(current).some(
+                key => current[key]  !== originalData[key]
+            );
+            if (mode === "S" ) {
+                btnChange.disabled = !changed;
+                btnDelete.disabled = true;
+            }
+        };
+
+        // 입력값 변경 감지 (입력/선택 모두 반응)
+        mainForm.querySelectorAll("input, textarea, select").forEach(el => {
+            el.addEventListener("input", checkChanged);
+            el.addEventListener("change", checkChanged);
+        });
+
+        document.getElementById("artclSeq").addEventListener("input", () => {
+            btnReg.disabled = true;
+            btnChange.disabled = true;
+            btnCheck.disabled = false;
+        });
+
+        // 중복검증
+       btnCheck.addEventListener('click', async () => {
+            let inData = formToJson(mainForm);
+            if (!inData.instCd.trim()) {
+                myAlert("기관코드를 입력하세요.");
+                mainForm.instCd.focus();
+                return;
+            }
+            const res = await fetch('/meta/getTelgmDtlData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(inData)
+            });
+            btnCheck.disabled = true;
+            btnChange.disabled = true;
+            const textData = await res.text();
+            if (!textData) {
+                mainForm.reset();
+                mainForm.instCd.value = inData.instCd;
+                mainForm.taskSeCd.value = inData.taskSeCd;
+                mainForm.telgmKndCd.value = inData.telgmKndCd;
+                mainForm.dlngSeCd.value = inData.dlngSeCd;
+                mainForm.artclSeq.value = inData.artclSeq;
+                mainForm.telgmNm.focus();
+                btnReg.disabled = false;
+                myAlert( "등록 가능합니다");
+            } else {
+                const data = JSON.parse(textData);
+                fillForm(mainForm, data);
+                btnReg.disabled = true;
+                myAlert( "이미 등록되어 있습니다");
+            }
+        });
+
+
+        // 변경 버튼
+        btnChange.addEventListener("click", async () => {
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
+            data.func = "U";
+            const ok = validateRequired([
+                { value: data.instCd, message: ' 필수 입력 항목 (기관코드) ', element: mainForm.instCd },
+                { value: data.taskSeCd,  message: '필수 입력 항목 (업무구분코드)', element: mainForm.taskSeCd },
+                { value: data.telgmKndCd,  message: '필수 입력 항목 (전문종별코드)', element: mainForm.telgmKndCd },
+                { value: data.artclNm,  message: '필수 입력 항목 (항목명)', element: mainForm.artclNm },
+                { value: data.artclEngNm,  message: '필수 입력 항목 (항목영문명)', element: mainForm.artclEngNm },
+                { value: data.artclAtrb,  message: '필수 입력 항목 (항목속성)', element: mainForm.artclAtrb },
+                { value: data.artclLen,  message: '필수 입력 항목 (항목길이)', element: mainForm.artclLen },
+                { value: data.artclTypeCd,  message: '필수 입력 항목 (항목유형코드)', element: mainForm.artclTypeCd },
+                { value: data.artclDpth,  message: '필수 입력 항목 (항목깊이)', element: mainForm.artclDpth },
+                { value: data.sttsCd,  message: '필수 입력 항목 (상태코드)', element: mainForm.sttsCd }
+            ]);
+            if (!ok) return;
+            manageProcess(data);
+        });
+
+        // 저장 버튼
+        btnReg.addEventListener("click", async () => {
+            let data = formToJson(mainForm);
+            data = addUserAuditFields(data);
+            data.func = "I";
+            const ok = validateRequired([
+                { value: data.instCd, message: ' 필수 입력 항목 (기관코드) ', element: mainForm.instCd },
+                { value: data.taskSeCd,  message: '필수 입력 항목 (업무구분코드)', element: mainForm.taskSeCd },
+                { value: data.telgmKndCd,  message: '필수 입력 항목 (전문종별코드)', element: mainForm.telgmKndCd },
+                { value: data.artclNm,  message: '필수 입력 항목 (항목명)', element: mainForm.artclNm },
+                { value: data.artclEngNm,  message: '필수 입력 항목 (항목영문명)', element: mainForm.artclEngNm },
+                { value: data.artclAtrb,  message: '필수 입력 항목 (항목속성)', element: mainForm.artclAtrb },
+                { value: data.artclLen,  message: '필수 입력 항목 (항목길이)', element: mainForm.artclLen },
+                { value: data.artclTypeCd,  message: '필수 입력 항목 (항목유형코드)', element: mainForm.artclTypeCd },
+                { value: data.artclDpth,  message: '필수 입력 항목 (항목깊이)', element: mainForm.artclDpth },
+                { value: data.sttsCd,  message: '필수 입력 항목 (상태코드)', element: mainForm.sttsCd }
+            ]);
+            if (!ok) return;
+            manageProcess(data);
+        });
+        // 삭제 버튼
+        btnDelete.addEventListener("click", async () => {
+            const isConfirmed = await myConfirm("정말로 삭제하시겠습니까?");
+            if (!isConfirmed) { return; }
+            let data = formToJson(mainForm);
+            data.func = "D";
+            manageProcess(data);
+        });
+
+        // 초기화
+        btnInit.addEventListener('click', () => {
+            mainForm.reset();
+            btnReg.disabled = true;
+            btnChange.disabled = true;
+            btnDelete.disabled = true;
+            btnCheck.disabled = true;
+            document.getElementById("instCd").focus();
+        });
+        // Enter Key
+        document.getElementById("instCd").addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                btnCheck.click();
+            }
+        });
+
+        // 닫기
+        btnClose.addEventListener("click", () => window.close() );
+
+    });
+
+    async function manageProcess(data) {
+        try {
+            let url = "/meta/manageTelgmDtlData";
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+            if (result.success) {
+                myAlert("처리 되었습니다.");
+                if (window.opener && typeof window.opener.refreshParentRow === 'function') {
+                    window.opener.refreshParentRow(data);
+                }
+                window.close();
+            } else {
+                myAlert("오류: " + result.message);
+            }
+
+        } catch (err) {
+            myAlert("처리중 오류가 발생했습니다.");
+        }
+    }
+</script>
+</body>
+</html>

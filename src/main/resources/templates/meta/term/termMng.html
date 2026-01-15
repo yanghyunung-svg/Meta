@@ -33,7 +33,9 @@
         <table class="popup-table">
             <tr>
                 <th>영문명 <span style="color:red">*</span></th>
-                <td > <input type="text" id="engNm" name="engNm" class="form-input" > </td>
+                <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" id="engNm" name="engNm" class="form-input" required>
+                    <button id="btnSplit" type="button" class="btn">단어조합</button></td>
             </tr>
             <tr>
                 <th>도메인명</th>
@@ -88,6 +90,9 @@
         const btnClose = document.getElementById("btnClose");
         const btnCheck = document.getElementById("btnCheck");
         const btnPopup = document.getElementById("btnPopup");
+        const btnSplit = document.getElementById("btnSplit");
+
+
 
         const dmnNm = document.forms.mainForm.dmnNm;
 
@@ -150,6 +155,7 @@
             btnChange.disabled = true;
             btnCheck.disabled = false;
         });
+
 
         // 변경 버튼
         btnChange.addEventListener("click", async () => {
@@ -265,6 +271,36 @@
                     myAlert("등록된 용어가 있습니다.." );
                     btnReg.disabled = true;
                 }
+            }
+        });
+
+
+        // 단어조합
+       btnSplit.addEventListener('click', async () => {
+            let inData = formToJson(mainForm);
+
+            if (!inData.trmNm.trim()) {
+                myAlert("용어명을 입력하세요.");
+                mainForm.trmNm.focus();
+                return;
+            }
+
+            const res = await fetch('/meta/getTermSplitData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(inData)
+            });
+
+
+            const textData = await res.text();
+            if (!textData) {
+                mainForm.reset();
+                mainForm.trmNm.value = inData.trmNm;
+                mainForm.engNm.focus();
+                btnReg.disabled = false;
+            } else {
+                const outData = JSON.parse(textData);
+                fillForm(mainForm, outData);
             }
         });
 

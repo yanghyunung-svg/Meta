@@ -126,6 +126,69 @@ public class TemplateController {
         );
     }
 
+
+    /**
+     * @ ID : downloadTelgmKndExcelTemplate
+     * @ NAME : 전문종류 UPLOAD Template
+     */
+    @GetMapping("/downloadTelgmKndExcelTemplate")
+    public void downloadTelgmKndExcelTemplate(HttpServletResponse response) throws Exception {
+        downloadExcelTemplate(
+                response,
+                "전문종류",
+                "전문종류_업로드_템플릿.xlsx",
+                new String[]{"No","기관코드","업무구분코드","전문종별코드","거래구분코드","전문명","전문길이","전문설명","상태"},
+                new String[]{"1","기관코드","업무구분코드","전문종별코드","거래구분코드","전문명","전문길이","전문설명","1"}
+        );
+    }
+
+    /**
+     * @ ID : downloadTelgmDtlExcelTemplate
+     * @ NAME : 전문상세 UPLOAD Template
+     */
+    @GetMapping("/downloadTelgmDtlExcelTemplate")
+    public void downloadTelgmDtlExcelTemplate(HttpServletResponse response) throws Exception {
+        downloadExcelTemplate(
+                response,
+                "전문상세",
+                "전문상세_업로드_템플릿.xlsx",
+                new String[]{"No"
+                        ,"기관코드"
+                        ,"업무구분코드"
+                        ,"전문종별코드"
+                        ,"거래구분코드"
+                        ,"항목순서"
+                        ,"항목명"
+                        ,"항목영문명"
+                        ,"항목속성"
+                        ,"항목길이"
+                        ,"항목기본값"
+                        ,"항목유형코드"
+                        ,"항목깊이"
+                        ,"반복FIELD"
+                        ,"반복고정횟수"
+                        ,"상태"},
+                new String[]{"1"
+                        ,"기관코드"
+                        ,"업무구분코드"
+                        ,"전문종별코드"
+                        ,"거래구분코드"
+                        ,"항목순서"
+                        ,"항목명"
+                        ,"항목영문명"
+                        ,"항목속성"
+                        ,"항목길이"
+                        ,"항목기본값"
+                        ,"항목유형코드"
+                        ,"항목깊이"
+                        ,"반복FIELD"
+                        ,"반복고정횟수"
+                        ,"1"}
+        );
+    }
+
+
+
     private void downloadExcelTemplate(
             HttpServletResponse response,
             String sheetName,

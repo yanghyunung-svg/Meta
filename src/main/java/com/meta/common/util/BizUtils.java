@@ -73,7 +73,7 @@ public class BizUtils {
         String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1); 
         String methodName = caller.getMethodName(); 
         int lineNumber = caller.getLineNumber();
-        return String.format("✅●●●●● %s.%s [03%d] ", className, methodName, lineNumber);
+        return String.format("✅●●●●● %s.%s [%03d] ", className, methodName, lineNumber);
     }
 
     public static String logInfo(String str) {

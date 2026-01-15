@@ -28,10 +28,8 @@ public class FnstController {
 
     @GetMapping("/fnst/fnstList")
     public String fnstListPage() { return "meta/fnst/fnstList"; }
-
     @GetMapping("/fnst/fnstMng")
     public String fnstMngPage() { return "meta/fnst/fnstMng"; }
-
     @GetMapping("/fnst/fnstRegEblc")
     public String fnstRegEblcPage() { return "meta/fnst/fnstRegEblc"; }
 

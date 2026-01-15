@@ -190,7 +190,7 @@
             const ok = validateRequired([
                 { value: data.grpCd.trim(), message: ' 필수 입력 항목 (그룹코드) ', element: mainForm.grpCd },
                 { value: data.grpNm.trim(),  message: '필수 입력 항목 (그룹코드명)', element: mainForm.grpNm },
-                { value: data.stat.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.stat }
+                { value: data.sttsCd.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.sttsCd }
             ]);
             if (!ok) return;
             manageProcess(data);
@@ -204,7 +204,7 @@
             const ok = validateRequired([
                 { value: data.grpCd.trim(), message: ' 필수 입력 항목 (그룹코드) ', element: mainForm.grpCd },
                 { value: data.grpNm.trim(),  message: '필수 입력 항목 (그룹코드명)', element: mainForm.grpNm },
-                { value: data.stat.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.stat }
+                { value: data.sttsCd.trim(),  message: '필수 입력 항목 (상태코드)', element: mainForm.sttsCd }
             ]);
             if (!ok) return;
             manageProcess(data);
