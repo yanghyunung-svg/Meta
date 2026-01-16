@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Meta System</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+</head>
+<body>
+
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+
+    <div class="mainHeadContainer">
+        <h2 style="margin:0;"> ✅ 전문용어 등록</h2>
+        <div class="button-group">
+            <button id="btnInit"    type="button" class="btn">초기화</button>
+            <button id="btnDelRow"  type="button" class="btn">행삭제</button>
+            <button id="btnAddRow"  type="button" class="btn">행추가</button>
+            <button id="btnWordReg" type="button" class="btn">단어등록</button>
+            <button id="btnVal"     type="button" class="btn">일괄용어검색</button>
+            <button id="btnUpload"  type="button" class="btn">엑셀 UPLOAD</button>
+            <button id="btnSave"    type="button" class="btn">전문용어등록</button>
+        </div>
+    </div>
+
+    <div class="mainBodyContainer">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>용어명</th>
+                    <td style="display:flex; align-items:center; gap:4px;">
+                        <input type="text" id="trmNm" name="trmNm" class="form-input" required>
+                        <button id="btnSplit" type="button" class="btn">용어검색</button>
+                    </td>
+                    <th>영문명</th>
+                    <td><input type="text" id="engNm" name="engNm" class="form-input"></td>
+                    <th>설명</th>
+                    <td width="40%"><input type="text" id="trmExpln" name="trmExpln" class="form-input"></td>
+                </tr>
+            </table>
+        </form>
+
+        <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx">
+        <table id="mainTable" class="data-table">
+            <thead>
+            <tr>
+                <th style="width:40px; text-align:center;">No</th>
+                <th style="width:140px; text-align:left;">용어명</th>
+                <th style="width:160px; text-align:left;">영문명</th>
+                <th style="width:300px; text-align:left;">용어설명</th>
+                <th style="width:140px; text-align:left;">도메인</th>
+                <th style="width:100px; text-align:left;">상태</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 로딩 오버레이 -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="hourglass"></div>
+    <div class="loading-text">처리 중입니다...</div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const mainForm = document.getElementById("mainForm");
+        let uploadPreviewData = [];
+
+
+        document.getElementById("btnInit").addEventListener("click", () => {
+            location.reload();
+        });
+
+
+        document.getElementById("btnAddRow").addEventListener("click", () => {
+            let inData = formToJson(mainForm);
+            if (!inData.trmNm.trim() || !inData.engNm.trim()) {
+                myAlert("용어명과 영문명은 필수입니다.");
+                mainForm.trmNm.focus();
+                return;
+            }
+
+            const newEmptyRow = {
+                trmNm: inData.trmNm,
+                engNm: inData.engNm,
+                trmExpln : inData.trmExpln,
+                dmnNm : '전문용어',
+                sttsCd: '1'
+            };
+
+            // uploadPreviewData가 아직 초기화되지 않았다면 빈 배열로 시작
+            if (!uploadPreviewData) {
+                uploadPreviewData = [];
+            }
+
+            // 데이터 배열에 새로운 행 추가
+            uploadPreviewData.push(newEmptyRow);
+            // 업데이트된 데이터를 사용하여 테이블 다시 렌더링
+            renderPreviewTable(uploadPreviewData);
+
+            requestAnimationFrame(() => {
+                const tbody = document.querySelector("#previewTable tbody");
+                const lastRow = tbody?.querySelector("tr:last-child");
+            });
+
+            mainForm.reset();
+            document.getElementById("trmNm").focus();
+        });
+
+        document.getElementById("btnDelRow").addEventListener("click", () => {
+            if (!uploadPreviewData || uploadPreviewData.length === 0) {
+                return;
+            }
+            // 마지막 행 삭제
+            uploadPreviewData.pop();
+            // 테이블 재렌더링
+            renderPreviewTable(uploadPreviewData);
+        });
+
+        // 용어검색
+        document.getElementById('btnSplit').addEventListener('click', async () => {
+            let inData = formToJson(mainForm);
+            if (!inData.trmNm.trim()) {
+                mainForm.trmNm.focus();
+                return;
+            }
+            const res = await fetch('/meta/getTermSplitData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(inData)
+            });
+
+            const textData = await res.text();
+            if (!textData) {
+                mainForm.reset();
+                mainForm.trmNm.value = inData.trmNm;
+            } else {
+                const outData = JSON.parse(textData);
+                fillForm(mainForm, outData);
+            }
+        });
+
+        document.getElementById("btnUpload").addEventListener("click", () => {
+            document.getElementById("excelFile").click();
+        });
+
+        document.getElementById("excelFile").addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                showLoading("Excel Load ...");
+                const res = await fetch("/meta/uploadTermExcelOnly", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await res.json();
+
+                if (!result.success) {
+                    myAlert("오류: " + result.message);
+                    return;
+                }
+
+                renderPreviewTable(result.data);
+                uploadPreviewData = result.data;
+
+            } catch (error) {
+                myAlert("업로드 중 오류가 발생했습니다.");
+            } finally {
+                hideLoading();
+            }
+        });
+
+
+        document.getElementById('btnVal').addEventListener('click', async () => {
+            if (!uploadPreviewData || uploadPreviewData.length === 0) {
+                return;
+            }
+
+            try {
+                const res = await fetch("/meta/parseTermReload", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(uploadPreviewData)
+                });
+
+                const result = await res.json();
+
+                if (!result.success) {
+                    myAlert("오류: " + result.message);
+                    return;
+                }
+
+                const mappedData = result.data.map(row => ({
+                    trmNm: row.trmNm  || "",
+                    engNm: row.engNm ||   "",
+                    trmExpln: row.trmExpln   || "",
+                    dmnNm: "전문용어",
+                    sttsCd: row.sttsCd   || ""
+                }));
+
+                renderPreviewTable(mappedData);
+                uploadPreviewData = mappedData;
+
+
+            } catch(err) {
+                console.error(err);
+                myAlert("처리 중 오류 발생");
+            }
+        });
+
+        document.getElementById("btnSave").addEventListener("click", async () => {
+            if (!uploadPreviewData || uploadPreviewData.length === 0){
+                myAlert("등록할 데이터가 없습니다.");
+                return;
+            }
+
+            const isConfirmed = await myConfirm("검증된 데이터를 등록하시겠습니까?");
+            if (!isConfirmed) { return; }
+
+            try {
+                showLoading("데이터 저장...");
+                const res = await fetch("/meta/eblcRegTerm", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(uploadPreviewData)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    myAlert(result.count + "건 저장되었습니다.");
+                    initView();
+
+                } else {
+                    myAlert("오류: " + result.message);
+                }
+
+            } catch(err) {
+                myAlert("저장 중 오류 발생");
+            } finally {
+                hideLoading();
+            }
+        });
+
+        function initView() {
+            document.getElementById("excelFile").value = "";
+            document.getElementById("mainTable").querySelector("tbody").innerHTML = "";
+            uploadPreviewData = null;
+        }
+
+        /** 단어등록 **/
+        document.getElementById('btnWordReg').addEventListener('click', () => {
+            const sendData = { mode: "I"};
+            openWindowWithJSON(sendData, "/meta/word/wordMng", 800, 700);
+        });
+
+        function renderPreviewTable(rows) {
+            const table = document.getElementById("mainTable");
+            const tbody = table.querySelector("tbody");
+            tbody.innerHTML = "";
+            table.style.display = "table";
+
+            rows.forEach((row, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="col-no">${index + 1}</td>
+                    <td style="text-align: left;">${row.trmNm}</td>
+                    <td style="text-align: left;">${row.engNm}</td>
+                    <td style="text-align: left;">${row.trmExpln}</td>
+                    <td style="text-align: left;">${row.dmnNm}</td>
+                    <td style="text-align: left;">${row.sttsCd}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.addEventListener("keydown", (e) => {
+            switch (e.key) {
+                case "F1":
+                    e.preventDefault();
+                    document.getElementById("btnInit")?.click();
+                    break;
+                case "F2":
+                    e.preventDefault();
+                    document.getElementById("btnDelRow")?.click();
+                    break;
+                case "F3":
+                    e.preventDefault();
+                    document.getElementById("btnAddRow")?.click();
+                    break;
+                case "F4":
+                    e.preventDefault();
+                    document.getElementById("btnWordReg")?.click();
+                    break;
+                case "Enter":
+                    if (e.target.tagName === "INPUT") {
+                        e.preventDefault();
+                        document.getElementById("btnSplit")?.click();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+    });
+</script>
+</body>
+</html>
+

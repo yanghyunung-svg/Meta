@@ -126,7 +126,7 @@
 
             try {
                 showLoading("데이터 저장...");
-                const res = await fetch("/meta/uploadTermExcelSave", {
+                const res = await fetch("/meta/eblcRegTerm", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(window.uploadPreviewData)

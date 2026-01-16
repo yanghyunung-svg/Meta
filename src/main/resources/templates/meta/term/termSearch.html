@@ -170,7 +170,7 @@
             tr.innerHTML = `
                 <td class="col-no">${index + 1}</td>
                 <td style="text-align: left;" class="form-input no-enter" contenteditable="true" data-index="${index}" data-field="trmNm">${row.trmNm}</td>
-                <td style="text-align: left;" class="form-input no-enter" contenteditable="true" data-index="${index}" data-field="trmNm">${row.engNm}</td>
+                <td style="text-align: left;">${row.engNm}</td>
                 <td style="text-align: left;">${row.snake}</td>
                 <td style="text-align: left;">${row.pascal}</td>
                 <td style="text-align: left;">${row.camel}</td>
@@ -239,7 +239,7 @@
             const tbody = document.querySelector("#previewTable tbody");
             const lastRow = tbody?.querySelector("tr:last-child");
             const firstInput = lastRow?.querySelector('input[name="trmNm"]');
-            firstInput?.focus();
+            firstInput.focus();
         });
     });
 
@@ -280,17 +280,21 @@
                 e.preventDefault();
                 document.getElementById("btnInit")?.click();
                 break;
-
             case "F2":
                 e.preventDefault();
+                document.getElementById("btnVal").focus();
                 document.getElementById("btnVal")?.click();
                 break;
-
             case "F3":
                 e.preventDefault();
                 document.getElementById("btnAddRow")?.click();
                 break;
-
+            case "Tab":
+                e.preventDefault();
+                document.getElementById("btnVal").focus();
+                document.getElementById("btnVal")?.click();
+                document.getElementById("btnAddRow")?.click();
+                break;
             default:
                 break;
         }

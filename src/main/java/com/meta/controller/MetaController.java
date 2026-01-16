@@ -15,16 +15,6 @@ public class MetaController {
     @GetMapping("/comm/loginLogList")
     public String loginLogListPage() {  return "meta/comm//loginLogList";  }
 
-    /* 용어 */
-    @GetMapping("/term/termList")
-    public String termListPage() { return "meta/term/termList"; }
-    @GetMapping("/term/termMng")
-    public String termMngPage() { return "meta/term/termMng"; }
-    @GetMapping("/term/termRegEblc")
-    public String termRegEblcPage() { return "meta/term/termRegEblc"; }
-    @GetMapping("/term/termSearch")
-    public String termSearchPage() { return "meta/term/termSearch"; }
-
     /* 단어 */
     @GetMapping("/word/wordList")
     public String wordListPage() { return "meta/word/wordList"; }

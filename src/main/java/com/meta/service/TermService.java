@@ -328,8 +328,8 @@ public class TermService {
         return null;  // 정상
     }
 
-    public int uploadTermExcelSave(List<TbStdTermBscDto> list)  {
-        log.debug(BizUtils.logInfo());
+    public int eblcRegTerm(List<TbStdTermBscDto> list)  {
+        log.debug(BizUtils.logInfo("START"));
         int count = 0;
         for (TbStdTermBscDto dto : list) {
             if (StringUtils.equals(dto.getSttsCd(), "0")) {
@@ -341,6 +341,7 @@ public class TermService {
                 }
             }
         }
+        log.debug(BizUtils.logInfo("END"));
         return count;
     } 
 }

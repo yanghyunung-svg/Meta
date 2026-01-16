@@ -29,6 +29,18 @@ public class TermController {
     @Autowired
     private TbStdTermBscMapper termMapper;
 
+    /* Web Page */
+    @GetMapping("/term/termList")
+    public String termList() { return "meta/term/termList"; }
+    @GetMapping("/term/termMng")
+    public String termMng() { return "meta/term/termMng"; }
+    @GetMapping("/term/termRegEblc")
+    public String termRegEblc() { return "meta/term/termRegEblc"; }
+    @GetMapping("/term/telgmTermReg")
+    public String telgmTermReg() { return "meta/term/telgmTermReg"; }
+    @GetMapping("/term/termSearch")
+    public String termSearch() { return "meta/term/termSearch"; }
+
     /**
      * @ ID : getTermListData
      * @ NAME : 용어사전 목록 조회
@@ -76,7 +88,7 @@ public class TermController {
 
     @PostMapping("/uploadTermExcelOnly")
     public ResponseEntity<Map<String, Object>> uploadTermExcelOnly(@RequestParam("file") MultipartFile file) {
-        log.debug(BizUtils.logInfo());
+        log.debug(BizUtils.logInfo("START"));
         Map<String, Object> res = new HashMap<>();
         try {
             List<TbStdTermBscDto> list = termService.uploadTermExcelOnly(file);
@@ -86,54 +98,61 @@ public class TermController {
         } catch (Exception e) {
             res.put("success", false);
             res.put("message", e.getMessage());
+        } finally {
+            log.debug(BizUtils.logInfo("END"));
             return ResponseEntity.ok(res);
         }
     }
     @PostMapping("/uploadTermPreview")
     public ResponseEntity<Map<String, Object>> uploadTermPreview(@RequestParam("file") MultipartFile file) {
-        log.debug(BizUtils.logInfo());
+        log.debug(BizUtils.logInfo("START"));
         Map<String, Object> res = new HashMap<>();
         try {
             List<TbStdTermBscDto> list = termService.parsePreview(file);
             res.put("success", true);
             res.put("data", list);
-            return ResponseEntity.ok(res);
         } catch (Exception e) {
             res.put("success", false);
             res.put("message", e.getMessage());
+        } finally {
+            log.debug(BizUtils.logInfo("END"));
             return ResponseEntity.ok(res);
         }
     }
 
     @PostMapping("/parseTermReload")
     public ResponseEntity<Map<String, Object>> parseTermReload(@RequestBody List<TbStdTermBscDto> inputList) {
-        log.debug(BizUtils.logInfo());
+        log.debug(BizUtils.logInfo("START"));
         Map<String, Object> res = new HashMap<>();
         try {
             List<TbStdTermBscDto> list = termService.parseTermReload(inputList);
             res.put("success", true);
             res.put("data", list);
-            return ResponseEntity.ok(res);
         } catch (Exception e) {
             res.put("success", false);
             res.put("message", e.getMessage());
+        } finally {
+            log.debug(BizUtils.logInfo("END"));
             return ResponseEntity.ok(res);
         }
     }
 
 
-    @PostMapping("/uploadTermExcelSave")
-    public ResponseEntity<Map<String, Object>> uploadTermExcelSave(@RequestBody List<TbStdTermBscDto> list, HttpServletRequest request) {
-        log.debug(BizUtils.logInfo());
+    @PostMapping("/eblcRegTerm")
+    public ResponseEntity<Map<String, Object>> eblcRegTerm(@RequestBody List<TbStdTermBscDto> list, HttpServletRequest request) {
+        log.debug(BizUtils.logInfo("START"));
         Map<String, Object> res = new HashMap<>();
+        int count = 0;
         try {
-            int count = termService.uploadTermExcelSave(list);
+            count = termService.eblcRegTerm(list);
             res.put("success", true);
             res.put("count", count);
-            return ResponseEntity.ok(res);
         } catch (Exception e) {
             res.put("success", false);
             res.put("message", e.getMessage());
+            res.put("count", count);
+        } finally {
+            log.debug(BizUtils.logInfo("END", String.valueOf(count)));
             return ResponseEntity.ok(res);
         }
     }
