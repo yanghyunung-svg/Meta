@@ -33,4 +33,6 @@ public class TbTelgmInterfaceBscDto {
     private String     updDttm;                         // 수정일시 DATETIME
     private String     updId;                           // 수정자 VARCHAR(50)
     private String     func;
+    private String     instNm;                          // 기관명
+    private String     taskSeNm;                        // 업무구분명
 }

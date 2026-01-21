@@ -11,7 +11,7 @@
  --bg-color:#fff;
  --main-bg-color:#fff;
  --main-text-color:#474747;
- --main-border-color:#474747;
+ --main-border-color:#1565c0;
  --main-over-color:#f0f0f0;
  --main-over-text-color:#474747;
  --btn-bg-color:#f0f0f0;
@@ -44,7 +44,7 @@ body, html { font-family:
 /* 테이블 */
 table { width:100%; border-collapse:collapse; }
 th, td { border:1px solid #ccc; padding:8px; text-align:left; }
-th { background-color:#fff; }
+th { background-color:#ddd; }
 
 input[readonly],textarea[readonly],select[readonly] { background-color:#f0f0f0; color:var(--bg-black); border:1px solid #ccc; }
 
@@ -135,9 +135,10 @@ ul { list-style: none; padding:0; margin:0; }
 .sidebar-menu li a:hover, sidebar-menu a:active { font-size:13px; color: var(--bg-cobalt-blue); border:0px solid #f0f0f0; font-weight: bold;}
 .sidebar-menu li a:link, .sidebar-menu a:visited { font-size:12px; color: var(--bg-black); border:0px solid #f0f0f0; font-weight: bold;}
 
-.search-table       { margin:0px 0px 5px; width:100%; border-collapse:collapse; border: 1px solid #ddd; }
-.search-table th    { padding:1px; text-align:center; font-size:12px; background-color:#f0f0f0; min-width:120px; width:150px; height:20px; white-space:nowrap;    border: 1px solid #ddd; }
-.search-table td    { padding:2px; font-size:12px; border:1px;  border: 1px solid #ddd; }
+.search-table       { margin:0px 0px 5px; width:100%; border-collapse:collapse; border: 1px solid #1565c0; }
+.search-table th    { padding:1px; text-align:center; font-size:12px;
+                        background-color:#1565c0; color:white; min-width:120px; width:150px; height:20px; white-space:nowrap; border: 1px solid #1565c0; }
+.search-table td    { padding:2px; font-size:12px; border:1px;  border: 1px solid #1565c0; }
 .search-table .label { padding:0px; text-align:center; font-size:12px; background-color:#f0f0f0; min-width:120px; width:150px; height:20px; white-space:nowrap;  }
 
 .search-table .form-input,

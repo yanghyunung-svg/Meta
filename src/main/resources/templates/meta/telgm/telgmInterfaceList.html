@@ -52,7 +52,7 @@
                             <option value="2">2-개설</option>
                         </select>
                     </td>
-                    <th>전문유형구분코드</th>
+                    <th>전문유형코드</th>
                     <td>
                         <select id="telgmTypeCd" name="telgmTypeCd" class="form-select">
                             <option value="">전체</option>
@@ -121,10 +121,10 @@
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr class="row-click" data-id="${item.ifId}">
                     <td style="text-align: center;"> ${start + index + 1} </td>
-                    <td style="text-align: center;">${item.instCd}</td>
-                    <td style="text-align: center;">${item.taskSeCd}</td>
-                    <td style="text-align: center;">${item.hndlEstblSeCd + ['','-취급','-개설'][item.hndlEstblSeCd * 1]}</td>
-                    <td style="text-align: center;">${item.telgmTypeCd + ['','-BIZ','-SYS'][item.telgmTypeCd * 1]}</td>
+                    <td style="text-align: center;">${item.instNm}</td>
+                    <td style="text-align: center;">${item.taskSeNm}</td>
+                    <td style="text-align: center;">${['','취급','개설'][item.hndlEstblSeCd * 1]}</td>
+                    <td style="text-align: center;">${['','BIZ','SYS'][item.telgmTypeCd * 1]}</td>
                     <td style="text-align: center;">${item.telgmKndCd}</td>
                     <td style="text-align: center;">${item.dlngSeCd}</td>
                     <td style="text-align: left;">${item.telgmNm}</td>
@@ -139,12 +139,9 @@
             if (!tr) return;
             const sendData = {
                 mode: "S",
-                instCd: tr.dataset.instcd,
-                taskSeCd: tr.dataset.tasksecd,
-                telgmKndCd: tr.dataset.telgmkndcd,
-                dlngSeCd: tr.dataset.dlngsecd
+                ifId: tr.dataset.id
             };
-            openWindowWithJSON(sendData, "/meta/telgm/telgmInterfaceMng", 800, 700);
+            openWindowWithJSON(sendData, "/meta/telgm/telgmInterfaceMng", 800, 800);
         });
 
         document.getElementById('btnSearch').addEventListener('click', () => {
@@ -208,7 +205,7 @@
                 instCd: instCd.value,
                 taskSeCd: taskSeCd.value
         }
-        openWindowWithJSON(sendData, "/meta/telgm/telgmInterfaceMng", 800, 700);
+        openWindowWithJSON(sendData, "/meta/telgm/telgmInterfaceMng", 800, 800);
     });
 
     document.getElementById('btnRegEblc').addEventListener('click', () => {

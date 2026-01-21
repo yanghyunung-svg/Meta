@@ -107,52 +107,61 @@
 
    <!--tb_telgm_interface_bsc SELECT LIST-->
    <select id="getListData" parameterType="com.meta.dto.TbTelgmInterfaceBscDto" resultType="com.meta.dto.TbTelgmInterfaceBscDto">
-      SELECT IF_ID
-           , INST_CD
-           , TASK_SE_CD
-           , HNDL_ESTBL_SE_CD
-           , TELGM_TYPE_CD
-           , TELGM_KND_CD
-           , DLNG_SE_CD
-           , TELGM_NM
-           , TELGM_EXPLN
-           , STTS_CD
-       , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
-       , CRT_ID
-       , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-       , UPD_ID
-        FROM tb_telgm_interface_bsc
+      SELECT A.IF_ID
+           , A.INST_CD
+       , CONCAT_WS('-', A.INST_CD, B.CD_NM) AS INST_NM
+           , A.TASK_SE_CD
+       , CONCAT_WS('-', A.TASK_SE_CD, C.CD_NM) AS TASK_SE_NM
+           , A.HNDL_ESTBL_SE_CD
+           , A.TELGM_TYPE_CD
+           , A.TELGM_KND_CD
+           , A.DLNG_SE_CD
+           , A.TELGM_NM
+           , A.TELGM_EXPLN
+           , A.STTS_CD
+       , date_format(A.CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
+       , A.CRT_ID
+       , date_format(A.UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
+       , A.UPD_ID
+        FROM tb_telgm_interface_bsc A
+       LEFT JOIN tb_code B
+       ON B.GRP_CD = 'INST_CD'
+       AND B.CD = A.INST_CD
+       LEFT JOIN tb_code C
+       ON C.GRP_CD = 'TASK_SE_CD'
+       AND C.CD = A.TASK_SE_CD
        WHERE 1=1
        <if test="ifId!= null and ifId!= ''">
-         AND IF_ID = #{ifId}
+         AND A.IF_ID = #{ifId}
        </if>
        <if test="instCd!= null and instCd!= ''">
-         AND INST_CD = #{instCd}
+         AND A.INST_CD = #{instCd}
        </if>
        <if test="taskSeCd!= null and taskSeCd!= ''">
-         AND TASK_SE_CD = #{taskSeCd}
+         AND A.TASK_SE_CD = #{taskSeCd}
        </if>
        <if test="hndlEstblSeCd!= null and hndlEstblSeCd!= ''">
-         AND HNDL_ESTBL_SE_CD = #{hndlEstblSeCd}
+         AND A.HNDL_ESTBL_SE_CD = #{hndlEstblSeCd}
        </if>
        <if test="telgmTypeCd!= null and telgmTypeCd!= ''">
-         AND TELGM_TYPE_CD = #{telgmTypeCd}
+         AND A.TELGM_TYPE_CD = #{telgmTypeCd}
        </if>
        <if test="telgmKndCd!= null and telgmKndCd!= ''">
-         AND TELGM_KND_CD = #{telgmKndCd}
+         AND A.TELGM_KND_CD = #{telgmKndCd}
        </if>
        <if test="dlngSeCd!= null and dlngSeCd!= ''">
-         AND DLNG_SE_CD = #{dlngSeCd}
+         AND A.DLNG_SE_CD = #{dlngSeCd}
        </if>
        <if test="telgmNm!= null and telgmNm!= ''">
-         AND TELGM_NM LIKE CONCAT('%',#{telgmNm} , '%')
+         AND A.TELGM_NM LIKE CONCAT('%',#{telgmNm} , '%')
        </if>
        <if test="telgmExpln!= null and telgmExpln!= ''">
-         AND TELGM_EXPLN = #{telgmExpln}
+         AND A.TELGM_EXPLN = #{telgmExpln}
        </if>
        <if test="sttsCd!= null and sttsCd!= ''">
-         AND STTS_CD = #{sttsCd}
+         AND A.STTS_CD = #{sttsCd}
        </if>
+       ORDER BY A.INST_CD, A.TASK_SE_CD, A.HNDL_ESTBL_SE_CD, A.TELGM_TYPE_CD, A.DLNG_SE_CD, A.TELGM_KND_CD
   </select>
 
 </mapper>
