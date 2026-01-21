@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -36,28 +37,39 @@ public class CommService {
      *@ NAME     : 코드기본 목록 조회
      */
     public List<CommCodeDto> getCommCodeSearch(CommCodeDto inputDto)  {
-        log.debug(BizUtils.logInfo());
+        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         return commCodeMapper.getCommCodeList(inputDto);
     }
 
     /**
-     *@ ID   : getDlngSeCdComboData
+     *@ ID   : getTelgmComboData
      *@ NAME     : 거래구분코드 combo 목록 조회
      */
     public List<TbCodeDto> getTelgmComboData(TbTelgmKndBscDto inputDto)  {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
+        List<TbCodeDto> outputDto = new ArrayList<TbCodeDto>();
         switch(inputDto.getFunc()) {
-            case "dlngSeCd":
-                return telgmMapper.getDlngSeCdComboData(inputDto);
-            case "telgmKndCd":
-                return telgmMapper.getTelgmKndCdComboData(inputDto);
-            case "taskSeCd":
-                return telgmMapper.getTaskSeCdComboData(inputDto);
+            case "taskSeCd":        // 업무구분
+                outputDto = telgmMapper.getTaskSeCdComboData(inputDto);
+                break;
+            case "telgmKndCd":   // 전체전문종별
+                outputDto = telgmMapper.getAllTelgmKndCdComboData(inputDto);
+                break;
+            case "reqTelgmKndCd":   // 요청전문종별
+                outputDto = telgmMapper.getReqTelgmKndCdComboData(inputDto);
+                break;
+            case "rspnsTelgmKndCd": // 응답전문종별
+                outputDto = telgmMapper.getRspnsTelgmKndCdComboData(inputDto);
+                break;
+            case "dlngSeCd":        // 거래구분코드
+                outputDto = telgmMapper.getDlngSeCdComboData(inputDto);
+                break;
             default:
                 break;
         }
+        log.debug("END result={}", outputDto);
         log.debug(BizUtils.logInfo("END"));
-        return null;
+        return outputDto;
     }
 
     /**
@@ -66,7 +78,7 @@ public class CommService {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void insertLoginLog(TbLoginLogDto inputDto) {
-        log.debug(BizUtils.logInfo());
+        log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         tbLoginLogMapper.insertData(inputDto);
     }
 

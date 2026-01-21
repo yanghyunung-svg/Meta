@@ -22,7 +22,6 @@ function loadCodeCombo(grpCd, cd) {
 }
 
 async function loadTelgmCombo(instCdEl, taskSeCdEl, telgmKndCdEl, cdEl) {
-
         const reqData = {
             instCd     : instCdEl?.value || '',
             taskSeCd   : taskSeCdEl?.value || '',

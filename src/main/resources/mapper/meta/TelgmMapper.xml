@@ -6,9 +6,9 @@
    <!--tb_telgm_knd_bsc SELECT LIST-->
    <select id="getTelgmKndListData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbTelgmKndBscDto">
       SELECT A.INST_CD
-           , B.CD_NM AS INST_NM
+            , CONCAT_WS('-', A.INST_CD, B.CD_NM) AS INST_NM
            , A.TASK_SE_CD
-           , C.CD_NM AS TASK_SE_NM
+           , CONCAT_WS('-', A.TASK_SE_CD, C.CD_NM) AS TASK_SE_NM
            , A.TELGM_KND_CD
            , A.DLNG_SE_CD
            , A.TELGM_NM
@@ -16,6 +16,7 @@
            , A.RSPNS_TELGM_KND_CD
            , A.TELGM_EXPLN
            , A.STTS_CD
+           , CONCAT_WS('-', A.INST_CD, A.TASK_SE_CD, A.TELGM_KND_CD, A.DLNG_SE_CD) AS TELGM_ID
         FROM tb_telgm_knd_bsc A
        LEFT JOIN tb_code B
        ON B.GRP_CD = 'INST_CD'
@@ -55,10 +56,7 @@
         , REPT_FIELD
         , REPT_FIX_NMTM
         , STTS_CD
-        , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
-        , CRT_ID
-        , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
-        , UPD_ID
+        , CONCAT_WS('-', INST_CD, TASK_SE_CD, TELGM_KND_CD, DLNG_SE_CD, ARTCL_SEQ) AS TELGM_ID
         FROM tb_telgm_dtl_bsc
         WHERE 1=1
         <if test="instCd!= null and instCd!= ''">
@@ -75,7 +73,7 @@
         </if>
     </select>
 
-    <!--전문종류 업무구분코드 combo data-->
+    <!--기관별 업무구분코드 업무구분코드 combo data-->
     <select id="getTaskSeCdComboData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbCodeDto">
         SELECT DISTINCT( A.TASK_SE_CD )  AS CD, B.CD_NM  AS CD_NM
           FROM tb_telgm_knd_bsc A
@@ -85,27 +83,7 @@
          WHERE A.INST_CD = #{instCd}
     </select>
 
-    <!--전문종류 전문종별 combo data-->
-    <select id="getTelgmKndCdComboData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbCodeDto">
-        SELECT A.CD AS CD,
-               B.CD_NM AS CD_NM
-        FROM  (
-        SELECT TELGM_KND_CD AS CD
-          FROM tb_telgm_knd_bsc
-         WHERE INST_CD = #{instCd}
-           AND TASK_SE_CD  = #{taskSeCd}
-         UNION
-        SELECT RSPNS_TELGM_KND_CD AS CD
-          FROM tb_telgm_knd_bsc
-         WHERE INST_CD = #{instCd}
-           AND TASK_SE_CD = #{taskSeCd}
-        ) A
-        LEFT JOIN tb_code B
-        ON B.GRP_CD = 'TELGM_KND_CD'
-        AND B.CD = A.CD
-    </select>
-
-    <!--전문종류 거래구분코드 combo data-->
+    <!--기관별 업무별 거래구분코드 combo data-->
     <select id="getDlngSeCdComboData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbCodeDto">
         SELECT DLNG_SE_CD AS CD, TELGM_NM AS CD_NM
         FROM tb_telgm_knd_bsc
@@ -118,6 +96,51 @@
         WHERE INST_CD = #{instCd}
         AND TASK_SE_CD = #{taskSeCd}
         AND RSPNS_TELGM_KND_CD = #{telgmKndCd}
+    </select>
+
+    <!-- 전문종별 전체 combo data-->
+    <select id="getAllTelgmKndCdComboData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbCodeDto">
+        SELECT A.CD AS CD,
+        B.CD_NM AS CD_NM
+        FROM  (
+        SELECT TELGM_KND_CD AS CD
+        FROM tb_telgm_knd_bsc
+        WHERE INST_CD = #{instCd}
+        AND TASK_SE_CD  = #{taskSeCd}
+        UNION
+        SELECT RSPNS_TELGM_KND_CD AS CD
+        FROM tb_telgm_knd_bsc
+        WHERE INST_CD = #{instCd}
+        AND TASK_SE_CD = #{taskSeCd}
+        ) A
+        LEFT JOIN tb_code B
+        ON B.GRP_CD = 'TELGM_KND_CD'
+        AND B.CD = A.CD
+
+    </select>
+
+    <!--전문종별 요청 combo data-->
+    <select id="getReqTelgmKndCdComboData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbCodeDto">
+        SELECT DISTINCT A.TELGM_KND_CD AS CD,
+        B.CD_NM AS CD_NM
+        FROM tb_telgm_knd_bsc A
+        LEFT JOIN tb_code B
+        ON B.GRP_CD = 'TELGM_KND_CD'
+        AND B.CD = A.TELGM_KND_CD
+        WHERE A.INST_CD = #{instCd}
+        AND A.TASK_SE_CD =  #{taskSeCd}
+    </select>
+
+    <!--전문종별 응답 combo data rspnsTelgmKndCd-->
+    <select id="getRspnsTelgmKndCdComboData" parameterType="com.meta.dto.TbTelgmKndBscDto" resultType="com.meta.dto.TbCodeDto">
+        SELECT DISTINCT A.RSPNS_TELGM_KND_CD AS CD,
+        B.CD_NM AS CD_NM
+        FROM tb_telgm_knd_bsc A
+        LEFT JOIN tb_code B
+        ON B.GRP_CD = 'TELGM_KND_CD'
+        AND B.CD = A.RSPNS_TELGM_KND_CD
+        WHERE A.INST_CD = #{instCd}
+        AND A.TASK_SE_CD =  #{taskSeCd}
     </select>
 
 </mapper>

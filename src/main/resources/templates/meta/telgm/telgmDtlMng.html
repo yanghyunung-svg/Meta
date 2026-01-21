@@ -117,6 +117,10 @@
                             </select>
                         </td>
                     </tr>
+                    <tr>
+                        <th>ID</th>
+                        <td><input type="text" id="telgmId" name="telgmId" class="form-input" readonly> </td>
+                    </tr>
                 </table>
 
 
@@ -185,11 +189,11 @@
                             body: JSON.stringify( sendData )
                         });    const data = await res.json();    fillForm(mainForm, data);
 
-<!--                        document.getElementById("instCd").disabled  = true;-->
-<!--                        document.getElementById("taskSeCd").disabled  = true;-->
-<!--                        document.getElementById("telgmKndCd").disabled = true;-->
-<!--                        document.getElementById("dlngSeCd").disabled = true;-->
-<!--                        document.getElementById("artclSeq").disabled = true;-->
+                        document.getElementById("instCd").readOnly  = true;
+                        document.getElementById("taskSeCd").readOnly  = true;
+                        document.getElementById("telgmKndCd").readOnly = true;
+                        document.getElementById("dlngSeCd").readOnly = true;
+                        document.getElementById("artclSeq").readOnly = true;
 
                         btnInit.disabled = true;
                         originalData = data;

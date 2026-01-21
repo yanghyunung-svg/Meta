@@ -568,6 +568,7 @@ function myAlert(msgString) {
  */
 window.updateRowDataFlexible = function(data, idKey, updateMap) {
     const targetId = data[idKey];
+    console.log('targetId=', targetId);
     if (!targetId) {
         return;
     }

@@ -32,6 +32,8 @@ public class TelgmDtlController {
     public String telgmDtlMng()     { return "meta/telgm/TelgmDtlMng"; }
     @GetMapping("/telgm/telgmDtlRegEblc")
     public String telgmDtlRegEblc() { return "meta/telgm/TelgmDtlRegEblc"; }
+    @GetMapping("/telgm/telgmDtlListPopup")
+    public String telgmDtlListPopup()    { return "meta/telgm/telgmDtlListPopup"; }
 
     /**
      * @ ID : getTelgmDtlListData

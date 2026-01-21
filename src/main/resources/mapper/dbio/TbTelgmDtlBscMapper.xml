@@ -20,6 +20,7 @@
            , REPT_FIELD
            , REPT_FIX_NMTM
            , STTS_CD
+       , CONCAT_WS('-', INST_CD, TASK_SE_CD, TELGM_KND_CD, DLNG_SE_CD, ARTCL_SEQ) AS TELGM_ID
            , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
            , CRT_ID
            , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
@@ -123,6 +124,7 @@
            , REPT_FIELD
            , REPT_FIX_NMTM
            , STTS_CD
+       , CONCAT_WS('-', INST_CD, TASK_SE_CD, TELGM_KND_CD, DLNG_SE_CD, ARTCL_SEQ) AS TELGM_ID
            , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
            , CRT_ID
            , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
@@ -163,6 +165,7 @@
            , REPT_FIELD
            , REPT_FIX_NMTM
            , STTS_CD
+            , CONCAT_WS('-', INST_CD, TASK_SE_CD, TELGM_KND_CD, DLNG_SE_CD, ARTCL_SEQ) AS TELGM_ID
            , date_format(CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
            , CRT_ID
            , date_format(UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM

@@ -38,4 +38,5 @@ public class TbTelgmDtlBscDto {
     private String     updDttm;                         // 수정일시 DATETIME
     private String     updId;                           // 수정자 VARCHAR(50)
     private String     func;
+    private String     telgmId;                         // 전문ID
 }

@@ -7,8 +7,8 @@
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
-    <script src="/js/commonCombo.js"></script>
-    <script src="/js/functionKey.js"></script>
+    <script src="/js/commonCombo.js" defer></script>
+    <script src="/js/functionKey.js" defer></script>
 
 </head>
 <body>
@@ -36,7 +36,6 @@
                     <th>기관코드</th>
                     <td>
                         <select id="instCd" name="instCd" class="form-select">
-                            <option value="">전체</option>
                         </select>
                     </td>
                     <th>업무구분코드</th>
@@ -63,12 +62,13 @@
                 <th style="width:50px">No</th>
                 <th style="width:100px">기관코드</th>
                 <th style="width:100px">업무구분코드</th>
-                <th style="width:100px">요청코드</th>
-                <th style="width:100px">응답코드</th>
+                <th style="width:100px">요청종별코드</th>
+                <th style="width:100px">응답종별코드</th>
                 <th style="width:100px">거래구분코드</th>
                 <th style="width:200px">전문명</th>
                 <th style="width:100px">전문길이</th>
                 <th style="width:100px">상태</th>
+                <th style="width:100px">ID</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -106,19 +106,23 @@
 
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr class="row-click"
+                        data-id="${item.telgmId}"
                         data-instcd="${item.instCd}"
                         data-tasksecd="${item.taskSeCd}"
                         data-telgmkndcd="${item.telgmKndCd}"
-                        data-dlngsecd="${item.dlngSeCd}">
+                        data-rspnstelgmkndcd="${item.rspnsTelgmKndCd}"
+                        data-dlngsecd="${item.dlngSeCd}"
+                        data-telgmnm="${item.telgmNm}">
                     <td style="text-align: center;"> ${start + index + 1} </td>
                     <td style="text-align: center;">${item.instNm}</td>
                     <td style="text-align: center;">${item.taskSeNm}</td>
-                    <td style="text-align: center;">${item.telgmKndCd}</td>
-                    <td style="text-align: center;">${item.rspnsTelgmKndCd}</td>
+                    <td class="telgm-knd-click" style="text-align: center; cursor:pointer; color:blue;">${item.telgmKndCd}</td>
+                    <td class="telgm-rspns-knd-click" style="text-align: center; cursor:pointer; color:blue;">${item.rspnsTelgmKndCd}</td>
                     <td style="text-align: center;">${item.dlngSeCd}</td>
                     <td style="text-align: left;">${item.telgmNm}</td>
                     <td style="text-align: center;">${item.telgmLen}</td>
                     <td>${getSttsCdLabel(item.sttsCd)}</td>
+                    <td style="text-align: center;">${item.telgmId}</td>
                 </tr>
             `).join('');
         }
@@ -136,26 +140,63 @@
             openWindowWithJSON(sendData, "/meta/telgm/telgmKndMng", 800, 700);
         });
 
+        document.addEventListener("click", (e) => {
+            const tr = e.target.closest("tr");
+            if (e.target.classList.contains("telgm-knd-click")) {
+                const instCd      = tr.dataset.instcd;
+                const taskSeCd    = tr.dataset.tasksecd;
+                const telgmKndCd  = tr.dataset.telgmkndcd;
+                const dlngSeCd    = tr.dataset.dlngsecd;
+                const telgmNm    = tr.dataset.telgmnm;
+                telgmDtlList({
+                    instCd,
+                    taskSeCd,
+                    telgmKndCd,
+                    dlngSeCd,
+                    telgmNm
+                });
+            }
+            if (e.target.classList.contains("telgm-rspns-knd-click")) {
+                const instCd      = tr.dataset.instcd;
+                const taskSeCd    = tr.dataset.tasksecd;
+                const telgmKndCd  = tr.dataset.rspnstelgmkndcd;
+                const dlngSeCd    = tr.dataset.dlngsecd;
+                const telgmNm    = tr.dataset.telgmnm;
+                telgmDtlList({
+                    instCd,
+                    taskSeCd,
+                    telgmKndCd,
+                    dlngSeCd,
+                    telgmNm
+                });
+            }
+        });
+
+        function telgmDtlList(param) {
+            openWindowWithJSON(param, "/meta/telgm/telgmDtlListPopup", 1400, 1400);
+        }
+
         window.refreshParentRow = function(data) {
             const refreshMap = {
                 rspnsTelgmKndCd: 'td:nth-child(5)',
                 telgmNm: 'td:nth-child(7)',
                 telgmLen: 'td:nth-child(8)',
-                sttsCd: 'td:nth-child(9)'
+                sttsCd: 'td:nth-child(9)',
+                telgmId: 'td:nth-child(10)'
             };
-            window.updateRowDataFlexible(data, 'dlngSeCd', refreshMap);
+            window.updateRowDataFlexible(data, 'telgmId', refreshMap);
         }
 
+
         document.getElementById('btnSearch').addEventListener('click', () => {
-            initScreen();
             const data = formToJson(document.getElementById('mainForm'));
 
-<!--            const instCd = document.getElementById('instCd'); -->
-<!--           if (!instCd.value || !instCd.value.trim()) {-->
-<!--                myAlert("기관코드를 입력하세요.");-->
-<!--                inqYear.focus();-->
-<!--                return;-->
-<!--            }-->
+            const instCd = document.getElementById('instCd');
+           if (!instCd.value || !instCd.value.trim()) {
+                myAlert("기관코드를 입력하세요.");
+                instCd.focus();
+                return;
+            }
 
             fetch('/meta/getTelgmKndListData', {
                 method: 'POST',
@@ -180,15 +221,34 @@
         });
     });
 
-
     document.getElementById('btnInit').addEventListener('click', () => {
         document.getElementById('mainForm').reset();
-        initScreen();
+        loadCodeCombo('INST_CD', 'instCd');
+        loadCodeCombo('TASK_SE_CD', 'taskSeCd');
     });
 
 
     document.getElementById('btnReg').addEventListener('click', () => {
-        const sendData = { mode: "I"};
+            const instCd = document.getElementById('instCd');
+            const taskSeCd = document.getElementById('taskSeCd');
+
+           if (!instCd.value || !instCd.value.trim()) {
+                myAlert("기관코드를 입력하세요.");
+                instCd.focus();
+                return;
+            }
+
+           if (!taskSeCd.value || !taskSeCd.value.trim()) {
+                myAlert("업무코드를 입력하세요.");
+                taskSeCd.focus();
+                return;
+            }
+
+        const sendData = {
+                mode: "I",
+                instCd: instCd.value,
+                taskSeCd: taskSeCd.value
+        }
         openWindowWithJSON(sendData, "/meta/telgm/telgmKndMng", 800, 700);
     });
 

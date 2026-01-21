@@ -8,7 +8,7 @@
     <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
     <script src="/js/commonCombo.js" defer></script>
-    <script src="/js/functionKey.js"></script>
+    <script src="/js/functionKey.js" defer></script>
 
 </head>
 <body>
@@ -66,22 +66,18 @@
         <table class="data-table" id="mainTable">
             <thead>
             <tr>
-<!--                <th style="width:50px">No</th>-->
-<!--                <th style="width:100px">기관코드</th>-->
-<!--                <th style="width:100px">업무구분코드</th>-->
-<!--                <th style="width:100px">전문종별코드</th>-->
-<!--                <th style="width:100px">거래구분코드</th>-->
-                <th style="width:100px">항목순서</th>
-                <th style="width:200px">항목명</th>
-                <th style="width:100px">항목영문명</th>
-                <th style="width:100px">항목속성</th>
-                <th style="width:100px">항목길이</th>
-                <th style="width:100px">항목기본값</th>
+                <th style="width:50px">항목순서</th>
+                <th style="width:120px">항목명</th>
+                <th style="width:120px">항목영문명</th>
+                <th style="width:80px">항목속성</th>
+                <th style="width:80px">항목길이</th>
+                <th style="width:80px">항목기본값</th>
                 <th style="width:100px">항목유형코드</th>
                 <th style="width:100px">항목Depth</th>
                 <th style="width:100px">반복횟수항목</th>
                 <th style="width:100px">반복고정횟수</th>
                 <th style="width:100px">상태</th>
+                <th style="width:120px">ID</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -112,7 +108,7 @@
         taskSeCdEl.addEventListener("change", telgmKndCdCombo);
         telgmKndCdEl.addEventListener("change", dlngSeCdCombo);
 
-        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
+        let PAGE_SIZE = 50;
         let dataAll = [];
         let currentPage = 1;
 
@@ -137,16 +133,12 @@
 
             tableBody.innerHTML = pageData.map((item, index) => `
                 <tr class="row-click"
+                        data-id="${item.telgmId}"
                         data-instcd="${item.instCd}"
                         data-tasksecd="${item.taskSeCd}"
                         data-telgmkndcd="${item.telgmKndCd}"
                         data-dlngsecd="${item.dlngSeCd}"
                         data-artclseq="${item.artclSeq}">
-<!--                    <td style="text-align: center;"> ${start + index + 1} </td>-->
-<!--                    <td style="text-align: center;">${item.instCd}</td>-->
-<!--                    <td style="text-align: center;">${item.taskSeCd}</td>-->
-<!--                    <td style="text-align: center;">${item.telgmKndCd}</td>-->
-<!--                    <td style="text-align: center;">${item.dlngSeCd}</td>-->
                     <td style="text-align: center;">${item.artclSeq}</td>
                     <td style="text-align: left;">${item.artclNm}</td>
                     <td style="text-align: left;">${item.artclEngNm}</td>
@@ -158,6 +150,7 @@
                     <td style="text-align: left;">${item.reptField}</td>
                     <td style="text-align: center;">${item.reptFixNmtm}</td>
                     <td>${getSttsCdLabel(item.sttsCd)}</td>
+                    <td style="text-align: center;">${item.telgmId}</td>
                 </tr>
             `).join('');
         }
@@ -173,19 +166,26 @@
                 dlngSeCd: tr.dataset.dlngsecd,
                 artclSeq: tr.dataset.artclseq
             };
-            openWindowWithJSON(sendData, "/meta/telgm/telgmDtlMng", 800, 850);
+            openWindowWithJSON(sendData, "/meta/telgm/telgmDtlMng", 900, 900);
         });
 
         window.refreshParentRow = function(data) {
             const refreshMap = {
-                artclNm: 'td:nth-child(7)',
-                artclEngNm: 'td:nth-child(8)',
-                artclAtrb: 'td:nth-child(9)',
-                artclLen: 'td:nth-child(10)',
-                sttsCd: 'td:nth-child(16)'
+                artclSeq: 'td:nth-child(1)',
+                artclNm: 'td:nth-child(2)',
+                artclEngNm: 'td:nth-child(3)',
+                artclAtrb: 'td:nth-child(4)',
+                artclLen: 'td:nth-child(5)',
+                artclBscVl: 'td:nth-child(6)',
+                artclTypeCd: 'td:nth-child(7)',
+                artclDpth: 'td:nth-child(8)',
+                reptField: 'td:nth-child(9)',
+                reptFixNmtm: 'td:nth-child(10)',
+                sttsCd: 'td:nth-child(11)',
+                telgmId: 'td:nth-child(12)'
             };
 
-            window.updateRowDataFlexible(data, 'dlngSeCd', refreshMap);
+            window.updateRowDataFlexible(data, 'telgmId', refreshMap);
         }
 
         document.getElementById('btnSearch').addEventListener('click', () => {
@@ -224,31 +224,33 @@
                 myAlert("에러 발생: " + err);
             });
         });
+
+
+        document.getElementById('btnInit').addEventListener('click', () => {
+            document.getElementById('mainForm').reset();
+            taskSeCdEl.innerHTML = '<option value="">선택</option>';
+            telgmKndCdEl.innerHTML = '<option value="">선택</option>';
+            dlngSeCdEl.innerHTML = '<option value="">선택</option>';
+
+            initScreen();
+        });
+
+
+        document.getElementById('btnReg').addEventListener('click', () => {
+            const sendData = { mode: "I"};
+            openWindowWithJSON(sendData, "/meta/telgm/telgmDtlMng", 900, 900);
+        });
+
+        document.getElementById('btnRegEblc').addEventListener('click', () => {
+            window.location.href = "/meta/telgm/telgmDtlRegEblc";
+        });
+
+        document.getElementById('btnExcel').addEventListener('click', () => {
+            downloadTableToExcel('mainTable', '전문상세 목록');
+        });
     });
 
 
-    document.getElementById('btnInit').addEventListener('click', () => {
-        document.getElementById('mainForm').reset();
-        taskSeCdEl.innerHTML = '<option value="">선택</option>';
-        telgmKndCdEl.innerHTML = '<option value="">선택</option>';
-        dlngSeCdEl.innerHTML = '<option value="">선택</option>';
-
-        initScreen();
-    });
-
-
-    document.getElementById('btnReg').addEventListener('click', () => {
-        const sendData = { mode: "I"};
-        openWindowWithJSON(sendData, "/meta/telgm/telgmDtlMng", 800, 850);
-    });
-
-    document.getElementById('btnRegEblc').addEventListener('click', () => {
-        window.location.href = "/meta/telgm/telgmDtlRegEblc";
-    });
-
-    document.getElementById('btnExcel').addEventListener('click', () => {
-        downloadTableToExcel('mainTable', '전문상세 목록');
-    });
 
 </script>
 </body>

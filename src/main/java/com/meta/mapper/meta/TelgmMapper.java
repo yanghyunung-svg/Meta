@@ -20,6 +20,8 @@ public interface TelgmMapper {
     public List<TbTelgmKndBscDto> getTelgmKndListData(TbTelgmKndBscDto tbTelgmKndBscDto);
     public List<TbTelgmDtlBscDto> getTelgmDtlListData(TbTelgmDtlBscDto tbTelgmDtlBscDto);
     public List<TbCodeDto> getDlngSeCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
-    public List<TbCodeDto> getTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
+    public List<TbCodeDto> getAllTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
+    public List<TbCodeDto> getReqTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
+    public List<TbCodeDto> getRspnsTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
     public List<TbCodeDto> getTaskSeCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
 }

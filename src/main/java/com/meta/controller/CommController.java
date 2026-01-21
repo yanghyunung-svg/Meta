@@ -36,8 +36,8 @@ public class CommController {
     }
 
     /**
-     * @ ID : getCommCodeSearch
-     * @ NAME : 거래구분코드 통합 검색
+     * @ ID : getTelgmComboData
+     * @ NAME : 전문관리 콤보 검색
      */
     @PostMapping("/getTelgmComboData")
     @ResponseBody
@@ -45,6 +45,4 @@ public class CommController {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         return commService.getTelgmComboData(inputDto);
     }
-
-
 }
