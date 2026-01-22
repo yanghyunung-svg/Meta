@@ -1,7 +1,7 @@
 
 <div class="sidebarContainer" id="sidebarContainer">
     <ul class="menu-section USER">
-        <li class="sidebar-title" onclick="toggleMenu(this)">사용자</li>
+        <li class="sidebar-title" onclick="toggleMenu(this)">메타관리</li>
         <ul class="sidebar-menu">
             <li><button type="button" class="menu-link" data-url="/meta/term/termList">표준용어</button></li>
             <li><button type="button" class="menu-link" data-url="/meta/word/wordList">표준단어</button></li>
@@ -10,33 +10,29 @@
             <li><button type="button" class="menu-link" data-url="/meta/term/termSearch">표준용어 단어검색</button></li>
             <li><button type="button" class="menu-link" data-url="/meta/comm/aplyDsctnInq">신청내역 조회</button></li>
         </ul>
-
-        <li class="sidebar-title" onclick="toggleMenu(this)">코드</li>
+        <li class="sidebar-title" onclick="toggleMenu(this)">정보</li>
         <ul class="sidebar-menu">
             <li><button type="button" class="menu-link" data-url="/meta/code/commCodeList">공통코드</button></li>
             <li><button type="button" class="menu-link" data-url="/meta/code/commCodeSearch">공통코드 통합검색</button></li>
-        </ul>
-        <li class="sidebar-title" onclick="toggleMenu(this)">정보</li>
-        <ul class="sidebar-menu">
             <li><button type="button" class="menu-link" data-url="/meta/hldy/hldyList">휴일관리</button></li>
             <li><button type="button" class="menu-link" data-url="/meta/fnst/fnstList">금융기관코드</button></li>
             <li><button type="button" class="menu-link" data-url="/meta/fnst/jntCdList">금융공동코드</button></li>
         </ul>
-        <li class="sidebar-title" onclick="toggleMenu(this)">전문</li>
+
+        <ul class="menu-section ADMIN">
+            <li class="sidebar-title" onclick="toggleMenu(this)">관리자 </li>
+            <ul class="sidebar-menu">
+                <li><button type="button" class="menu-link" data-url="/meta/comm/aprvDsctnInq">신청내역 상태변경</button></li>
+                <li><button type="button" class="menu-link" data-url="/meta/comm/loginLogList">로그인로그 조회</button></li>
+                <li><button type="button" class="menu-link" data-url="/meta/user/userList">사용자정보</button></li>
+
+            </ul>
+        </ul>
+        <li class="sidebar-title" onclick="toggleMenu(this)">공상은행</li>
         <ul class="sidebar-menu">
             <li><button type="button" class="menu-link" data-url="/meta/telgm/telgmInterfaceList">전문인터페이스</button></li>
             <li><button type="button" class="menu-link" data-url="/meta/telgm/telgmKndList">전문종류</button></li>
             <li><button type="button" class="menu-link" data-url="/meta/telgm/telgmDtlList">전문상세</button></li>
-        </ul>
-    </ul>
-
-    <ul class="menu-section ADMIN">
-        <li class="sidebar-title" onclick="toggleMenu(this)">관리자 </li>
-        <ul class="sidebar-menu">
-            <li><button type="button" class="menu-link" data-url="/meta/comm/aprvDsctnInq">신청내역 상태변경</button></li>
-            <li><button type="button" class="menu-link" data-url="/meta/comm/loginLogList">로그인로그 조회</button></li>
-            <li><button type="button" class="menu-link" data-url="/meta/user/userList">사용자정보</button></li>
-
         </ul>
     </ul>
 

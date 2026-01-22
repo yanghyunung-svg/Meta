@@ -23,36 +23,6 @@
     });
 
     observer.observe(document.documentElement, { childList: true, subtree: true });
-
-    function initSidebarToggle() {
-        const sidebar = document.getElementById('sidebarContainer');
-        const toggleBtn = document.getElementById('sidebarToggleBtn');
-        const content = document.querySelector('.container') || document.getElementById('content');
-
-        if (!sidebar || !toggleBtn) return;
-
-        toggleBtn.addEventListener('click', () => {
-            const isHidden = sidebar.classList.toggle('hidden');
-
-            if (content) {
-                content.classList.toggle('full', isHidden);
-            }
-
-            localStorage.setItem('sidebarHidden', isHidden);
-        });
-
-        if (localStorage.getItem('sidebarHidden') === 'true') {
-            sidebar.classList.add('hidden');
-            if (content) content.classList.add('full');
-        }
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSidebarToggle);
-    } else {
-        initSidebarToggle();
-    }
-
 })();
 function toggleMenu(titleEl) {
     const currentMenu = titleEl.nextElementSibling;
