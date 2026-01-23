@@ -77,10 +77,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!container) return;
 
     fetch('/common/pageSize.html')
-    .then(res => res.text())
-    .then(html => {
-        container.innerHTML = html;
-    });
+        .then(res => res.text())
+        .then(html => {
+            container.innerHTML = html;
+            const pageSizeSelect = document.getElementById("pageSize");
+            if (!pageSizeSelect) return;
+            pageSizeSelect.addEventListener("change", () => {
+                PAGE_SIZE = Number(pageSizeSelect.value);
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            });
+        });
 
     // 조회결과
     window.renderTable = function(page)  {

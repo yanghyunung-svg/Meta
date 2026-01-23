@@ -93,6 +93,15 @@
             .then(res => res.text())
             .then(html => {
                 container.innerHTML = html;
+                const pageSizeSelect = document.getElementById("pageSize");
+                if (!pageSizeSelect) return;
+                pageSizeSelect.addEventListener("change", () => {
+                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    currentPage = 1;
+                    renderTable(currentPage);
+                    renderPagination(dataAll, currentPage, PAGE_SIZE);
+                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+                });
             });
 
 
