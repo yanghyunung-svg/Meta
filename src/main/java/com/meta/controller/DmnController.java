@@ -66,7 +66,7 @@ public class DmnController {
     }
 
     /**
-     * @ ID : uploadCodePreview
+     * @ ID : uploadCodeDetlPreview
      * @ NAME : 표준도메인 엑셀업로드
      */
     @PostMapping("/uploadDmnPreview")
@@ -85,7 +85,7 @@ public class DmnController {
     }
 
     /**
-     * @ ID : uploadCodeExcelSave
+     * @ ID : uploadCodeDetlExcelSave
      * @ NAME : 표준도메인 엑셀업로드 저장
      */
     @PostMapping("/uploadDmnExcelSave")

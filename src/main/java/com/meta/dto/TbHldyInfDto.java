@@ -22,6 +22,7 @@ public class TbHldyInfDto {
     private String     hldyNm;                          // 휴일명 VARCHAR(50)
     private String     hldySeCd;                        // 휴일구분코드 VARCHAR(2)
     private String     dowSeCd;                         // 요일코드 VARCHAR(2)
+    private String     rmk;
     private String     crtId;                           // 등록자ID VARCHAR(30)
     private String     crtDttm;                         // 등록일시 DATETIME
     private String     updId;                           // 수정자ID VARCHAR(30)

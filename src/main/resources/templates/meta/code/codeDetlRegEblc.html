@@ -10,8 +10,11 @@
 </head>
 <body>
 
-<div class="iframeMainContainer">
-    <div class="iframeMainHeadContainer">
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+
+    <div class="mainHeadContainer">
             <h2 style="margin:0;"> ✅ 상세코드 일괄등록</h2>
             <div class="button-group">
                 <button id="btnTemplate" type="button" class="btn">템플릿</button>
@@ -19,8 +22,7 @@
                 <button id="btnUploadSave" type="button" class="btn" disabled>저장</button>
             </div>
         </div>
-    <div class="iframeMainBodyContainer">
-
+    <div class="mainBodyContainer">
         <input class="hidden" type="file" id="excelFile" name="excelFile" accept=".xlsx">
 
         <table id="uploadPreviewTable" class="data-table">
@@ -62,7 +64,7 @@
 
             try {
                 showLoading("Excel Load ...");
-                const res = await fetch("/meta/uploadCodePreview", {
+                const res = await fetch("/meta/uploadCodeDetlPreview", {
                     method: "POST",
                     body: formData
                 });
@@ -129,7 +131,7 @@
 
             try {
                 showLoading("데이터 저장...");
-                const res = await fetch("/meta/uploadCodeExcelSave", {
+                const res = await fetch("/meta/uploadCodeDetlExcelSave", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(window.uploadPreviewData)

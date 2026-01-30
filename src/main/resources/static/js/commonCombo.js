@@ -1,7 +1,7 @@
 
 function loadCodeCombo(grpCd, cd) {
     const reqData = {grpCd: grpCd };
-    fetch('/meta/getCodeAllData', {
+    fetch('/meta/getCodeDetlAllData', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reqData)

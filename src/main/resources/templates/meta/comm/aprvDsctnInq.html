@@ -19,13 +19,9 @@
             <h2 style="margin:0;"> ✅ 신청내역 상태 변경</h2>
 
             <div class="button-group">
-                <button id="btnInit" type="button" class="btn">초기화
-                </button>
-                <button id="btnSearch" type="button" class="btn">
-                    조회
-                </button>
-                <button id="btnApprove" type="button" class="btn">일괄변경
-                </button>
+                <button id="btnInit" type="button" class="btn">초기화</button>
+                <button id="btnSearch" type="button" class="btn">조회</button>
+                <button id="btnApprove" type="button" class="btn">일괄변경</button>
             </div>
         </div>
 
@@ -34,9 +30,9 @@
             <table class="search-table">
                 <tr>
                     <th>등록자ID</th>
-                    <td style="display:flex; align-items:center; gap:4px;">
+                    <td style="display:flex; align-items:center; gap:2px;">
                         <input type="text" id="userId" name="userId" class="form-input">
-                        <button id="btnPopup">🔍</button>
+                        <button id="btnPopup" type="button" class="btn-search">사용자검색</button>
                     </td>
                     <th>등록자이름</th>
                     <td><input type="text" id="userNm" name="userNm" class="form-input" readonly></td>
@@ -63,7 +59,7 @@
         <div id="pageInfoContainer" class="page-header"></div>
 
 
-        <table class="data-table" id="mainTable">
+        <table class="data-table" id="mainTable" style="margin-top:10px" >
             <thead>
             <tr>
                 <th class="col-no">No</th>
@@ -174,7 +170,8 @@
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
                 if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                    myAlert("조회 결과가 없습니다.");
+                    initScreen();
+                            document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
                     return
                 }
                 currentPage = 1;

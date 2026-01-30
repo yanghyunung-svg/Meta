@@ -2,7 +2,7 @@ package com.meta.controller;
 
 import com.meta.common.util.BizUtils;
 import com.meta.dto.CommCodeDto;
-import com.meta.dto.TbCodeDto;
+import com.meta.dto.TbCodeDetlDto;
 import com.meta.dto.TbTelgmKndBscDto;
 import com.meta.service.CommService;
 import lombok.Data;
@@ -41,7 +41,7 @@ public class CommController {
      */
     @PostMapping("/getTelgmComboData")
     @ResponseBody
-    public List<TbCodeDto> getTelgmComboData(@RequestBody TbTelgmKndBscDto inputDto) throws Exception {
+    public List<TbCodeDetlDto> getTelgmComboData(@RequestBody TbTelgmKndBscDto inputDto) throws Exception {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
         return commService.getTelgmComboData(inputDto);
     }

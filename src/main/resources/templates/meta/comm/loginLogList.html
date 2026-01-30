@@ -33,13 +33,14 @@
             <table class="search-table">
                 <tr>
                     <th>사용자 ID</th>
-                    <td style="display:flex; align-items:center; gap:4px;">
+                    <td style="display:flex; align-items:center; gap:2px;">
                         <input type="text" id="userId" name="userId" class="form-input">
-                        <button id="btnPopup" type="button" class="btn-search">🔍</button>
+                        <button id="btnPopup" type="button" class="btn">사용자검색</button>
                     </td>
                     <th>사용자이름</th>
-                    <td><input type="text" id="userNm" name="userNm" class="form-input" readonly></td><th>조회일자</th>
-                    <td style="display:flex; align-items:center; gap:4px;">
+                    <td><input type="text" id="userNm" name="userNm" class="form-input" readonly></td>
+                    <th>조회일자</th>
+                    <td class="date-range">
                         <input type="date" id="startDate" name="startDate" class="form-date">
                         <span>/</span>
                         <input type="date" id="endDate" name="endDate" class="form-date">
@@ -60,17 +61,16 @@
         <div id="pageInfoContainer" class="page-header"></div>
 
 
-        <table class="data-table" id="mainTable">
+        <table class="data-table" id="mainTable" style="margin-top:10px" >
             <thead>
             <tr>
                 <th class="col-no">No</th>
-                <th style="text-align: center;">사용자ID</th>
-                <th style="text-align: center;">로그인일시</th>
-                <th style="text-align: center;">IP주소</th>
+                <th width="150px" style="text-align: center;">사용자ID</th>
+                <th width="200px" style="text-align: center;">로그인일시</th>
+                <th width="150px" style="text-align: center;">IP주소</th>
                 <th style="text-align: left;">UserAgent</th>
-                <th style="text-align: center;">상태</th>
-                <th style="text-align: center;">실패사유</th>
-                <th style="text-align: center;">로그ID</th>
+                <th width="120px" style="text-align: center;">상태</th>
+                <th width="200px" style="text-align: center;">실패사유</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -131,7 +131,7 @@
                     <td style="text-align: left;">${item.userAgent}</td>
                     <td style="text-align: center;"> ${item.loginResult === '0' ? '성공' : item.loginResult === '1' ? '실패'  : ''} </td>
                     <td>${item.failReason}</td>
-                    <td>${item.logId}</td>
+<!--                    <td>${item.logId}</td>-->
                 </tr>
             `).join('');
         }
@@ -166,7 +166,8 @@
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
                 if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                    myAlert("조회 결과가 없습니다.");
+                    initScreen();
+                            document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
                     return
                 }
                 currentPage = 1;

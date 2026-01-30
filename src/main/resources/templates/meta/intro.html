@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ITZeen.Net</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Custom Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0f172a',   // slate-900
+            accent: '#38bdf8'     // sky-400
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/css/mainLayout.css">
+  <script src="/js/mainLayout.js" defer></script>
+  <script src="/js/sideLayout.js" defer></script>
+  <script src="/js/commonUtils.js" defer></script>
+  <script src="/js/commonCombo.js" defer></script>
+  <script src="/js/functionKey.js" defer></script>
+</head>
+
+<body class="bg-primary text-gray-200">
+<div class="container">
+  <div id="topbarContainer"></div>
+  <div id="sidebarContainer"></div>
+
+  <!-- Wrapper -->
+  <div class="min-h-screen flex flex-col justify-center items-center px-6">
+
+    <!-- Brand -->
+    <div class="text-center max-w-2xl">
+
+      <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight">
+        IT<span class="text-accent">Zeen</span><span class="text-gray-400">.Net</span>
+      </h1>
+
+      <p class="mt-6 text-lg md:text-xl text-gray-400 leading-relaxed">
+        IT 기술을 <span class="text-white">정리</span>하고  
+        흐름을 <span class="text-white">기록</span>하는  
+        개인 중심 IT 매거진
+      </p>
+
+      <!-- Divider -->
+      <div class="mt-10 h-px bg-gray-700"></div>
+
+      <!-- Description -->
+      <p class="mt-8 text-base text-gray-400 leading-relaxed">
+        트렌드보다 <strong class="text-gray-200">맥락</strong>,  
+        속보보다 <strong class="text-gray-200">정리</strong>,  
+        소비보다 <strong class="text-gray-200">축적</strong>.
+      </p>
+
+      <!-- CTA -->
+      <div class="mt-10 flex justify-center gap-4">
+        <a href="#"
+           class="px-6 py-3 rounded-xl bg-accent text-primary font-semibold hover:opacity-90 transition">
+          매거진 보기
+        </a>
+
+        <a href="#"
+           class="px-6 py-3 rounded-xl border border-gray-600 text-gray-300 hover:border-gray-400 transition">
+          소개 더보기
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="absolute bottom-6 text-sm text-gray-500">
+      © 2026 ITZeen.Net · All rights reserved.
+    </footer>
+
+  </div>
+</div>
+</body>
+</html>

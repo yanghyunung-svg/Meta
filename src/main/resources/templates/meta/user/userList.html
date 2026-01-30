@@ -50,7 +50,7 @@
         <div id="pageInfoContainer" class="page-header"></div>
 
 
-        <table class="data-table" id="mainTable">
+        <table class="data-table" id="mainTable" style="margin-top:10px" >
             <thead>
             <tr>
                 <th class="col-no">No</th>
@@ -167,7 +167,8 @@
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
                 if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                    myAlert("조회 결과가 없습니다.");
+                    initScreen();
+                            document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
                     return
                 }
                 currentPage = 1;

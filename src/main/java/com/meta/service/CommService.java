@@ -2,7 +2,7 @@ package com.meta.service;
 
 import com.meta.common.util.BizUtils;
 import com.meta.dto.CommCodeDto;
-import com.meta.dto.TbCodeDto;
+import com.meta.dto.TbCodeDetlDto;
 import com.meta.dto.TbLoginLogDto;
 import com.meta.dto.TbTelgmKndBscDto;
 import com.meta.mapper.dbio.TbLoginLogMapper;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
- *@ ID       : CodeService
+ *@ ID       : CodeDetlService
  *@ NAME     : 코드기본 Service
  */
 @Service
@@ -45,9 +45,9 @@ public class CommService {
      *@ ID   : getTelgmComboData
      *@ NAME     : 거래구분코드 combo 목록 조회
      */
-    public List<TbCodeDto> getTelgmComboData(TbTelgmKndBscDto inputDto)  {
+    public List<TbCodeDetlDto> getTelgmComboData(TbTelgmKndBscDto inputDto)  {
         log.debug(BizUtils.logInfo("START", BizUtils.logVoKey(inputDto)));
-        List<TbCodeDto> outputDto = new ArrayList<TbCodeDto>();
+        List<TbCodeDetlDto> outputDto = new ArrayList<TbCodeDetlDto>();
         switch(inputDto.getFunc()) {
             case "taskSeCd":        // 업무구분
                 outputDto = telgmMapper.getTaskSeCdComboData(inputDto);

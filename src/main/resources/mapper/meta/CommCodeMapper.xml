@@ -33,7 +33,7 @@
             , C.GRP_CD , D.GRP_NM
             , C.CD , C.CD_NM
             , C.RMK , C.STTS_CD
-            FROM tb_code C
+            FROM tb_code_detl C
             LEFT JOIN tb_code_group  D
             ON   C.GRP_CD = D.GRP_CD
             WHERE 1=1
@@ -55,7 +55,7 @@
         </choose>
 
         ) Z
-        LEFT JOIN tb_code  X
+        LEFT JOIN tb_code_detl  X
         ON   X.GRP_CD = 'APRV_CD'
         AND  X.CD = Z.SE
         WHERE 1=1

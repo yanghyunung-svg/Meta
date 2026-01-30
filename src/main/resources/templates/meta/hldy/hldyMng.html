@@ -12,16 +12,11 @@
     <div class="popup-header">
         <h2 class="popup-title"> ✅ 휴일정보 관리</h2>
         <div class="button-group">
-            <button id="btnReg" type="button" class="btn">등록
-            </button>
-            <button id="btnChange" type="button" class="btn">변경
-            </button>
-            <button id="btnDelete" type="button" class="btn">삭제
-            </button>
-            <button id="btnInit" type="button" class="btn">초기화
-            </button>
-            <button id="btnClose" type="button" class="btn">닫기
-            </button>
+            <button id="btnReg" type="button" class="btn">등록            </button>
+            <button id="btnChange" type="button" class="btn">변경            </button>
+            <button id="btnDelete" type="button" class="btn">삭제            </button>
+            <button id="btnInit" type="button" class="btn">초기화            </button>
+            <button id="btnClose" type="button" class="btn">닫기            </button>
         </div>
     </div>
 <!--    <div class="divider-t"></div>-->
@@ -68,7 +63,7 @@
                 </tr>
                 <tr>
                     <th>비고</th>
-                    <td > <textarea id="rmk" name="rmk" class="form-input" rows="10" ></textarea> </td>
+                    <td> <textarea id="rmk" name="rmk" class="form-input" rows="10" ></textarea> </td>
                 </tr>
                 </table>
                 <table class="popup-table">
@@ -275,9 +270,6 @@
             const result = await res.json();
             if (result.success) {
                 myAlert("처리 되었습니다.");
-                if (window.opener && typeof window.opener.refreshParentRow === 'function') {
-                    window.opener.refreshParentRow(data);
-                }
                 window.close();
             } else {
                 myAlert("오류: " + result.message);

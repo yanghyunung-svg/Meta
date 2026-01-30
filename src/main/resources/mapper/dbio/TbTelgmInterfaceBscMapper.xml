@@ -124,10 +124,10 @@
        , date_format(A.UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
        , A.UPD_ID
         FROM tb_telgm_interface_bsc A
-       LEFT JOIN tb_code B
+       LEFT JOIN tb_code_detl B
        ON B.GRP_CD = 'INST_CD'
        AND B.CD = A.INST_CD
-       LEFT JOIN tb_code C
+       LEFT JOIN tb_code_detl C
        ON C.GRP_CD = 'TASK_SE_CD'
        AND C.CD = A.TASK_SE_CD
        WHERE 1=1

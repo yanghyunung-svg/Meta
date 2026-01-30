@@ -56,7 +56,7 @@ public class CodeGroupController {
         return ApiResponse.success(null);
     }
     /**
-     * @ ID : uploadCodePreview
+     * @ ID : uploadCodeDetlPreview
      * @ NAME : 코드그룹 엑셀업로드
      */
     @PostMapping("/uploadCodeGroupPreview")
@@ -75,7 +75,7 @@ public class CodeGroupController {
     }
 
     /**
-     * @ ID : uploadCodeExcelSave
+     * @ ID : uploadCodeDetlExcelSave
      * @ NAME : 코드그룹 엑셀업로드 저장
      */
     @PostMapping("/uploadCodeGroupExcelSave")

@@ -9,6 +9,7 @@
            , HLDY_NM
            , HLDY_SE_CD
            , DOW_SE_CD
+       , RMK
            , CRT_ID
            , date_format(CRT_DTTM,   '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
            , UPD_ID
@@ -24,6 +25,7 @@
           , HLDY_NM
           , HLDY_SE_CD
           , DOW_SE_CD
+       , RMK
           , CRT_ID
           , UPD_ID
      )
@@ -32,6 +34,7 @@
           , #{hldyNm}
           , #{hldySeCd}
           , #{dowSeCd}
+       , #{rmk}
           , #{crtId}
           , #{updId}
      ) 
@@ -43,6 +46,7 @@
         SET HLDY_NM = #{hldyNm}
           , HLDY_SE_CD = #{hldySeCd}
           , DOW_SE_CD = #{dowSeCd}
+            , RMK = #{rmk}
           , UPD_ID = #{updId}
       WHERE CRTR_YMD = #{crtrYmd}
    </update>
@@ -60,6 +64,7 @@
            , HLDY_NM
            , HLDY_SE_CD
            , DOW_SE_CD
+            , RMK
            , CRT_ID
            , date_format(CRT_DTTM,   '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
            , UPD_ID
@@ -81,6 +86,7 @@
            , HLDY_NM
            , HLDY_SE_CD
            , DOW_SE_CD
+       , RMK
            , CRT_ID
            , date_format(CRT_DTTM,   '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
            , UPD_ID

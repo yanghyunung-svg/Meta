@@ -83,7 +83,7 @@ public class UserInfoController {
 
 
     /**
-     * @ ID : uploadCodePreview
+     * @ ID : uploadCodeDetlPreview
      * @ NAME : 사용자정보 엑셀업로드
      */
     @PostMapping("/uploadUserPreview")
@@ -102,7 +102,7 @@ public class UserInfoController {
     }
 
     /**
-     * @ ID : uploadCodeExcelSave
+     * @ ID : uploadCodeDetlExcelSave
      * @ NAME : 사용자정보 엑셀업로드 저장
      */
     @PostMapping("/uploadUserExcelSave")

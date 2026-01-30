@@ -1,6 +1,6 @@
 package com.meta.mapper.meta;
 
-import com.meta.dto.TbCodeDto;
+import com.meta.dto.TbCodeDetlDto;
 import com.meta.dto.TbTelgmDtlBscDto;
 import com.meta.dto.TbTelgmKndBscDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,9 +19,9 @@ import java.util.List;
 public interface TelgmMapper {
     public List<TbTelgmKndBscDto> getTelgmKndListData(TbTelgmKndBscDto tbTelgmKndBscDto);
     public List<TbTelgmDtlBscDto> getTelgmDtlListData(TbTelgmDtlBscDto tbTelgmDtlBscDto);
-    public List<TbCodeDto> getDlngSeCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
-    public List<TbCodeDto> getAllTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
-    public List<TbCodeDto> getReqTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
-    public List<TbCodeDto> getRspnsTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
-    public List<TbCodeDto> getTaskSeCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
+    public List<TbCodeDetlDto> getDlngSeCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
+    public List<TbCodeDetlDto> getAllTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
+    public List<TbCodeDetlDto> getReqTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
+    public List<TbCodeDetlDto> getRspnsTelgmKndCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
+    public List<TbCodeDetlDto> getTaskSeCdComboData(TbTelgmKndBscDto tbTelgmKndBscDto);
 }

@@ -20,15 +20,9 @@
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
-                <button id="btnInit" type="button" class="btn">초기화
-                </button>
-                <button id="btnSearch" type="button" class="btn">조회
-                </button>
-                <button id="btnReg" type="button" class="btn">등록
-                </button>
-                <button id="btnRegEblc" type="button" class="btn">일괄등록
-                </button>
-                <button id="btnExcel" type="button" class="btn">Excel 저장</button>
+                <button id="btnSearch" type="button" class="btn">조회                </button>
+                <button id="btnReg" type="button" class="btn">등록                </button>
+                <button id="btnRegEblc" type="button" class="btn">일괄등록                </button>
             </div>
         </div>
 
@@ -37,21 +31,20 @@
             <table class="search-table">
                 <tr>
                     <th>조회년도</th>
-                    <td style="display:flex; align-items:center; gap:4px;" >
+                    <td style="display:flex; align-items:center; gap:4px;"  width="100px" >
                         <input type="number"
                                id="inqYear"
                                name="inqYear"
                                class="form-input"
                                min="1900"
                                max="2099"
-                               step="1">
+                               step="1"><span>년</span>
                     </td>
 
 
                     <th>조회월</th>
-                    <td>
+                    <td  width="100px">
                         <select id="inqMonth" name="inqMonth" class="form-select">
-                            <option value="" selected>전체</option>
                             <option value="01">01월</option>
                             <option value="02">02월</option>
                             <option value="03">03월</option>
@@ -64,133 +57,106 @@
                             <option value="10">10월</option>
                             <option value="11">11월</option>
                             <option value="12">12월</option>
-
                         </select>
                     </td>
-                    <th>휴일구분</th>
-                    <td>
-                        <select id="hldySeCd" name="hldySeCd" class="form-select">
-                            <option value="">전체</option>
-                            <option value="00">영업일</option>
-                            <option value="01" selected>공휴일</option>
-                        </select>
-                    </td>
-                    <td width="50%"> </td>
-
+                    <td width="60%"> </td>
                 </tr>
             </table>
         </form>
 
-
-        <div id="pageInfoContainer" class="page-header"></div>
-
-
-        <table class="data-table" id="mainTable">
-            <thead>
-            <tr>
-                <th class="col-no">No</th>
-                <th width="100px">기준일자</th>
-                <th width="100px">요일</th>
-                <th width="250px">휴일명</th>
-                <th width="100px">휴일구분</th>
-                <th width="400px">비고</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-   </div>
+        <div id="calendarContainer" class="calendar-container"></div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
-        let dataAll = [];
-        let currentPage = 1;
 
-        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+        let dataAll = [];
         const today = new Date();
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0'); // 01~12
-
         document.getElementById('inqYear').value = `${year}`;
         document.getElementById('inqMonth').value = `${month}`;
 
+        doSearch();
 
-        const container = document.getElementById("pageInfoContainer");
-        if (!container) return;
+        document.getElementById('btnSearch').addEventListener('click', doSearch);
+        document.getElementById('inqYear').addEventListener('change', doSearch);
+        document.getElementById('inqMonth').addEventListener('change', () => { doSearch(); });
 
-        fetch('/common/pageSize.html')
-            .then(res => res.text())
-            .then(html => {
-                container.innerHTML = html;
-                const pageSizeSelect = document.getElementById("pageSize");
-                if (!pageSizeSelect) return;
+        function renderCalendar(year, month, listData) {
+            const container = document.getElementById("calendarContainer");
+            if (!container) return;
 
-                pageSizeSelect.addEventListener("change", () => {
-                    PAGE_SIZE = Number(pageSizeSelect.value);
-                    currentPage = 1;
-                    renderTable(currentPage);
-                    renderPagination(dataAll, currentPage, PAGE_SIZE);
-                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            const firstDay = new Date(year, month - 1, 1);
+            const lastDay  = new Date(year, month, 0);
+            const startDow = firstDay.getDay(); // 0~6
+            const totalDay = lastDay.getDate();
+
+            const hldyMap = {};
+            listData.forEach(item => {
+                hldyMap[item.crtrYmd] = item;
+            });
+
+            let html = `
+                <table class="calendar">
+                    <thead>
+                        <tr>
+                            <th>일</th><th>월</th><th>화</th>
+                            <th>수</th><th>목</th><th>금</th><th>토</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            let day = 1;
+            for (let r = 0; r < 6; r++) {
+                html += "<tr>";
+                for (let c = 0; c < 7; c++) {
+                    if ((r === 0 && c < startDow) || day > totalDay) {
+                        html += "<td></td>";
+                    } else {
+                        const ymd = `${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`;
+                        const info = hldyMap[ymd];
+                        const cls = info?.hldySeCd === "01" ? "holiday" : "business";
+
+                        html += `
+                           <td class="${cls} has-link" data-ymd="${ymd}">
+                                <div class="day">${day}</div>
+                                ${info ? `<div class="hldyNm">${info.hldyNm}</div>` : ""}
+                                ${info?.rmk ? `<div class="rmk">${truncateText(info.rmk, 30)}</div>` : ""}
+                            </td>
+                        `;
+                        day++;
+                    }
+                }
+                html += "</tr>";
+                if (day > totalDay) break;
+            }
+
+            html += "</tbody></table>";
+            container.innerHTML = html;
+
+            container.querySelectorAll("td.has-link").forEach(td => {
+                td.addEventListener("dblclick", () => {
+                    const ymd = td.dataset.ymd;
+                    if (!ymd) return;
+                    const sendData = { mode: "S", crtrYmd: ymd };
+                    openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
                 });
             });
-
-
-        window.renderTable = function(page)  {
-            if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                return;
-            }
-            const start = (page - 1) * PAGE_SIZE;
-            const end = start + PAGE_SIZE;
-            const pageData = dataAll.slice(start, end);
-
-            tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click" data-id="${item.crtrYmd}">
-                    <td> ${start + index + 1} </td>
-                    <td style="text-align: center;">${  getFormatDate(item.crtrYmd) }</td>
-                    <td style="text-align: center;">
-                         ${['','일요일','월요일','화요일','수요일','목요일','금요일','토요일'][item.dowSeCd * 1]}
-                    </td>
-                    <td style="text-align: center;">${item.hldyNm}</td>
-                    <td style="text-align: center;">${['영업일','공휴일'][item.hldySeCd * 1]}
-                    </td>
-                    <td style="text-align: left;">${truncateText(item.rmk, 100)}</td>
-                </tr>
-            `).join('');
-
-
-            tableBody.addEventListener("dblclick", e => {
-                const tr = e.target.closest(".row-click");
-                if (!tr) return;
-                const sendData = { mode: "S", crtrYmd: tr.dataset.id };
-                openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
-            });
         }
 
-        window.refreshParentRow = function(data) {
-            const refreshMap = {
-                dowSeCd: 'td:nth-child(3)',
-                hldyNm: 'td:nth-child(4)',
-                hldySeCd: 'td:nth-child(5)',
-                rmk:     'td:nth-child(6)'
-            };
-            window.updateRowDataFlexible(data, 'crtrYmd', refreshMap);
-        }
-
-
-        document.getElementById('btnSearch').addEventListener('click', () => {
-
-            initScreen();
+        function doSearch() {
             const data = formToJson(document.getElementById('mainForm'));
-            const inqYear = document.getElementById('inqYear');
+            const inqYear  = document.getElementById('inqYear');
+            const inqMonth = document.getElementById('inqMonth');
 
-           if (!inqYear.value || !inqYear.value.trim()) {
-                document.getElementById("pageInfo").innerText = `조회년월을 입력하세요.`;
+            if (!inqYear.value || !inqYear.value.trim()) {
                 inqYear.focus();
                 return;
             }
 
-            data.crtrYmd =  document.getElementById('inqYear').value  + document.getElementById('inqMonth').value
+            data.crtrYmd = inqYear.value + (inqMonth.value || '');
 
             fetch('/meta/getHldyListData', {
                 method: 'POST',
@@ -200,40 +166,26 @@
             .then(res => res.json())
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
-                if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                    myAlert("조회 결과가 없습니다.");
-                    return
+
+                if (dataAll.length === 0) {
+                    document.getElementById("calendarContainer").innerHTML = "";
+                    return;
                 }
-                currentPage = 1;
-                renderTable(currentPage);
-                renderPagination(dataAll, currentPage, PAGE_SIZE);
-                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+
+                renderCalendar(inqYear.value, inqMonth.value || 1, dataAll);
             })
-            .catch(err => {
-                myAlert("에러 발생: " + err);
-            });
-        });
+            .catch(err => myAlert("에러 발생: " + err));
+        }
     });
-
-
-    document.getElementById('btnInit').addEventListener('click', () => {
-        document.getElementById('mainForm').reset();
-        initScreen();
-    });
-
 
     document.getElementById('btnReg').addEventListener('click', () => {
         const sendData = { mode: "I"};
         openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
     });
-
     document.getElementById('btnRegEblc').addEventListener('click', () => {
         window.location.href = "/meta/hldy/hldyRegEblc";
     });
 
-    document.getElementById('btnExcel').addEventListener('click', () => {
-        downloadTableToExcel('mainTable', '휴일목록');
-    });
 
 </script>
 <script src="/js/functionKey.js"></script>

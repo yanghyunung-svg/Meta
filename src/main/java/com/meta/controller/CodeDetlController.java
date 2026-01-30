@@ -1,8 +1,8 @@
 package com.meta.controller;
 
 import com.meta.common.response.ApiResponse;
-import com.meta.dto.TbCodeDto;
-import com.meta.service.CodeService;
+import com.meta.dto.TbCodeDetlDto;
+import com.meta.service.CodeDetlService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -20,29 +20,29 @@ import java.util.Map;
 @Data
 @Controller
 @RequestMapping("/meta")
-public class CodeController {
+public class CodeDetlController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    private CodeService codeService;
+    private CodeDetlService codeDetlService;
  
     /**
-     * @ ID : getCodeListData
+     * @ ID : getCodeDetlListData
      * @ NAME : 코드 목록 조회
      */
-    @PostMapping("/getCodeListData")
+    @PostMapping("/getCodeDetlListData")
     @ResponseBody
-    public List<TbCodeDto> getCodeListData(@RequestBody TbCodeDto inputDto, HttpServletRequest request) throws Exception {
-        return codeService.getListData(inputDto);
+    public List<TbCodeDetlDto> getCodeDetlListData(@RequestBody TbCodeDetlDto inputDto, HttpServletRequest request) throws Exception {
+        return codeDetlService.getListData(inputDto);
     }
 
     /**
-     * @ ID : getCodeData
+     * @ ID : getCodeDetlData
      * @ NAME : 코드 상세 조회
      */
-    @PostMapping("/getCodeData")
+    @PostMapping("/getCodeDetlData")
     @ResponseBody
-    public TbCodeDto getCodeData(@RequestBody TbCodeDto inputDto, HttpServletRequest request) throws Exception {
-        return codeService.getData(inputDto);
+    public TbCodeDetlDto getCodeDetlData(@RequestBody TbCodeDetlDto inputDto, HttpServletRequest request) throws Exception {
+        return codeDetlService.getData(inputDto);
     }
 
     /**
@@ -51,31 +51,20 @@ public class CodeController {
      */
     @PostMapping("/manageCodeDetlData")
     @ResponseBody
-    public ApiResponse<Void> manageCodeDetlData(@RequestBody TbCodeDto inputDto, HttpServletRequest request) throws Exception {
-        codeService.manageData(inputDto);
+    public ApiResponse<Void> manageCodeDetlData(@RequestBody TbCodeDetlDto inputDto, HttpServletRequest request) throws Exception {
+        codeDetlService.manageData(inputDto);
         return ApiResponse.success(null);
     }
 
-
     /**
-     * @ ID : getCodeAllData
-     * @ NAME : 코드 콤보 조회
-     */
-    @PostMapping("/getCodeAllData")
-    public ResponseEntity<List<TbCodeDto>> getCodeAllData(@RequestBody TbCodeDto inputDto)  {
-        List<TbCodeDto> outputDto = codeService.getCodeAllData(inputDto);
-        return ResponseEntity.ok(outputDto);
-    }
-
-    /**
-     * @ ID : uploadCodePreview
+     * @ ID : uploadCodeDetlPreview
      * @ NAME : 상세코드 엑셀업로드
      */
-    @PostMapping("/uploadCodePreview")
-    public ResponseEntity<Map<String, Object>> uploadCodePreview(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/uploadCodeDetlPreview")
+    public ResponseEntity<Map<String, Object>> uploadCodeDetlPreview(@RequestParam("file") MultipartFile file) {
         Map<String, Object> res = new HashMap<>();
         try {
-            List<TbCodeDto> list = codeService.parsePreview(file);
+            List<TbCodeDetlDto> list = codeDetlService.parsePreview(file);
             res.put("success", true);
             res.put("data", list);
             return ResponseEntity.ok(res);
@@ -87,14 +76,14 @@ public class CodeController {
     }
 
     /**
-     * @ ID : uploadCodeExcelSave
+     * @ ID : uploadCodeDetlExcelSave
      * @ NAME : 상세코드 엑셀업로드 저장
      */
-    @PostMapping("/uploadCodeExcelSave")
-    public ResponseEntity<Map<String, Object>> uploadCodeExcelSave(@RequestBody List<TbCodeDto> list) {
+    @PostMapping("/uploadCodeDetlExcelSave")
+    public ResponseEntity<Map<String, Object>> uploadCodeDetlExcelSave(@RequestBody List<TbCodeDetlDto> list) {
         Map<String, Object> res = new HashMap<>();
         try {
-            int count = codeService.saveUploaded(list);
+            int count = codeDetlService.saveUploaded(list);
             res.put("success", true);
             res.put("count", count);
             return ResponseEntity.ok(res);
@@ -105,4 +94,14 @@ public class CodeController {
         }
     }
 
+
+    /**
+     * @ ID : getCodeDetlAllData
+     * @ NAME : 코드 콤보 조회
+     */
+    @PostMapping("/getCodeDetlAllData")
+    public ResponseEntity<List<TbCodeDetlDto>> getCodeDetlAllData(@RequestBody TbCodeDetlDto inputDto)  {
+        List<TbCodeDetlDto> outputDto = codeDetlService.getCodeDetlAllData(inputDto);
+        return ResponseEntity.ok(outputDto);
+    }
 }

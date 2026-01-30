@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MetaController {
 
     /* LOGIN */
+    @GetMapping("/intro")
+    public String intro(Model model) { return "meta/intro"; }
     @GetMapping("/login")
     public String login(Model model) { return "meta/login"; }
     @GetMapping("/comm/loginLogList")
@@ -34,6 +36,8 @@ public class MetaController {
     public String dmnSearchPage() { return "meta/popup/dmnSearch"; }
 
     /* 공통코드 */
+    @GetMapping("/code/commCodeList1")
+    public String commCodeList1Page() { return "meta/code/commCodeList1"; }
     @GetMapping("/code/commCodeList")
     public String commCodeListPage() { return "meta/code/commCodeList"; }
     @GetMapping("/code/commCodeGroup")
@@ -48,18 +52,19 @@ public class MetaController {
     public String codeGroupMngPage() { return "meta/code/codeGroupMng"; }
     @GetMapping("/code/codeGroupRegEblc")
     public String codeGroupRegEblcPage() { return "meta/code/codeGroupRegEblc"; }
+
     @GetMapping("/popup/codeGroupSearch")
     public String codeGroupSearchPage() { return "meta/popup/codeGroupSearch"; }
 
-    /* Code */
+    /* Code Detl */
     @GetMapping("/code/codeDetlList")
-    public String codeDetlListPage() { return "meta/code/odeDetlList"; }
+    public String codeDetlListPage() { return "meta/code/codeDetlList"; }
     @GetMapping("/code/codeDetlMng")
     public String codeDetlMngPage() { return "meta/code/codeDetlMng"; }
     @GetMapping("/code/codeDetlRegEblc")
     public String codeDetlRegEblcPage() { return "meta/code/codeDetlRegEblc"; }
-    @GetMapping("/popup/codeDetlPopup")
-    public String codeDetlPopupPage() { return "meta/popup/codeDetlPopup"; }
+    @GetMapping("/code/codeDetlListPopup")
+    public String codeDetlListPopup() { return "meta/code/codeDetlListPopup"; }
 
     /* 사용자 */
     @GetMapping("/user/userList")

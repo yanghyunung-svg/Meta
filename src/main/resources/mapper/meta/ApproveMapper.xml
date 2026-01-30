@@ -94,7 +94,7 @@
             , STTS_CD
             , CRT_ID
             , CRT_DTTM
-            FROM tb_code
+            FROM tb_code_detl
             WHERE 1=1
             <if test="sttsCd  != null and sttsCd  != ''">
                 AND STTS_CD = #{sttsCd}
@@ -104,7 +104,7 @@
             </if>
 
         ) Z
-        JOIN tb_code  B
+        JOIN tb_code_detl  B
         ON   B.GRP_CD = 'APRV_CD'
         AND  B.CD = Z.SE
         WHERE 1=1

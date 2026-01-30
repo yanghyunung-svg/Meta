@@ -5,59 +5,71 @@
     <title>Meta System</title>
     <link rel="stylesheet" href="/css/mainLayout.css">
     <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
+    <script src="/js/commonCombo.js"></script>
 
 
 </head>
 <body>
-    <div class="iframeMainHeadContainer">
-        <h2 style="margin:0;"> ✅ 상세코드 조회</h2>
-        <div class="button-group">
-            <button id="btnSearch"  type="button" class="hidden">조회</button>
-            <button id="btnReg"     type="button" class="btn">등록</button>
-        </div>
-    </div>
 
-    <div class="iframeMainBodyContainer">
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+
+    <div class="mainHeadContainer">
+            <!-- 왼쪽 타이틀 -->
+            <h2 style="margin:0;"> ✅ 상세코드 조회</h2>
+
+            <div class="button-group">
+                <button id="btnInit"    type="button" class="btn">초기화</button>
+                <button id="btnSearch"  type="button" class="btn">조회</button>
+                <button id="btnReg"     type="button" class="btn">등록</button>
+                <button id="btnRegEblc" type="button" class="btn">일괄등록</button>
+            </div>
+        </div>
+
+    <div class="mainBodyContainer">
         <form id="mainForm">
             <table class="search-table">
                 <tr>
                     <th>그룹코드</th>
-                    <td><input type="text" id="grpCd" name="grpCd" class="form-input" readonly ></td>
+                    <td style="display:flex; align-items:center; gap:2px;">
+                        <input type="text" id="grpCd" name="grpCd" class="form-input">
+                        <button id="btnPopup" type="button" class="btn-search">검색</button>
+                    </td>
                     <th>그룹코드명</th>
-                    <td><input type="text" id="grpNm" name="grpNm" class="form-input" readonly ></td>
+                    <td><input type="text" id="grpNm" name="grpNm" class="form-input"   ></td>
+                    <td width="40%"> </td>
                 </tr>
             </table>
         </form>
-    </div>
-    <div class="iframeMainGridContainer">
+
         <div id="pageInfoContainer" class="page-header"></div>
+
+
         <table class="data-table" id="mainTable" style="margin-top:10px" >
             <thead>
             <tr>
                 <th class="col-no">No</th>
-                <th width="250px">그룹코드</th>
-                <th width="250px">상세코드</th>
-                <th>상세코드명</th>
-                <th width="120px" style="text-align: center;">상태</th>
+                <th width="150px" style="text-align:left;">그룹코드</th>
+                <th width="150px" style="text-align:left;">상세코드</th>
+                <th style="text-align:left;">상세코드명</th>
+                <th  width="120px" style="text-align: center;">상태</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
-    </div>
+
+</div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-
-        let PAGE_SIZE = 50;
+        let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
         const btnReg = document.getElementById("btnReg");
-        btnReg.disabled = true;
-
         window.tableBody = document.getElementById("mainTable").querySelector("tbody");
-
-
 
         const container = document.getElementById("pageInfoContainer");
         if (!container) return;
@@ -71,6 +83,16 @@
             if (pageSelect) {
                 pageSelect.classList.add('hidden');
             }
+            const pageSizeSelect = document.getElementById("pageSize");
+            if (!pageSizeSelect) return;
+
+            pageSizeSelect.addEventListener("change", () => {
+                PAGE_SIZE = Number(pageSizeSelect.value);
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            });
         });
 
         window.addEventListener('storage', (e) => {
@@ -83,7 +105,6 @@
 
                 if (savedGrpCd) {
                     btnSearch.click();
-                    btnReg.disabled = false;
                 }
 
             }
@@ -105,7 +126,7 @@
                     data-cd="${item.cd}"
                     data-id="${item.grpCd}_${item.cd}"><td style="text-align:center;"> ${start + index + 1} </td>
                     <td style="text-align:left;">${item.grpCd}</td>
-                    <td style="text-align:center;">${item.cd}</td>
+                    <td style="text-align:left;">${item.cd}</td>
                     <td style="text-align:left;">${item.cdNm}</td>
                     <td style="text-align:center;">${getSttsCdLabel(item.sttsCd)}</td>
                 </tr>
@@ -136,6 +157,8 @@
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
                 if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                    initScreen();
+                            document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
                     return
                 }
                 currentPage = 1;
@@ -156,6 +179,10 @@
         document.getElementById("btnSearch").click();
     }
 
+    document.getElementById('btnPopup').addEventListener('click', () => {
+        const sendData = {};
+        openWindowWithJSON(sendData, "/meta/popup/codeGroupSearch", 700, 900);
+    });
 
 
     document.getElementById('btnReg').addEventListener('click', () => {
@@ -165,6 +192,15 @@
         openWindowWithJSON(sendData, "/meta/code/codeDetlMng", 800, 550);
     });
 
+
+    document.getElementById('btnInit').addEventListener('click', () => {
+        document.getElementById('mainForm').reset();
+        initScreen();
+    });
+
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = "/meta/code/codeDetlRegEblc";
+    });
 
 
 </script>

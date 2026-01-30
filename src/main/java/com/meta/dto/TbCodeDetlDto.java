@@ -7,17 +7,17 @@ import lombok.AllArgsConstructor;
 
 /**
  * @author     : somnus21
- * @file       : TbCodeDto.java
+ * @file       : TbCodeDetlDto.java
  * @version    : 1.0.0
  * @createDate : 2025-11-28 오후 3:11:14
  * @updateDate : 2025-11-28 오후 3:11:14
- * @desc       : 코드기본 tb_code
+ * @desc       : 코드기본 tb_code_detl
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TbCodeDto {  
+public class TbCodeDetlDto {
   private String     grpCd;                             // 그룹코드 VARCHAR(50)
   private String     grpNm;                            // 그룹코드명 VARCHAR(50)
   private String     cd;                              // 상세코드 VARCHAR(50)

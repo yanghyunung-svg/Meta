@@ -12,7 +12,7 @@
     <div class="searchHeadContainer">
             <h2 style="margin:0;"> ✅ 전문상세 조회</h2>
             <div class="button-group">
-                <button id="btnSearch"  type="button" class="btn">조회</button>
+                <button id="btnSearch"  type="button" class="hidden">조회</button>
                 <button id="btnClose" type="button" class="btn">닫기</button>
             </div>
     </div> 
@@ -35,12 +35,12 @@
 
         <div id="pageInfoContainer" class="page-header"></div>
 
-        <table class="data-table" id="mainTable">
+        <table class="data-table" id="mainTable" style="margin-top:10px" >
             <thead>
             <tr>
                 <th style="width:100px">항목순서</th>
                 <th style="width:200px">항목명</th>
-                <th style="width:100px">항목영문명</th>
+                <th style="width:200px">항목영문명</th>
                 <th style="width:100px">항목속성</th>
                 <th style="width:100px">항목길이</th>
                 <th style="width:100px">항목기본값</th>
@@ -143,7 +143,7 @@
             .then(data => {
                 dataAll = Array.isArray(data) ? data : [];
                 if (!Array.isArray(dataAll) || dataAll.length === 0) {
-                    myAlert("조회 결과가 없습니다.");
+                    document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
                     document.getElementById("btnClose").click();
                 }
                 currentPage = 1;

@@ -26,18 +26,19 @@ function bindHeaderEvents() {
     const userId = localStorage.getItem('userId');
     const role = localStorage.getItem('role');
 
-    const logoutBtn = document.querySelector('.footbarContainer .logout');
-    const userInfo = document.querySelector('.footbarContainer .userInfo');
+    const logoutBtn = document.querySelector('.topbarContainer .logout');
+    const userInfo = document.querySelector('.topbarContainer .userInfo');
     const headerUserNm = document.getElementById('headerUserNm');
 
     if (headerUserNm && userNm && userId) {
         headerUserNm.innerText = `${userNm} (${userId})`;
     }
 
-    const termSearch = document.querySelector('.topbar-logo .termSearch');
+    const termSearch = document.querySelector('.logo');
     if (termSearch) {
         termSearch.addEventListener('click', () => {
-            location.href = '/meta/term/termSearch';
+       //     location.href = '/meta/term/termSearch';
+            location.href = '/meta/intro';
         });
     }
 

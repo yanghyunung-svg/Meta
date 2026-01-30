@@ -87,7 +87,7 @@
             , date_format(A.CRT_DTTM, '%Y-%m-%d %H:%i:%s') AS CRT_DTTM
             , date_format(A.UPD_DTTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTTM
         FROM TB_STD_DMN_BSC A
-        LEFT JOIN tb_code B
+        LEFT JOIN tb_code_detl B
         ON B.GRP_CD = 'STTS_CD'
         AND B.CD = A.STTS_CD
         WHERE 1=1
