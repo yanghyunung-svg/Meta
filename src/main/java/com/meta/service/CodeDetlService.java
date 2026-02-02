@@ -67,7 +67,7 @@ public class CodeDetlService {
 
         switch (inputDto.getFunc()) {
             case BizConstants.FUNC_SE.INS:
-                if (outputDto  != null) {
+                if (outputDto != null) {
                     throw new BizException(ResponseCode.DUPLICATE_DATA);
                 }
                 if (tbCodeDetlMapper.insertData(inputDto) == 0) {

@@ -27,12 +27,12 @@
             <table class="search-table">
                 <tr>
                     <th>그룹코드</th>
-                    <td><input type="text" id="grpCd" name="grpCd" class="form-input"></td>
+                    <td><input type="text" id="grpCd" name="grpCd" class="search-input"></td>
                     <th>그룹코드명</th>
-                    <td><input type="text" id="grpNm" name="grpNm" class="form-input"></td>
+                    <td><input type="text" id="grpNm" name="grpNm" class="search-input"></td>
 <!--                    <th>상태</th>-->
 <!--                    <td>-->
-<!--                        <select id="sttsCd" name="sttsCd" class="form-select">-->
+<!--                        <select id="sttsCd" name="sttsCd" class="search-select">-->
 <!--                            <option value="">전체</option>-->
 <!--                        </select>-->
 <!--                    </td>-->
@@ -49,6 +49,7 @@
                 <th class="col-no">No</th>
                 <th width="250px">그룹코드</th>
                 <th width="250px">그룹코드명</th>
+                <th width="120px">코드수</th>
                 <th>비고</th>
                 <th width="120px" style="text-align: center;">상태</th>
 
@@ -110,6 +111,7 @@
                     <td style="text-align: center;"> ${start + index + 1} </td>
                     <td style="text-align: left;">  ${item.grpCd} </td>
                     <td style="text-align: left;">${item.grpNm}</td>
+                    <td style="text-align: center;">${item.detlCnt}</td>
                     <td style="text-align: left;">${item.rmk}</td>
                     <td>${getSttsCdLabel(item.sttsCd)}</td>
                 </tr>

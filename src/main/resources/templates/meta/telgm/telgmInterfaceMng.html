@@ -26,7 +26,7 @@
                     <tr>
                         <th>인터페이스ID <span style="color:red">*</span></th>
                         <td style="display:flex; align-items:center; gap:4px;">
-                            <input type="text" id="ifId" name="ifId" class="form-input" required>
+                            <input type="text" id="ifId" name="ifId" class="search-input" required>
                             <button id="btnCheck" type="button" class="btn">중복검증</button>
                         </td>
 
@@ -36,7 +36,7 @@
                     <tr>
                         <th>기관코드 <span style="color:red">*</span></th>
                         <td>
-                            <select id="instCd" name="instCd" class="form-input">
+                            <select id="instCd" name="instCd" class="search-input">
 <!--                                <option value="">선택</option>-->
                             </select>
                         </td>
@@ -44,7 +44,7 @@
                     <tr>
                         <th>업무구분코드 <span style="color:red">*</span></th>
                         <td>
-                            <select id="taskSeCd" name="taskSeCd" class="form-input">
+                            <select id="taskSeCd" name="taskSeCd" class="search-input">
 <!--                                <option value="">선택</option>-->
                             </select>
                         </td>
@@ -52,7 +52,7 @@
                     <tr>
                         <th>취급개설구분코드 <span style="color:red">*</span></th>
                         <td>
-                            <select id="hndlEstblSeCd" name="hndlEstblSeCd" class="form-input">
+                            <select id="hndlEstblSeCd" name="hndlEstblSeCd" class="search-input">
                                 <option value="">선택</option>
                                 <option value="1">1-취급</option>
                                 <option value="2">2-개설</option>
@@ -62,26 +62,26 @@
                     <tr>
                         <th>전문종별코드 <span style="color:red">*</span></th>
                         <td>
-                            <select id="telgmKndCd" name="telgmKndCd" class="form-input">
+                            <select id="telgmKndCd" name="telgmKndCd" class="search-input">
                                 <!--                            <option value="">선택</option>-->
                             </select>
                         </td>
                     </tr>
                     <tr>
                         <th>거래구분코드 <span style="color:red">*</span></th>
-                        <td><input type="text" id="dlngSeCd" name="dlngSeCd" class="form-input" > </td>
+                        <td><input type="text" id="dlngSeCd" name="dlngSeCd" class="search-input" > </td>
                     </tr>
                 </table>
 
                 <table class="popup-table">
                     <tr>
                         <th>전문명</th>
-                        <td><input type="text" id="telgmNm" name="telgmNm" class="form-input" > </td>
+                        <td><input type="text" id="telgmNm" name="telgmNm" class="search-input" > </td>
                     </tr>
                     <tr>
                         <th>전문유형코드 <span style="color:red">*</span></th>
                         <td>
-                            <select id="telgmTypeCd" name="telgmTypeCd" class="form-input">
+                            <select id="telgmTypeCd" name="telgmTypeCd" class="search-input">
                                 <option value="">선택</option>
                                 <option value="1">1-BIZ</option>
                                 <option value="2">2-SYS</option>
@@ -90,12 +90,12 @@
                     </tr>
                     <tr>
                         <th>전문설명</th>
-                        <td> <textarea id="telgmExpln" name="telgmExpln" class="form-input" rows="10" ></textarea> </td>
+                        <td> <textarea id="telgmExpln" name="telgmExpln" class="search-input" rows="10" ></textarea> </td>
                     </tr>
                     <tr>
                         <th>상태</th>
                         <td>
-                            <select id="sttsCd" name="sttsCd" class="form-input">
+                            <select id="sttsCd" name="sttsCd" class="search-input">
                                 <option value="">선택</option>
                                 <option value="1" SELECTED>사용</option>
                                 <option value="9">미사용</option>
@@ -108,14 +108,14 @@
                 <tr>
                     <th>최초등록</th>
                     <td style="display:flex; gap:5px;">
-                        <input type="text" id="crtId" name="crtId" class="form-input" readonly>
-                        <input type="text" id="crtDttm" name="crtDttm" class="form-input" readonly>   </td>
+                        <input type="text" id="crtId" name="crtId" class="search-input" readonly>
+                        <input type="text" id="crtDttm" name="crtDttm" class="search-input" readonly>   </td>
                 </tr>
                 <tr>
                     <th>최종변경</th>
                     <td style="display:flex; gap:5px;">
-                        <input type="text" id="updId" name="updId" class="form-input" readonly>
-                        <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
+                        <input type="text" id="updId" name="updId" class="search-input" readonly>
+                        <input type="text" id="updDttm" name="updDttm" class="search-input" readonly> </td>
                 </tr>
                 </table>
 

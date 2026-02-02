@@ -26,7 +26,7 @@
             <tr>
                 <th>용어명 <span style="color:red">*</span></th>
                 <td style="display:flex; align-items:center; gap:4px;">
-                    <input type="text" id="trmNm" name="trmNm" class="form-input" required>
+                    <input type="text" id="trmNm" name="trmNm" class="search-input" required>
                     <button id="btnCheck" type="button" class="btn">중복검증</button></td>
             </tr>
         </table>
@@ -34,24 +34,24 @@
             <tr>
                 <th>영문명 <span style="color:red">*</span></th>
                 <td style="display:flex; align-items:center; gap:4px;">
-                    <input type="text" id="engNm" name="engNm" class="form-input" required>
+                    <input type="text" id="engNm" name="engNm" class="search-input" required>
                     <button id="btnSplit" type="button" class="btn">단어조합</button></td>
             </tr>
             <tr>
                 <th>도메인명</th>
                 <td style="display:flex; align-items:center; gap:4px;">
-                    <input type="text" id="dmnNm" name="dmnNm" class="form-input">
+                    <input type="text" id="dmnNm" name="dmnNm" class="search-input">
 <!--                    <button id="btnPopup" type="button">🔍</button>-->
                 </td>
             </tr>
             <tr>
                 <th>설명</th>
-                <td > <textarea id="trmExpln" name="trmExpln" class="form-input" rows="20" ></textarea> </td>
+                <td > <textarea id="trmExpln" name="trmExpln" class="search-input" rows="20" ></textarea> </td>
             </tr>
             <tr>
                 <th>상태</th>
                 <td>
-                    <select id="sttsCd" name="sttsCd" class="form-input">
+                    <select id="sttsCd" name="sttsCd" class="search-input">
                         <option value="" >선택</option>
                         <option value="0" selected>신청</option>
                         <option value="1">사용</option>
@@ -64,14 +64,14 @@
             <tr>
                 <th>최초등록</th>
                 <td style="display:flex; gap:5px;">
-                    <input type="text" id="crtId" name="crtId" class="form-input" readonly>
-                    <input type="text" id="crtDttm" name="crtDttm" class="form-input" readonly>   </td>
+                    <input type="text" id="crtId" name="crtId" class="search-input" readonly>
+                    <input type="text" id="crtDttm" name="crtDttm" class="search-input" readonly>   </td>
             </tr>
             <tr>
                 <th>최종변경</th>
                 <td style="display:flex; gap:5px;">
-                    <input type="text" id="updId" name="updId" class="form-input" readonly>
-                    <input type="text" id="updDttm" name="updDttm" class="form-input" readonly> </td>
+                    <input type="text" id="updId" name="updId" class="search-input" readonly>
+                    <input type="text" id="updDttm" name="updDttm" class="search-input" readonly> </td>
             </tr>
         </table>
         <!--  <div class="msgInfo"> <span id="msgInfo"></span>   </div> -->

@@ -31,12 +31,12 @@
             <table class="search-table">
                 <tr>
                     <th>그룹코드</th>
-                    <td><input type="text" id="grpCd" name="grpCd" class="form-input"></td>
+                    <td><input type="text" id="grpCd" name="grpCd" class="search-input"></td>
                     <th>그룹코드명</th>
-                    <td><input type="text" id="grpNm" name="grpNm" class="form-input"></td>
+                    <td><input type="text" id="grpNm" name="grpNm" class="search-input"></td>
                     <th>상태</th>
                     <td>
-                        <select id="sttsCd" name="sttsCd" class="form-select">
+                        <select id="sttsCd" name="sttsCd" class="search-select">
                             <option value="">전체</option>
                         </select>
                     </td>
@@ -52,18 +52,36 @@
             <thead>
             <tr>
                 <th class="col-no">No</th>
-                <th width="150px">공통코드</th>
-                <th width="250px">공통코드명</th>
+                <th width="250px">그룹코드</th>
+                <th width="250px">그룹코드명</th>
+                <th width="120px">코드수</th>
                 <th>비고</th>
                 <th width="120px" style="text-align: center;">상태</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
-
     </div>
-</div>
 
+    <div class="regContainer">
+        <form id="regForm">
+            <table class="reg-table">
+                <tr>
+                    <td class="col-no"> </td>
+                    <td width="250px"><input type="text" id="grpCdIn" name="grpCdIn" class="reg-input"></td>
+                    <td width="250px"><input type="text" id="grpNmIn" name="grpNmIn" class="reg-input"></td>
+                    <td ><input type="text" id="rmkIn" name="rmkIn" class="reg-input"></td>
+                    <td width="120px">
+                        <select id="sttsCdIn" name="sttsCdIn" class="reg-select">
+                            <option value="1">사용</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -110,6 +128,7 @@
                         ${item.grpCd}
                     </td>
                     <td style="text-align: left;">${item.grpNm}</td>
+                    <td style="text-align: center;">${item.detlCnt}</td>
                     <td style="text-align: left;">${item.rmk}</td>
                     <td>${getSttsCdLabel(item.sttsCd)}</td>
                 </tr>
@@ -134,7 +153,7 @@
 
         document.getElementById('btnReg').addEventListener('click', () => {
             const sendData = {mode: "I"};
-            openWindowWithJSON(sendData, "/meta/codeGroupMng", 800, 600);
+            openWindowWithJSON(sendData, "/meta/code/codeGroupMng", 800, 600);
         });
 
         window.refreshParentRow = function(data) {
