@@ -52,7 +52,7 @@
             <thead>
             <tr>
                 <th class="col-no">No</th>
-                <th width="150px" style="text-align:left;">그룹코드</th>
+                <th width="200px" style="text-align:left;">그룹코드</th>
                 <th width="150px" style="text-align:left;">상세코드</th>
                 <th style="text-align:left;">상세코드명</th>
                 <th  width="120px" style="text-align: center;">상태</th>
@@ -158,7 +158,7 @@
                 dataAll = Array.isArray(data) ? data : [];
                 if (!Array.isArray(dataAll) || dataAll.length === 0) {
                     initScreen();
-                            document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
+                    document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
                     return
                 }
                 currentPage = 1;

@@ -486,12 +486,21 @@ function getDefaultDates() {
         end: formatDate(today)
     };
 }
-function getFormatDate(date) {
-    const result =
-        date.substring(0,4) + "-" +
-        date.substring(4,6) + "-" +
-        date.substring(6,8);
-    return result;
+function getFormatDate(ymd) {
+    if (!ymd) return "";
+
+    // 이미 yyyy-MM-dd 인 경우
+    if (/^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
+        return ymd;
+    }
+
+    // yyyyMMdd 만 허용
+    if (!/^\d{8}$/.test(ymd)) {
+        console.warn("Invalid date format:", ymd);
+        return "";
+    }
+
+    return `${ymd.substring(0,4)}-${ymd.substring(4,6)}-${ymd.substring(6,8)}`;
 }
 
 function addUserAuditFields(data) {

@@ -219,15 +219,27 @@ body.loading { cursor:wait; }
 .selected-row { background-color:#e6f2ff; }
 td[contenteditable="true"] { cursor:text; }
 
-
 .calendar-container { margin-top: 20px; }
 .calendar { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .calendar th,
 .calendar td { border: 1px solid #dcdcdc; height: 100px; vertical-align: top; padding: 4px; font-size: 13px; }
 .calendar th { background: #64748B; color: white; text-align: center; vertical-align: middle; height: 40px; }
-.calendar td .day { font-weight: bold; margin-bottom: 4px; text-align: center; }
-.calendar td.holiday { background: #fff3f3; color: #d32f2f; text-align: center; }
-.calendar td.business { background: #f9f9f9; text-align: center; }
 .calendar td.has-link { cursor: pointer; }
 .calendar td.has-link:hover { background-color: #e3f2fd; }
-.calendar .rmk { font-size: 11px; color: blue; margin-top: 2px; line-height: 1.2; word-break: break-word; }
+.calendar td .day       { font-weight: bold; margin-bottom: 4px; text-align: center; }
+.calendar td.business   { background: #f9f9f9; text-align: center; }
+.calendar td.holiday    { background: #fff3f3; color: red; text-align: center; }
+.calendar td .rmk       { font-size: 11px; color: blue; margin-top: 2px; line-height: 1.2; }
+.calendar td.today      { border: 2px solid #e53935; background-color: #fff5f5;}
+.calendar td.today .day { font-weight: bold; color: #e53935;}
+
+.month-radio {
+    display: flex;
+    flex-wrap: wrap;   /* 공간 부족 시 줄바꿈 */
+    gap: 8px 12px;
+}
+
+.month-radio label {
+    white-space: nowrap;
+    cursor: pointer;
+}

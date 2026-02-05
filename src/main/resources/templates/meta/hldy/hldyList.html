@@ -16,175 +16,211 @@
     <div id="sidebarContainer"></div>
     <div class="mainHeadContainer">
             <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 휴일정보 조회</h2>
+            <h2 style="margin:0;"> ✅ 일정정보</h2>
 
             <!-- 오른쪽 버튼 그룹 -->
             <div class="button-group">
-                <button id="btnSearch" type="button" class="btn">조회                </button>
-                <button id="btnReg" type="button" class="btn">등록                </button>
-                <button id="btnRegEblc" type="button" class="btn">일괄등록                </button>
+                <button id="btnSearch" type="button" class="btn">조회</button>
+                <button id="btnReg" type="button" class="btn">등록</button>
+                <button id="btnRegEblc" type="button" class="btn">일괄등록</button>
             </div>
         </div>
-
         <div class="mainBodyContainer">
         <form id="mainForm">
             <table class="search-table">
                 <tr>
                     <th>조회년도</th>
-                    <td style="display:flex; align-items:center; gap:4px;"  width="100px" >
-                        <input type="number"
-                               id="inqYear"
-                               name="inqYear"
-                               class="search-input"
-                               min="1900"
-                               max="2099"
-                               step="1"><span>년</span>
+                    <td style="display:flex; align-items:center; gap:2px;" width="80px">
+                        <input type="number" id="inqYear" name="inqYear" class="search-select" min="2025" max="2099" step="1"><span>년</span>
                     </td>
-
-
-                    <th>조회월</th>
-                    <td  width="100px">
-                        <select id="inqMonth" name="inqMonth" class="search-select">
-                            <option value="01">01월</option>
-                            <option value="02">02월</option>
-                            <option value="03">03월</option>
-                            <option value="04">04월</option>
-                            <option value="05">05월</option>
-                            <option value="06">06월</option>
-                            <option value="07">07월</option>
-                            <option value="08">08월</option>
-                            <option value="09">09월</option>
-                            <option value="10">10월</option>
-                            <option value="11">11월</option>
-                            <option value="12">12월</option>
-                        </select>
+                        <td>
+                        <div class="month-radio">
+                            <label><input type="radio" name="inqMonth" value="01"> 01월</label>
+                            <label><input type="radio" name="inqMonth" value="02"> 02월</label>
+                            <label><input type="radio" name="inqMonth" value="03"> 03월</label>
+                            <label><input type="radio" name="inqMonth" value="04"> 04월</label>
+                            <label><input type="radio" name="inqMonth" value="05"> 05월</label>
+                            <label><input type="radio" name="inqMonth" value="06"> 06월</label>
+                            <label><input type="radio" name="inqMonth" value="07"> 07월</label>
+                            <label><input type="radio" name="inqMonth" value="08"> 08월</label>
+                            <label><input type="radio" name="inqMonth" value="09"> 09월</label>
+                            <label><input type="radio" name="inqMonth" value="10"> 10월</label>
+                            <label><input type="radio" name="inqMonth" value="11"> 11월</label>
+                            <label><input type="radio" name="inqMonth" value="12"> 12월</label>
+                        </div>
                     </td>
-                    <td width="60%"> </td>
                 </tr>
             </table>
         </form>
+
+            <div style="text-align:center; font-size:20px; line-height:1.6;">
+                <span id="inqCalendar" style="margin-top:8px; display:inline-block;"></span>
+            </div>
+
 
         <div id="calendarContainer" class="calendar-container"></div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
 
-        let dataAll = [];
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // 01~12
-        document.getElementById('inqYear').value = `${year}`;
-        document.getElementById('inqMonth').value = `${month}`;
+document.addEventListener("DOMContentLoaded", () => {
 
-        doSearch();
+    let dataAll = [];
 
-        document.getElementById('btnSearch').addEventListener('click', doSearch);
-        document.getElementById('inqYear').addEventListener('change', doSearch);
-        document.getElementById('inqMonth').addEventListener('change', () => { doSearch(); });
+    const todayStr = (() => {
+        const d = new Date();
+        return (
+                d.getFullYear() +
+                String(d.getMonth() + 1).padStart(2, '0') +
+                String(d.getDate()).padStart(2, '0')
+        );
+    })();
 
-        function renderCalendar(year, month, listData) {
-            const container = document.getElementById("calendarContainer");
-            if (!container) return;
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // 01~12
 
-            const firstDay = new Date(year, month - 1, 1);
-            const lastDay  = new Date(year, month, 0);
-            const startDow = firstDay.getDay(); // 0~6
-            const totalDay = lastDay.getDate();
+    // 현재월 라디오 체크
+    const radio = document.querySelector(
+        `input[name="inqMonth"][value="${month}"]`
+    );
+    if (radio) radio.checked = true;
 
-            const hldyMap = {};
-            listData.forEach(item => {
-                hldyMap[item.crtrYmd] = item;
-            });
+    // 조회년도 세팅
+    document.getElementById('inqYear').value = `${year}`;
+    doSearch();
 
-            let html = `
-                <table class="calendar">
-                    <thead>
-                        <tr>
-                            <th>일</th><th>월</th><th>화</th>
-                            <th>수</th><th>목</th><th>금</th><th>토</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
+    // 이벤트 바인딩
+    document.getElementById('btnSearch').addEventListener('click', doSearch);
+    document.getElementById('inqYear').addEventListener('change', doSearch);
 
-            let day = 1;
-            for (let r = 0; r < 6; r++) {
-                html += "<tr>";
-                for (let c = 0; c < 7; c++) {
-                    if ((r === 0 && c < startDow) || day > totalDay) {
-                        html += "<td></td>";
-                    } else {
-                        const ymd = `${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`;
-                        const info = hldyMap[ymd];
-                        const cls = info?.hldySeCd === "01" ? "holiday" : "business";
+    document.querySelectorAll('input[name="inqMonth"]').forEach(radio => {
+        radio.addEventListener('change', doSearch);
+    });
 
-                        html += `
-                           <td class="${cls} has-link" data-ymd="${ymd}">
-                                <div class="day">${day}</div>
-                                ${info ? `<div class="hldyNm">${info.hldyNm}</div>` : ""}
-                                ${info?.rmk ? `<div class="rmk">${truncateText(info.rmk, 30)}</div>` : ""}
-                            </td>
-                        `;
-                        day++;
-                    }
-                }
-                html += "</tr>";
-                if (day > totalDay) break;
-            }
+    function doSearch() {
+        const form = document.getElementById('mainForm');
+        const data = formToJson(form);
 
-            html += "</tbody></table>";
-            container.innerHTML = html;
+        const inqYear  =document.getElementById('inqYear').value;
+        const inqMonth = document.querySelector(
+            'input[name="inqMonth"]:checked'
+        )?.value;
 
-            container.querySelectorAll("td.has-link").forEach(td => {
-                td.addEventListener("dblclick", () => {
-                    const ymd = td.dataset.ymd;
-                    if (!ymd) return;
-                    const sendData = { mode: "S", crtrYmd: ymd };
-                    openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
-                });
-            });
+        if (!inqYear) {
+            document.getElementById('inqYear').focus();
+            return;
         }
 
-        function doSearch() {
-            const data = formToJson(document.getElementById('mainForm'));
-            const inqYear  = document.getElementById('inqYear');
-            const inqMonth = document.getElementById('inqMonth');
+        data.inqYear  = inqYear;
+        data.inqMonth = inqMonth;
+        data.crtrYmd  = inqYear + (inqMonth || '');
 
-            if (!inqYear.value || !inqYear.value.trim()) {
-                inqYear.focus();
+        const inqCalendar = document.getElementById('inqCalendar');
+
+        if (inqCalendar) {
+        inqCalendar.innerText = `${inqYear} 년 ${inqMonth} 월`;
+        }
+
+        fetch('/meta/getHldyListData', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(data => {
+            dataAll = Array.isArray(data) ? data : [];
+
+            if (dataAll.length === 0) {
+                document.getElementById("calendarContainer").innerHTML = "";
                 return;
             }
 
-            data.crtrYmd = inqYear.value + (inqMonth.value || '');
+            renderCalendar(inqYear, inqMonth || 1, dataAll);
+        })
+        .catch(err => myAlert("에러 발생: " + err));
+    }
 
-            fetch('/meta/getHldyListData', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(res => res.json())
-            .then(data => {
-                dataAll = Array.isArray(data) ? data : [];
+    function renderCalendar(year, month, listData) {
+        const container = document.getElementById("calendarContainer");
+        if (!container) return;
 
-                if (dataAll.length === 0) {
-                    document.getElementById("calendarContainer").innerHTML = "";
-                    return;
+        const firstDay = new Date(year, month - 1, 1);
+        const lastDay  = new Date(year, month, 0);
+        const startDow = firstDay.getDay(); // 0~6
+        const totalDay = lastDay.getDate();
+
+        const hldyMap = {};
+        listData.forEach(item => {
+            hldyMap[item.crtrYmd] = item;
+        });
+
+        let html = `
+            <table class="calendar">
+                <thead>
+                    <tr>
+                        <th>일</th><th>월</th><th>화</th>
+                        <th>수</th><th>목</th><th>금</th><th>토</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        let day = 1;
+        for (let r = 0; r < 6; r++) {
+            html += "<tr>";
+            for (let c = 0; c < 7; c++) {
+                if ((r === 0 && c < startDow) || day > totalDay) {
+                    html += "<td></td>";
+                } else {
+                    const ymd = `${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`;
+                    const info = hldyMap[ymd];
+                    let cls = info?.hldySeCd === "01" ? "holiday" : "business";
+                    if (ymd === todayStr) cls += " today";
+
+                    html += `
+                       <td class="${cls} has-link" data-ymd="${ymd}">
+                            <div class="day">${day}</div>
+                            ${info ? `<div class="hldyNm">${info.hldyNm}</div>` : ""}
+                            ${info?.rmk ? `<div class="rmk">${info.rmk.replace(/\n/g, "<br>")}</div>` : ""}
+                        </td>
+                    `;
+                    day++;
                 }
-
-                renderCalendar(inqYear.value, inqMonth.value || 1, dataAll);
-            })
-            .catch(err => myAlert("에러 발생: " + err));
+            }
+            html += "</tr>";
+            if (day > totalDay) break;
         }
-    });
 
-    document.getElementById('btnReg').addEventListener('click', () => {
-        const sendData = { mode: "I"};
-        openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
-    });
-    document.getElementById('btnRegEblc').addEventListener('click', () => {
-        window.location.href = "/meta/hldy/hldyRegEblc";
-    });
+        html += "</tbody></table>";
+        container.innerHTML = html;
+
+        container.querySelectorAll("td.has-link").forEach(td => {
+            td.addEventListener("dblclick", () => {
+                const ymd = td.dataset.ymd;
+                if (!ymd) return;
+                const sendData = { mode: "S", crtrYmd: ymd };
+                const popup = openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
+                const timer = setInterval(() => {
+                    if (popup && popup.closed) {
+                        clearInterval(timer);
+                        doSearch();
+                    }
+                }, 300);
+            });
+        });
+    }
+});
+
+
+
+document.getElementById('btnReg').addEventListener('click', () => {
+    const sendData = { mode: "I"};
+    openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
+});
+document.getElementById('btnRegEblc').addEventListener('click', () => {
+    window.location.href = "/meta/hldy/hldyRegEblc";
+});
 
 
 </script>

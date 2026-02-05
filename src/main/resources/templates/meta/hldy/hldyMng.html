@@ -182,7 +182,7 @@
             const textData = await res.text();
             if (!textData) {
                 mainForm.reset();
-                mainForm.crtrYmd.value = data.crtrYmd;
+                mainForm.crtrYmd.value = getFormatDate(data.crtrYmd);
                 mainForm.dowSeCd.focus();
                 btnReg.disabled = false;
                 myAlert( "등록 가능합니다");
@@ -215,7 +215,6 @@
         btnReg.addEventListener("click", async () => {
             let data = formToJson(mainForm);
             data = addUserAuditFields(data);
-            data.crtrYmd = data.crtrYmd.replace(/-/g, "");
             data.func = "I";
             const ok = validateRequired([
                 { value: data.crtrYmd.trim(), message: ' 필수 입력 항목 (기준일자) ', element: mainForm.crtrYmd },
@@ -224,11 +223,11 @@
                 { value: data.hldySeCd.trim(),  message: '필수 입력 항목 (휴일구분)', element: mainForm.hldySeCd }
             ]);
             if (!ok) return;
+            data.crtrYmd = data.crtrYmd.replace(/-/g, "");
             manageProcess(data);
         });
         // 삭제 버튼
         btnDelete.addEventListener("click", async () => {
-
             const isConfirmed = await myConfirm("정말로 삭제하시겠습니까?");
             if (!isConfirmed) { return; }
             let data = formToJson(mainForm);
@@ -243,7 +242,6 @@
             btnChange.disabled = true;
             btnDelete.disabled = true;
             btnCheck.disabled = true;
-
             document.getElementById("crtrYmd").focus();
         });
         // Enter Key

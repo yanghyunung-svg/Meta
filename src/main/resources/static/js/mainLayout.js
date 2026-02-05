@@ -37,8 +37,7 @@ function bindHeaderEvents() {
     const termSearch = document.querySelector('.logo');
     if (termSearch) {
         termSearch.addEventListener('click', () => {
-       //     location.href = '/meta/term/termSearch';
-            location.href = '/meta/intro';
+            location.href = '/meta/hldy/hldyList';
         });
     }
 
@@ -140,6 +139,8 @@ function openWindowWithJSON(sendData, url, width, height) {
 
     // 일부 브라우저 대응 (load 미발생 대비)
     setTimeout(sendsendData, 500);
+
+     return popupWin;
 }
 
 function receiveCode(grpCd, grpNm) {
