@@ -43,7 +43,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity:0.6; cursor:poin
 .topbarContainer {
     display:flex; justify-content:space-between; align-items:center; padding:0 20px; z-index:1000;
     position:fixed; top:5px; left:5px; width:calc(100% - 10px); height:40px;
-    background-color: #0f172a; color: white; border-radius: 3px;
+    background-color: #0f172a; color: white; border-radius: 6px;
     box-shadow:0 2px 6px rgba(0, 0, 0, 0.12);
     /* 아래쪽 줄만
     border-bottom:1px solid #1565C0;
@@ -54,16 +54,32 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity:0.6; cursor:poin
 
 .topbarRight { display:flex; align-items:center; gap:20px; }
 
-.userInfo {cursor:pointer; font-size:11px; }
-.logout {cursor:pointer; font-size:11px; }
+.userInfo {cursor:pointer; font-size:12px; }
+.logout {cursor:pointer; font-size:12px; }
 
 .sidebarContainer { position:fixed; top:50px; left:5px; width:180px; height:890px; background-color:var(--bg-white); color: var(--bg-black); box-shadow:2px 0 6px rgba(0, 0, 0, 0.12); }
-.sidebar-title { padding:15px 5px 1px 15px; margin:5px; font-size:13px; color: var(--bg-black); }
-.sidebar-menu { padding: 5px 5px 1px 30px; margin:5px; font-size:11px; color: var(--bg-black); }
-.sidebar-menu li a { display:block; padding:3px 3px; text-decoration:none; color: var(--bg-black); }
-.sidebar-menu li a:hover, sidebar-menu a:active { font-size:13px; color: var(--bg-black); border:1px solid var(--bg-black); }
-.sidebar-menu li a:link, .sidebar-menu a:visited { font-size:11px; color: var(--bg-black); border:1px solid var(--bg-black); }
+.sidebar-title { padding:15px 5px 1px 15px; margin:5px; font-size:13px; color: var(--bg-black); cursor: pointer; position: relative; padding-right: 30px; /* 화살표 공간 확보 */ }
+.sidebar-menu { padding: 5px 5px 1px 30px; margin:5px; font-size:12px; color: var(--bg-black); width: 80%; display: none; list-style: none; padding-left: 15px; }
+.sidebar-menu li a { display:block; padding:3px 3px; text-decoration:none; font-size:13px; color: var(--bg-black); border:1px solid var(--bg-black);  border-radius:1px;    }
+.sidebar-menu li a:hover, sidebar-menu a:active { font-size:13px; color: var(--bg-black); border:1px solid var(--bg-black);  border-radius:1px; }
+.sidebar-menu li a:link, .sidebar-menu a:visited { font-size:12px; color: var(--bg-black); border:1px solid var(--bg-black); }
 
+/* 화살표 기본 모양 (CSS 테두리로 제작) */
+.sidebar-title::after {
+    content: '';
+    position: absolute;
+    right: 15px;
+    top: 70%;
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid #000; /* 화살표 선 두께와 색상 */
+    border-bottom: 2px solid #000;
+    transform: translateY(-70%) rotate(45deg); /* 아래 방향 화살표 */
+    transition: transform 0.3s ease;
+}
+
+/* 열렸을 때 화살표 회전 (위로 향하게) */
+.sidebar-title.open::after { transform: translateY(-30%) rotate(-135deg);}
 
 .mainHeadContainer {
     display:flex;
@@ -93,25 +109,25 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity:0.6; cursor:poin
 ul { list-style:none; padding:0; margin:0; }
 
 
-.pageSelect .search-select { width:100px; height:20px; line-height:20px; padding:0 2px; box-sizing:border-box; font-size:11px; border:1px solid #ddd; border-radius:2px; }
+.pageSelect .search-select { width:100px; height:20px; line-height:20px; padding:0 2px; box-sizing:border-box; font-size:12px; border:1px solid #ddd; border-radius:2px; }
 
 .search-table { margin:0px 0px 5px; width:100%; border-collapse:collapse; border:1px solid #64748B; }
-.search-table th { padding:1px; text-align:center; font-size:11px; background-color: #64748B; color: white; min-width:120px; width:150px; white-space:nowrap; border:1px solid #64748B; }
-.search-table td { padding:1px; font-size:11px; border:0px; solid #64748B; }
+.search-table th { padding:1px; text-align:center; font-size:12px; background-color: #64748B; color: white; min-width:120px; width:150px; white-space:nowrap; border:1px solid #64748B; }
+.search-table td { padding:1px; font-size:12px; border:0px; solid #64748B; }
 
-.search-table .search-input { padding-left: 6px; width:100%; height:24px; line-height:24px; box-sizing:border-box; font-size:11px; border:0px solid #ddd; border-radius:2px; }
-.search-table .search-select { padding-left: 6px; width:100%; height:24px; line-height:24px; box-sizing:border-box; font-size:11px; border:2px solid #ddd; border-radius:2px; }
-.search-table .search-date { padding-left: 6px; width:100px; height:24px; line-height:24px; box-sizing:border-box; font-size:11px; border:1px solid #ddd; border-radius:2px; }
+.search-table .search-input { padding-left: 6px; width:100%; height:24px; line-height:24px; box-sizing:border-box; font-size:12px; border:0px solid #ddd; border-radius:2px; }
+.search-table .search-select { padding-left: 6px; width:100%; height:24px; line-height:24px; box-sizing:border-box; font-size:12px; border:2px solid #ddd; border-radius:2px; }
+.search-table .search-date { padding-left: 6px; width:100px; height:24px; line-height:24px; box-sizing:border-box; font-size:12px; border:1px solid #ddd; border-radius:2px; }
 .search-table .date-range { display: flex; align-items: center; gap: 4px; }
 
 .regContainer { position:fixed; top: 895px; left:190px; width:calc(100% - 195px); height:20px; padding:10px; }
 .reg-table { margin:0px 0px 5px; width:100%; border-collapse:collapse; border:1px solid #64748B; }
-.reg-table td { padding:1px; font-size:11px; border:0px; solid #64748B; }
+.reg-table td { padding:1px; font-size:12px; border:0px; solid #64748B; }
 
-.reg-table .reg-input { padding-left: 6px; width:100%; height:24px; line-height:24px; box-sizing:border-box; font-size:11px; border:1px solid #ddd; border-radius:2px; }
-.reg-table .reg-select { padding-left: 6px; width:100%; height:24px; line-height:24px; box-sizing:border-box; font-size:11px; border:2px solid #ddd; border-radius:2px; }
+.reg-table .reg-input { padding-left: 6px; width:100%; height:24px; line-height:24px; box-sizing:border-box; font-size:12px; border:1px solid #ddd; border-radius:2px; }
+.reg-table .reg-select { padding-left: 6px; width:100%; height:24px; line-height:24px; box-sizing:border-box; font-size:12px; border:2px solid #ddd; border-radius:2px; }
 
-.data-table { width:100%; font-size:11px; border:1px solid var(--table-thead-bg-color); border-collapse:collapse; table-layout: fixed; }
+.data-table { width:100%; font-size:12px; border:1px solid var(--table-thead-bg-color); border-collapse:collapse; table-layout: fixed; }
 .data-table thead { background-color:#ddd; color:white; }
 .data-table thead th {height:28px; padding:0 6px; line-height:28px;text-align:center; vertical-align:middle; box-sizing:border-box; background-color:#64748B; color:white; border:1px solid #ddd; }
 
@@ -130,10 +146,10 @@ ul { list-style:none; padding:0; margin:0; }
 .popup-header { padding:5px; display:flex; justify-content:space-between; align-items:center; flex-wrap:nowrap; margin-bottom:10px; }
 .popup-table { margin:0; font-size:20px; width:100%; border-collapse:collapse; border:1px solid #ddd; margin:5px auto; }
 .popup-table tr td input { display:block; margin:0 auto; }
-.popup-table th { padding:6px 10px; text-align:center; font-size:11px; background-color:#f0f0f0; border:1px solid #ddd; width:150px; }
-.popup-table td { padding:6px 8px; border:1px solid #ddd; font-size:11px; }
+.popup-table th { padding:6px 10px; text-align:center; font-size:12px; background-color:#f0f0f0; border:1px solid #ddd; width:150px; }
+.popup-table td { padding:6px 8px; border:1px solid #ddd; font-size:12px; }
 
-.popup-table .search-input { width:100%; box-sizing:border-box; padding:5px 8px; font-size:11px; border:1px solid #ccc; border-radius:4px; }
+.popup-table .search-input { width:100%; box-sizing:border-box; padding:5px 8px; font-size:12px; border:1px solid #ccc; border-radius:4px; }
 
 .popup-table input,
 .popup-table select,
@@ -149,40 +165,38 @@ ul { list-style:none; padding:0; margin:0; }
 .align-right { text-align:right; }
 .align-center { text-align:center; }
 
-.divider { height:3px; background:var(--main-border-color); margin:3px 10px; flex-wrap:nowrap; }
-.divider-h { height:1px; background:var(--main-border-color); flex-wrap:nowrap; }
-.divider-t { height:1px; background:#000000; margin:0px 0px; }
+.divider { height:1px; background:var(--bg-black); margin:1px 1px; flex-wrap:nowrap; }
 
-.msgInfo { width:100%; height:30px; margin:5px 0px; padding:5px; text-align:center; align-items:center; font-size:11px; border:1px solid #ddd; border-radius:3px; background-color:white; color:blue; }
+.msgInfo { width:100%; height:30px; margin:5px 0px; padding:5px; text-align:center; align-items:center; font-size:12px; border:1px solid #ddd; border-radius:3px; background-color:white; color:blue; }
 
 /* 버튼 그룹 */
 .button-group { display:flex; margin-left:auto; flex-wrap:wrap; gap:2px; justify-content:flex-end; align-items:center; }
-.btn { background-color:white; color:var(--btn-color); border:1px solid var(--btn-color); border-radius:3px; width:80px; height:20px; cursor:pointer; font-size:11px; align-items:center; }
+.btn { background-color:white; color:var(--btn-color); border:1px solid var(--btn-color); border-radius:3px; width:80px; height:20px; cursor:pointer; font-size:12px; align-items:center; }
 .btn:hover { background-color:var(--btn-color); color:white; }
 .btn:disabled { display:none; }
 
 .btn.ok { background:#2563eb; color:#fff; }
 .btn.cancel { background:#ccc; }
 
-.btn-chk { background-color:white; color:#; border:1px solid #1565c0; border-radius:3px; width:90px; height:25px; cursor:pointer; font-size:11px; white-space:nowrap; }
+.btn-chk { background-color:white; color:#; border:1px solid #1565c0; border-radius:3px; width:90px; height:25px; cursor:pointer; font-size:12px; white-space:nowrap; }
 .btn-chk:hover { background-color:#2563eb; color:white; }
 
-.btn-search { background-color: #16a34a; color:#fff; border:1px solid #16a34a; border-radius:3px; width:90px; height:25px; cursor:pointer; font-size:11px; align-items:center; }
+.btn-search { background-color: #16a34a; color:#fff; border:1px solid #16a34a; border-radius:3px; width:90px; height:25px; cursor:pointer; font-size:12px; align-items:center; }
 .btn-search:hover { background:#f59e0b; color:#fff; border-color:#f59e0b; }
 
 #uploadPreviewTable { table-layout:fixed; width:100%; }
 #codeGroupFrame { width:100%; height:calc(100% - 40px); border:none; }
 #pageTopBar { display:flex; align-items:center; justify-content:space-between; height:30px; padding:0 10px; background-color:#fff; border-bottom:1px solid #dcdcdc; box-sizing:border-box; }
-#pageInfo { font-size:11px; color:black; line-height:20px; }
+#pageInfo { font-size:12px; color:black; line-height:20px; }
 
 .pagination button { width:30px; height:25px; display:inline-flex; justify-content:center; align-items:center; padding:0; margin:0 2px;
-        border:1px solid #ccc; background:#ffffff; border-radius:4px; cursor:pointer; font-size:11px; }
+        border:1px solid #ccc; background:#ffffff; border-radius:4px; cursor:pointer; font-size:12px; }
 
-.iframeContainer { position:absolute; top:50px; left:190px; width:calc(100% - 195px); height:880px; gap:5px; flex-direction: column; border:1px; }
+.iframeContainer { position:absolute; top:50px; left:190px; width:calc(100% - 195px); height:880px; gap:5px; flex-direction: column; border:0px; }
 .iframe-left { flex: 0 0 60%; width: 100%; height:60%; }
 .iframe-right { flex: 0 0 40%; width: 100%; height:40%; }
 .iframe-left,
-.iframe-right { overflow-x:hidden; overflow-y:auto; }
+.iframe-right { overflow-x:hidden; overflow-y:auto; border:0px;  }
 
 .iframeMainHeadContainer { display:flex; position:fixed; top:5px; width:100%; height:40px; padding:5px; overflow-y:auto; transition:margin-left 0.25s ease, width 0.25s ease; }
 .iframeMainBodyContainer { position:fixed; top:45px; width:100%; bottom: 0; padding:5px; overflow-y:auto; transition:margin-left 0.25s ease, width 0.25s ease; }
@@ -229,17 +243,9 @@ td[contenteditable="true"] { cursor:text; }
 .calendar td .day       { font-weight: bold; margin-bottom: 4px; text-align: center; }
 .calendar td.business   { background: #f9f9f9; text-align: center; }
 .calendar td.holiday    { background: #fff3f3; color: red; text-align: center; }
-.calendar td .rmk       { font-size: 11px; color: blue; margin-top: 2px; line-height: 1.2; }
+.calendar td .rmk       { font-size: 12px; color: blue; margin-top: 2px; line-height: 1.2; }
 .calendar td.today      { border: 2px solid #e53935; background-color: #fff5f5;}
 .calendar td.today .day { font-weight: bold; color: #e53935;}
 
-.month-radio {
-    display: flex;
-    flex-wrap: wrap;   /* 공간 부족 시 줄바꿈 */
-    gap: 8px 12px;
-}
-
-.month-radio label {
-    white-space: nowrap;
-    cursor: pointer;
-}
+.month-radio        { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.month-radio label  { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer;}

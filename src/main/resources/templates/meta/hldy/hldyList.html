@@ -30,7 +30,7 @@
             <table class="search-table">
                 <tr>
                     <th>조회년도</th>
-                    <td style="display:flex; align-items:center; gap:2px;" width="80px">
+                    <td style="display:flex; align-items:center; gap:2px;" width="70px">
                         <input type="number" id="inqYear" name="inqYear" class="search-select" min="2025" max="2099" step="1"><span>년</span>
                     </td>
                         <td>
@@ -116,11 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data.inqMonth = inqMonth;
         data.crtrYmd  = inqYear + (inqMonth || '');
 
-        const inqCalendar = document.getElementById('inqCalendar');
-
-        if (inqCalendar) {
-        inqCalendar.innerText = `${inqYear} 년 ${inqMonth} 월`;
-        }
+        document.getElementById('inqCalendar').innerText = `${inqYear} 년 ${inqMonth} 월`;
 
         fetch('/meta/getHldyListData', {
             method: 'POST',
