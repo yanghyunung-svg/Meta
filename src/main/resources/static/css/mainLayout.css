@@ -171,7 +171,9 @@ ul { list-style:none; padding:0; margin:0; }
 
 /* 버튼 그룹 */
 .button-group { display:flex; margin-left:auto; flex-wrap:wrap; gap:2px; justify-content:flex-end; align-items:center; }
-.btn { background-color:white; color:var(--btn-color); border:1px solid var(--btn-color); border-radius:3px; width:80px; height:20px; cursor:pointer; font-size:12px; align-items:center; }
+.btn {
+    background-color:white; color:var(--btn-color); border:1px solid var(--btn-color);
+    border-radius:3px; width:80px; height:25px; cursor:pointer; font-size:12px; align-items:center; }
 .btn:hover { background-color:var(--btn-color); color:white; }
 .btn:disabled { display:none; }
 
