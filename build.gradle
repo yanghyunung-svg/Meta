@@ -19,6 +19,9 @@ java {
 
 dependencies {
 
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-crypto:6.2.0'
+
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
     // Spring Boot
@@ -27,7 +30,6 @@ dependencies {
     // MyBatis
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 
-    implementation 'org.springframework.security:spring-security-crypto:6.2.0'
 
     // MySQL Connector
     runtimeOnly 'mysql:mysql-connector-java:8.0.33'  // 안정 버전 사용
