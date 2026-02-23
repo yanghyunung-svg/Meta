@@ -26,6 +26,19 @@ public class WordController {
     @Autowired
     private WordService wordService;
 
+    /* 단어 */
+    @GetMapping("/word/wordList")
+    public String wordListPage() { return "meta/word/wordList"; }
+//    public String wordListPage(Model model) {
+//        model.addAttribute("defaultPageSize", 25); // 기본 페이지 사이즈 전달
+//        return "meta/word/wordList"; // templates/meta/wordList.html 호출
+//    }
+
+    @GetMapping("/word/wordMng")
+    public String wordMngPage() { return "meta/word/wordMng"; }
+    @GetMapping("/word/wordRegEblc")
+    public String wordRegEblcPage() { return "meta/word/wordRegEblc"; }
+
     /**
      * @ ID : getWordListData
      * @ NAME : 단어사전 목록 조회

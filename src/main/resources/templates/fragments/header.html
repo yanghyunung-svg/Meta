@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="topbar" class="topbarContainer">
+    <div class="logo"> <strong>META SYSTEM</strong> </div>
+    <div class="topbarRight">
+        <div class="userInfo">
+            <span id="headerUserNm"></span>
+        </div>
+        <div class="logout">
+            <span id="logout"><i>Logout</i></span>
+        </div>
+    </div>
+
+    <div id="commonModal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modalTitle">알림</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="modalOkBtn" type="button" class="btn">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
