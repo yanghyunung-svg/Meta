@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마켓 리스트</title>
+    <link rel="stylesheet" href="/css/upbitLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+
+</head>
+<body>
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+
+    <div class="mainHeadContainer">
+        <h2 style="margin:0;">마켓 리스트</h2>
+    </div>
+
+    <div class="mainBodyContainer">
+        <table id="upbit-table">
+            <thead>
+            <tr>
+                <th>마켓 코드</th>
+                <th>한글명</th>
+                <th>영문명</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+<script>
+    fetch("https://api.upbit.com/v1/market/all")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const tbody = document.querySelector("#upbit-table tbody");
+            // KRW 마켓만 필터링
+            const krwMarkets = data.filter(market => market.market.startsWith("KRW-"));
+
+            krwMarkets.forEach(market => {
+
+            console.log(market);
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${market.market.replace("KRW-", "")}</td>
+                    <td>${market.korean_name}</td>
+                    <td>${market.english_name}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(err => console.error("Fetch error:", err));
+
+
+
+function sortTable(columnIndex, numeric = false) {
+  const table = document.getElementById("upbit-table");
+  const tbody = table.querySelector("tbody");
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+
+  // 정렬 방향 토글 (오름차순 ↔ 내림차순)
+  let ascending = table.getAttribute("data-sort-dir") !== "asc";
+  table.setAttribute("data-sort-dir", ascending ? "asc" : "desc");
+
+  rows.sort((a, b) => {
+    let A = a.children[columnIndex].innerText.replace(/,/g, "");
+    let B = b.children[columnIndex].innerText.replace(/,/g, "");
+
+    if (numeric) {
+      return ascending ? parseFloat(A) - parseFloat(B) : parseFloat(B) - parseFloat(A);
+    } else {
+      return ascending ? A.localeCompare(B) : B.localeCompare(A);
+    }
+  });
+
+  tbody.innerHTML = "";
+  rows.forEach(row => tbody.appendChild(row));
+}
+
+// 헤더 클릭 이벤트 연결
+document.addEventListener("DOMContentLoaded", () => {
+  const headers = document.querySelectorAll("#upbit-table th");
+  headers.forEach((th, index) => {
+    th.style.cursor = "pointer";
+    th.addEventListener("click", () => {
+      // 마켓 코드 열은 문자열, 나머지는 숫자 가능
+      const numericColumns = []; // 필요시 숫자열 인덱스 넣기
+      sortTable(index, numericColumns.includes(index));
+    });
+  });
+});
+
+
+    </script>
+
+</body>
+</html>

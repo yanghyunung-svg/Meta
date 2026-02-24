@@ -2,32 +2,27 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>Meta System</title>
+    <title>Meta System - 일정정보</title>
     <link rel="stylesheet" href="/css/mainLayout.css">
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
     <script src="/js/functionKey.js" defer></script>
-
-
 </head>
 <body>
 <div class="container">
     <div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainHeadContainer">
-            <!-- 왼쪽 타이틀 -->
-            <h2 style="margin:0;"> ✅ 일정정보</h2>
-
-            <!-- 오른쪽 버튼 그룹 -->
-            <div class="button-group">
-                <button id="btnSearch" type="button" class="btn">조회</button>
-                <button id="btnReg" type="button" class="btn">등록</button>
-                <button id="btnRegEblc" type="button" class="btn">일괄등록</button>
-                <button id="btnYearView" type="button" class="btn">연도전체</button>
-            </div>
+        <h2 style="margin:0;"> ✅ 일정정보</h2>
+        <div class="button-group">
+            <button id="btnSearch"      type="button" class="btn">조회</button>
+            <button id="btnReg"         type="button" class="btn">등록</button>
+            <button id="btnRegEblc"     type="button" class="btn">일괄등록</button>
+            <button id="btnYearView"    type="button" class="btn">연도전체</button>
         </div>
-        <div class="mainBodyContainer">
+    </div>
+    <div class="mainBodyContainer">
         <form id="mainForm">
             <table class="search-table">
                 <tr>
@@ -35,230 +30,212 @@
                     <td style="display:flex; align-items:center; gap:2px;" width="70px">
                         <input type="number" id="inqYear" name="inqYear" class="search-select" min="2025" max="2099" step="1"><span>년</span>
                     </td>
-                        <td>
-                            <div class="month-radio" id="monthRadio"></div>
-                    </td>
+                    <td><div class="month-radio" id="monthRadio"></div></td>
                 </tr>
             </table>
         </form>
-
-            <div style="text-align:center; font-size:20px; line-height:1.6;">
-                <span id="inqCalendar" style="margin-top:8px; display:inline-block;"></span>
-            </div>
-
-
+        <div style="text-align:center; font-size:20px; line-height:1.6;">
+            <span id="inqCalendar" style="margin-top:8px; display:inline-block;"></span>
+        </div>
         <div id="calendarContainer" class="calendar-container"></div>
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let viewMode = "MONTH";
+        let dataAll = [];
+        const todayStr = (() => {
+            const d = new Date();
+            return (
+                    d.getFullYear() +
+                    String(d.getMonth() + 1).padStart(2, '0') +
+                    String(d.getDate()).padStart(2, '0')
+            );
+        })();
 
-document.addEventListener("DOMContentLoaded", () => {
+        const monthDiv = document.getElementById("monthRadio");
+        for (let i = 1; i <= 12; i++) {
+            const month = String(i).padStart(2, "0");
+            const label = document.createElement("label");
+            label.innerHTML = `<input type="radio" name="inqMonth" value="${month}"> ${month}월`;
+            monthDiv.appendChild(label);
+        }
 
-    let viewMode = "MONTH"; // MONTH or YEAR
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // 01~12
 
-    let dataAll = [];
-    const todayStr = (() => {
-        const d = new Date();
-        return (
-                d.getFullYear() +
-                String(d.getMonth() + 1).padStart(2, '0') +
-                String(d.getDate()).padStart(2, '0')
+        // 현재월 라디오 체크
+        const radio = document.querySelector(
+            `input[name="inqMonth"][value="${month}"]`
         );
-    })();
+        if (radio) radio.checked = true;
 
-    const monthDiv = document.getElementById("monthRadio");
-    for (let i = 1; i <= 12; i++) {
-        const month = String(i).padStart(2, "0");
-        const label = document.createElement("label");
-        label.innerHTML = `<input type="radio" name="inqMonth" value="${month}"> ${month}월`;
-        monthDiv.appendChild(label);
-    }
-
-
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // 01~12
-
-    // 현재월 라디오 체크
-    const radio = document.querySelector(
-        `input[name="inqMonth"][value="${month}"]`
-    );
-    if (radio) radio.checked = true;
-
-    // 조회년도 세팅
-    document.getElementById('inqYear').value = `${year}`;
-    doSearch();
-
-    // 이벤트 바인딩
-    document.getElementById('btnSearch').addEventListener('click', () => {
-        viewMode = "MONTH";
+        // 조회년도 세팅
+        document.getElementById('inqYear').value = `${year}`;
         doSearch();
-    });
 
+        // 이벤트 바인딩
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            viewMode = "MONTH";
+            doSearch();
+        });
 
-    document.getElementById('inqYear').addEventListener('change', doSearch);
+        document.getElementById('inqYear').addEventListener('change', doSearch);
+        document.querySelectorAll('input[name="inqMonth"]').forEach(radio => {
+            viewMode = "MONTH";
+            radio.addEventListener('change', doSearch);
+        });
 
-    document.querySelectorAll('input[name="inqMonth"]').forEach(radio => {
-        viewMode = "MONTH";
-        radio.addEventListener('change', doSearch);
-    });
+        function doSearch() {
+            const form = document.getElementById('mainForm');
+            const data = formToJson(form);
 
-    function doSearch() {
-        const form = document.getElementById('mainForm');
-        const data = formToJson(form);
+            const inqYear  =document.getElementById('inqYear').value;
+            const inqMonth = document.querySelector('input[name="inqMonth"]:checked')?.value;
 
-        const inqYear  =document.getElementById('inqYear').value;
-        const inqMonth = document.querySelector(
-            'input[name="inqMonth"]:checked'
-        )?.value;
-
-        if (!inqYear) {
-            document.getElementById('inqYear').focus();
-            return;
-        }
-
-        data.inqYear  = inqYear;
-        data.inqMonth = inqMonth;
-
-        if (viewMode === "YEAR") {
-            data.crtrYmd  = inqYear +  '';
-        } else {
-            data.crtrYmd  = inqYear + (inqMonth || '');
-            document.getElementById('inqCalendar').innerText = `${inqYear} 년 ${inqMonth} 월`;
-        }
-
-        fetch('/meta/getHldyListData', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(res => res.json())
-        .then(data => {
-            dataAll = Array.isArray(data) ? data : [];
-
-            if (dataAll.length === 0) {
-                document.getElementById("calendarContainer").innerHTML = "";
+            if (!inqYear) {
+                document.getElementById('inqYear').focus();
                 return;
             }
 
+            data.inqYear  = inqYear;
+            data.inqMonth = inqMonth;
+
             if (viewMode === "YEAR") {
-                renderYearCalendar(inqYear, dataAll);
+                data.crtrYmd  = inqYear +  '';
             } else {
-                renderCalendar(inqYear, inqMonth || 1, dataAll);
+                data.crtrYmd  = inqYear + (inqMonth || '');
+                document.getElementById('inqCalendar').innerText = `${inqYear} 년 ${inqMonth} 월`;
             }
-        })
-        .catch(err => myAlert("에러 발생: " + err));
-    }
 
-    function renderCalendar(year, month, listData, target) {
-        const container = target || document.getElementById("calendarContainer");
-        if (!container) return;
+            fetch('/meta/getHldyListData', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                dataAll = Array.isArray(data) ? data : [];
 
-        const firstDay = new Date(year, month - 1, 1);
-        const lastDay  = new Date(year, month, 0);
-        const startDow = firstDay.getDay(); // 0~6
-        const totalDay = lastDay.getDate();
-
-        const hldyMap = {};
-        listData.forEach(item => {
-            hldyMap[item.crtrYmd] = item;
-        });
-
-        let html = `
-            <table class="calendar">
-                <thead>
-                    <tr>
-                        <th>일</th><th>월</th><th>화</th>
-                        <th>수</th><th>목</th><th>금</th><th>토</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        let day = 1;
-        for (let r = 0; r < 6; r++) {
-            html += "<tr>";
-            for (let c = 0; c < 7; c++) {
-                if ((r === 0 && c < startDow) || day > totalDay) {
-                    html += "<td></td>";
-                } else {
-                    const ymd = `${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`;
-                    const info = hldyMap[ymd];
-                    let cls = info?.hldySeCd === "01" ? "holiday" : "business";
-                    if (ymd === todayStr) cls += " today";
-
-                    html += `
-                       <td class="${cls} has-link" data-ymd="${ymd}">
-                            <div class="day">${day}</div>
-                            ${info ? `<div class="hldyNm">${info.hldyNm}</div>` : ""}
-                            ${info?.rmk ? `<div class="rmk">${info.rmk.replace(/\n/g, "<br>")}</div>` : ""}
-                        </td>
-                    `;
-                    day++;
+                if (dataAll.length === 0) {
+                    document.getElementById("calendarContainer").innerHTML = "";
+                    return;
                 }
-            }
-            html += "</tr>";
-            if (day > totalDay) break;
+
+                if (viewMode === "YEAR") {
+                    renderYearCalendar(inqYear, dataAll);
+                } else {
+                    renderCalendar(inqYear, inqMonth || 1, dataAll);
+                }
+            })
+            .catch(err => myAlert("에러 발생: " + err));
         }
 
-        html += "</tbody></table>";
-        container.innerHTML = html;
+        function renderCalendar(year, month, listData, target) {
+            const container = target || document.getElementById("calendarContainer");
+            if (!container) return;
 
-        container.querySelectorAll("td.has-link").forEach(td => {
-            td.addEventListener("dblclick", () => {
-                const ymd = td.dataset.ymd;
-                if (!ymd) return;
-                const sendData = { mode: "S", crtrYmd: ymd };
-                const popup = openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
-                const timer = setInterval(() => {
-                    if (popup && popup.closed) {
-                        clearInterval(timer);
-                        doSearch();
-                    }
-                }, 300);
+            const firstDay = new Date(year, month - 1, 1);
+            const lastDay  = new Date(year, month, 0);
+            const startDow = firstDay.getDay();
+            const totalDay = lastDay.getDate();
+
+            const hldyMap = {};
+            listData.forEach(item => {
+                hldyMap[item.crtrYmd] = item;
             });
+
+            let html = `
+                <table class="calendar">
+                    <thead>
+                        <tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            let day = 1;
+            for (let r = 0; r < 6; r++) {
+                html += "<tr>";
+                for (let c = 0; c < 7; c++) {
+                    if ((r === 0 && c < startDow) || day > totalDay) {
+                        html += "<td></td>";
+                    } else {
+                        const ymd = `${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`;
+                        const info = hldyMap[ymd];
+                        let cls = info?.hldySeCd === "01" ? "holiday" : "business";
+                        if (ymd === todayStr) cls += " today";
+
+                        html += `
+                           <td class="${cls} has-link" data-ymd="${ymd}">
+                                <div class="day">${day}</div>
+                                ${info ? `<div class="hldyNm">${info.hldyNm}</div>` : ""}
+                                ${info?.rmk ? `<div class="rmk">${info.rmk.replace(/\n/g, "<br>")}</div>` : ""}
+                            </td>
+                        `;
+                        day++;
+                    }
+                }
+                html += "</tr>";
+                if (day > totalDay) break;
+            }
+
+            html += "</tbody></table>";
+            container.innerHTML = html;
+
+            container.querySelectorAll("td.has-link").forEach(td => {
+                td.addEventListener("dblclick", () => {
+                    const ymd = td.dataset.ymd;
+                    if (!ymd) return;
+                    const sendData = { mode: "S", crtrYmd: ymd };
+                    const popup = openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 600);
+                    const timer = setInterval(() => {
+                        if (popup && popup.closed) {
+                            clearInterval(timer);
+                            doSearch();
+                        }
+                    }, 300);
+                });
+            });
+        }
+
+        document.getElementById('btnYearView').addEventListener('click', () => {
+            viewMode = "YEAR";
+            doSearch();
         });
-    }
 
+        function renderYearCalendar(year, listData) {
+            const container = document.getElementById("calendarContainer");
+            container.innerHTML = "";
 
-    document.getElementById('btnYearView').addEventListener('click', () => {
-        viewMode = "YEAR";
-        doSearch();
+            document.getElementById('inqCalendar').innerText = ``;
+
+            for (let m = 1; m <= 12; m++) {
+                const monthDiv = document.createElement("div");
+                monthDiv.className = "year-month";
+
+                const title = document.createElement("h3");
+                title.innerText = `${year}년 ${String(m).padStart(2, '0')}월`;
+                monthDiv.appendChild(title);
+
+                const calDiv = document.createElement("div");
+                monthDiv.appendChild(calDiv);
+
+                container.appendChild(monthDiv);
+
+                renderCalendar(year, m, listData, calDiv);
+            }
+        }
     });
 
-    function renderYearCalendar(year, listData) {
-        const container = document.getElementById("calendarContainer");
-        container.innerHTML = "";
+    document.getElementById('btnReg').addEventListener('click', () => {
+        const sendData = { mode: "I"};
+        openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 600);
+    });
 
-        document.getElementById('inqCalendar').innerText = ``;
-
-        for (let m = 1; m <= 12; m++) {
-            const monthDiv = document.createElement("div");
-            monthDiv.className = "year-month";
-
-            const title = document.createElement("h3");
-            title.innerText = `${year}년 ${String(m).padStart(2, '0')}월`;
-            monthDiv.appendChild(title);
-
-            const calDiv = document.createElement("div");
-            monthDiv.appendChild(calDiv);
-
-            container.appendChild(monthDiv);
-
-            renderCalendar(year, m, listData, calDiv);
-        }
-    }
-});
-
-
-document.getElementById('btnReg').addEventListener('click', () => {
-    const sendData = { mode: "I"};
-    openWindowWithJSON(sendData, "/meta/hldy/hldyMng", 800, 580);
-});
-document.getElementById('btnRegEblc').addEventListener('click', () => {
-    window.location.href = "/meta/hldy/hldyRegEblc";
-});
-
+    document.getElementById('btnRegEblc').addEventListener('click', () => {
+        window.location.href = "/meta/hldy/hldyRegEblc";
+    });
 
 </script>
 </body>

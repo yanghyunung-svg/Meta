@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Upbit 현재가 조회</title>
+    <link rel="stylesheet" href="/css/upbitLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+</head>
+<body>
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+    <div class="mainHeadContainer">
+
+    <h2 style="margin:4;"> KRW 마켓 현재가</h2>
+
+    </div>
+
+    <div class="mainBodyContainer">
+
+
+<table   id="upbit-table">
+    <thead>
+    <tr>
+        <th>마켓</th>
+        <th>마켓명</th>
+        <th style="text-align:right;">전일가</th>
+        <th style="text-align:right;">현재가</th>
+        <th style="text-align:right;">고가</th>
+        <th style="text-align:right;">저가</th>
+        <th style="text-align:right;">전일대비</th>
+        <th style="text-align:right;">변동률</th>
+        <th style="text-align:right;">거래량</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+    </div>
+    <script>
+        function loadPrices() {
+
+          fetch("https://api.upbit.com/v1/market/all")
+            .then(response => response.json())
+            .then(markets => {
+                const krwMarkets = markets.filter(m => m.market.startsWith("KRW-"));
+                const marketMap = {};
+                krwMarkets.forEach( m => {
+                    marketMap[m.market] = {korean: m.korean_name,english: m.english_name};
+                });
+
+              // 현재가 조회
+            return fetch("https://api.upbit.com/v1/ticker?markets=" + krwMarkets.map(m => m.market).join(","))
+                .then(response => response.json())
+                .then(data => {
+                  const tbody = document.querySelector("#upbit-table tbody");
+                  tbody.innerHTML = ""; // 기존 데이터 초기화
+                  data.forEach(item => {
+                    console.log(item);
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                      <td>${item.market.replace("KRW-", "")}</td>
+                      <td>${marketMap[item.market].korean} </td>
+                      <td style="text-align:right;">${item.prev_closing_price.toLocaleString()} </td>
+                      <td style="text-align:right;">${item.trade_price.toLocaleString()} </td>
+                      <td style="text-align:right;">${item.high_price.toLocaleString()} </td>
+                      <td style="text-align:right;">${item.low_price.toLocaleString()} </td>
+                      <td style="text-align:right; color:${item.change === 'RISE' ? 'red' : item.change === 'FALL' ? 'blue' : 'black'};">
+                       ${item.change_price.toLocaleString()}
+                      </td>
+                      <td style="text-align:right; color:${item.change === 'RISE' ? 'red' : item.change === 'FALL' ? 'blue' : 'black'};">
+                       ${(item.signed_change_rate * 100).toFixed(2)} %
+                     </td>
+                      <td style="text-align:right;">${item.acc_trade_volume.toLocaleString()} </td>
+                    `;
+                    tbody.appendChild(row);
+                  });
+                })
+            })
+            .catch(err => console.error("Fetch error:", err));
+        }
+
+        // 최초 실행
+        loadPrices();
+
+        // 5초마다 자동 갱신
+      //  setInterval(loadPrices, 5000);
+
+
+    function sortTable(columnIndex, numeric = false) {
+      const table = document.getElementById("upbit-table");
+      const tbody = table.querySelector("tbody");
+      const rows = Array.from(tbody.querySelectorAll("tr"));
+
+      // 정렬 방향 토글 (오름차순 ↔ 내림차순)
+      let ascending = table.getAttribute("data-sort-dir") !== "asc";
+      table.setAttribute("data-sort-dir", ascending ? "asc" : "desc");
+
+      rows.sort((a, b) => {
+        let A = a.children[columnIndex].innerText.replace(/,/g, "");
+        let B = b.children[columnIndex].innerText.replace(/,/g, "");
+
+
+        if (numeric) {
+          return ascending ? parseFloat(A) - parseFloat(B) : parseFloat(B) - parseFloat(A);
+        } else {
+          return ascending ? A.localeCompare(B) : B.localeCompare(A);
+        }
+      });
+
+      // 기존 내용 초기화 후 정렬된 행 추가
+      tbody.innerHTML = "";
+      rows.forEach(row => tbody.appendChild(row));
+    }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const headers = document.querySelectorAll("#upbit-table th");
+          headers.forEach((th, index) => {
+            th.style.cursor = "pointer";
+            th.addEventListener("click", () => {
+              // 숫자열은 오른쪽 정렬 → numeric=true
+              const numericColumns = [1, 2, 3, 4];
+              sortTable(index, numericColumns.includes(index));
+            });
+          });
+        });
+
+</script>
+
+</body>
+</html>
