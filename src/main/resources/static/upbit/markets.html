@@ -1,67 +1,168 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>마켓 리스트</title>
-    <link rel="stylesheet" href="/css/upbitLayout.css">
+    <meta charset="utf-8">
+    <title>Upbit 마켓 리스트</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/sideLayout.js" defer></script>
-
+    <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
 <div class="container">
     <div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
-
     <div class="mainHeadContainer">
-        <h2 style="margin:0;">마켓 리스트</h2>
+        <!-- 왼쪽 타이틀 -->
+        <h2 style="margin:0;"> ✅ 마켓 리스트 </h2>
+
+        <div class="button-group">
+            <button id="btnInit"    type="button" class="btn">초기화</button>
+            <button id="btnSearch"  type="button" class="btn">조회</button>
+            <button id="btnExcel"   type="button" class="btn">Excel</button>
+        </div>
     </div>
 
     <div class="mainBodyContainer">
-        <table id="upbit-table">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>마켓</th>
+                    <td width="100px">
+                        <select id="market" name="market" class="search-select">
+                            <option value="KRW-" selected>KRW</option>
+                            <option value="BTC-" >BTC</option>
+                            <option value="USDT-" >USDT</option>
+                        </select>
+                    </td>
+                    <td width="70%"></td>
+                </tr>
+            </table>
+        </form>
+
+        <div id="pageInfoContainer" class="page-header"></div>
+
+        <table class="data-table" id="mainTable" style="margin-top:10px" >
             <thead>
             <tr>
-                <th>마켓 코드</th>
-                <th>한글명</th>
-                <th>영문명</th>
+                <th width="15%" style="text-align:left;">마켓 코드</th>
+                <th width="15%" style="text-align:left;">한글명</th>
+                <th width="15%" style="text-align:left;">영문명</th>
+                <th width="55%">비고</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
+</div>
+
+
 
 <script>
-    fetch("https://api.upbit.com/v1/market/all")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("HTTP error " + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            const tbody = document.querySelector("#upbit-table tbody");
-            // KRW 마켓만 필터링
-            const krwMarkets = data.filter(market => market.market.startsWith("KRW-"));
+    document.addEventListener("DOMContentLoaded", () => {
 
-            krwMarkets.forEach(market => {
+        let PAGE_SIZE = (window.CONFIG && window.CONFIG.PAGE_SIZE) || 10;
+        let dataAll = [];
+        let currentPage = 1;
 
-            console.log(market);
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+        const btnSearch = document.getElementById('btnSearch');
+        const marketSelect = document.getElementById('market'); // 선택박스
 
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${market.market.replace("KRW-", "")}</td>
-                    <td>${market.korean_name}</td>
-                    <td>${market.english_name}</td>
-                `;
-                tbody.appendChild(row);
+
+        // 마켓 변경 시 즉시 조회 및 자동 갱신 재시작
+        marketSelect.addEventListener('change', () => {
+            btnSearch.click();
+        });
+
+        const container = document.getElementById("pageInfoContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                const pageSizeSelect = document.getElementById("pageSize");
+                if (!pageSizeSelect) return;
+
+                pageSizeSelect.addEventListener("change", () => {
+                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    currentPage = 1;
+                    refreshUI();
+                    renderTable(currentPage);
+                    renderPagination(dataAll, currentPage, PAGE_SIZE);
+                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+                });
             });
-        })
-        .catch(err => console.error("Fetch error:", err));
 
+        function refreshUI() {
+            renderTable(currentPage);
+            if (typeof renderPagination === "function") renderPagination(dataAll, currentPage, PAGE_SIZE);
+
+            // 요소 존재 여부 확인 후 호출 (Null 에러 방지)
+            const infoElem = document.getElementById("pageInfo");
+            if (infoElem && typeof updatePageInfo === "function") {
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            }
+        }
+
+        // 2. 테이블 렌더링 함수
+        window.renderTable = function(page) {
+            if (!dataAll.length) return;
+
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const pageData = dataAll.slice(start, end);
+
+            tableBody.innerHTML = pageData.map(item => {
+                return `
+                    <tr class="row-click" data-id="${item.market}">
+                        <td style="text-align:left;">${item.market}</td>
+                        <td style="text-align:left;">${item.korean_name}</td>
+                        <td style="text-align:left;">${item.english_name}</td>
+                        <td style="text-align:center;">-</td>
+                    </tr>
+                `;
+            }).join('');
+        };
+
+        // 3. 조회 버튼 클릭 이벤트 (Async/Await 활용)
+        btnSearch.addEventListener('click', async () => {
+            try {
+                const marketRes = await fetch("https://api.upbit.com/v1/market/all");
+                const markets = await marketRes.json();
+                const prefix = marketSelect.value;
+                const filterMarkets = markets.filter(m => m.market.startsWith(prefix));
+
+                dataAll = filterMarkets;
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+
+            } catch (err) {
+                console.error(err);
+                alert("데이터를 가져오는 중 오류가 발생했습니다.");
+            }
+        });
+
+        marketSelect.addEventListener('change', btnSearch.click()); // 선택
+
+        // 페이지 초기화 시 자동 조회
+        setTimeout(() => btnSearch.click(), 100);
+    });
+
+
+    // 나머지 버튼 이벤트 (기존과 동일)
+    document.getElementById('btnInit').addEventListener('click', () => location.reload());
+    document.getElementById('btnExcel').addEventListener('click', () => {
+        if(typeof downloadTableToExcel === "function")
+            downloadTableToExcel('mainTable', '마켓 리스트');
+    });
 
 
 function sortTable(columnIndex, numeric = false) {
-  const table = document.getElementById("upbit-table");
+  const table = document.getElementById("mainTable");
   const tbody = table.querySelector("tbody");
   const rows = Array.from(tbody.querySelectorAll("tr"));
 
@@ -86,7 +187,7 @@ function sortTable(columnIndex, numeric = false) {
 
 // 헤더 클릭 이벤트 연결
 document.addEventListener("DOMContentLoaded", () => {
-  const headers = document.querySelectorAll("#upbit-table th");
+  const headers = document.querySelectorAll("#mainTable th");
   headers.forEach((th, index) => {
     th.style.cursor = "pointer";
     th.addEventListener("click", () => {
@@ -96,9 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
-
-
-    </script>
-
+</script>
 </body>
 </html>

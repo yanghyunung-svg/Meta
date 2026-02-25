@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Upbit 캔들 조회 </title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+</head>
+<body>
+<div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+    <div class="mainHeadContainer">
+        <!-- 왼쪽 타이틀 -->
+        <h2 style="margin:0;"> ✅ 캔들 조회 </h2>
+
+        <div class="button-group">
+            <button id="btnInit"    type="button" class="btn">초기화</button>
+            <button id="btnSearch"  type="button" class="btn">조회</button>
+            <button id="btnExcel"   type="button" class="btn">Excel</button>
+        </div>
+    </div>
+
+    <div class="mainBodyContainer">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>마켓</th>
+                    <td width="200px">
+                        <select id="market" name="market" class="search-select">
+                            <!--                            <option value="ALL" >전체</option>-->
+                        </select>
+                    </td>
+                    <th>단위</th>
+                    <td width="100px">
+                        <select id="unit" name="unit" class="search-select">
+                            <optgroup label="분 단위">
+                                <option value="1">1분</option>
+                                <option value="3" >3분</option>
+                                <option value="5" >5분</option>
+                                <option value="10" >10분</option>
+                                <option value="15" >15분</option>
+                                <option value="30" >30분</option>
+                                <option value="60" >60분</option>
+                                <option value="240" >240분</option>
+                            </optgroup>
+                            <optgroup label="일 이상">
+                                <option value="days">Days</option>
+                                <option value="weeks">Weeks</option>
+                                <option value="months">Months</option>
+                                <option value="years">Years</option>
+                            </optgroup>
+
+                        </select>
+                    </td>
+                    <td style="padding-left: 10px;">
+                        <span id="lastUpdateTime" style="color: #666; font-size: 0.9em; font-weight: normal;"></span>
+                    </td>
+                    <td width="50%"> </td>
+                </tr>
+            </table>
+        </form>
+
+        <div id="pageInfoContainer" class="page-header"></div>
+
+        <table class="data-table" id="mainTable" style="margin-top:10px" >
+            <thead>
+            <tr>
+                <th style="text-align:center;">기준일시</th>
+                <th style="text-align:right;">시가</th>
+                <th style="text-align:right;">고가</th>
+                <th style="text-align:right;">저가</th>
+                <th style="text-align:right;">종가</th>
+                <th style="text-align:right;">누적금액 </th>
+                <th style="text-align:right;">누적수량 </th>
+                <th style="text-align:right;">변동액</th>
+                <th style="text-align:right;">변동률</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. 상태 관리 변수
+        let PAGE_SIZE = (window.CONFIG && window.CONFIG.PAGE_SIZE) || 10;
+        let dataAll = [];
+        let marketMap = {}; // 마켓 한글명을 저장할 객체 (전역적 위치)
+        let currentPage = 1;
+
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+        const btnSearch = document.getElementById('btnSearch');
+
+        const marketSelect = document.getElementById('market'); // 선택박스
+        const unitSelect =  document.getElementById('unit');
+        const count = 200;
+
+        [marketSelect,unitSelect].forEach(el => {
+            el.addEventListener('change', () => btnSearch.click());
+        });
+
+        async function initMarketList() {
+            try {
+                const res = await fetch("https://api.upbit.com/v1/market/all");
+                const markets = await res.json();
+                const krwMarkets = markets.filter(m => m.market.startsWith("KRW-"));
+
+                // 가나다순 정렬
+                krwMarkets.sort((a, b) => a.korean_name.localeCompare(b.korean_name));
+
+                krwMarkets.forEach(m => {
+                    marketMap[m.market] = { korean: m.korean_name, english: m.english_name };
+                    // 셀렉트 박스 옵션 추가
+                    const option = document.createElement('option');
+                    option.value = m.market;
+                    option.textContent = `${m.korean_name} (${m.market.replace("KRW-", "")})`;
+                    marketSelect.appendChild(option);
+                });
+
+                // 마켓 로드 후 첫 조회 실행
+                btnSearch.click();
+
+            } catch (err) {
+                console.error("마켓 정보 로드 실패:", err);
+            }
+        }
+
+        const container = document.getElementById("pageInfoContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                const pageSizeSelect = document.getElementById("pageSize");
+                if (!pageSizeSelect) return;
+                pageSizeSelect.addEventListener("change", () => {
+                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    currentPage = 1;
+                    renderTable(currentPage);
+                    renderPagination(dataAll, currentPage, PAGE_SIZE);
+                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+                });
+            });
+
+        // 2. 테이블 렌더링 함수
+window.renderTable = function(page) {
+    if (!dataAll.length) return;
+
+    const start = (page - 1) * PAGE_SIZE;
+    const pageData = dataAll.slice(start, start + PAGE_SIZE);
+    const selectedUnit = document.getElementById('unit').value;
+
+    tableBody.innerHTML = pageData.map(item => {
+        // 1. 공통 색상 계산 (시가 vs 종가 비교)
+        let rowColor = '#333';
+        if (item.trade_price > item.opening_price) rowColor = '#d60000'; // 상승
+        else if (item.trade_price < item.opening_price) rowColor = '#0051c7'; // 하락
+
+        // 2. 날짜/시간 표시 분기
+        const dateDisplay = (selectedUnit === 'days' || selectedUnit === 'weeks' || selectedUnit === 'months' || selectedUnit === 'years')
+                            ? item.candle_date_time_kst.slice(0, 10)
+                            : item.candle_date_time_kst.slice(11, 19);
+
+        // 3. 일봉 전용 변동 데이터 처리
+        let changeHtml = '';
+        if (selectedUnit === 'days') {
+            let cColor = '#000';
+            let arrow = '○';
+
+            // 일봉은 전일 종가(prev_closing_price) 기준으로 색상 결정
+            if (item.trade_price > item.prev_closing_price) {
+                cColor = '#d60000';
+                arrow = '▲';
+            } else if (item.trade_price < item.prev_closing_price) {
+                cColor = '#0051c7';
+                arrow = '▼';
+            }
+
+            changeHtml = `
+                <td style="text-align:right; color:${cColor};">
+                    ${item.change_price ? item.change_price.toLocaleString() : '0'}
+                </td>
+                <td style="text-align:right; color:${cColor};">
+                    ${item.change_rate ? (item.change_rate * 100).toFixed(2) : '0.00'}% ${arrow}
+                </td>
+            `;
+        } else {
+            changeHtml = `<td style="text-align:center;">-</td><td style="text-align:center;">-</td>`;
+        }
+
+        return `
+            <tr>
+                <td style="text-align:center;">${dateDisplay}</td>
+                <td style="text-align:right;">${item.opening_price.toLocaleString()}</td>
+                <td style="text-align:right; color:#d60000;">${item.high_price.toLocaleString()}</td>
+                <td style="text-align:right; color:#0051c7;">${item.low_price.toLocaleString()}</td>
+                <td style="text-align:right; font-weight:bold; color:${rowColor};">
+                    ${item.trade_price.toLocaleString()}
+                </td>
+                <td style="text-align:right;">${Math.round(item.candle_acc_trade_price).toLocaleString()}</td>
+                <td style="text-align:right;">${Math.round(item.candle_acc_trade_volume).toLocaleString()}</td>
+                ${changeHtml}
+            </tr>
+        `;
+    }).join('');
+};
+
+        // 3. 조회 버튼 클릭 이벤트 (Async/Await 활용)
+        btnSearch.addEventListener('click', async () => {
+            try {
+                let selectedMarket = marketSelect.value;
+                let selectedUnit = unitSelect.value;
+
+                if (!selectedMarket) return;
+
+                let apiUrl = "";
+                if (['days', 'weeks', 'months', 'years'].includes(selectedUnit)) {
+                    // 일, 주, 월, 년 조회
+                    apiUrl = `https://api.upbit.com/v1/candles/${selectedUnit}?market=${selectedMarket}&count=${count}`;
+                } else {
+                    // 분 조회 (기존 로직)
+                    apiUrl = `https://api.upbit.com/v1/candles/minutes/${selectedUnit}?market=${selectedMarket}&count=${count}`;
+                }
+
+                const dataRes = await fetch(apiUrl);
+                const data = await dataRes.json();
+
+                // --- 실행 시간 표시 로직 추가 ---
+                const now = new Date();
+                document.getElementById('lastUpdateTime').textContent =
+                    `최근 업데이트 : ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+
+                // C. 데이터 저장 및 UI 업데이트
+                dataAll = data;
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+
+            } catch (err) {
+                console.error(err);
+                alert("데이터를 가져오는 중 오류가 발생했습니다.");
+            }
+        });
+
+        initMarketList();
+
+    });
+
+    // 나머지 버튼 이벤트 (기존과 동일)
+    document.getElementById('btnInit').addEventListener('click', () => location.reload());
+    document.getElementById('btnExcel').addEventListener('click', () => {
+        if(typeof downloadTableToExcel === "function")
+            downloadTableToExcel('mainTable', 'Upbit_캔들');
+    });
+
+
+
+
+</script>
+</body>
+</html>

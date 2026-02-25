@@ -1,118 +1,155 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>호가 조회</title>
-    <link rel="stylesheet" href="/css/upbitLayout.css">
+    <meta charset="utf-8">
+    <title>Upbit 호가 조회</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/sideLayout.js" defer></script>
-
+    <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
 <div class="container">
     <div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainHeadContainer">
-        <h2 style="margin:0;">  <span id="headerName"></span> 호가 조회</h2>
+        <!-- 왼쪽 타이틀 -->
+        <h2 style="margin:0;"> ✅ 호가 조회</h2>
+
+        <div class="button-group">
+            <button id="btnInit"    type="button" class="btn">초기화</button>
+            <button id="btnSearch"  type="button" class="btn">조회</button>
+            <button id="btnExcel"   type="button" class="btn">Excel</button>
+        </div>
     </div>
 
     <div class="mainBodyContainer">
-        <table id="upbit-table">
+        <form id="mainForm">
+            <table class="search-table">
+                <tr>
+                    <th>마켓</th>
+                    <td width="200px">
+                        <select id="market" name="market" class="search-select">
+                            <!--                            <option value="ALL" >전체</option>-->
+                        </select>
+                    </td>
+                    <td style="padding-left: 10px;">
+                        <span id="lastUpdateTime" style="color: #666; font-size: 0.9em; font-weight: normal;"></span>
+                    </td>
+                    <td width="50%"> </td>
+                </tr>
+            </table>
+        </form>
+
+        <table class="data-table" id="mainTable" style="margin-top:10px" >
             <thead>
-            <tr>
-                <th>매도 잔량</th>
-                <th>호가</th>
-                <th>매수 잔량 </th>
-                <th width="50%"></th>
+            <tr><th width="15%">매도 잔량</th>
+                <th width="15%">호가 (KRW)</th>
+                <th width="15%">매수 잔량</th>
+                <th width="55%">비고</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
+</div>
 
-    <script>
-        async function loadOrderbook() {
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let dataAll = [];
+        let marketMap = {};
+        let autoRefresh = null; // 자동 갱신 타이머 변수
 
-            // 1. 마켓명 매핑 가져오기
-            const marketRes = await fetch("https://api.upbit.com/v1/market/all");
-            const marketData = await marketRes.json();
-            const marketMap = {};
-            marketData.forEach(m => {
-              marketMap[m.market] = { korean: m.korean_name, english: m.english_name };
-            });
+        const tableBody = document.querySelector("#mainTable tbody");
+        const btnSearch = document.getElementById('btnSearch');
+        const marketSelect = document.getElementById('market');
 
-            //const markets = ["KRW-MLK", "KRW-MOCA", "KRW-ONG"];
-            const markets = ["KRW-MLK"];
-            const response = await fetch(`https://api.upbit.com/v1/orderbook?markets=${markets.join(",")}`);
-            const data = await response.json();
-            const tbody = document.querySelector("#upbit-table tbody");
-            tbody.innerHTML = "";
+        // 마켓 변경 시 즉시 조회 및 자동 갱신 재시작
+        marketSelect.addEventListener('change', () => {
+            btnSearch.click();
+            startAutoRefresh();
+        });
 
-  data.forEach(orderbook => {
-   const headerName = document.getElementById('headerName');
-    headerName.innerText = ` ${orderbook.market.replace("KRW-", "")} - ${marketMap[orderbook.market]?.korean} (${marketMap[orderbook.market]?.english})`;
+        async function initMarketList() {
+            try {
+                const res = await fetch("https://api.upbit.com/v1/market/all");
+                const markets = await res.json();
+                const krwMarkets = markets.filter(m => m.market.startsWith("KRW-"));
 
-    // 호가 데이터
-    orderbook.orderbook_units.forEach(unit => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td style="text-align:right;">${unit.ask_size.toLocaleString()}</td>
-        <td style="text-align:right;">${unit.ask_price.toLocaleString()}</td>
-        <td style="text-align:right;"> </td>
-      `;
-      tbody.appendChild(row);
-    });
+                krwMarkets.sort((a, b) => a.korean_name.localeCompare(b.korean_name));
+                krwMarkets.forEach(m => {
+                    marketMap[m.market] = { korean: m.korean_name };
+                    const option = document.createElement('option');
+                    option.value = m.market;
+                    option.textContent = `${m.korean_name} (${m.market.replace("KRW-", "")})`;
+                    marketSelect.appendChild(option);
+                });
 
-    // 호가 데이터
-    orderbook.orderbook_units.forEach(unit => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td style="text-align:right;"> </td>
-        <td style="text-align:right;">${unit.bid_price.toLocaleString()}</td>
-        <td style="text-align:right;">${unit.bid_size.toLocaleString()}</td>
-      `;
-      tbody.appendChild(row);
-    });
-
-          const numericColumns = [1];
-          sortTable(1, numericColumns.includes(1));
-
-
-  });
-}
-
-
-        // 최초 실행
-        loadOrderbook();
-
-
-    function sortTable(columnIndex, numeric = false) {
-      const table = document.getElementById("upbit-table");
-      const tbody = table.querySelector("tbody");
-      const rows = Array.from(tbody.querySelectorAll("tr"));
-
-      // 정렬 방향 토글 (오름차순 ↔ 내림차순)
-      table.setAttribute("data-sort-dir",   "desc");
-
-      rows.sort((a, b) => {
-        let A = a.children[columnIndex].innerText.replace(/,/g, "");
-        let B = b.children[columnIndex].innerText.replace(/,/g, "");
-
-        if (numeric) {
-          return  parseFloat(B) - parseFloat(A);
-        } else {
-          return  B.localeCompare(A);
+                btnSearch.click();
+                startAutoRefresh(); // 리스트 로드 후 자동 갱신 시작
+            } catch (err) {
+                console.error("마켓 로드 실패", err);
+            }
         }
-      });
 
-      // 기존 내용 초기화 후 정렬된 행 추가
-      tbody.innerHTML = "";
-      rows.forEach(row => tbody.appendChild(row));
-    }
+        // 테이블 렌더링 함수
+        window.renderTable = function() {
+            if (!dataAll || !dataAll[0]) return;
 
+            const units = dataAll[0].orderbook_units;
 
-    </script>
+            // 매도 호가 (높은 가격이 위로)
+            const askHtml = [...units].reverse().map(unit => `
+                <tr style="background-color: #f0f4ff;">
+                    <td style="text-align:right; color:#0051c7; padding-right:10px;">${unit.ask_size.toLocaleString()}</td>
+                    <td style="text-align:center; font-weight:bold; background-color: #e6eefd; border:1px solid #fff;">${unit.ask_price.toLocaleString()}</td>
+                    <td style="text-align:center; color:#ccc;">-</td>
+                    <td style="text-align:center; color:#ccc;">-</td>
+                </tr>
+            `).join('');
 
+            // 매수 호가 (높은 가격이 위로)
+            const bidHtml = units.map(unit => `
+                <tr style="background-color: #fff0f0;">
+                    <td style="text-align:center; color:#ccc;">-</td>
+                    <td style="text-align:center; font-weight:bold; background-color: #fde6e6; border:1px solid #fff;">${unit.bid_price.toLocaleString()}</td>
+                    <td style="text-align:right; color:#d60000; padding-right:10px;">${unit.bid_size.toLocaleString()}</td>
+                    <td style="text-align:center; color:#ccc;">-</td>
+                </tr>
+            `).join('');
 
+            tableBody.innerHTML = askHtml + bidHtml;
+        };
+
+        // 조회 버튼 클릭 이벤트
+        btnSearch.addEventListener('click', async () => {
+            const selectedMarket = marketSelect.value;
+            if(!selectedMarket) return;
+
+            try {
+                const res = await fetch(`https://api.upbit.com/v1/orderbook?markets=${selectedMarket}`);
+                dataAll = await res.json();
+
+                const now = new Date();
+                document.getElementById('lastUpdateTime').textContent =
+                    `최근 업데이트 : ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+
+                renderTable();
+            } catch (err) {
+                console.error("호가 조회 실패", err);
+            }
+        });
+
+        // 자동 갱신 함수 (3초 간격)
+        function startAutoRefresh() {
+            if (autoRefresh) clearInterval(autoRefresh);
+            autoRefresh = setInterval(() => {
+                btnSearch.click();
+            }, 3000);
+        }
+
+        initMarketList();
+    });
+</script>
 </body>
 </html>

@@ -28,8 +28,8 @@ function bindHeaderEvents() {
 
     const logoutBtn = document.querySelector('.topbarContainer .logout');
     const userInfo = document.querySelector('.topbarContainer .userInfo');
-    const headerUserNm = document.getElementById('headerUserNm');
 
+    const headerUserNm = document.getElementById('headerUserNm');
     if (headerUserNm && userNm && userId) {
         headerUserNm.innerText = `${userNm} (${userId})`;
     }
@@ -53,6 +53,22 @@ function bindHeaderEvents() {
             openWindowWithJSON( { mode: "S", userId },  "/meta/user/userChg", 800, 700 );
         });
     }
+
+
+    const locationInfo = document.querySelector('.topbarContainer .locationInfo');
+    const location = document.getElementById('location');
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+       location.innerHTML += `<p>위도: ${lat}, 경도: ${lon}</p>`;
+      },
+      (error) => {
+        console.error("위치 조회 실패:", error);
+      }
+    );
+
 
 }
 
