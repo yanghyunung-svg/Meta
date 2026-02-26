@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="utf-8">
     <title>Meta System - 표준단어</title>
-    <link rel="stylesheet" th:href="@{/css/mainLayout.css}">
-    <script th:src="@{/js/mainLayout.js}" defer></script>
-    <script th:src="@{/js/sideLayout.js}" defer></script>
-    <script th:src="@{/js/commonUtils.js}" defer></script>
-    <script th:src="@{/js/functionKey.js}"></script>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
+    <script src="/js/functionKey.js"></script>
+    <script src="/js/commonCombo.js"></script>
 </head>
 <body>
 <div class="container">
-    <div id="topbarContainer" th:replace="~{fragments/header :: topbar}"></div>
-    <div id="sidebarContainer" th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
 
     <div class="mainHeadContainer">
         <h2 style="margin:0;">✅ 표준단어 조회</h2>
@@ -27,7 +28,7 @@
     </div>
 
     <div class="mainBodyContainer">
-        <form id="mainForm" th:action="@{/meta/getWordListData}" method="post">
+        <form id="mainForm">
             <table class="search-table">
                 <tr>
                     <th>단어명</th>
@@ -47,11 +48,11 @@
             </table>
         </form>
 
-        <div id="pageInfoContainer" class="page-header">
-            <div th:replace="~{common/pageSize :: pageSizeSelect}"></div>
-        </div>
+        <div id="pageInfoContainer" class="page-header"></div>
+    </div>
+    <div class="mainTableContainer">
 
-        <table class="data-table" id="mainTable" style="margin-top:10px">
+        <table class="data-table" id="mainTable" >
             <thead>
             <tr>
                 <th class="col-no">No</th>
@@ -62,21 +63,37 @@
                 <th width="50px" style="text-align: center;">상태</th>
             </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
         </table>
-        <div id="pagination" class="pagination-container"></div>
     </div>
 </div>
 
-<script th:inline="javascript">
+<script>
     document.addEventListener("DOMContentLoaded", () => {
+        loadCodeCombo('STTS_CD', 'stat');
 
         let PAGE_SIZE = window.CONFIG.PAGE_SIZE;
         let dataAll = [];
         let currentPage = 1;
 
-        window.tableBody = document.querySelector("#mainTable tbody");
+        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+        const container = document.getElementById("pageInfoContainer");
+        if (!container) return;
+
+        fetch('/common/pageSize.html')
+        .then(res => res.text())
+        .then(html => {
+            container.innerHTML = html;
+            const pageSizeSelect = document.getElementById("pageSize");
+            if (!pageSizeSelect) return;
+            pageSizeSelect.addEventListener("change", () => {
+                PAGE_SIZE = Number(pageSizeSelect.value);
+                currentPage = 1;
+                renderTable(currentPage);
+                renderPagination(dataAll, currentPage, PAGE_SIZE);
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+            });
+        });
 
         // 1. 조회 버튼 이벤트
         document.getElementById('btnSearch').addEventListener('click', () => {
@@ -109,6 +126,9 @@
 
         // 2. 테이블 렌더링 함수
         window.renderTable = function(page) {
+            if (!Array.isArray(dataAll) || dataAll.length === 0) {
+                return;
+            }
             const start = (page - 1) * PAGE_SIZE;
             const end = start + PAGE_SIZE;
             const pageData = dataAll.slice(start, end);
@@ -127,17 +147,6 @@
             // 상세 팝업 이벤트 바인딩
             addTableRowEvents();
         };
-
-        const pageSizeSelect = document.getElementById("pageSize");
-        if (!pageSizeSelect) return;
-
-        pageSizeSelect.addEventListener("change", () => {
-            PAGE_SIZE = Number(pageSizeSelect.value);
-            currentPage = 1;
-            renderTable(currentPage);
-            renderPagination(dataAll, currentPage, PAGE_SIZE);
-            updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-        });
 
         function addTableRowEvents() {
             document.querySelectorAll(".row-click").forEach(tr => {

@@ -1,5 +1,9 @@
 <!doctype html>
 <html lang="ko">
+
+<!--Access key 6Mhq0J7kcJGxrATxWs3zy7sDgeqGxBfnsgxOF9u2-->
+<!--Secret key OodlqpmxKl6RCxrVGBBxstY8ovpHQ2ltgxXUfpw8-->
+
 <head>
     <meta charset="utf-8">
     <title>Upbit 현재가 조회</title>
@@ -30,8 +34,8 @@
                     <th>마켓</th>
                     <td width="200px">
                         <select id="market" name="market" class="search-select">
-                            <option value="ALL" >전체</option>
-                            <option value="MY" selected>관심</option>
+                            <option value="ALL" selected >전체</option>
+                            <option value="MY">관심</option>
                         </select>
                     </td>
                     <td style="padding-left: 10px;">
@@ -42,22 +46,25 @@
         </form>
 
         <div id="pageInfoContainer" class="page-header"></div>
+    </div>
 
-        <table class="data-table" id="mainTable" style="margin-top:10px" >
+    <div class="mainTableContainer">
+        <table class="data-table" id="mainTable" >
             <thead>
             <tr>
-                <th>마켓</th>
-                <th >마켓명</th>
-                <th style="text-align:right;">전일가</th>
+                <th style="text-align:right;">마켓</th>
+                <th style="text-align:left;" >마켓명</th>
                 <th style="text-align:right;">현재가</th>
-                <th style="text-align:right;">고가</th>
-                <th style="text-align:right;">저가</th>
+                <th style="text-align:right;">전일가</th>
                 <th style="text-align:right;">전일대비</th>
                 <th style="text-align:right;">변동률</th>
+                <th style="text-align:right;">고가</th>
+                <th style="text-align:right;">저가</th>
                 <th style="text-align:center;">최고가일자</th>
                 <th style="text-align:right;">최고가</th>
                 <th style="text-align:center;">최저가일자</th>
                 <th style="text-align:right;">최저가</th>
+                <th style="text-align:right;">거래대금</th>
                 <th style="text-align:center;">시간</th>
             </tr>
             </thead>
@@ -78,6 +85,27 @@
         window.tableBody = document.getElementById("mainTable").querySelector("tbody");
         const btnSearch = document.getElementById('btnSearch');
         const marketSelect = document.getElementById('market'); // 선택박스
+
+        const container = document.getElementById("pageInfoContainer");
+        if (!container) return;
+
+
+        fetch('/common/pageSize.html')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                const pageSizeSelect = document.getElementById("pageSize");
+                if (!pageSizeSelect) return;
+
+                pageSizeSelect.addEventListener("change", () => {
+                    PAGE_SIZE = Number(pageSizeSelect.value);
+                    currentPage = 1;
+                    renderTable(currentPage);
+                    renderPagination(dataAll, currentPage, PAGE_SIZE);
+                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+                });
+            });
+
 
         marketSelect.addEventListener('change', () => {
             // 선택 항목이 변경되면 즉시 조회 버튼 클릭 효과를 냅니다.
@@ -109,25 +137,6 @@
             }
         }
 
-        const container = document.getElementById("pageInfoContainer");
-        if (!container) return;
-
-        fetch('/common/pageSize.html')
-            .then(res => res.text())
-            .then(html => {
-                container.innerHTML = html;
-                const pageSizeSelect = document.getElementById("pageSize");
-                if (!pageSizeSelect) return;
-
-                pageSizeSelect.addEventListener("change", () => {
-                    PAGE_SIZE = Number(pageSizeSelect.value);
-                    currentPage = 1;
-                    renderTable(currentPage);
-                    renderPagination(dataAll, currentPage, PAGE_SIZE);
-                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-                });
-            });
-
         // 2. 테이블 렌더링 함수
         window.renderTable = function(page) {
             if (!dataAll.length) return;
@@ -143,29 +152,46 @@
 //console.log(item);
                 return `
                     <tr class="row-click" data-id="${item.market}">
-                        <td text-align:left;>${item.market.replace("KRW-", "")}</td>
-                        <td style="text-align:left; font-weight:bold;">${mInfo.korean}</td>
+                        <td style="text-align:right;">${item.market.replace("KRW-", "")}</td>
+                        <td style="text-align:left;">${mInfo.korean}</td>
+                        <td style="text-align:right; color:${changeColor};">${item.trade_price.toLocaleString()}</td>
                         <td style="text-align:right;">${item.prev_closing_price.toLocaleString()}</td>
-                        <td style="text-align:right; font-weight:bold;">${item.trade_price.toLocaleString()}</td>
-                        <td style="text-align:right; color:#d60000;">${item.high_price.toLocaleString()}</td>
-                        <td style="text-align:right; color:#0051c7;">${item.low_price.toLocaleString()}</td>
-                        <td style="text-align:right; color:${changeColor};">
-                            ${item.change_price.toLocaleString()}
-                        </td>
-                        <td style="text-align:right; color:${changeColor};">
-                            ${(item.signed_change_rate * 100).toFixed(2)}% ${changeSymbol}
-                        </td>
-<!--                        <td style="text-align:right;">${Math.round(item.acc_trade_price).toLocaleString()}</td>-->
-<!--                         <td style="text-align:right;">${Math.round(item.acc_trade_volume).toLocaleString()}</td>-->
+                        <td style="text-align:right; color:${changeColor};">${item.change_price.toLocaleString()}                        </td>
+                        <td style="text-align:right; color:${changeColor};">${(item.signed_change_rate * 100).toFixed(2)}% ${changeSymbol}   </td>
+                        <td style="text-align:right;">${item.high_price.toLocaleString()}</td>
+                        <td style="text-align:right;">${item.low_price.toLocaleString()}</td>
                         <td style="text-align:center;">${item.highest_52_week_date}</td>
                         <td style="text-align:right;">${item.highest_52_week_price.toLocaleString()}</td>
                         <td style="text-align:center;">${item.lowest_52_week_date}</td>
                         <td style="text-align:right;">${item.lowest_52_week_price.toLocaleString()}</td>
+                        <td style="text-align:right;">${Math.round(item.acc_trade_price_24h).toLocaleString()}</td>
+<!--                         <td style="text-align:right;">${Math.round(item.acc_trade_volume).toLocaleString()}</td>-->
                         <td style="text-align:center;">${item.trade_time_kst.replace(/^(\d{2})(\d{2})(\d{2})$/, '$1:$2:$3')}</td>
                     </tr>
                 `;
             }).join('');
         };
+
+        // 테이블 행(tr) 더블 클릭 이벤트
+        document.getElementById("mainTable").querySelector("tbody").addEventListener("dblclick", (e) => {
+            const row = e.target.closest("tr");
+
+            if (row && row.dataset.id) {
+                const marketId = row.dataset.id;
+
+                const popupWidth = 700;
+                const popupHeight = 1200;
+
+                // 화면 중앙에 팝업을 띄우기 위한 좌표 계산
+                const left = window.screenX + (window.outerWidth - popupWidth) / 2;
+                const top = window.screenY + (window.outerHeight - popupHeight) / 2;
+                const popupOptions = `width=${popupWidth}, height=${popupHeight}, top=${top}, left=${left}, resizable=yes, scrollbars=yes`;
+
+                // 팝업 열기
+                window.open(`orderbook.html?market=${marketId}`, `orderbook_${marketId}`, popupOptions);
+            }
+        });
+
 
         // 3. 조회 버튼 클릭 이벤트 (Async/Await 활용)
         btnSearch.addEventListener('click', async () => {
@@ -184,17 +210,13 @@
                 // B. 해당 마켓들의 현재가(Ticker) 가져오기
                 const tickerRes = await fetch(`https://api.upbit.com/v1/ticker?markets=${targetMarkets}`);
                 const tickers = await tickerRes.json();
+                tickers.sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h);
 
                 // --- 실행 시간 표시 로직 추가 ---
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
+                const now = new Date();
+                document.getElementById('lastUpdateTime').textContent =
+                `최근 업데이트 : ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
-        const timeDisplay = document.getElementById('lastUpdateTime');
-        if (timeDisplay) {
-            timeDisplay.textContent = `최근 업데이트 : ${hours}:${minutes}:${seconds}`;
-        }
 
                 // C. 데이터 저장 및 UI 업데이트
                 dataAll = tickers;
@@ -210,7 +232,6 @@
         });
 
         initMarketList();
-
         setInterval(() => btnSearch.click(), 5000);
     });
 

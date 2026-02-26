@@ -1,5 +1,5 @@
 window.CONFIG = {
-    PAGE_SIZE: 25,
+    PAGE_SIZE: 30,
     PAGE_RANGE: 10
 };
 window.MENU = '';

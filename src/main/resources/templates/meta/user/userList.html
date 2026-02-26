@@ -7,12 +7,12 @@
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
-
-
+    <script src="/js/functionKey.js"></script>
+    <script src="/js/commonCombo.js"></script>
 </head>
 <body>
 <div class="container">
-<div id="topbarContainer"></div>
+    <div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
 
         <div class="mainHeadContainer">
@@ -37,7 +37,7 @@
                     <th>사용자이름</th>
                     <td><input type="text" id="userNm" name="userNm" class="search-input"></td>
                     <th>상태</th>
-                    <td>
+                    <td   width="100px" >
                         <select id="sttsCd" name="sttsCd" class="search-select">
                             <option value="">전체</option>
                         </select>
@@ -49,8 +49,10 @@
 
         <div id="pageInfoContainer" class="page-header"></div>
 
+    </div>
+    <div class="mainTableContainer">
 
-        <table class="data-table" id="mainTable" style="margin-top:10px" >
+        <table class="data-table" id="mainTable">
             <thead>
             <tr>
                 <th class="col-no">No</th>
@@ -78,7 +80,6 @@
         let currentPage = 1;
 
         window.tableBody = document.getElementById("mainTable").querySelector("tbody");
-
 
         const container = document.getElementById("pageInfoContainer");
         if (!container) return;
@@ -190,7 +191,5 @@
     });
 
 </script>
-<script src="/js/functionKey.js"></script>
-<script src="/js/commonCombo.js"></script>
 </body>
 </html>

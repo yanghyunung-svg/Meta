@@ -5,25 +5,20 @@
     <title>Upbit 호가 조회</title>
     <link rel="stylesheet" href="/css/mainLayout.css">
     <script src="/js/mainLayout.js" defer></script>
-    <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
-<div class="container">
-    <div id="topbarContainer"></div>
-    <div id="sidebarContainer"></div>
-    <div class="mainHeadContainer">
+<div class="popupContainer" id="popupContainer">
+    <div class="popup-header">
         <!-- 왼쪽 타이틀 -->
-        <h2 style="margin:0;"> ✅ 호가 조회</h2>
+        <h2 class="popup-title"> ✅ 호가 조회</h2>
 
         <div class="button-group">
-            <button id="btnInit"    type="button" class="btn">초기화</button>
-            <button id="btnSearch"  type="button" class="btn">조회</button>
-            <button id="btnExcel"   type="button" class="btn">Excel</button>
+            <button id="btnSearch" type="button" class="hidden">조회</button>
+            <button id="btnClose" type="button" class="btn">닫기</button>
         </div>
     </div>
 
-    <div class="mainBodyContainer">
         <form id="mainForm">
             <table class="search-table">
                 <tr>
@@ -36,23 +31,20 @@
                     <td style="padding-left: 10px;">
                         <span id="lastUpdateTime" style="color: #666; font-size: 0.9em; font-weight: normal;"></span>
                     </td>
-                    <td width="50%"> </td>
                 </tr>
             </table>
         </form>
 
-        <table class="data-table" id="mainTable" style="margin-top:10px" >
+        <table class="data-table" id="mainTable">
             <thead>
             <tr><th width="15%">매도 잔량</th>
                 <th width="15%">호가 (KRW)</th>
                 <th width="15%">매수 잔량</th>
-                <th width="55%">비고</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
-</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -63,6 +55,11 @@
         const tableBody = document.querySelector("#mainTable tbody");
         const btnSearch = document.getElementById('btnSearch');
         const marketSelect = document.getElementById('market');
+        const btnClose = document.getElementById("btnClose");
+
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const marketCode = urlParams.get('market');
 
         // 마켓 변경 시 즉시 조회 및 자동 갱신 재시작
         marketSelect.addEventListener('change', () => {
@@ -82,44 +79,24 @@
                     const option = document.createElement('option');
                     option.value = m.market;
                     option.textContent = `${m.korean_name} (${m.market.replace("KRW-", "")})`;
+
+                    // 핵심 추가: URL에서 넘어온 marketCode와 일치하면 선택 상태로 설정
+                    if (marketCode && m.market === marketCode) {
+                        option.selected = true;
+                    }
+
                     marketSelect.appendChild(option);
                 });
 
+                // 리스트 로드 후 즉시 조회 실행
                 btnSearch.click();
-                startAutoRefresh(); // 리스트 로드 후 자동 갱신 시작
+                startAutoRefresh();
             } catch (err) {
                 console.error("마켓 로드 실패", err);
             }
         }
 
-        // 테이블 렌더링 함수
-        window.renderTable = function() {
-            if (!dataAll || !dataAll[0]) return;
-
-            const units = dataAll[0].orderbook_units;
-
-            // 매도 호가 (높은 가격이 위로)
-            const askHtml = [...units].reverse().map(unit => `
-                <tr style="background-color: #f0f4ff;">
-                    <td style="text-align:right; color:#0051c7; padding-right:10px;">${unit.ask_size.toLocaleString()}</td>
-                    <td style="text-align:center; font-weight:bold; background-color: #e6eefd; border:1px solid #fff;">${unit.ask_price.toLocaleString()}</td>
-                    <td style="text-align:center; color:#ccc;">-</td>
-                    <td style="text-align:center; color:#ccc;">-</td>
-                </tr>
-            `).join('');
-
-            // 매수 호가 (높은 가격이 위로)
-            const bidHtml = units.map(unit => `
-                <tr style="background-color: #fff0f0;">
-                    <td style="text-align:center; color:#ccc;">-</td>
-                    <td style="text-align:center; font-weight:bold; background-color: #fde6e6; border:1px solid #fff;">${unit.bid_price.toLocaleString()}</td>
-                    <td style="text-align:right; color:#d60000; padding-right:10px;">${unit.bid_size.toLocaleString()}</td>
-                    <td style="text-align:center; color:#ccc;">-</td>
-                </tr>
-            `).join('');
-
-            tableBody.innerHTML = askHtml + bidHtml;
-        };
+        btnClose.addEventListener("click", () => window.close() );
 
         // 조회 버튼 클릭 이벤트
         btnSearch.addEventListener('click', async () => {
@@ -139,6 +116,37 @@
                 console.error("호가 조회 실패", err);
             }
         });
+
+        // 테이블 렌더링 함수
+        window.renderTable = function() {
+            if (!dataAll || !dataAll[0]) return;
+
+            // 업비트 API에서 제공하는 호가 단위들 (기본 15개)
+            const allUnits = dataAll[0].orderbook_units;
+
+            // 매도/매수 각각 최대 15개까지만 사용 (안전을 위해 slice 추가)
+            const units = allUnits.slice(0, 15);
+
+            // 매도 호가 (높은 가격이 위로)
+            const askHtml = [...units].reverse().map(unit => `
+                <tr style="background-color: #f0f4ff;">
+                    <td style="text-align:right; color:#0051c7; padding-right:10px;">${unit.ask_size.toLocaleString()}</td>
+                    <td style="text-align:center; font-weight:bold; background-color: #e6eefd; border:1px solid #fff;">${unit.ask_price.toLocaleString()}</td>
+                    <td style="text-align:center; color:#ccc;">-</td>
+                </tr>
+            `).join('');
+
+            // 매수 호가 (높은 가격이 위로)
+            const bidHtml = units.map(unit => `
+                <tr style="background-color: #fff0f0;">
+                    <td style="text-align:center; color:#ccc;">-</td>
+                    <td style="text-align:center; font-weight:bold; background-color: #fde6e6; border:1px solid #fff;">${unit.bid_price.toLocaleString()}</td>
+                    <td style="text-align:right; color:#d60000; padding-right:10px;">${unit.bid_size.toLocaleString()}</td>
+                </tr>
+            `).join('');
+
+            tableBody.innerHTML = askHtml + bidHtml;
+        };
 
         // 자동 갱신 함수 (3초 간격)
         function startAutoRefresh() {
