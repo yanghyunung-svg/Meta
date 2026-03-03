@@ -50,7 +50,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity:0.6; cursor:poin
     border-radius:1;
      */
  }
-.logo { padding:2px; font-size:20px; }
+.logo { display: flex;  font-size:20px;  padding:2px; gap: 5px; align-items:center;  }
 
 .topbarRight { display:flex; align-items:center; gap:20px; }
 
@@ -249,6 +249,7 @@ body.loading { cursor:wait; }
 .selected-row { background-color:#e6f2ff; }
 td[contenteditable="true"] { cursor:text; }
 
+.calendar-container { display: grid; grid-template-columns: repeat(1, 1fr); gap: 20px;}
 .calendar-container { margin-top: 20px; }
 .calendar { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .calendar th,
@@ -266,5 +267,33 @@ td[contenteditable="true"] { cursor:text; }
 .month-radio        { display: flex; flex-wrap: wrap; gap: 8px 11px; align-items: center; }
 .month-radio label  { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer;}
 
-.calendar-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;}
 .year-month { border: 1px solid #ddd; padding: 20px; background: #fff;}
+
+.hamburger-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+}
+
+.hamburger-btn .line {
+    fill: none;
+    stroke: #fff; /* 선 색상 */
+    stroke-width: 2;
+    stroke-linecap: round;
+    transition: all 0.3s ease-in-out;
+}
+#sidebarContainer.active + #sidebarToggle .line.top, /* 버튼이 사이드바 뒤에 있을 경우 */
+#sidebarToggle.open .line.top {
+    transform: translateY(7px) rotate(45deg);
+    transform-origin: center;
+}
+
+#sidebarToggle.open .line.middle {
+    opacity: 0; /* 가운데 선 숨기기 */
+}
+
+#sidebarToggle.open .line.bottom {
+    transform: translateY(-7px) rotate(-45deg);
+    transform-origin: center;
+}

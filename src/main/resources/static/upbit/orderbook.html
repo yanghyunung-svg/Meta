@@ -3,37 +3,55 @@
 <head>
     <meta charset="utf-8">
     <title>Upbit 호가 조회</title>
-    <link rel="stylesheet" href="/css/mainLayout.css">
+    <style>
+        @keyframes flash-blue {
+            0% { background-color: #d0e0ff; }
+            100% { background-color: #f0f4ff; }
+        }
+        @keyframes flash-red {
+            0% { background-color: #ffd0d0; }
+            100% { background-color: #fff0f0; }
+        }
+        .ask-row.update { animation: flash-blue 0.4s ease-out; }
+        .bid-row.update { animation: flash-red 0.4s ease-out; }
+
+        /* 팝업 컨테이너에 스크롤 적용 */
+        #popupContainer {
+            height: 100vh; /* 화면 꽉 차게 */
+            overflow-y: auto;
+            position: relative;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/upbit.css">
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
-<div class="popupContainer" id="popupContainer">
-    <div class="popup-header">
-        <!-- 왼쪽 타이틀 -->
-        <h2 class="popup-title"> ✅ 호가 조회</h2>
 
+<div class="container" id="container">
+    <div class="popupHeadContainer">
+        <h2 style="margin:0;"> ✅ 호가 조회</h2>
         <div class="button-group">
             <button id="btnSearch" type="button" class="hidden">조회</button>
             <button id="btnClose" type="button" class="btn">닫기</button>
         </div>
     </div>
 
-        <form id="mainForm">
-            <table class="search-table">
-                <tr>
-                    <td width="200px">
-                        <select id="market" name="market" class="search-select">
-                            <!--                            <option value="ALL" >전체</option>-->
-                        </select>
-                    </td>
-                    <td style="padding-left: 10px;">
-                        <span id="lastUpdateTime" style="color: #666; font-size: 0.9em; font-weight: normal;"></span>
-                    </td>
-                </tr>
-            </table>
-        </form>
+    <div class="popupBodyContainer">
+        <table class="search-table">
+            <tr>
+                <td width="200px">
+                    <select id="market" name="market" class="search-select">
+                    </select>
+                </td>
+                <td style="padding-left: 10px;">
+                    <span id="lastUpdateTime" style="color: #666; font-size: 0.9em; font-weight: normal;"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
 
+    <div class="popupTableContainer">
         <table class="data-table" id="mainTable">
             <thead>
             <tr><th width="15%">매도 잔량</th>
@@ -44,118 +62,139 @@
             <tbody></tbody>
         </table>
     </div>
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        let dataAll = [];
-        let marketMap = {};
-        let autoRefresh = null; // 자동 갱신 타이머 변수
+    let socket = null;
+    let marketMap = {};
+    window.isFirstLoad = true; // 마켓 변경 시 중앙 정렬을 위한 플래그
 
-        const tableBody = document.querySelector("#mainTable tbody");
-        const btnSearch = document.getElementById('btnSearch');
-        const btnClose = document.getElementById("btnClose");
-        const marketSelect = document.getElementById('market');
+    const tableBody = document.querySelector("#mainTable tbody");
+    const marketSelect = document.getElementById('market');
+    const container = document.getElementById('popupContainer');
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const marketCode = urlParams.get('market');
+    const urlParams = new URLSearchParams(window.location.search);
+    const marketCode = urlParams.get('market');
 
-        // 마켓 변경 시 즉시 조회 및 자동 갱신 재시작
-        marketSelect.addEventListener('change', () => {
-            btnSearch.click();
-            startAutoRefresh();
-        });
+    // 1. 마켓 리스트 초기화 (Local Storage 활용)
+    async function initMarketList() {
+        try {
+            const savedData = localStorage.getItem('upbit_markets');
+            if (!savedData) return;
 
-        async function initMarketList() {
-            try {
-                const res = await fetch("https://api.upbit.com/v1/market/all");
-                const markets = await res.json();
-                const krwMarkets = markets.filter(m => m.market.startsWith("KRW-"));
+            const markets = JSON.parse(savedData);
+            const filtered = markets.filter(m => m.market.startsWith("KRW-"));
+            filtered.sort((a, b) => a.korean_name.localeCompare(b.korean_name));
 
-                krwMarkets.sort((a, b) => a.korean_name.localeCompare(b.korean_name));
-                krwMarkets.forEach(m => {
-                    marketMap[m.market] = { korean: m.korean_name };
-                    const option = document.createElement('option');
-                    option.value = m.market;
-                    option.textContent = `${m.korean_name} (${m.market.replace("KRW-", "")})`;
+            filtered.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m.market;
+                option.textContent = `${m.korean_name} (${m.market})`;
+                marketSelect.appendChild(option);
+            });
 
-                    // 핵심 추가: URL에서 넘어온 marketCode와 일치하면 선택 상태로 설정
-                    if (marketCode && m.market === marketCode) {
-                        option.selected = true;
-                    }
-
-                    marketSelect.appendChild(option);
-                });
-
-                // 리스트 로드 후 즉시 조회 실행
-                btnSearch.click();
-                startAutoRefresh();
-            } catch (err) {
-                console.error("마켓 로드 실패", err);
-            }
+            // 초기 마켓 설정 및 연결
+            if (marketCode) marketSelect.value = marketCode;
+            connectWS(marketSelect.value);
+        } catch (err) {
+            console.error("마켓 로드 실패", err);
         }
+    }
 
-        btnClose.addEventListener("click", () => window.close() );
+    // 2. WebSocket 연결 및 데이터 수신
+    function connectWS(market) {
+        if (socket) socket.close(); // 기존 연결 종료
 
-        // 조회 버튼 클릭 이벤트
-        btnSearch.addEventListener('click', async () => {
-            const selectedMarket = marketSelect.value;
-            if(!selectedMarket) return;
+        socket = new WebSocket("wss://api.upbit.com/websocket/v1");
+        socket.binaryType = 'blob';
 
-            try {
-                const res = await fetch(`https://api.upbit.com/v1/orderbook?markets=${selectedMarket}`);
-                dataAll = await res.json();
-
-                const now = new Date();
-                document.getElementById('lastUpdateTime').textContent =
-                    `최근 업데이트 : ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-
-                renderTable();
-            } catch (err) {
-                console.error("호가 조회 실패", err);
-            }
-        });
-
-        // 테이블 렌더링 함수
-        window.renderTable = function() {
-            if (!dataAll || !dataAll[0]) return;
-
-            // 업비트 API에서 제공하는 호가 단위들 (기본 15개)
-            const allUnits = dataAll[0].orderbook_units;
-
-            // 매도/매수 각각 최대 15개까지만 사용 (안전을 위해 slice 추가)
-            const units = allUnits.slice(0, 17);
-
-            // 매도 호가 (높은 가격이 위로)
-            const askHtml = [...units].reverse().map(unit => `
-                <tr style="background-color: #f0f4ff;">
-                    <td style="text-align:right; color:#0051c7; padding-right:10px;">${unit.ask_size.toLocaleString()}</td>
-                    <td style="text-align:center; font-weight:bold; background-color: #e6eefd; border:1px solid #fff;">${unit.ask_price.toLocaleString()}</td>
-                    <td style="text-align:center; color:#ccc;">-</td>
-                </tr>
-            `).join('');
-
-            // 매수 호가 (높은 가격이 위로)
-            const bidHtml = units.map(unit => `
-                <tr style="background-color: #fff0f0;">
-                    <td style="text-align:center; color:#ccc;">-</td>
-                    <td style="text-align:center; font-weight:bold; background-color: #fde6e6; border:1px solid #fff;">${unit.bid_price.toLocaleString()}</td>
-                    <td style="text-align:right; color:#d60000; padding-right:10px;">${unit.bid_size.toLocaleString()}</td>
-                </tr>
-            `).join('');
-
-            tableBody.innerHTML = askHtml + bidHtml;
+        socket.onopen = () => {
+            const query = [
+                { "ticket": "upbit-hoga-viewer" },
+                { "type": "orderbook", "codes": [market] }
+            ];
+            socket.send(JSON.stringify(query));
         };
 
-        // 자동 갱신 함수 (3초 간격)
-        function startAutoRefresh() {
-            if (autoRefresh) clearInterval(autoRefresh);
-            autoRefresh = setInterval(() => {
-                btnSearch.click();
-            }, 3000);
-        }
+        socket.onmessage = async (event) => {
+            const text = await event.data.text();
+            const data = JSON.parse(text);
+            renderTable(data);
+            updateTime();
+        };
+    }
 
-        initMarketList();
+    // 3. 테이블 렌더링 및 시각 효과
+    function renderTable(data) {
+        if (!data) return;
+
+        // 상위 18개만 추출
+        const units = data.orderbook_units.slice(0, 17);
+        const maxSize = Math.max(...units.map(u => Math.max(u.ask_size, u.bid_size)));
+
+        // 매도 호가 (18개, 역순)
+        const askHtml = [...units].reverse().map(unit => {
+            const ratio = (unit.ask_size / maxSize) * 100;
+            return `
+                <tr class="ask-row">
+                    <td style="text-align:right; padding-right:10px; position:relative;">
+                        <div style="position:absolute; right:0; top:0; bottom:0; width:${ratio}%; background:rgba(0,81,199,0.1);"></div>
+                        <span style="position:relative; color:#0051c7;">${unit.ask_size.toLocaleString(undefined, {minimumFractionDigits: 3})}</span>
+                    </td>
+                    <td style="text-align:center; font-weight:bold; background-color: #e6eefd; border:1px solid #fff;">${unit.ask_price.toLocaleString()}</td>
+                    <td style="text-align:center; color:#ccc;">-</td>
+                </tr>`;
+        }).join('');
+
+        // 매수 호가 (18개, 정순)
+        const bidHtml = units.map(unit => {
+            const ratio = (unit.bid_size / maxSize) * 100;
+            return `
+                <tr class="bid-row">
+                    <td style="text-align:center; color:#ccc;">-</td>
+                    <td style="text-align:center; font-weight:bold; background-color: #fde6e6; border:1px solid #fff;">${unit.bid_price.toLocaleString()}</td>
+                    <td style="text-align:right; padding-right:10px; position:relative;">
+                        <div style="position:absolute; left:0; top:0; bottom:0; width:${ratio}%; background:rgba(214,0,0,0.1);"></div>
+                        <span style="position:relative; color:#d60000;">${unit.bid_size.toLocaleString(undefined, {minimumFractionDigits: 3})}</span>
+                    </td>
+                </tr>`;
+        }).join('');
+
+        tableBody.innerHTML = askHtml + bidHtml;
+
+        if (window.isFirstLoad) {
+            scrollToSpread();
+            window.isFirstLoad = false;
+        }
+    }
+
+    // 4. 유틸리티 함수들
+    function scrollToSpread() {
+        const firstBid = tableBody.querySelector('.bid-row');
+        if (firstBid && container) {
+            const target = firstBid.offsetTop - (container.offsetHeight / 2) + (firstBid.offsetHeight / 2);
+            container.scrollTo({ top: target, behavior: 'smooth' });
+        }
+    }
+
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('lastUpdateTime').textContent =
+            `실시간 : ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+    }
+
+    // 5. 이벤트 리스너
+    marketSelect.addEventListener('change', (e) => {
+        window.isFirstLoad = true;
+        connectWS(e.target.value);
     });
+
+    document.getElementById("btnClose").addEventListener("click", () => window.close());
+
+    // 실행 시작
+    initMarketList();
+});
 </script>
 </body>
 </html>

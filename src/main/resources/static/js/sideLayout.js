@@ -1,14 +1,39 @@
 (function () {
-    // 1. 초기 실행 (페이지 로드 시)
+    // 공통 참조 변수
+    let toggleBtn;
+    let sidebar;
+
     document.addEventListener("DOMContentLoaded", () => {
+        toggleBtn = document.getElementById('sidebarToggle');
+        sidebar = document.getElementById('sidebarContainer');
+
+        if (toggleBtn && sidebar) {
+            // 기존 이벤트 리스너 제거 후 새로 등록 (중복 방지)
+            toggleBtn.onclick = (e) => {
+                sidebar.classList.toggle('active');
+                toggleBtn.classList.toggle('open');
+                e.stopPropagation();
+            };
+
+            // 외부 클릭 시 닫기
+            document.addEventListener('click', (e) => {
+                if (sidebar.classList.contains('active')) {
+                    if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                        sidebar.classList.remove('active');
+                        toggleBtn.classList.remove('open');
+                    }
+                }
+            });
+        }
         initSidebar();
     });
 
-    // 2. 동적 로드 대응 (사이드바가 나중에 로드될 경우를 대비해 감시)
+    // 2. 동적 로드 대응 (사이드바가 나중에 로드될 경우를 대비)
     const observer = new MutationObserver(() => {
-        if (document.querySelector('.sidebar-title')) {
+        const sidebarTitle = document.querySelector('.sidebar-title');
+        if (sidebarTitle) {
             initSidebar();
-            // observer.disconnect(); // 상황에 따라 해제 여부 결정
+            // 필요 시: toggleBtn = document.getElementById('sidebarToggle'); 재할당
         }
     });
 
@@ -17,34 +42,38 @@
         observer.observe(container, { childList: true, subtree: true });
     }
 
-    // 메뉴 실행 로직 (이벤트 위임)
     document.addEventListener("click", function(e) {
-        // 클릭된 요소가 .menu-link 버튼인지 확인
         const btn = e.target.closest('.menu-link');
         if (btn) {
             const url = btn.getAttribute('data-url');
             if (url) {
-                // 이동 전 현재 카테고리 상태를 'opened'로 강제 저장
                 const parentMenu = btn.closest('.sidebar-menu');
                 const title = parentMenu ? parentMenu.previousElementSibling : null;
                 if (title) {
                     const menuId = title.getAttribute('data-menu-id');
                     if (menuId) localStorage.setItem('menu_' + menuId, 'opened');
                 }
-                // 페이지 이동 실행
                 location.href = url;
             }
         }
     });
 
-    // 전역 토글 함수 (HTML의 onclick="toggleMenu(this)" 대응)
     window.toggleMenu = function(element) {
         const menuList = element.nextElementSibling;
         const menuId = element.getAttribute('data-menu-id');
         if (!menuList) return;
 
-        const isVisible = window.getComputedStyle(menuList).display === "block";
+        document.querySelectorAll('.sidebar-title').forEach(otherTitle => {
+            if (otherTitle !== element) {
+                const otherList = otherTitle.nextElementSibling;
+                const otherId = otherTitle.getAttribute('data-menu-id');
+                if (otherList) otherList.style.display = "none";
+                otherTitle.classList.remove("open");
+                if (otherId) localStorage.setItem('menu_' + otherId, 'closed');
+            }
+        });
 
+        const isVisible = window.getComputedStyle(menuList).display === "block";
         if (isVisible) {
             menuList.style.display = "none";
             element.classList.remove("open");
@@ -59,7 +88,6 @@
     function initSidebar() {
         restoreMenuState();
         highlightActiveMenu();
-        // applyRole(); // 필요시 활성화
     }
 
     function restoreMenuState() {
@@ -67,7 +95,6 @@
             const menuId = title.getAttribute('data-menu-id');
             const state = localStorage.getItem('menu_' + menuId);
             const menuList = title.nextElementSibling;
-
             if (menuList && state === 'opened') {
                 menuList.style.display = "block";
                 title.classList.add("open");
@@ -90,4 +117,6 @@
             }
         });
     }
+
+
 })();

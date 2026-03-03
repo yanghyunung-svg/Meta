@@ -125,9 +125,6 @@
                 const response = await fetch("https://api.upbit.com/v1/market/all");
                 const markets = await response.json();
 
-                // localStorage에 저장
-                localStorage.setItem('upbit_markets', JSON.stringify(markets));
-
                 // 1. 마켓별 분류
                 const krwList = markets.filter(m => m.market.startsWith("KRW-"));
                 const btcList = markets.filter(m => m.market.startsWith("BTC-"));
