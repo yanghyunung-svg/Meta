@@ -7,13 +7,11 @@
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/sideLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
-
-
+    <script src="/js/functionKey.js"></script>
 </head>
 <body>
 
         <div class="iframeMainHeadContainer">
-            <!-- 왼쪽 타이틀 -->
             <h2 style="margin:0;"> ✅ 그룹코드 조회</h2>
             <div class="button-group">
                 <button id="btnInit"    type="button" class="btn">초기화</button>
@@ -30,12 +28,6 @@
                     <td><input type="text" id="grpCd" name="grpCd" class="search-input"></td>
                     <th>그룹코드명</th>
                     <td><input type="text" id="grpNm" name="grpNm" class="search-input"></td>
-<!--                    <th>상태</th>-->
-<!--                    <td>-->
-<!--                        <select id="sttsCd" name="sttsCd" class="search-select">-->
-<!--                            <option value="">전체</option>-->
-<!--                        </select>-->
-<!--                    </td>-->
                 </tr>
             </table>
         </form>
@@ -61,13 +53,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-
-        let PAGE_SIZE = 12;
+        let PAGE_SIZE = 10;
         let dataAll = [];
         let currentPage = 1;
 
         window.tableBody = document.getElementById("mainTable").querySelector("tbody");
-
 
         const container = document.getElementById("pageInfoContainer");
         if (!container) return;
@@ -76,21 +66,10 @@
         .then(res => res.text())
         .then(html => {
             container.innerHTML = html;
-
             const pageSelect = document.querySelector('.pageSelect');
             if (pageSelect) {
                 pageSelect.classList.add('hidden');
             }
-
-            const pageSizeSelect = document.getElementById("pageSize");
-            if (!pageSizeSelect) return;
-            pageSizeSelect.addEventListener("change", () => {
-                PAGE_SIZE = Number(pageSizeSelect.value);
-                currentPage = 1;
-                renderTable(currentPage);
-                renderPagination(dataAll, currentPage, PAGE_SIZE);
-                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-            });
         });
 
 
@@ -105,9 +84,7 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click"
-                    data-grpCd="${item.grpCd}"
-                    data-grpNm="${item.grpNm}" >
+                <tr class="row-click" data-grpCd="${item.grpCd}" data-grpNm="${item.grpNm}" >
                     <td style="text-align: center;"> ${start + index + 1} </td>
                     <td style="text-align: left;">  ${item.grpCd} </td>
                     <td style="text-align: left;">${item.grpNm}</td>
@@ -169,6 +146,7 @@
             rmk: 'td:nth-child(4)',
             sttsCd: 'td:nth-child(5)'
         };
+
         document.getElementById("btnSearch").click();
 <!--        window.updateRowDataFlexible(data, 'grpCd', refreshMap);-->
     }
@@ -179,14 +157,11 @@
         openWindowWithJSON(sendData, "/meta/code/codeGroupMng", 800, 600);
     });
 
-
     document.getElementById('btnInit').addEventListener('click', () => {
         document.getElementById('mainForm').reset();
         initScreen();
     });
 
-
 </script>
- <script src="/js/functionKey.js"></script>
 </body>
 </html>

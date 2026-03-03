@@ -8,7 +8,7 @@
     <style>
         :root { --upbit-blue: #0046ff; --upbit-red: #d60000; --upbit-blue-down: #0051c7; }
         body { font-family: 'Pretendard', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
+
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 
         .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
@@ -27,10 +27,18 @@
         .plus { color: var(--upbit-red); }
         .minus { color: var(--upbit-blue-down); }
     </style>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <script src="/js/mainLayout.js" defer></script>
+    <script src="/js/sideLayout.js" defer></script>
+    <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
 
 <div class="container">
+    <div id="topbarContainer"></div>
+    <div id="sidebarContainer"></div>
+
+    <div class="mainFullContainer">
     <div class="header">
         <h2>내 투자 내역</h2>
         <span id="updateTime" style="color:#888; font-size: 13px;"></span>
@@ -71,6 +79,7 @@
         <tr><td colspan="6" style="text-align:center; padding: 40px; color: #999;">API 키를 입력하고 조회를 눌러주세요.</td></tr>
         </tbody>
     </table>
+</div>
 </div>
 
 <script>

@@ -105,13 +105,9 @@
             const pageData = dataAll.slice(start, end);
 
             tableBody.innerHTML = pageData.map((item, index) => `
-                <tr class="row-click"
-                    data-grp-cd="${item.grpCd}"
-                    data-grp-nm="${item.grpNm}">
+                <tr class="row-click" data-grp-cd="${item.grpCd}" data-grp-nm="${item.grpNm}">
                     <td style="text-align:center">${start + index + 1}</td>
-                    <td class="grpcd-click" style="cursor:pointer;color:blue;text-align: left;">
-                        ${item.grpCd}
-                    </td>
+                    <td class="grpcd-click" style="cursor:pointer;color:blue;text-align: left;"> ${item.grpCd} </td>
                     <td style="text-align: left;">${item.grpNm}</td>
                     <td style="text-align: center;">${item.detlCnt}</td>
                     <td style="text-align: left;">${item.rmk}</td>
@@ -173,7 +169,7 @@
                 dataAll = Array.isArray(data) ? data : [];
                 if (!Array.isArray(dataAll) || dataAll.length === 0) {
                     initScreen();
-                            document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
+                    document.getElementById("pageInfo").innerText = `조회 결과가 없습니다.`;
                     return
                 }
                 currentPage = 1;

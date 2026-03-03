@@ -9,31 +9,23 @@
     <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
-<div class="container">
-    <div id="topbarContainer"></div>
-    <div id="sidebarContainer"></div>
-    <div class="mainHeadContainer">
-        <!-- 왼쪽 타이틀 -->
+<div class="popupContainer" id="popupContainer">
+    <div class="popup-header">
         <h2 style="margin:0;"> ✅ 캔들 조회 </h2>
-
         <div class="button-group">
-            <button id="btnInit"    type="button" class="btn">초기화</button>
-            <button id="btnSearch"  type="button" class="btn">조회</button>
-            <button id="btnExcel"   type="button" class="btn">Excel</button>
+            <button id="btnSearch" type="button" class="hidden">조회</button>
+            <button id="btnClose" type="button" class="btn">닫기</button>
         </div>
     </div>
 
-    <div class="mainBodyContainer">
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th>마켓</th>
                     <td width="200px">
                         <select id="market" name="market" class="search-select">
                             <!--                            <option value="ALL" >전체</option>-->
                         </select>
                     </td>
-                    <th>단위</th>
                     <td width="100px">
                         <select id="unit" name="unit" class="search-select">
                             <optgroup label="분 단위">
@@ -52,21 +44,20 @@
                                 <option value="months">Months</option>
                                 <option value="years">Years</option>
                             </optgroup>
-
+                        </select>
+                    </td>
+                    <td width="100px">
+                        <select id="cnt" name="cnt" class="search-select">
+                            <option value="35" selected>Min</option>
+                            <option value="200">Max</option>
                         </select>
                     </td>
                     <td style="padding-left: 10px;">
                         <span id="lastUpdateTime" style="color: #666; font-size: 0.9em; font-weight: normal;"></span>
                     </td>
-                    <td width="50%"> </td>
                 </tr>
             </table>
         </form>
-
-        <div id="pageInfoContainer" class="page-header"></div>
-    </div>
-
-    <div class="mainTableContainer">
 
         <table class="data-table" id="mainTable">
             <thead>
@@ -85,25 +76,28 @@
             <tbody></tbody>
         </table>
     </div>
-</div>
 
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         // 1. 상태 관리 변수
-        let PAGE_SIZE = (window.CONFIG && window.CONFIG.PAGE_SIZE) || 10;
+        let PAGE_SIZE = 10000;
         let dataAll = [];
         let marketMap = {}; // 마켓 한글명을 저장할 객체 (전역적 위치)
         let currentPage = 1;
 
         window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+
         const btnSearch = document.getElementById('btnSearch');
-
-        const marketSelect = document.getElementById('market'); // 선택박스
+        const btnClose = document.getElementById("btnClose");
+        const marketSelect = document.getElementById('market');
         const unitSelect =  document.getElementById('unit');
-        const count = 200;
+        const cntSelect =  document.getElementById('cnt');
 
-        [marketSelect,unitSelect].forEach(el => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const marketCode = urlParams.get('market');
+
+        [marketSelect,unitSelect,cntSelect].forEach(el => {
             el.addEventListener('change', () => btnSearch.click());
         });
 
@@ -122,6 +116,9 @@
                     const option = document.createElement('option');
                     option.value = m.market;
                     option.textContent = `${m.korean_name} (${m.market.replace("KRW-", "")})`;
+                    if (marketCode && m.market === marketCode) {
+                        option.selected = true;
+                    }
                     marketSelect.appendChild(option);
                 });
 
@@ -132,24 +129,6 @@
                 console.error("마켓 정보 로드 실패:", err);
             }
         }
-
-        const container = document.getElementById("pageInfoContainer");
-        if (!container) return;
-
-        fetch('/common/pageSize.html')
-            .then(res => res.text())
-            .then(html => {
-                container.innerHTML = html;
-                const pageSizeSelect = document.getElementById("pageSize");
-                if (!pageSizeSelect) return;
-                pageSizeSelect.addEventListener("change", () => {
-                    PAGE_SIZE = Number(pageSizeSelect.value);
-                    currentPage = 1;
-                    renderTable(currentPage);
-                    renderPagination(dataAll, currentPage, PAGE_SIZE);
-                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-                });
-            });
 
         // 2. 테이블 렌더링 함수
 window.renderTable = function(page) {
@@ -219,16 +198,17 @@ window.renderTable = function(page) {
             try {
                 let selectedMarket = marketSelect.value;
                 let selectedUnit = unitSelect.value;
+                let selectedcount = cntSelect.value;
 
                 if (!selectedMarket) return;
 
                 let apiUrl = "";
                 if (['days', 'weeks', 'months', 'years'].includes(selectedUnit)) {
                     // 일, 주, 월, 년 조회
-                    apiUrl = `https://api.upbit.com/v1/candles/${selectedUnit}?market=${selectedMarket}&count=${count}`;
+                    apiUrl = `https://api.upbit.com/v1/candles/${selectedUnit}?market=${selectedMarket}&count=${selectedcount}`;
                 } else {
                     // 분 조회 (기존 로직)
-                    apiUrl = `https://api.upbit.com/v1/candles/minutes/${selectedUnit}?market=${selectedMarket}&count=${count}`;
+                    apiUrl = `https://api.upbit.com/v1/candles/minutes/${selectedUnit}?market=${selectedMarket}&count=${selectedcount}`;
                 }
 
                 const dataRes = await fetch(apiUrl);
@@ -244,8 +224,6 @@ window.renderTable = function(page) {
                 dataAll = data;
                 currentPage = 1;
                 renderTable(currentPage);
-                renderPagination(dataAll, currentPage, PAGE_SIZE);
-                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
 
             } catch (err) {
                 console.error(err);
@@ -253,15 +231,9 @@ window.renderTable = function(page) {
             }
         });
 
+        btnClose.addEventListener("click", () => window.close() );
         initMarketList();
 
-    });
-
-    // 나머지 버튼 이벤트 (기존과 동일)
-    document.getElementById('btnInit').addEventListener('click', () => location.reload());
-    document.getElementById('btnExcel').addEventListener('click', () => {
-        if(typeof downloadTableToExcel === "function")
-            downloadTableToExcel('mainTable', 'Upbit_캔들');
     });
 
 

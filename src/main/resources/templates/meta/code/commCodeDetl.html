@@ -6,8 +6,6 @@
     <link rel="stylesheet" href="/css/mainLayout.css">
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/commonUtils.js" defer></script>
-
-
 </head>
 <body>
     <div class="iframeMainHeadContainer">
@@ -29,9 +27,9 @@
                 </tr>
             </table>
         </form>
-    </div>
-    <div class="iframeMainGridContainer">
+
         <div id="pageInfoContainer" class="page-header"></div>
+
         <table class="data-table" id="mainTable">
             <thead>
             <tr>
@@ -45,10 +43,11 @@
             <tbody></tbody>
         </table>
     </div>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-
-        let PAGE_SIZE = 50;
+        let PAGE_SIZE = 10;
         let dataAll = [];
         let currentPage = 1;
 
@@ -57,8 +56,6 @@
 
         window.tableBody = document.getElementById("mainTable").querySelector("tbody");
 
-
-
         const container = document.getElementById("pageInfoContainer");
         if (!container) return;
 
@@ -66,7 +63,6 @@
         .then(res => res.text())
         .then(html => {
             container.innerHTML = html;
-
             const pageSelect = document.querySelector('.pageSelect');
             if (pageSelect) {
                 pageSelect.classList.add('hidden');
@@ -77,15 +73,12 @@
             if (e.key === 'grpCd' && e.newValue) {
                 const savedGrpCd = localStorage.getItem('grpCd');
                 const savedGrpNm = localStorage.getItem('grpNm');
-
                 document.getElementById('grpCd').value = savedGrpCd;
                 document.getElementById('grpNm').value = savedGrpNm;
-
                 if (savedGrpCd) {
                     btnSearch.click();
                     btnReg.disabled = false;
                 }
-
             }
         });
 
@@ -120,12 +113,10 @@
                     openWindowWithJSON(sendData, "/meta/code/codeDetlMng", 800, 550);
                 });
             });
-
         }
 
 
         document.getElementById('btnSearch').addEventListener('click', () => {
-            initScreen();
             const data = formToJson(document.getElementById('mainForm'));
             fetch('/meta/getCodeDetlListData', {
                 method: 'POST',
@@ -140,8 +131,8 @@
                 }
                 currentPage = 1;
                 renderTable(currentPage);
-                renderPagination(dataAll, currentPage, PAGE_SIZE);
-                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+                renderPagination(dataAll, currentPage, PAGE_SIZE)
+                updatePageInfo(dataAll, currentPage, PAGE_SIZE)
             })
             .catch(err => {
                 myAlert("에러 발생: " + err);
@@ -156,8 +147,6 @@
         document.getElementById("btnSearch").click();
     }
 
-
-
     document.getElementById('btnReg').addEventListener('click', () => {
         const grpCdS = mainForm.grpCd.value;
         const grpNmS = mainForm.grpNm.value;
@@ -165,9 +154,6 @@
         openWindowWithJSON(sendData, "/meta/code/codeDetlMng", 800, 550);
     });
 
-
-
 </script>
-<script src="/js/functionKey.js"></script>
 </body>
 </html>

@@ -8,9 +8,8 @@
         .container { max-width: 1200px; margin: 0 auto; }
 
         /* 가로 3열 레이아웃 설정 */
-        .market-wrapper { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
-
-        .market-column { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
+        .market-wrapper { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: start; }
+        .market-column { background: white; border-radius: 1px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
         .column-header { padding: 15px; text-align: center; color: white; font-weight: bold; font-size: 18px; }
 
         /* 마켓별 테마 컬러 */
@@ -18,15 +17,16 @@
         .bg-btc { background: #0046ff; } /* 블루 */
         .bg-usdt { background: #26a69a; } /* 그린 */
 
-        .list-container { max-height: 700px; overflow-y: auto; }
+        .list-container { max-height: 780px; overflow-y: auto; }
+
         table { width: 100%; border-collapse: collapse; }
         th { position: sticky; top: 0; background: #f8f9fa; font-size: 12px; padding: 10px; border-bottom: 2px solid #eee; }
-        td { padding: 10px; font-size: 13px; border-bottom: 1px solid #f1f1f1; }
+        td { padding: 10px; font-size: 11px; border-bottom: 1px solid #f1f1f1; }
         .market-code { color: #888; font-size: 11px; }
 
         /* 스크롤바 디자인 */
         .list-container::-webkit-scrollbar { width: 6px; }
-        .list-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        .list-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 1px; }
     </style>
     <link rel="stylesheet" href="/css/mainLayout.css">
     <script src="/js/mainLayout.js" defer></script>
@@ -43,13 +43,13 @@
             <button id="btnSearch"  type="button" class="hidden">데이터 불러오기</button>
     </div>
 
-<div class="mainTableContainer">
+<div class="mainDataContainer">
     <div class="market-wrapper">
         <div class="market-column">
             <div class="column-header bg-krw">KRW (원화) <span id="cntKRW">0</span></div>
             <div class="list-container">
                 <table id="tableKRW">
-                    <thead><tr><th>코인명</th><th>코드</th></tr></thead>
+                    <thead><tr><th>코인명</th><th>코드</th><th>영문명</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -59,7 +59,7 @@
             <div class="column-header bg-btc">BTC (비트코인) <span id="cntBTC">0</span></div>
             <div class="list-container">
                 <table id="tableBTC">
-                    <thead><tr><th>코인명</th><th>코드</th></tr></thead>
+                    <thead><tr><th>코인명</th><th>코드</th><th>영문명</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -69,7 +69,7 @@
             <div class="column-header bg-usdt">USDT (테더) <span id="cntUSDT">0</span></div>
             <div class="list-container">
                 <table id="tableUSDT">
-                    <thead><tr><th>코인명</th><th>코드</th></tr></thead>
+                    <thead><tr><th>코인명</th><th>코드</th><th>영문명</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -92,6 +92,9 @@
                 const krwList = markets.filter(m => m.market.startsWith("KRW-"));
                 const btcList = markets.filter(m => m.market.startsWith("BTC-"));
                 const usdtList = markets.filter(m => m.market.startsWith("USDT-"));
+                krwList.sort((a, b) => a.korean_name.localeCompare(b.korean_name));
+                btcList.sort((a, b) => a.korean_name.localeCompare(b.korean_name));
+                usdtList.sort((a, b) => a.korean_name.localeCompare(b.korean_name));
 
                 // 2. 카운트 업데이트
                 document.getElementById('cntKRW').innerText = `(${krwList.length})`;
@@ -105,6 +108,7 @@
                         <tr>
                             <td><b>${item.korean_name}</b></td>
                             <td><span class="market-code">${item.market}</span></td>
+                            <td><b>${item.english_name}</b></td>
                         </tr>
                     `).join('');
                 };

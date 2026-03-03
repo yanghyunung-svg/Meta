@@ -22,7 +22,6 @@
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th>마켓</th>
                     <td width="200px">
                         <select id="market" name="market" class="search-select">
                             <!--                            <option value="ALL" >전체</option>-->
@@ -54,9 +53,8 @@
 
         const tableBody = document.querySelector("#mainTable tbody");
         const btnSearch = document.getElementById('btnSearch');
-        const marketSelect = document.getElementById('market');
         const btnClose = document.getElementById("btnClose");
-
+        const marketSelect = document.getElementById('market');
 
         const urlParams = new URLSearchParams(window.location.search);
         const marketCode = urlParams.get('market');
@@ -125,7 +123,7 @@
             const allUnits = dataAll[0].orderbook_units;
 
             // 매도/매수 각각 최대 15개까지만 사용 (안전을 위해 slice 추가)
-            const units = allUnits.slice(0, 15);
+            const units = allUnits.slice(0, 17);
 
             // 매도 호가 (높은 가격이 위로)
             const askHtml = [...units].reverse().map(unit => `

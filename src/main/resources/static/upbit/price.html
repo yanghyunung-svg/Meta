@@ -1,12 +1,17 @@
 <!doctype html>
 <html lang="ko">
-
-<!--Access key 6Mhq0J7kcJGxrATxWs3zy7sDgeqGxBfnsgxOF9u2-->
-<!--Secret key OodlqpmxKl6RCxrVGBBxstY8ovpHQ2ltgxXUfpw8-->
-
 <head>
     <meta charset="utf-8">
     <title>Upbit 현재가 조회</title>
+    <link rel="stylesheet" href="/css/mainLayout.css">
+    <style>
+        /* 가독성을 위한 추가 스타일 */
+        .positive { color: #d60000; } /* 상승 */
+        .negative { color: #0051c7; } /* 하락 */
+        .even { color: #000; }         /* 보합 */
+        .candle-click:hover { text-decoration: none; }
+        th { cursor: pointer; background-color: #f8f9fa; }
+    </style>
     <link rel="stylesheet" href="/css/mainLayout.css">
     <script src="/js/mainLayout.js" defer></script>
     <script src="/js/sideLayout.js" defer></script>
@@ -17,13 +22,11 @@
     <div id="topbarContainer"></div>
     <div id="sidebarContainer"></div>
     <div class="mainHeadContainer">
-        <!-- 왼쪽 타이틀 -->
-        <h2 style="margin:0;"> ✅ KRW 마켓 현재가</h2>
-
+        <h2 style="margin:0;"> ✅ 업비트 현재가 대시보드</h2>
         <div class="button-group">
-            <button id="btnInit"    type="button" class="btn">초기화</button>
-            <button id="btnSearch"  type="button" class="btn">조회</button>
-            <button id="btnExcel"   type="button" class="btn">Excel</button>
+            <button id="btnInit" type="button" class="btn">초기화</button>
+            <button id="btnSearch" type="button" class="btn">조회</button>
+            <button id="btnExcel" type="button" class="btn">Excel</button>
         </div>
     </div>
 
@@ -31,41 +34,45 @@
         <form id="mainForm">
             <table class="search-table">
                 <tr>
-                    <th>마켓</th>
-                    <td width="200px">
+                    <td width="200">
+                        <select id="unit" name="unit" class="search-select">
+                            <option value="KRW-" selected>KRW 마켓</option>
+                            <option value="BTC-">BTC 마켓</option>
+                            <option value="USDT-">USDT 마켓</option>
+                        </select>
+                    </td>
+                    <td width="300">
                         <select id="market" name="market" class="search-select">
-                            <option value="ALL" selected >전체</option>
-                            <option value="MY">관심</option>
+                            <option value="ALL">전체 보기</option>
                         </select>
                     </td>
                     <td style="padding-left: 10px;">
-                        <span id="lastUpdateTime" style="color: #666; font-size: 0.9em; font-weight: normal;"></span>
+                        <span id="lastUpdateTime" style="color: #666; font-size: 0.9em;"></span>
                     </td>
                 </tr>
             </table>
         </form>
-
-        <div id="pageInfoContainer" class="page-header"></div>
     </div>
 
-    <div class="mainTableContainer">
-        <table class="data-table" id="mainTable" >
+    <div class="mainNoPageContainer">
+        <table class="data-table" id="mainTable">
             <thead>
             <tr>
-                <th style="text-align:right;">마켓</th>
-                <th style="text-align:left;" >마켓명</th>
-                <th style="text-align:right;">현재가</th>
-                <th style="text-align:right;">전일가</th>
-                <th style="text-align:right;">전일대비</th>
-                <th style="text-align:right;">변동률</th>
-                <th style="text-align:right;">고가</th>
-                <th style="text-align:right;">저가</th>
-                <th style="text-align:center;">최고가일자</th>
-                <th style="text-align:right;">최고가</th>
-                <th style="text-align:center;">최저가일자</th>
-                <th style="text-align:right;">최저가</th>
-                <th style="text-align:right;">거래대금</th>
-                <th style="text-align:center;">시간</th>
+                <th width="50">No</th>
+                <th class="left" onclick="sortTable(0)">마켓</th>
+                <th class="left"  onclick="sortTable(1)">마켓명</th>
+                <th class="right"  onclick="sortTable(2, true)">현재가</th>
+                <th class="right" onclick="sortTable(3, true)">전일가</th>
+                <th class="right" onclick="sortTable(4, true)">전일대비</th>
+                <th class="right" onclick="sortTable(5, true)">변동률  </th>
+                <th class="right" onclick="sortTable(6, true)">고가</th>
+                <th class="right" onclick="sortTable(7, true)">저가</th>
+                <th>52주 최고</th>
+                <th class="right"> 52주 최고가</th>
+                <th>52주 최저</th>
+                <th class="right"> 52주 최저가</th>
+                <th class="right" onclick="sortTable(12, true)">거래대금(24h)</th>
+                <th>시간</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -73,213 +80,168 @@
     </div>
 </div>
 
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // 1. 상태 관리 변수
-        let PAGE_SIZE = (window.CONFIG && window.CONFIG.PAGE_SIZE) || 10;
         let dataAll = [];
-        let marketMap = {}; // 마켓 한글명을 저장할 객체 (전역적 위치)
-        let currentPage = 1;
-
-        window.tableBody = document.getElementById("mainTable").querySelector("tbody");
+        let marketMap = {};
+        const tableBody = document.querySelector("#mainTable tbody");
         const btnSearch = document.getElementById('btnSearch');
-        const marketSelect = document.getElementById('market'); // 선택박스
+        const marketSelect = document.getElementById('market');
+        const unitSelect = document.getElementById('unit');
 
-        const container = document.getElementById("pageInfoContainer");
-        if (!container) return;
-
-
-        fetch('/common/pageSize.html')
-            .then(res => res.text())
-            .then(html => {
-                container.innerHTML = html;
-                const pageSizeSelect = document.getElementById("pageSize");
-                if (!pageSizeSelect) return;
-
-                pageSizeSelect.addEventListener("change", () => {
-                    PAGE_SIZE = Number(pageSizeSelect.value);
-                    currentPage = 1;
-                    renderTable(currentPage);
-                    renderPagination(dataAll, currentPage, PAGE_SIZE);
-                    updatePageInfo(dataAll, currentPage, PAGE_SIZE);
-                });
-            });
-
-
-        marketSelect.addEventListener('change', () => {
-            // 선택 항목이 변경되면 즉시 조회 버튼 클릭 효과를 냅니다.
-            btnSearch.click();
-        });
-
+        // [1] 마켓 리스트 초기화 (단위 변경 시 호출)
         async function initMarketList() {
             try {
                 const res = await fetch("https://api.upbit.com/v1/market/all");
                 const markets = await res.json();
-                const krwMarkets = markets.filter(m => m.market.startsWith("KRW-"));
+                const unit = unitSelect.value;
 
-                // 가나다순 정렬
-                krwMarkets.sort((a, b) => a.korean_name.localeCompare(b.korean_name));
+                // 해당 유닛 마켓만 필터링
+                const filtered = markets.filter(m => m.market.startsWith(unit));
+                filtered.sort((a, b) => a.korean_name.localeCompare(b.korean_name));
 
-                krwMarkets.forEach(m => {
+                // Select Box 초기화 ("전체" 옵션 유지)
+                marketSelect.innerHTML = '<option value="ALL">전체 보기</option><option value="MY">관심 코인</option>';
+                marketMap = {};
+
+                filtered.forEach(m => {
                     marketMap[m.market] = { korean: m.korean_name, english: m.english_name };
-                    // 셀렉트 박스 옵션 추가
                     const option = document.createElement('option');
                     option.value = m.market;
-                    option.textContent = `${m.korean_name} (${m.market.replace("KRW-", "")})`;
+                    option.textContent = `${m.korean_name} (${m.market})`;
                     marketSelect.appendChild(option);
                 });
 
-                // 마켓 로드 후 첫 조회 실행
-                btnSearch.click();
+                fetchTickers(); // 마켓 로드 후 조회
             } catch (err) {
-                console.error("마켓 정보 로드 실패:", err);
+                console.error("마켓 로드 실패:", err);
             }
         }
 
-        // 2. 테이블 렌더링 함수
-        window.renderTable = function(page) {
-            if (!dataAll.length) return;
-
-            const start = (page - 1) * PAGE_SIZE;
-            const end = start + PAGE_SIZE;
-            const pageData = dataAll.slice(start, end);
-
-            tableBody.innerHTML = pageData.map(item => {
-                const mInfo = marketMap[item.market] || { korean: item.market };
-                const changeColor = item.change === 'RISE' ? '#d60000' : item.change === 'FALL' ? '#0051c7' : '#000';
-                const changeSymbol = item.change === 'RISE' ? '▲' : item.change === 'FALL' ? '▼' : '○';
-//console.log(item);
-                return `
-                    <tr class="row-click" data-id="${item.market}">
-                        <td style="text-align:right;">${item.market.replace("KRW-", "")}</td>
-                        <td style="text-align:left;">${mInfo.korean}</td>
-                        <td style="text-align:right; color:${changeColor};">${item.trade_price.toLocaleString()}</td>
-                        <td style="text-align:right;">${item.prev_closing_price.toLocaleString()}</td>
-                        <td style="text-align:right; color:${changeColor};">${item.change_price.toLocaleString()}                        </td>
-                        <td style="text-align:right; color:${changeColor};">${(item.signed_change_rate * 100).toFixed(2)}% ${changeSymbol}   </td>
-                        <td style="text-align:right;">${item.high_price.toLocaleString()}</td>
-                        <td style="text-align:right;">${item.low_price.toLocaleString()}</td>
-                        <td style="text-align:center;">${item.highest_52_week_date}</td>
-                        <td style="text-align:right;">${item.highest_52_week_price.toLocaleString()}</td>
-                        <td style="text-align:center;">${item.lowest_52_week_date}</td>
-                        <td style="text-align:right;">${item.lowest_52_week_price.toLocaleString()}</td>
-                        <td style="text-align:right;">${Math.round(item.acc_trade_price_24h).toLocaleString()}</td>
-<!--                         <td style="text-align:right;">${Math.round(item.acc_trade_volume).toLocaleString()}</td>-->
-                        <td style="text-align:center;">${item.trade_time_kst.replace(/^(\d{2})(\d{2})(\d{2})$/, '$1:$2:$3')}</td>
-                    </tr>
-                `;
-            }).join('');
-        };
-
-        // 테이블 행(tr) 더블 클릭 이벤트
-        document.getElementById("mainTable").querySelector("tbody").addEventListener("dblclick", (e) => {
-            const row = e.target.closest("tr");
-
-            if (row && row.dataset.id) {
-                const marketId = row.dataset.id;
-
-                const popupWidth = 700;
-                const popupHeight = 1200;
-
-                // 화면 중앙에 팝업을 띄우기 위한 좌표 계산
-                const left = window.screenX + (window.outerWidth - popupWidth) / 2;
-                const top = window.screenY + (window.outerHeight - popupHeight) / 2;
-                const popupOptions = `width=${popupWidth}, height=${popupHeight}, top=${top}, left=${left}, resizable=yes, scrollbars=yes`;
-
-                // 팝업 열기
-                window.open(`orderbook.html?market=${marketId}`, `orderbook_${marketId}`, popupOptions);
-            }
-        });
-
-
-        // 3. 조회 버튼 클릭 이벤트 (Async/Await 활용)
-        btnSearch.addEventListener('click', async () => {
+        // [2] Ticker 데이터 가져오기
+        async function fetchTickers() {
             try {
                 let targetMarkets = "";
-                if (marketSelect.value === "ALL") {
+                const selectedMarket = marketSelect.value;
+
+                if (selectedMarket === "ALL") {
                     targetMarkets = Object.keys(marketMap).join(",");
-                } else if (marketSelect.value === "MY") {
+                } else if (selectedMarket === "MY") {
+                    // 관심 코인 예시
                     targetMarkets = ["KRW-MLK", "KRW-MOCA", "KRW-ONG"].join(",");
                 } else {
-                    targetMarkets = marketSelect.value;
+                    targetMarkets = selectedMarket;
                 }
 
                 if (!targetMarkets) return;
 
-                // B. 해당 마켓들의 현재가(Ticker) 가져오기
-                const tickerRes = await fetch(`https://api.upbit.com/v1/ticker?markets=${targetMarkets}`);
-                const tickers = await tickerRes.json();
+                const res = await fetch(`https://api.upbit.com/v1/ticker?markets=${targetMarkets}`);
+                const tickers = await res.json();
+
+                // 거래대금 순 정렬
                 tickers.sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h);
 
-                // --- 실행 시간 표시 로직 추가 ---
+                dataAll = tickers;
+                renderTable();
+
                 const now = new Date();
                 document.getElementById('lastUpdateTime').textContent =
-                `최근 업데이트 : ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-
-
-                // C. 데이터 저장 및 UI 업데이트
-                dataAll = tickers;
-                currentPage = 1;
-                renderTable(currentPage);
-                renderPagination(dataAll, currentPage, PAGE_SIZE);
-                updatePageInfo(dataAll, currentPage, PAGE_SIZE);
+                    `최근 업데이트 : ${now.toLocaleTimeString()}`;
 
             } catch (err) {
-                console.error(err);
-                alert("데이터를 가져오는 중 오류가 발생했습니다.");
+                console.error("데이터 조회 오류:", err);
+            }
+        }
+
+        // [3] 테이블 렌더링
+        function renderTable() {
+            let index = 1;
+
+            // 현재 선택된 마켓 단위 (KRW-, BTC-, USDT-)
+            const currentUnit = document.getElementById('unit').value;
+            const isKRW = (currentUnit === "KRW-");
+
+            // 헬퍼 함수: KRW일 때만 콤마를 찍고, 아니면 원본 숫자 반환
+            const formatPrice = (val) => {
+                if (val <= 0) return val;
+                return isKRW ? val.toLocaleString() : val;
+            };
+
+
+
+            tableBody.innerHTML = dataAll.map(item => {
+                const mInfo = marketMap[item.market] || { korean: item.market };
+                const changeClass = item.change === 'RISE' ? 'positive' : item.change === 'FALL' ? 'negative' : 'even';
+                const changeSymbol = item.change === 'RISE' ? '▲' : item.change === 'FALL' ? '▼' : '-';
+
+                return `
+                    <tr data-id="${item.market}">
+                        <td style="text-align:center;">${index++}</td>
+                        <td style="text-align:left;">${item.market.split('-')[1]}</td>
+                        <td class="candle-click" style="text-align:left; cursor:pointer; color:blue;">${mInfo.korean}</td>
+
+                        <td style="text-align:right;" class="${changeClass}">${formatPrice(item.trade_price)}</td>
+                        <td style="text-align:right;">${formatPrice(item.prev_closing_price)}</td>
+
+                        <td style="text-align:right;" class="${changeClass}">${formatPrice(item.change_price)}</td>
+                        <td style="text-align:right;" class="${changeClass}">${(item.signed_change_rate * 100).toFixed(2)}% ${changeSymbol}</td>
+
+                        <td style="text-align:right;">${formatPrice(item.high_price)}</td>
+                        <td style="text-align:right;">${formatPrice(item.low_price)}</td>
+
+                        <td style="text-align:center;">${item.highest_52_week_date}</td>
+                        <td style="text-align:right;">${formatPrice(item.highest_52_week_price)}</td>
+                        <td style="text-align:center;">${item.lowest_52_week_date}</td>
+                        <td style="text-align:right;">${formatPrice(item.lowest_52_week_price)}</td>
+
+                        <td style="text-align:right;">${Math.round(item.acc_trade_price_24h / 1000000).toLocaleString()} 백만</td>
+                        <td style="text-align:center;">${item.trade_time_kst.replace(/^(\d{2})(\d{2})(\d{2})$/, '$1:$2:$3')}</td>
+
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 이벤트 바인딩
+        btnSearch.addEventListener('click', fetchTickers);
+        unitSelect.addEventListener('change', initMarketList);
+        marketSelect.addEventListener('change', fetchTickers);
+
+        // 팝업 이벤트 (호가창)
+        tableBody.addEventListener("dblclick", (e) => {
+            const row = e.target.closest("tr");
+            if (row) window.open(`orderbook.html?market=${row.dataset.id}`, `_blank`, 'width=600,height=1000, resizable=yes, scrollbars=yes');
+        });
+
+        // 팝업 이벤트 (차트)
+        tableBody.addEventListener("click", (e) => {
+            if (e.target.classList.contains("candle-click")) {
+                const row = e.target.closest("tr");
+                window.open(`candle.html?market=${row.dataset.id}`, `_blank`, 'width=900,height=1200, resizable=yes, scrollbars=yes');
             }
         });
 
+        // 초기 실행 및 5초 주기 갱신
         initMarketList();
-        setInterval(() => btnSearch.click(), 5000);
+        setInterval(fetchTickers, 5000);
     });
 
-    // 나머지 버튼 이벤트 (기존과 동일)
-    document.getElementById('btnInit').addEventListener('click', () => location.reload());
-    document.getElementById('btnExcel').addEventListener('click', () => {
-        if(typeof downloadTableToExcel === "function")
-            downloadTableToExcel('mainTable', 'Upbit_현재가');
-    });
-
-
+    // 정렬 함수
     function sortTable(columnIndex, numeric = false) {
-      const table = document.getElementById("mainTable");
-      const tbody = table.querySelector("tbody");
-      const rows = Array.from(tbody.querySelectorAll("tr"));
+        const table = document.getElementById("mainTable");
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        let ascending = table.getAttribute("data-sort-dir") !== "asc";
 
-      // 정렬 방향 토글 (오름차순 ↔ 내림차순)
-      let ascending = table.getAttribute("data-sort-dir") !== "asc";
-      table.setAttribute("data-sort-dir", ascending ? "asc" : "desc");
-
-      rows.sort((a, b) => {
-        let A = a.children[columnIndex].innerText.replace(/,/g, "");
-        let B = b.children[columnIndex].innerText.replace(/,/g, "");
-
-        if (numeric) {
-          return ascending ? parseFloat(A) - parseFloat(B) : parseFloat(B) - parseFloat(A);
-        } else {
-          return ascending ? A.localeCompare(B) : B.localeCompare(A);
-        }
-      });
-
-      tbody.innerHTML = "";
-      rows.forEach(row => tbody.appendChild(row));
-    }
-
-    // 헤더 클릭 이벤트 연결
-    document.addEventListener("DOMContentLoaded", () => {
-        const headers = document.querySelectorAll("#mainTable th");
-        headers.forEach((th, index) => {
-            th.style.cursor = "pointer";
-            th.addEventListener("click", () => {
-                const numericColumns = [2,3,4,5,6,7];
-                sortTable(index, numericColumns.includes(index));
-            });
+        rows.sort((a, b) => {
+            let A = a.children[columnIndex].innerText.replace(/,/g, "").replace(/[^0-9.-]/g, "");
+            let B = b.children[columnIndex].innerText.replace(/,/g, "").replace(/[^0-9.-]/g, "");
+            return ascending ? (numeric ? A - B : A.localeCompare(B)) : (numeric ? B - A : B.localeCompare(A));
         });
-    });
 
-
+        table.setAttribute("data-sort-dir", ascending ? "asc" : "desc");
+        rows.forEach(row => tbody.appendChild(row));
+    }
 </script>
 </body>
 </html>

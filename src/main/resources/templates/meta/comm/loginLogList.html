@@ -31,7 +31,15 @@
                     <th>사용자 ID</th>
                     <td style="display:flex; align-items:center; gap:2px;">
                         <input type="text" id="userId" name="userId" class="search-input">
-                        <button id="btnPopup" type="button" class="btn">사용자검색</button>
+                        <button id="btnPopup" type="button" class="btn" style="display: flex; align-items: center; gap: 5px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            검색
+                        </button>
+
                     </td>
                     <th>사용자이름</th>
                     <td><input type="text" id="userNm" name="userNm" class="search-input" readonly></td>
@@ -49,6 +57,7 @@
                             <option value="1">실패</option>
                         </select>
                     </td>
+                    <td width="10%"></td>
                 </tr>
             </table>
         </form>
