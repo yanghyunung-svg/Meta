@@ -38,8 +38,11 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity:0.6; cursor:poin
 
 .hidden { display:none !important; }
 
-/* Topbar */
-/* Topbar */
+.container {
+    width 100%; height: 100vh; /* 화면 전체 높이 사용 */
+    background-color: #fff;
+ }
+
 .topbarContainer {
     display:flex; justify-content:space-between; align-items:center; padding:0 20px; z-index:1000;
     position:fixed; top:5px; left:5px; width:calc(100% - 12px); height:40px;
@@ -69,13 +72,15 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity:0.6; cursor:poin
  }
 .mainBodyContainer {
     position:fixed; top:95px; left:190px; width:calc(100% - 195px); height:30px;
-    background-color:#f0f0f0; color:var(--main-text-color);
+    background-color:#26a69a; color: #fff;
     padding:0; margin:0; overflow-y:auto;
  }
 .mainTableContainer {
     position:fixed; top:130px; left:190px; width:calc(100% - 195px); height:810px;
-    background-color:#f0f0f0; color:var(--main-text-color);
+    background-color:#fff; color:var(--main-text-color);
     padding:0; margin:0; overflow-y:auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
  }
 .mainDataContainer {
     position:fixed; top:95px; left:190px; width:calc(100% - 195px); height:840px; border-radius:1px;
@@ -86,6 +91,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity:0.6; cursor:poin
     position:fixed; top:95px; left:190px; width:calc(100% - 395px); height:900px; border-radius:1px;
     background-color:#fff; color:var(--main-text-color);
  }
+
+#lastUpdateTime { padding:5px; float: center; font-size: 10px; font-weight: bold;}
 
 .searchHeadContainer {
     display:flex;
@@ -110,7 +117,7 @@ ul { list-style:none; padding:0; margin:0; }
 .search-table .search-date { padding-left:6px; width:100px; height:26px; box-sizing:border-box; font-size:12px; border:1px solid #64748B; border-radius:2px; }
 .search-table .date-range { display:flex; align-items:center; gap:4px; }
 
-.data-table { width:100%; margin:0; font-size:12px; border:0px solid var(--table-thead-bg-color); border-collapse:collapse; table-layout:fixed;   border:1px solid #64748B;  }
+.data-table { width:100%; margin:0; font-size:12px; border-collapse:collapse; table-layout:fixed; border:1px solid #ddd;  }
 .data-table thead { background-color:#f8f9fa; color:#666; }
 .data-table thead th { position: sticky; top:0; height:28px; padding:0 6px; line-height:28px; text-align:center; vertical-align:middle; box-sizing:border-box; background-color:#f8f9faB; color:666; border:1px solid #fff; }
 .data-table tbody { background-color:var(--bg-white); color:var(--bg-black); }
@@ -141,16 +148,20 @@ ul { list-style:none; padding:0; margin:0; }
     border-bottom:1px solid #ccc;
 }
 .popupBodyContainer {
-    display:flex; position:fixed; top:55px;  left:5px; height:45px; width:calc(100% - 10px);
+    display:flex; position:fixed; top:55px; left:5px; height:45px; width:calc(100% - 10px);
     padding:5px; overflow-y:auto;
     background-color:var(--bg-white); color:var(--main-text-color);
 }
 .popupTableContainer {
-    display:flex; position:fixed; top:100px; left:5px; width:calc(100% - 10px);
-    padding:5px; overflow-y:auto;
+    position:fixed; top:100px; left:10px; width:calc(100% - 20px); height:820px;
+    padding:0px;
+    overflow-y: auto;
     background-color:var(--bg-white); color:var(--main-text-color);
+    /* IE 및 Edge용 */
+        -ms-overflow-style: none;
+        /* Firefox용 */
+        scrollbar-width: none;
 }
-
 
 .regContainer { position:fixed; top:895px; left:190px; width:calc(100% - 195px); height:20px; padding:12px; }
 .reg-table { margin:0px 0px 5px; width:100%; border-collapse:collapse; border:1px solid #64748B; }
@@ -264,7 +275,7 @@ td[contenteditable="true"] { cursor:text; }
 .candle-click:hover { text-decoration: none; }
 
 .highlight-border {
-   outline: 2px solid #ff0000 !important;
-    outline-offset: -2px; /* 테두리가 안쪽으로 그려지게 */
+   outline: 1px solid red !important;
+    outline-offset: -3px; /* 테두리가 안쪽으로 그려지게 */
     background-color: rgba(255, 230, 230, 0.5) !important; /*
 }

@@ -9,7 +9,7 @@
     <script src="/js/commonUtils.js" defer></script>
 </head>
 <body>
-<div class="container" id="container">
+<div class="container" >
     <div class="popupHeadContainer">
         <h2 style="margin:0;"> ✅ 캔들 조회 </h2>
         <div class="button-group">
@@ -21,7 +21,7 @@
     <div class="popupBodyContainer">
             <table class="search-table">
                 <tr>
-                    <td width="200px">
+                    <td width="300px">
                         <select id="market" name="market" class="search-select">
                             <!--                            <option value="ALL" >전체</option>-->
                         </select>
@@ -30,15 +30,16 @@
                         <select id="unit" name="unit" class="search-select">
                             <optgroup label="분 단위">
                                 <option value="1">1분</option>
-                                <option value="3" >3분</option>
-                                <option value="5" >5분</option>
-                                <option value="10" >10분</option>
-                                <option value="15" >15분</option>
-                                <option value="30" >30분</option>
-                                <option value="60" >60분</option>
-                                <option value="240" >240분</option>
+                                <option value="3">3분</option>
+                                <option value="5">5분</option>
+                                <option value="10">10분</option>
+                                <option value="15">15분</option>
+                                <option value="30">30분</option>
+                                <option value="60">60분</option>
+                                <option value="240">240분</option>
                             </optgroup>
-                            <optgroup label="일 이상">
+                            <optgroup label="초,일,주,월,년">
+                                <option value="seconds">Seconds</option>
                                 <option value="days">Days</option>
                                 <option value="weeks">Weeks</option>
                                 <option value="months">Months</option>
@@ -46,21 +47,14 @@
                             </optgroup>
                         </select>
                     </td>
-                    <td width="100px">
-                        <select id="cnt" name="cnt" class="search-select">
-                            <option value="35" selected>Min</option>
-                            <option value="200">Max</option>
-                        </select>
-                    </td>
-                    <td style="padding-left: 10px;">
-                        <span id="lastUpdateTime" style="color: #666; font-size: 0.9em; font-weight: normal;"></span>
+                    <td>
+                        <span id="lastUpdateTime" style="color: #888;"></span>
                     </td>
                 </tr>
             </table>
     </div>
 
     <div class="popupTableContainer">
-
         <table class="data-table" id="mainTable">
             <thead>
             <tr>
@@ -84,23 +78,25 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         // 1. 상태 관리 변수
-        let PAGE_SIZE = 10000;
         let dataAll = [];
         let marketMap = {}; // 마켓 한글명을 저장할 객체 (전역적 위치)
-        let currentPage = 1;
 
         window.tableBody = document.getElementById("mainTable").querySelector("tbody");
-
         const btnSearch = document.getElementById('btnSearch');
         const btnClose = document.getElementById("btnClose");
+
         const marketSelect = document.getElementById('market');
         const unitSelect =  document.getElementById('unit');
-        const cntSelect =  document.getElementById('cnt');
 
         const urlParams = new URLSearchParams(window.location.search);
         const marketCode = urlParams.get('market');
 
-        [marketSelect,unitSelect,cntSelect].forEach(el => {
+        const formatPrice = (val) => {
+            const num = Number(val);
+            return (num > 1) ? num.toLocaleString() : (num || 0);
+        };
+
+        [marketSelect,unitSelect].forEach(el => {
             el.addEventListener('change', () => btnSearch.click());
         });
 
@@ -122,7 +118,6 @@
 
                 if (marketCode) marketSelect.value = marketCode;
 
-                // 마켓 로드 후 첫 조회 실행
                 btnSearch.click();
 
             } catch (err) {
@@ -130,115 +125,169 @@
             }
         }
 
-        // 2. 테이블 렌더링 함수
-window.renderTable = function(page) {
-    if (!dataAll.length) return;
 
-    const start = (page - 1) * PAGE_SIZE;
-    const pageData = dataAll.slice(start, start + PAGE_SIZE);
-    const selectedUnit = document.getElementById('unit').value;
+    // 2. 테이블 렌더링 함수
+    window.renderTable = function() {
+        if (!dataAll.length) return;
 
-    tableBody.innerHTML = pageData.map(item => {
-        // 1. 공통 색상 계산 (시가 vs 종가 비교)
-        let rowColor = '#333';
-        if (item.trade_price > item.opening_price) rowColor = '#d60000'; // 상승
-        else if (item.trade_price < item.opening_price) rowColor = '#0051c7'; // 하락
+        updateTime();
 
-        // 2. 날짜/시간 표시 분기
-        const dateDisplay = (selectedUnit === 'days' || selectedUnit === 'weeks' || selectedUnit === 'months' || selectedUnit === 'years')
+        const selectedUnit = document.getElementById('unit').value;
+
+        tableBody.innerHTML = dataAll
+            .filter(item => item && item.candle_date_time_kst)
+            .map(item => {
+
+            // 1. 공통 색상 계산 (시가 vs 종가 비교)
+            let rowColor = '#333';
+            if (item.trade_price > item.opening_price) rowColor = '#d60000'; // 상승
+            else if (item.trade_price < item.opening_price) rowColor = '#0051c7'; // 하락
+
+            // 2. 날짜/시간 표시 분기
+           const dateDisplay = (item.candle_date_time_kst)
+                        ? ((selectedUnit === 'days' || selectedUnit === 'weeks' || selectedUnit === 'months' || selectedUnit === 'years')
                             ? item.candle_date_time_kst.slice(0, 10)
-                            : item.candle_date_time_kst.slice(11, 19);
+                            : item.candle_date_time_kst.slice(11, 19))
+                        : "시간 정보 없음";
 
-        // 3. 일봉 전용 변동 데이터 처리
-        let changeHtml = '';
-        if (selectedUnit === 'days') {
-            let cColor = '#000';
-            let arrow = '○';
+            // 3. 일봉 전용 변동 데이터 처리
+            let changeHtml = '';
+            if (selectedUnit === 'days') {
+                let cColor = '#000';
+                let arrow = '○';
 
-            // 일봉은 전일 종가(prev_closing_price) 기준으로 색상 결정
-            if (item.trade_price > item.prev_closing_price) {
-                cColor = '#d60000';
-                arrow = '▲';
-            } else if (item.trade_price < item.prev_closing_price) {
-                cColor = '#0051c7';
-                arrow = '▼';
-            }
-
-            changeHtml = `
-                <td style="text-align:right; color:${cColor};">
-                    ${item.change_price ? item.change_price.toLocaleString() : '0'}
-                </td>
-                <td style="text-align:right; color:${cColor};">
-                    ${item.change_rate ? (item.change_rate * 100).toFixed(2) : '0.00'}% ${arrow}
-                </td>
-            `;
-        } else {
-            changeHtml = `<td style="text-align:center;">-</td><td style="text-align:center;">-</td>`;
-        }
-
-        return `
-            <tr>
-                <td style="text-align:center;">${dateDisplay}</td>
-                <td style="text-align:right;">${item.opening_price.toLocaleString()}</td>
-                <td style="text-align:right; color:#d60000;">${item.high_price.toLocaleString()}</td>
-                <td style="text-align:right; color:#0051c7;">${item.low_price.toLocaleString()}</td>
-                <td style="text-align:right; font-weight:bold; color:${rowColor};">
-                    ${item.trade_price.toLocaleString()}
-                </td>
-                <td style="text-align:right;">${Math.round(item.candle_acc_trade_price).toLocaleString()}</td>
-                <td style="text-align:right;">${Math.round(item.candle_acc_trade_volume).toLocaleString()}</td>
-                ${changeHtml}
-            </tr>
-        `;
-    }).join('');
-};
-
-        // 3. 조회 버튼 클릭 이벤트 (Async/Await 활용)
-        btnSearch.addEventListener('click', async () => {
-            try {
-                let selectedMarket = marketSelect.value;
-                let selectedUnit = unitSelect.value;
-                let selectedcount = cntSelect.value;
-
-                if (!selectedMarket) return;
-
-                let apiUrl = "";
-                if (['days', 'weeks', 'months', 'years'].includes(selectedUnit)) {
-                    // 일, 주, 월, 년 조회
-                    apiUrl = `https://api.upbit.com/v1/candles/${selectedUnit}?market=${selectedMarket}&count=${selectedcount}`;
-                } else {
-                    // 분 조회 (기존 로직)
-                    apiUrl = `https://api.upbit.com/v1/candles/minutes/${selectedUnit}?market=${selectedMarket}&count=${selectedcount}`;
+                // 일봉은 전일 종가(prev_closing_price) 기준으로 색상 결정
+                if (item.trade_price > item.prev_closing_price) {
+                    cColor = '#d60000';
+                    arrow = '▲';
+                } else if (item.trade_price < item.prev_closing_price) {
+                    cColor = '#0051c7';
+                    arrow = '▼';
                 }
 
-                const dataRes = await fetch(apiUrl);
-                const data = await dataRes.json();
-
-                // --- 실행 시간 표시 로직 추가 ---
-                const now = new Date();
-                document.getElementById('lastUpdateTime').textContent =
-                    `최근 업데이트 : ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-
-
-                // C. 데이터 저장 및 UI 업데이트
-                dataAll = data;
-                currentPage = 1;
-                renderTable(currentPage);
-
-            } catch (err) {
-                console.error(err);
-                alert("데이터를 가져오는 중 오류가 발생했습니다.");
+                changeHtml = `
+                    <td style="text-align:right; color:${cColor};"> ${item.change_price ? formatPrice(item.change_price ) : '0'} </td>
+                    <td style="text-align:right; color:${cColor};"> ${item.change_rate ? (item.change_rate * 100).toFixed(2) : '0.00'}% ${arrow} </td>
+                `;
+            } else {
+                changeHtml = `<td style="text-align:center;">-</td><td style="text-align:center;">-</td>`;
             }
-        });
 
-        btnClose.addEventListener("click", () => window.close() );
-        initMarketList();
+            return `
+                <tr>
+                    <td style="text-align:center;">${dateDisplay}</td>
+                    <td style="text-align:right;">${formatPrice(item.opening_price)}</td>
+                    <td style="text-align:right; color:#d60000;">${formatPrice(item.high_price )}</td>
+                    <td style="text-align:right; color:#0051c7;">${formatPrice(item.low_price )}</td>
+                    <td style="text-align:right; font-weight:bold; color:${rowColor};">
+                        ${formatPrice(item.trade_price )}
+                    </td>
+                    <td style="text-align:right;">${Math.round(item.candle_acc_trade_price).toLocaleString()}</td>
+                    <td style="text-align:right;">${Math.round(item.candle_acc_trade_volume).toLocaleString()}</td>
+                    ${changeHtml}
+                </tr>
+            `;
+        }).join('');
+   };
 
+    let socket; // 웹소켓 객체 저장
+    function connectWS(marketCode, unit) {
+        // 기존 연결이 있다면 닫기
+        if (socket) {
+            socket.close();
+        }
+
+        socket = new WebSocket('wss://api.upbit.com/websocket/v1');
+        socket.binaryType = 'arraybuffer'; // 업비트는 데이터를 바이너리로 보냅니다.
+
+        socket.onopen = () => {
+            console.log("WebSocket Connected!");
+            // 구독 요청 (초봉 또는 분봉 캔들)
+            const type = (unit === 'seconds') ? "candle.1s" : `candle.minutes.${unit}`;
+            const payload = [
+                { "ticket": "UNIQUE_TICKET" },
+                { "type": type, "codes": [marketCode] }
+            ];
+            socket.send(JSON.stringify(payload));
+        };
+
+        socket.onmessage = async (event) => {
+            const enc = new TextDecoder("utf-8");
+            const arr = new Uint8Array(event.data);
+            const data = JSON.parse(enc.decode(arr));
+
+            // 실시간으로 받은 캔들 데이터를 기존 dataAll의 최상단(0번째)에 업데이트
+            updateRealtimeData(data);
+        };
+    }
+
+
+    function updateRealtimeData(newCandle) {
+
+        if (dataAll.length > 0 && dataAll[0].candle_date_time_kst === newCandle.candle_date_time_kst) {
+            dataAll[0] = { ...dataAll[0], ...newCandle };
+        } else {
+            dataAll.unshift(newCandle);
+            if (dataAll.length > 200) dataAll.pop();
+        }
+        renderTable(); // 테이블 다시 그리기
+    }
+
+    // 3. 조회 버튼 클릭 이벤트 (Async/Await 활용)
+    btnSearch.addEventListener('click', async () => {
+        try {
+            let selectedMarket = marketSelect.value;
+            let selectedUnit = unitSelect.value;
+            let selectedcount = 200;
+
+            if (!selectedMarket) return;
+
+            let apiUrl = "";
+            if (['days', 'weeks', 'months', 'years','seconds'].includes(selectedUnit)) {
+                apiUrl = `https://api.upbit.com/v1/candles/${selectedUnit}?market=${selectedMarket}&count=${selectedcount}`;
+            } else {
+                apiUrl = `https://api.upbit.com/v1/candles/minutes/${selectedUnit}?market=${selectedMarket}&count=${selectedcount}`;
+            }
+
+            const dataRes = await fetch(apiUrl);
+            if (!dataRes.ok) throw new Error("API 요청 실패");
+
+            const data = await dataRes.json();
+
+            // C. 데이터 저장 및 UI 업데이트
+            dataAll = data;
+            renderTable();
+
+            // 초봉(seconds)이거나 분봉(1~240)일 때만 실시간 연결
+            if (!['days', 'weeks', 'months', 'years'].includes(selectedUnit)) {
+                connectWS(selectedMarket, selectedUnit);
+            } else if (socket) {
+                socket.close(); // 일봉 이상은 실시간 캔들 업데이트가 불필요하므로 닫음
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("데이터를 가져오는 중 오류가 발생했습니다.");
+        }
     });
 
+    btnClose.addEventListener("click", () => window.close() );
+    initMarketList();
 
 
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('ko-KR', {
+            hour12: false,           // 24시간 형식 (선택)
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            fractionalSecondDigits: 3 // 3자리 밀리초 표시
+        });
+        document.getElementById('lastUpdateTime').textContent = ` ${timeString}`;
+    }
 
+});
 </script>
 </body>
 </html>

@@ -28,7 +28,7 @@
 </head>
 <body>
 
-<div class="container" id="container">
+<div class="container" >
     <div class="popupHeadContainer">
         <h2 style="margin:0;"> ✅ 호가 조회</h2>
         <div class="button-group">
@@ -40,12 +40,12 @@
     <div class="popupBodyContainer">
         <table class="search-table">
             <tr>
-                <td width="200px">
+                <td width="300px">
                     <select id="market" name="market" class="search-select">
                     </select>
                 </td>
-                <td style="padding-left: 10px;">
-                    <span id="lastUpdateTime" style="color: #666; font-size: 0.9em; font-weight: normal;"></span>
+                <td>
+                    <span id="lastUpdateTime" style="color: #888;"></span>
                 </td>
             </tr>
         </table>
@@ -129,8 +129,14 @@
     function renderTable(data) {
         if (!data) return;
 
+          const formatPrice = (val) => {
+              const num = Number(val);
+              return (num > 1) ? num.toLocaleString() : (num || 0);
+            };
+
+
         // 상위 18개만 추출
-        const units = data.orderbook_units.slice(0, 17);
+        const units = data.orderbook_units.slice(0,20);
         const maxSize = Math.max(...units.map(u => Math.max(u.ask_size, u.bid_size)));
 
         // 매도 호가 (18개, 역순)
@@ -142,7 +148,7 @@
                         <div style="position:absolute; right:0; top:0; bottom:0; width:${ratio}%; background:rgba(0,81,199,0.1);"></div>
                         <span style="position:relative; color:#0051c7;">${unit.ask_size.toLocaleString(undefined, {minimumFractionDigits: 3})}</span>
                     </td>
-                    <td style="text-align:center; font-weight:bold; background-color: #e6eefd; border:1px solid #fff;">${unit.ask_price.toLocaleString()}</td>
+                    <td style="text-align:center; font-weight:bold; background-color: #e6eefd; border:1px solid #fff;">${formatPrice(unit.ask_price)}</td>
                     <td style="text-align:center; color:#ccc;">-</td>
                 </tr>`;
         }).join('');
@@ -153,7 +159,7 @@
             return `
                 <tr class="bid-row">
                     <td style="text-align:center; color:#ccc;">-</td>
-                    <td style="text-align:center; font-weight:bold; background-color: #fde6e6; border:1px solid #fff;">${unit.bid_price.toLocaleString()}</td>
+                    <td style="text-align:center; font-weight:bold; background-color: #fde6e6; border:1px solid #fff;">${formatPrice(unit.bid_price)}</td>
                     <td style="text-align:right; padding-right:10px; position:relative;">
                         <div style="position:absolute; left:0; top:0; bottom:0; width:${ratio}%; background:rgba(214,0,0,0.1);"></div>
                         <span style="position:relative; color:#d60000;">${unit.bid_size.toLocaleString(undefined, {minimumFractionDigits: 3})}</span>
@@ -180,8 +186,15 @@
 
     function updateTime() {
         const now = new Date();
-        document.getElementById('lastUpdateTime').textContent =
-            `실시간 : ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+        const timeString = now.toLocaleTimeString('ko-KR', {
+            hour12: false,           // 24시간 형식 (선택)
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            fractionalSecondDigits: 3 // 3자리 밀리초 표시
+        });
+
+        document.getElementById('lastUpdateTime').textContent = ` ${timeString}`;
     }
 
     // 5. 이벤트 리스너

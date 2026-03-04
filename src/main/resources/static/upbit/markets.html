@@ -10,17 +10,22 @@
         /* 가로 3열 레이아웃 설정 */
         .market-wrapper { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: start; }
         .market-column { background: white; border-radius: 1px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
-        .column-header { padding: 15px; text-align: center; color: white; font-weight: bold; font-size: 18px; }
+        .column-header { padding: 12px; text-align: center; color: white; font-weight: bold; font-size: 14px; border: 2px solid rgba(0,0,0,0.1); }
 
         /* 마켓별 테마 컬러 */
         .bg-krw { background: #26a69a; } /* 레드 */
         .bg-btc { background: #26a69a; } /* 블루 */
         .bg-usdt { background: #26a69a; } /* 그린 */
 
-        .list-container { max-height: 780px; overflow-y: auto; }
+        .list-container { max-height: 790px; overflow-y: auto; border: 1px solid rgba(0,0,0,0.1);
+    /* IE 및 Edge용 */
+        -ms-overflow-style: none;
+        /* Firefox용 */
+        scrollbar-width: none;
+        }
 
         table { width: 100%; border-collapse: collapse; }
-        th { position: sticky; top: 0; background: #f8f9fa; font-size: 12px; padding: 10px; border-bottom: 2px solid #eee; }
+        th { position: sticky; top: 0; background: #f8f9fa; font-size: 12px; padding: 10px; border-bottom: 2px solid #eee; font-weight: bold;  }
         td { padding: 10px; font-size: 11px; border-bottom: 1px solid #f1f1f1; }
         .market-code { color: #888; font-size: 11px; }
 
@@ -41,15 +46,17 @@
     <div class="mainHeadContainer">
             <h2> ✅ 업비트 마켓 리스트 </h2>
             <div class="button-group">
-                <button id="btnSearch"  type="button" class="hidden">데이터 불러오기</button>
-                <button id="btnSave"  type="button" class="btn">데이터 저장</button>
+                <button id="btnSearch"  type="button" class="hidden">조회</button>
+                <button id="btnSave"  type="button" class="btn">Json저장</button>
+                <button id="btnAllExcel" type="button" class="btn">Excel저장</button>
             </div>
     </div>
 
 <div class="mainDataContainer">
     <div class="market-wrapper">
         <div class="market-column">
-            <div class="column-header bg-krw">KRW (원화) <span id="cntKRW">0</span></div>
+            <div class="column-header bg-krw">KRW (원화) <span id="cntKRW">0</span>
+            </div>
             <div class="list-container">
                 <table id="tableKRW">
                     <thead><tr><th>코인명</th><th>코드</th><th>영문명</th></tr></thead>
@@ -83,37 +90,28 @@
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-
         const btnSearch = document.getElementById('btnSearch');
         const btnSave = document.getElementById('btnSave');
-
 
         btnSave.addEventListener('click', async () => {
             try {
                 const response = await fetch("https://api.upbit.com/v1/market/all?isDetails=true");
-
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
                 const data = await response.json();
-
                 const blob = new Blob(
                     [JSON.stringify(data, null, 2)],
                     { type: "application/json" }
                 );
-
                 const url = URL.createObjectURL(blob);
-
                 const a = document.createElement("a");
                 a.href = url;
                 a.download = "market_all.json";
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-
                 URL.revokeObjectURL(url);
-
             } catch (error) {
                 console.error("마켓 목록 다운로드 실패:", error);
                 alert("데이터 다운로드 중 오류가 발생했습니다.");
@@ -160,6 +158,40 @@
             } catch (err) {
                 console.error(err);
                 alert("조회 실패! CORS 설정을 확인하세요.");
+            }
+        });
+
+        // 전체 Excel(CSV) 저장 버튼 수정
+        document.getElementById('btnAllExcel').addEventListener('click', async () => {
+            try {
+                const response = await fetch("https://api.upbit.com/v1/market/all");
+                const markets = await response.json();
+
+                // 한글 이름 순 정렬
+                markets.sort((a, b) => a.market.localeCompare(b.market));
+
+                let csv = "\ufeff"; // 한글 깨짐 방지 BOM
+                csv += "마켓,한글명,영문명\n"; // 헤더 추가
+
+                markets.forEach(m => {
+                    // 쉼표(,)가 이름에 포함될 경우를 대비해 큰따옴표로 감쌈
+                    csv += `"${m.market}","${m.korean_name}","${m.english_name}"\n`;
+                });
+
+                const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+
+                link.setAttribute("href", url);
+                link.setAttribute("download", "upbit_market_all.csv");
+                link.style.visibility = 'hidden';
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error("데이터 저장 실패:", error);
+                alert("전체 리스트를 불러오는 중 오류가 발생했습니다.");
             }
         });
 
